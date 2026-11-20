@@ -32,6 +32,8 @@ export type SetupDeps = {
   upgradePreference?: { load(): boolean; save(skipped: boolean): void }
   /** Windows and Linux: the speed check picks the speech model (a Mac never has it: turbo, as always) */
   speed?: SpeedDeps
+  /** the notes are written on Amazon Bedrock: no notes model to download (speech and meaning search stay local) */
+  cloudNotes?: () => boolean
 }
 
 /** Where the models ended up, for the parts of the app that use them; llm once the first notes model is in (after ready) */
@@ -65,6 +67,8 @@ export class SetupController {
   private background: Promise<void> | undefined
   private backgroundItem: Item | undefined
   private firstItem: Item | undefined
+  /** the first notes model's download is running (or done): started once, when the notes are written here */
+  private firstStarted = false
   private upgradeAbort: AbortController | undefined
   private upgradeDownload: Promise<void> | undefined
   private upgradeChange: Promise<void> | undefined
@@ -202,19 +206,23 @@ export class SetupController {
       const [hw, catalog] = await Promise.all([this.deps.getHardware(), this.deps.getCatalog()])
       const llm = pick(hw, catalog.models)
       const weak = tooWeak(hw, !!llm.recommended)
-      if (!llm.recommended || weak) return this.set({ phase: 'error', fraction: 0, message: weak ?? '' })
+      // on Bedrock the notes model is in the cloud: a computer too small for one still records and transcribes
+      const cloud = this.deps.cloudNotes?.() ?? false
+      if ((!llm.recommended || weak) && !cloud) return this.set({ phase: 'error', fraction: 0, message: weak ?? '' })
 
       // The first notes model is the starter when it downloads faster than the pick; otherwise the pick itself.
-      const starter = llm.starter && llm.starter.build.sizeGB < llm.recommended.build.sizeGB ? llm.starter : llm.recommended
-      const later = starter === llm.recommended ? undefined : llm.recommended
-      console.info('NOTES', `notes models for this computer: ${starter.model.id}${later ? `, then ${later.model.id}` : ''} (graphics ${hw.gpu.kind}${hw.gpu.name ? ` ${hw.gpu.name}` : ''}, ${hw.totalRamGB} GB)`)
+      const recommended = llm.recommended && !weak ? llm.recommended : undefined
+      const starter = recommended && (llm.starter && llm.starter.build.sizeGB < recommended.build.sizeGB ? llm.starter : recommended)
+      const later = starter === recommended ? undefined : recommended
+      if (starter) console.info('NOTES', `notes models for this computer: ${starter.model.id}${later ? `, then ${later.model.id}` : ''} (graphics ${hw.gpu.kind}${hw.gpu.name ? ` ${hw.gpu.name}` : ''}, ${hw.totalRamGB} GB)`)
+      else console.info('NOTES', 'no notes model fits this computer: the notes are written on Bedrock')
       const dirs = { asr: join(this.deps.modelsDir, 'asr'), llm: join(this.deps.modelsDir, 'llm'), embed: join(this.deps.modelsDir, 'embed') }
 
       // Speech first: ready (recording works) once it is in. The notes models come after.
       let asr = pickAsr(hw, catalog)
       const asrItem = (m: CatalogAsr): Item => ({ url: m.url, sha256: m.sha256, bytes: m.bytes, dir: dirs.asr, fileName: fileNameFor(m.url) })
       // whisper-server is built into the app (catalog.whisperServer.bundled), so only the speech model is downloaded for it.
-      const starterItem = llmItem(dirs.llm, starter)
+      const starterItem = starter && llmItem(dirs.llm, starter)
       this.firstItem = starterItem
       this.backgroundItem = later && llmItem(dirs.llm, later)
       const bigger = this.backgroundItem
@@ -236,7 +244,7 @@ export class SetupController {
       const waitFor: Item[] = [asrItem(speed ? keep ?? candidates[0] : asr.model)]
       const total = waitFor.reduce((n, i) => n + i.bytes, 0)
       // room for the first notes model too, so it never runs out of disk after ready
-      await this.checkDisk([...waitFor, ...(hasUpgrade ? [] : [starterItem]), embedItem])
+      await this.checkDisk([...waitFor, ...(hasUpgrade || cloud || !starterItem ? [] : [starterItem]), embedItem])
 
       let done = 0
       const report = (item: Item, fraction: number) => this.set({ phase: 'downloading', fraction: Math.min(1, (done + item.bytes * fraction) / total) })
@@ -268,9 +276,9 @@ export class SetupController {
       this.paths = { asr: asrPath }
       if (hasUpgrade) {
         this.paths.recommendedLlm = join(bigger!.dir, bigger!.fileName)
-        if (isVerified(starterItem.dir, starterItem.fileName, this.sha(starterItem))) this.paths.llm = join(starterItem.dir, starterItem.fileName)
+        if (starterItem && isVerified(starterItem.dir, starterItem.fileName, this.sha(starterItem))) this.paths.llm = join(starterItem.dir, starterItem.fileName)
       }
-      this.set({ phase: 'ready', fraction: 1, notesUpgradeBytes: bigger?.bytes, notesUpgradeSkipped: skipped, notesUpgradeInstalled: hasUpgrade })
+      this.set({ phase: 'ready', fraction: 1, notesUpgradeBytes: cloud ? undefined : bigger?.bytes, notesUpgradeSkipped: skipped, notesUpgradeInstalled: hasUpgrade })
       this.startNotes(starterItem, embedItem)
     } catch (err) {
       console.error('setup failed', err)
@@ -305,8 +313,25 @@ export class SetupController {
    * The first notes model downloads while Yogurt already records: it is tried until it lands (meetings recorded
    * meanwhile get their notes then). The bigger one follows.
    */
-  private startNotes(first: Item, embed: Item) {
-    this.background = (async () => {
+  private startNotes(first: Item | undefined, embed: Item) {
+    const local = !!first && !(this.deps.cloudNotes?.() ?? false)
+    this.background = (local ? this.downloadFirst(first!) : Promise.resolve()).then(() => this.startEmbedding(embed))
+    this.background = this.background.then(() => { if (local && this.backgroundItem) return this.startBackground(this.backgroundItem) })
+  }
+
+  /** The notes moved back from Bedrock to this computer: its notes model downloads now if it never did. */
+  localNotesWanted(): void {
+    if (this._state.phase !== 'ready' || this.firstStarted || !this.firstItem) return
+    const first = this.firstItem
+    void this.downloadFirst(first).then(() => { if (this.backgroundItem) return this.startBackground(this.backgroundItem) })
+  }
+
+  /** whether notes can be written on this computer (a model was picked for it) */
+  canRunLocally(): boolean { return !!this.firstItem || !!this.paths?.recommendedLlm }
+
+  private downloadFirst(first: Item): Promise<void> {
+    this.firstStarted = true
+    return (async () => {
       const waits = this.deps.notesRetryMs ?? NOTES_RETRY_MS
       // Waiting notes show whole percents; every 10% goes in the log.
       let shown = -1, logged = -1
@@ -338,8 +363,6 @@ export class SetupController {
       }
       for (const l of this.notesListeners) { try { l() } catch (e) { console.error('notes model listener failed', e) } }
     })()
-    this.background = this.background.then(() => this.startEmbedding(embed))
-    this.background = this.background.then(() => { if (this.backgroundItem) return this.startBackground(this.backgroundItem) })
   }
 
   /**

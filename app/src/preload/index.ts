@@ -2,7 +2,7 @@ import { audioUpload } from './audioUpload'
 import type { WidgetLayout } from '../shared/widgetMorph'
 import { contextBridge, ipcRenderer } from 'electron'
 import { capabilities, platformOf } from '../shared/platform'
-import type { ChatView, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
+import type { ChatView, CloudNotesView, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
 
 const api: YogurtApi = {
   reportRendererError: report => ipcRenderer.send('renderer:error', report),
@@ -221,6 +221,18 @@ const api: YogurtApi = {
     nudge: () => ipcRenderer.invoke('onboarding:nudge'),
     dismissNudge: () => ipcRenderer.invoke('onboarding:dismiss-nudge'),
     restoreNudge: () => ipcRenderer.invoke('onboarding:restore-nudge'),
+  },
+  cloud: {
+    get: () => ipcRenderer.invoke('cloud:get'),
+    setProvider: (p) => ipcRenderer.invoke('cloud:provider', p),
+    setConfig: (c) => ipcRenderer.invoke('cloud:config', c),
+    signIn: () => ipcRenderer.invoke('cloud:sign-in'),
+    cancelSignIn: () => ipcRenderer.invoke('cloud:cancel'),
+    signOut: () => ipcRenderer.invoke('cloud:sign-out'),
+    accounts: () => ipcRenderer.invoke('cloud:accounts'),
+    roles: (accountId) => ipcRenderer.invoke('cloud:roles', accountId),
+    test: () => ipcRenderer.invoke('cloud:test'),
+    onChange: (fn) => { const f = (_e: unknown, v: CloudNotesView) => fn(v); ipcRenderer.on('cloud:changed', f); return () => { ipcRenderer.off('cloud:changed', f) } },
   },
   mcp: {
     status: () => ipcRenderer.invoke('mcp:status'),

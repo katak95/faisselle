@@ -156,6 +156,20 @@ export type YogurtApi = {
     save(meetingId: string, side: 'mine' | 'enhanced'): Promise<'saved' | 'cancelled' | 'failed'>
   }
   /** every meeting in one file and back (Settings): import adds the ones that are not here, never changes one that is */
+  /** Settings → Notes model: this computer or Claude on Amazon Bedrock, signed in with AWS IAM Identity Center */
+  cloud: {
+    get(): Promise<CloudNotesView>
+    setProvider(p: 'local' | 'bedrock'): Promise<CloudNotesView>
+    /** only the fields given change; a field that isn't valid stays as it was */
+    setConfig(c: Partial<CloudNotesView['config']>): Promise<CloudNotesView>
+    signIn(): Promise<CloudNotesView>
+    cancelSignIn(): Promise<CloudNotesView>
+    signOut(): Promise<CloudNotesView>
+    accounts(): Promise<Array<{ id: string; name: string }>>
+    roles(accountId: string): Promise<string[]>
+    test(): Promise<{ ok: true } | { ok: false; message: string }>
+    onChange(fn: (v: CloudNotesView) => void): () => void
+  }
   /** AI apps on this Mac reading meetings through MCP (Settings) */
   mcp: {
     status(): Promise<McpStatus>
@@ -467,3 +481,23 @@ export type ConversationSummary = { id: string; title: string; updatedAt: number
 export type McpStatus = { enabled: boolean; clients: string[]; command: string }
 /** Settings → Updates. available: this build updates itself (not in development or a preview); next: the version found */
 export type UpdateStatus = { version: string; available: boolean; on: boolean; state: 'idle' | 'checking' | 'latest' | 'downloading' | 'ready' | 'error'; next?: string; dismissed?: boolean }
+
+/** the AWS sign-in for Bedrock, as Settings shows it */
+export type SsoStatus =
+  | { state: 'signed-out' }
+  /** waiting for the person to approve in the browser: the code they should see there */
+  | { state: 'pending'; userCode: string; url: string }
+  | { state: 'signed-in'; startUrl: string; expiresAt: number }
+  /** the token ran out and could not be refreshed: sign in again */
+  | { state: 'expired'; startUrl: string }
+  | { state: 'error'; message: string }
+
+export type CloudNotesView = {
+  provider: 'local' | 'bedrock'
+  /** a notes model fits this computer (it can go back to local) */
+  canRunLocally: boolean
+  sso: SsoStatus
+  config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
+  /** signed in, with an account and role: notes can be written on Bedrock */
+  ready: boolean
+}

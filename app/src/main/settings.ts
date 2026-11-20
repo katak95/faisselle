@@ -53,7 +53,11 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** the default for newly written summaries; the meeting's language when left out */
   summaryLanguage?: string
   /** new versions download by themselves; on unless turned off */
-  autoUpdate?: boolean }
+  autoUpdate?: boolean
+  /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
+  notesProvider?: 'bedrock'
+  /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
+  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)
@@ -96,3 +100,5 @@ export function updateSettings(path: string, patch: Partial<Settings>): Settings
 
 /** The language picked in Settings; the computer's when none (or one Yogurt no longer has) */
 export const localeOf = (s: Settings, system: string): string => (isLocale(s.language) ? s.language : system)
+
+export const notesProviderSetting = (s: Settings): 'local' | 'bedrock' => (s.notesProvider === 'bedrock' ? 'bedrock' : 'local')

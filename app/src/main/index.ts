@@ -69,6 +69,14 @@ import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
 import { UtilityEngine } from './engine'
 import { createNotesModel } from './notes/model'
+import { createBedrockNotesModel, bedrockClient } from './notes/bedrock'
+import { fakeMessagesClient } from './notes/fake'
+import { createSwitchingNotesModel } from './notes/provider'
+import { createSso } from './aws/sso'
+import { awsSsoApi } from './aws/ssoApi'
+import { fakeSsoApi } from './aws/fakeSso'
+import { bedrockConfig, hookCloud } from './cloudNotes'
+import { notesProviderSetting } from './settings'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
 import { hookReadAhead, readAheadAllowed } from './notes/readAhead'
@@ -188,6 +196,8 @@ function createSetup(): SetupController {
     ...(isFake() ? { sha256Override: 'FAKE' } : {}),
     // Windows and Linux: speech models timed on this computer (asr/speedCheck.ts); a Mac never is
     ...(platform === 'darwin' ? {} : { speed: { ...speedStore(speedFile()), measure: isFake() ? fakeMeasure() : (model: string) => measureSpeed(model, { binary: whisperServerPath(), vadModel: vadModelPath(), clip: speedClipPath() ?? '' }) } }),
+    // the notes on Bedrock: no notes model to download
+    cloudNotes: () => notesProviderSetting(loadSettings(join(userDataDir(), 'settings.json'))) === 'bedrock',
   })
 }
 /** what the speed check found (Windows and Linux) */
@@ -631,16 +641,43 @@ app.whenReady().then(() => {
   // fake mode: the fixed Mac (a bigger one) unless a test asks for a 16 GB one
   const smallMac = isFake() ? process.env.YOGURT_FAKE_SMALL_MAC === '1' : isSmallMac(os.totalmem())
   const memory = notesMemory(smallMac)
-  const model = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
+  const localModel = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
+  // the notes on Amazon Bedrock instead (Settings → Notes model): signed in with AWS IAM Identity Center
+  let cloud: ReturnType<typeof hookCloud> | undefined
+  const sso = createSso({
+    file: join(userDataDir(), 'aws-sso.json'), api: isFake() ? fakeSsoApi() : awsSsoApi(),
+    seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
+    open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()),
+    openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
+    onChange: () => cloud?.statusChanged(),
+  })
+  const cloudConfig = () => bedrockConfig(loadSettings(settingsFile), sso)
+  const bedrockModel = createBedrockNotesModel({ config: cloudConfig,
+    // fake mode: the fake engine answers, as for the local model
+    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, () => sso.credentials(c.accountId, c.roleName))) })
+  const provider = () => notesProviderSetting(loadSettings(settingsFile))
+  const model = createSwitchingNotesModel({ local: localModel, bedrock: bedrockModel, provider })
+  /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */
+  const notesReady = () => (provider() === 'bedrock' ? !!cloudConfig() : !!setup.notesPath())
   // first run: the notes model lands after recording already works; jobs wait in the queue for it
   // the embedding model (meaning search across meetings) runs in the same worker and is let go with the notes model
   const embedder = createEmbedder({ engine, modelPath: () => setup.installed()?.embed, id: bundledCatalog.embedding.id, dims: bundledCatalog.embedding.dims })
-  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: () => !!setup.notesPath() })
+  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: notesReady })
   ipcMain.handle('setup:remove-upgrade', () => setup.removeUpgrade(remove => queue.enqueue(async () => {
     await model.unload()
     remove()
   }, 'enhance')))
   setup.onNotesModel(() => { queue.modelArrived(); conversations.refresh() })
+  cloud = hookCloud({
+    file: settingsFile, sso, canRunLocally: () => setup.canRunLocally(),
+    send: (v) => win?.webContents.send('cloud:changed', v),
+    changed: (p) => {
+      if (p === 'local') setup.localNotesWanted()
+      else void model.switched().catch((e) => console.error('letting the local notes model go failed', e))
+      queue.modelArrived(); conversations.refresh()
+    },
+    test: async () => { const llm = await bedrockModel.llm(); await llm.chat('Reply with the single word OK.', () => {}, { maxTokens: 16 }) },
+  })
   // chat across meetings: every finished meeting chunked and embedded in the background, last in the queue
   const library = new Library(store.db)
   const indexer = createIndexer({ store, library, embedder, queue })
@@ -761,7 +798,7 @@ app.whenReady().then(() => {
       win?.webContents.send('conversations:changed', v)
       if (v.chips.length === 1 && v.chips[0].kind === 'meeting') win?.webContents.send('chat:changed', { ...v, meetingId: v.chips[0].id })
     }, sendList: (l) => win?.webContents.send('conversations:list', l),
-    waitsForMeeting, waitsForModel: () => !setup.notesPath(),
+    waitsForMeeting, waitsForModel: () => !notesReady(),
     // a meeting read in ahead during a recording only where reading ahead is allowed (32 GB and up; the fake Mac is big)
     warmAllowed: () => !activeMeeting() || (isFake() ? !smallMac : readAheadAllowed(os.totalmem())),
   })

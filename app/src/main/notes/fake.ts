@@ -94,3 +94,22 @@ function fakeVector(text: string): number[] {
   v[0] += 0.01
   return v
 }
+
+/**
+ * Fake mode on Bedrock: the Anthropic client's messages.stream, answered by the fake engine, so the notes on
+ * "Bedrock" read the same as the local ones in tests.
+ */
+export function fakeMessagesClient(engine: Engine): import('./bedrock').MessagesClient {
+  type Params = { messages: Array<{ role: 'user' | 'assistant'; content: Array<{ text: string }> }>; max_tokens: number }
+  const stream = (p: Params, o?: { signal?: AbortSignal }) => {
+    const listeners: Array<(t: string) => void> = []
+    const done = Promise.resolve().then(() => engine.chat({ messages: p.messages.map((m) => ({ role: m.role, content: m.content.map((c) => c.text).join('') })), maxTokens: p.max_tokens },
+      (t) => { for (const l of listeners) l(t) }, o?.signal))
+    const s = {
+      on(ev: string, fn: (t: string) => void) { if (ev === 'text') listeners.push(fn); return s },
+      finalMessage: async () => ({ stop_reason: 'end_turn', content: [{ type: 'text', text: await done }], usage: { input_tokens: 0, output_tokens: 0 } }),
+    }
+    return s
+  }
+  return { messages: { stream } } as unknown as import('./bedrock').MessagesClient
+}
