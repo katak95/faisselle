@@ -1,5 +1,5 @@
 import { asrCandidates, pick, pickAsr, pickBySpeed, speedKey, type Catalog, type CatalogAsr, type Choice, type Hardware } from '@yogurt/picker'
-import { rmSync } from 'node:fs'
+import { rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { ChecksumError, DiskSpaceError, ensureFile, fileNameFor, isVerified, partialDownloadGB, type DownloadDeps } from './downloader'
@@ -34,6 +34,11 @@ export type SetupDeps = {
   speed?: SpeedDeps
   /** the notes are written on Amazon Bedrock: no notes model to download (speech and meaning search stay local) */
   cloudNotes?: () => boolean
+  /**
+   * First run: the notes model waits for this before it downloads, so the person can pick Bedrock on the welcome
+   * screen first. Speech and meaning search don't wait.
+   */
+  beforeLocalNotes?: () => Promise<void>
 }
 
 /** Where the models ended up, for the parts of the app that use them; llm once the first notes model is in (after ready) */
@@ -69,6 +74,8 @@ export class SetupController {
   private firstItem: Item | undefined
   /** the first notes model's download is running (or done): started once, when the notes are written here */
   private firstStarted = false
+  /** stops the first notes model's download (the notes moved to Bedrock); it picks up where it stopped if they come back */
+  private firstAbort: AbortController | undefined
   private upgradeAbort: AbortController | undefined
   private upgradeDownload: Promise<void> | undefined
   private upgradeChange: Promise<void> | undefined
@@ -314,14 +321,52 @@ export class SetupController {
    * meanwhile get their notes then). The bigger one follows.
    */
   private startNotes(first: Item | undefined, embed: Item) {
-    const local = !!first && !(this.deps.cloudNotes?.() ?? false)
-    this.background = (local ? this.downloadFirst(first!) : Promise.resolve()).then(() => this.startEmbedding(embed))
-    this.background = this.background.then(() => { if (local && this.backgroundItem) return this.startBackground(this.backgroundItem) })
+    const cloud = () => this.deps.cloudNotes?.() ?? false
+    // the notes model waits for the welcome screen (Bedrock can be picked there), then follows Settings
+    const hold = (this.deps.beforeLocalNotes?.() ?? Promise.resolve()).catch(() => {})
+    let local = false
+    // the order stays: the first notes model, then the embedding model, then the bigger notes model
+    this.background = hold.then(() => { local = !!first && !cloud(); return local ? this.downloadFirst(first!) : undefined }).then(() => this.startEmbedding(embed))
+    this.background = this.background.then(() => { if (local && !cloud() && this.backgroundItem) return this.startBackground(this.backgroundItem) })
+  }
+
+  /**
+   * The notes moved to Bedrock: the notes models' downloads stop (what came in is kept, so coming back picks up
+   * where it stopped). Nothing that is already in is removed; removeLocalNotes() does that.
+   */
+  cloudChosen(): void {
+    this.firstAbort?.abort()
+    this.upgradeAbort?.abort()
+    this.retryNotes?.()
+    this.set({ ...this._state, notesDownloading: undefined, notesFraction: undefined, notesEtaSec: undefined, notesTotalBytes: undefined, notesError: undefined,
+      notesUpgradeDownloading: undefined, notesUpgradePending: undefined, notesUpgradeFraction: undefined, notesUpgradeEtaSec: undefined, notesUpgradeTotalBytes: undefined })
+  }
+
+  /** the notes models' files on this computer, finished or not (Settings offers to remove them on Bedrock) */
+  localNotesBytes(): number {
+    let n = 0
+    for (const i of [this.firstItem, this.backgroundItem]) {
+      if (!i) continue
+      for (const suffix of ['', '.part']) { try { n += statSync(join(i.dir, i.fileName) + suffix).size } catch { /* not there */ } }
+    }
+    return n
+  }
+
+  /**
+   * On Bedrock: the notes models' files go (the model must be let go first: unload()). Coming back to this computer
+   * downloads the first one again.
+   */
+  removeLocalNotes(): void {
+    this.cloudChosen()
+    for (const i of [this.firstItem, this.backgroundItem]) if (i) this.removeFiles(join(i.dir, i.fileName))
+    if (this.paths) this.paths = { ...this.paths, llm: undefined, recommendedLlm: undefined }
+    this.firstStarted = false
+    this.set({ ...this._state, notesUpgradeInstalled: false })
   }
 
   /** The notes moved back from Bedrock to this computer: its notes model downloads now if it never did. */
   localNotesWanted(): void {
-    if (this._state.phase !== 'ready' || this.firstStarted || !this.firstItem) return
+    if (this._state.phase !== 'ready' || this.firstStarted || !this.firstItem || this.notesPath()) return
     const first = this.firstItem
     void this.downloadFirst(first).then(() => { if (this.backgroundItem) return this.startBackground(this.backgroundItem) })
   }
@@ -331,6 +376,8 @@ export class SetupController {
 
   private downloadFirst(first: Item): Promise<void> {
     this.firstStarted = true
+    const abort = new AbortController()
+    this.firstAbort = abort
     return (async () => {
       const waits = this.deps.notesRetryMs ?? NOTES_RETRY_MS
       // Waiting notes show whole percents; every 10% goes in the log.
@@ -343,15 +390,17 @@ export class SetupController {
       const already = isVerified(first.dir, first.fileName, this.sha(first))
       if (!already && !this.paths?.recommendedLlm) console.info('NOTES', `downloading the notes model ${first.fileName}`)
       for (let i = 0; !this.paths?.recommendedLlm; i++) {
+        if (abort.signal.aborted) { console.info('NOTES', 'the notes model download stopped: the notes are written on Bedrock'); this.firstStarted = false; return }
         shown = -1
         this.set({ ...this._state, notesError: undefined, ...(already ? {} : { notesDownloading: true, notesFraction: 0, notesTotalBytes: first.bytes, notesEtaSec: undefined }) })
         try {
-          const path = await this.fetch(first, already ? undefined : progress)
+          const path = await this.fetch(first, already ? undefined : (p) => { if (!abort.signal.aborted) progress(p) }, abort.signal)
           if (this.paths) this.paths = { ...this.paths, llm: path }
           if (!already) console.info('NOTES', 'the notes model is in')
           this.set({ ...this._state, notesFraction: undefined, notesDownloading: undefined, notesTotalBytes: undefined, notesEtaSec: undefined, notesUpgradePending: !!this.backgroundItem && !this._state.notesUpgradeSkipped })
           break
         } catch (err) {
+          if (abort.signal.aborted) continue
           console.warn('the notes model did not download yet, trying again', err)
           await new Promise<void>((resolve) => {
             const wake = () => { clearTimeout(timer); this.retryNotes = undefined; resolve() }

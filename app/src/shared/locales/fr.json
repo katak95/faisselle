@@ -852,5 +852,10 @@
   "Read the invite, related emails and documents": "Lire l’invitation, les e-mails et les documents liés",
   "Search SharePoint and OneDrive": "Rechercher dans SharePoint et OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ce qui a été dit avec ces personnes, les points ouverts, les e-mails et documents liés, et les questions à poser.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Votre administrateur doit approuver les autorisations demandées par Yogurt. Envoyez-lui la documentation, ou désactivez la recherche SharePoint et OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Votre administrateur doit approuver les autorisations demandées par Yogurt. Envoyez-lui la documentation, ou désactivez la recherche SharePoint et OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "Un modèle de notes de quelques gigaoctets se télécharge après cet écran.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Aucun modèle de notes n’est téléchargé. Connectez-vous à AWS dans les Réglages ensuite.",
+  "Notes model on this computer": "Modèle de notes sur cet ordinateur",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Rédiger les résumés avec Amazon Bedrock (Claude) plutôt qu’avec un modèle sur cet ordinateur",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} Go, inutilisé tant que les résumés sont rédigés sur Bedrock. Il se retéléchargera si vous revenez à cet ordinateur."
 }

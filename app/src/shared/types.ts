@@ -168,6 +168,8 @@ export type YogurtApi = {
     accounts(): Promise<Array<{ id: string; name: string }>>
     roles(accountId: string): Promise<string[]>
     test(): Promise<{ ok: true } | { ok: false; message: string }>
+    /** on Bedrock: removes the local notes models' files (they download again if the notes come back here) */
+    removeLocal(): Promise<CloudNotesView>
     onChange(fn: (v: CloudNotesView) => void): () => void
   }
   /** what is written beside a meeting's notes: action items, follow-up email, brief (main/extras.ts) */
@@ -532,6 +534,8 @@ export type CloudNotesView = {
   config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
   /** signed in, with an account and role: notes can be written on Bedrock */
   ready: boolean
+  /** the local notes models' files on this computer (0: none), which Bedrock lets the person remove */
+  localBytes: number
 }
 
 export type FollowUp = { subject: string; body: string }

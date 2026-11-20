@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "อ่านคำเชิญ อีเมล และเอกสารที่เกี่ยวข้อง",
   "Search SharePoint and OneDrive": "ค้นหาใน SharePoint และ OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "สิ่งที่เคยพูดกับคนเหล่านี้ ประเด็นที่ค้างอยู่ อีเมลและเอกสารที่เกี่ยวข้อง และคำถามที่ควรถาม",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "ผู้ดูแลต้องอนุมัติสิทธิ์ที่ Yogurt ขอ ส่งเอกสารให้ผู้ดูแล หรือปิดการค้นหาใน SharePoint และ OneDrive"
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "ผู้ดูแลต้องอนุมัติสิทธิ์ที่ Yogurt ขอ ส่งเอกสารให้ผู้ดูแล หรือปิดการค้นหาใน SharePoint และ OneDrive",
+  "A notes model of a few gigabytes downloads after this screen.": "หลังหน้าจอนี้จะดาวน์โหลดโมเดลโน้ตขนาดไม่กี่กิกะไบต์",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "ไม่ดาวน์โหลดโมเดลโน้ต จากนั้นลงชื่อเข้าใช้ AWS ในการตั้งค่า",
+  "Notes model on this computer": "โมเดลโน้ตบนคอมพิวเตอร์เครื่องนี้",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "เขียนสรุปด้วย Amazon Bedrock (Claude) แทนโมเดลบนคอมพิวเตอร์เครื่องนี้",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB ไม่ได้ใช้ขณะที่เขียนสรุปบน Bedrock จะดาวน์โหลดอีกครั้งหากกลับมาใช้คอมพิวเตอร์เครื่องนี้"
 }

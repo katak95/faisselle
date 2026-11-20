@@ -892,5 +892,10 @@
   "Read the invite, related emails and documents": "قراءة الدعوة والرسائل والمستندات المرتبطة",
   "Search SharePoint and OneDrive": "البحث في SharePoint وOneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "ما قيل سابقًا مع هؤلاء الأشخاص والنقاط المفتوحة والرسائل والمستندات المرتبطة والأسئلة التي تُطرح.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "يجب أن يوافق المسؤول على الأذونات التي يطلبها Yogurt. أرسل إليه الوثائق، أو أوقف البحث في SharePoint وOneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "يجب أن يوافق المسؤول على الأذونات التي يطلبها Yogurt. أرسل إليه الوثائق، أو أوقف البحث في SharePoint وOneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "بعد هذه الشاشة يُنزَّل نموذج ملاحظات بحجم بضعة غيغابايت.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "لن يُنزَّل أي نموذج ملاحظات. بعد ذلك، سجّل الدخول إلى AWS من الإعدادات.",
+  "Notes model on this computer": "نموذج الملاحظات على هذا الكمبيوتر",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "اكتب الملخصات باستخدام Amazon Bedrock (Claude) بدلًا من نموذج على هذا الكمبيوتر",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} غيغابايت، غير مستخدم ما دامت الملخصات تُكتب على Bedrock. سيُنزَّل مجددًا إذا عدت إلى هذا الكمبيوتر."
 }

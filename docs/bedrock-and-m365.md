@@ -23,6 +23,12 @@ What to check in AWS:
 - Claude Haiku 5.5 is enabled for your account in the Bedrock console, in the region you chose.
 - The Identity Center permission set behind the role allows Bedrock inference.
 
+**The local notes model.** On the first run, the welcome screen asks first: tick *Write summaries with Amazon
+Bedrock* and no notes model is downloaded (the notes model waits for that screen; speech to text and meaning search
+download as usual). Switching to Bedrock later stops a notes model download still running (what came in is kept, so
+switching back picks up where it stopped), and Settings offers to **Remove** a notes model already on the computer.
+Switching back to this computer downloads it again.
+
 Yogurt keeps the Identity Center token sealed with your system keychain, in `aws-sso.json` in its data folder. The
 role's keys stay in memory and are fetched again before they expire. A meeting's summary stays under 100K input
 tokens, so long meetings are summarised in parts at the lower price.

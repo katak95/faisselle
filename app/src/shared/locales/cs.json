@@ -867,5 +867,10 @@
   "Read the invite, related emails and documents": "Číst pozvánku, související e-maily a dokumenty",
   "Search SharePoint and OneDrive": "Hledat v SharePointu a OneDrivu",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Co se s těmito lidmi řešilo dříve, otevřené body, související e-maily a dokumenty a otázky k položení.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Správce musí schválit oprávnění, o která Yogurt žádá. Pošlete mu dokumentaci, nebo vypněte hledání v SharePointu a OneDrivu."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Správce musí schválit oprávnění, o která Yogurt žádá. Pošlete mu dokumentaci, nebo vypněte hledání v SharePointu a OneDrivu.",
+  "A notes model of a few gigabytes downloads after this screen.": "Po této obrazovce se stáhne model poznámek o velikosti několika gigabajtů.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Žádný model poznámek se nestáhne. Potom se přihlaste k AWS v Nastavení.",
+  "Notes model on this computer": "Model poznámek na tomto počítači",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Psát shrnutí pomocí Amazon Bedrock (Claude) místo modelu na tomto počítači",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, nepoužívá se, dokud se shrnutí píšou v Bedrocku. Znovu se stáhne, pokud se vrátíte k tomuto počítači."
 }

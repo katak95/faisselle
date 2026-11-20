@@ -15,8 +15,14 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
     await expect(page.getByTestId('home')).toBeVisible()
 
     // Settings: the notes on Bedrock, signed in with Identity Center (fake mode approves at once)
+    // the local notes model is in (fake mode downloads it at once)
+    await expect.poll(() => page.evaluate(() => window.yogurt.cloud.get().then((v) => v.localBytes)), { timeout: 20_000 }).toBeGreaterThan(0)
     await page.getByTestId('settings-open').click()
     await page.getByTestId('cloud-notes-provider').selectOption('bedrock')
+    // on Bedrock it can go: its files are removed
+    await page.getByTestId('cloud-remove-local').click()
+    await expect(page.getByTestId('cloud-local-model')).toHaveCount(0)
+    expect(await page.evaluate(() => window.yogurt.cloud.get().then((v) => v.localBytes))).toBe(0)
     await page.getByTestId('cloud-start-url').fill('https://example.awsapps.com/start')
     await page.getByTestId('cloud-start-url').press('Enter')
     await page.getByTestId('cloud-sign-in-button').click()

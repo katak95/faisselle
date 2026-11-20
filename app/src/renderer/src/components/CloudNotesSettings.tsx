@@ -30,6 +30,7 @@ export function CloudNotesSettings() {
   const [accounts, setAccounts] = useState<Array<{ id: string; name: string }>>()
   const [roles, setRoles] = useState<string[]>()
   const [test, setTest] = useState<{ ok: true } | { ok: false; message: string } | 'running'>()
+  const [removing, setRemoving] = useState(false)
   useEffect(() => {
     void window.yogurt.cloud.get().then(setV)
     return window.yogurt.cloud.onChange(setV)
@@ -114,6 +115,15 @@ export function CloudNotesSettings() {
 
         <Field id="cloud-region" label={t('Bedrock region')} value={v.config.region} placeholder="eu-west-1" onSave={(region) => set({ region })} />
         <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="anthropic.claude-haiku-5-5" onSave={(modelId) => set({ modelId })} />
+
+        {v.localBytes > 0 && <div className="settings-row" data-testid="cloud-local-model">
+          <div className="settings-row-copy">
+            <p className="settings-label">{t('Notes model on this computer')}</p>
+            <p className="settings-description">{t('{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.', { size: (v.localBytes / 1e9).toFixed(1) })}</p>
+          </div>
+          <button data-testid="cloud-remove-local" className="workspace-button settings-action" disabled={removing} aria-busy={removing}
+            onClick={() => { setRemoving(true); void window.yogurt.cloud.removeLocal().then(setV).finally(() => setRemoving(false)) }}>{removing ? t('Removing…') : t('Remove')}</button>
+        </div>}
 
         {v.ready && <div className="settings-row">
           <div className="settings-row-copy">

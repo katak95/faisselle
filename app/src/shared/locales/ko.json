@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "초대, 관련 이메일, 문서 읽기",
   "Search SharePoint and OneDrive": "SharePoint와 OneDrive 검색",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "이 사람들과 이전에 나눈 이야기, 미해결 사항, 관련 이메일과 문서, 물어볼 질문.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt가 요청하는 권한을 관리자가 승인해야 해요. 문서를 관리자에게 보내거나 SharePoint와 OneDrive 검색을 끄세요."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt가 요청하는 권한을 관리자가 승인해야 해요. 문서를 관리자에게 보내거나 SharePoint와 OneDrive 검색을 끄세요.",
+  "A notes model of a few gigabytes downloads after this screen.": "이 화면 다음에 수 GB 크기의 노트 모델을 내려받아요.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "노트 모델을 내려받지 않아요. 이후 설정에서 AWS에 로그인하세요.",
+  "Notes model on this computer": "이 컴퓨터의 노트 모델",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "이 컴퓨터의 모델 대신 Amazon Bedrock(Claude)으로 요약 작성",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size}GB, 요약을 Bedrock에서 작성하는 동안에는 사용하지 않아요. 이 컴퓨터로 돌아오면 다시 내려받아요."
 }

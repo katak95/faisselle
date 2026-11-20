@@ -824,5 +824,10 @@
   "Read the invite, related emails and documents": "আমন্ত্রণ, সংশ্লিষ্ট ইমেইল ও নথি পড়ুন",
   "Search SharePoint and OneDrive": "SharePoint ও OneDrive-এ খুঁজুন",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "এই মানুষদের সাথে আগে কী কথা হয়েছে, খোলা বিষয়, সংশ্লিষ্ট ইমেইল ও নথি, এবং জিজ্ঞাসার প্রশ্ন।",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt যে অনুমতি চায় তা আপনার অ্যাডমিনকে অনুমোদন করতে হবে। তাঁকে নির্দেশিকা পাঠান, অথবা SharePoint ও OneDrive খোঁজা বন্ধ করুন।"
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt যে অনুমতি চায় তা আপনার অ্যাডমিনকে অনুমোদন করতে হবে। তাঁকে নির্দেশিকা পাঠান, অথবা SharePoint ও OneDrive খোঁজা বন্ধ করুন।",
+  "A notes model of a few gigabytes downloads after this screen.": "এই স্ক্রিনের পরে কয়েক গিগাবাইটের একটি নোট মডেল ডাউনলোড হবে।",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "কোনো নোট মডেল ডাউনলোড হবে না। এরপর সেটিংসে AWS-এ সাইন ইন করুন।",
+  "Notes model on this computer": "এই কম্পিউটারের নোট মডেল",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "এই কম্পিউটারের মডেলের বদলে Amazon Bedrock (Claude) দিয়ে সারাংশ লিখুন",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, সারাংশ Bedrock-এ লেখা হলে ব্যবহার হয় না। এই কম্পিউটারে ফিরলে আবার ডাউনলোড হবে।"
 }

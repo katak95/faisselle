@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "讀取邀請、相關郵件與文件",
   "Search SharePoint and OneDrive": "搜尋 SharePoint 與 OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "先前與這些人談過的內容、待解決事項、相關郵件與文件，以及該問的問題。",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "管理員需要核准 Yogurt 要求的權限。請將說明文件傳給管理員，或關閉 SharePoint 與 OneDrive 搜尋。"
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "管理員需要核准 Yogurt 要求的權限。請將說明文件傳給管理員，或關閉 SharePoint 與 OneDrive 搜尋。",
+  "A notes model of a few gigabytes downloads after this screen.": "此畫面之後會下載一個數 GB 的筆記模型。",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "不會下載筆記模型。之後請在設定中登入 AWS。",
+  "Notes model on this computer": "這台電腦上的筆記模型",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "用 Amazon Bedrock（Claude）而非這台電腦上的模型來撰寫摘要",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB，在 Bedrock 上撰寫摘要期間不會使用。若改回這台電腦，會重新下載。"
 }

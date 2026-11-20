@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "Baca jemputan, e-mel dan dokumen berkaitan",
   "Search SharePoint and OneDrive": "Cari dalam SharePoint dan OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Apa yang pernah dibincangkan dengan mereka, perkara terbuka, e-mel dan dokumen berkaitan serta soalan untuk ditanya.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Pentadbir anda perlu meluluskan kebenaran yang diminta Yogurt. Hantar dokumentasi kepada mereka, atau matikan carian SharePoint dan OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Pentadbir anda perlu meluluskan kebenaran yang diminta Yogurt. Hantar dokumentasi kepada mereka, atau matikan carian SharePoint dan OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "Selepas skrin ini, model nota sebesar beberapa gigabait akan dimuat turun.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Tiada model nota dimuat turun. Selepas ini, log masuk ke AWS dalam Tetapan.",
+  "Notes model on this computer": "Model nota pada komputer ini",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Tulis ringkasan dengan Amazon Bedrock (Claude) dan bukan dengan model pada komputer ini",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, tidak digunakan selagi ringkasan ditulis di Bedrock. Ia dimuat turun semula jika anda kembali ke komputer ini."
 }

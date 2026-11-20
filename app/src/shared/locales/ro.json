@@ -853,5 +853,10 @@
   "Read the invite, related emails and documents": "Citește invitația, e-mailurile și documentele legate",
   "Search SharePoint and OneDrive": "Caută în SharePoint și OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ce s-a spus înainte cu aceste persoane, puncte deschise, e-mailuri și documente legate și întrebări de pus.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratorul trebuie să aprobe permisiunile cerute de Yogurt. Trimite-i documentația sau dezactivează căutarea în SharePoint și OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratorul trebuie să aprobe permisiunile cerute de Yogurt. Trimite-i documentația sau dezactivează căutarea în SharePoint și OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "După acest ecran se descarcă un model de notițe de câțiva gigaocteți.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Nu se descarcă niciun model de notițe. Apoi conectează-te la AWS din Setări.",
+  "Notes model on this computer": "Model de notițe pe acest computer",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Scrie rezumatele cu Amazon Bedrock (Claude) în loc de un model pe acest computer",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, nefolosit cât timp rezumatele sunt scrise pe Bedrock. Se descarcă din nou dacă revii la acest computer."
 }

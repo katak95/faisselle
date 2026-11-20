@@ -836,5 +836,10 @@
   "Read the invite, related emails and documents": "Les invitasjonen, relaterte e-poster og dokumenter",
   "Search SharePoint and OneDrive": "Søk i SharePoint og OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Hva som er sagt før med disse personene, åpne punkter, relaterte e-poster og dokumenter, og spørsmål å stille.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratoren din må godkjenne tillatelsene Yogurt ber om. Send dem dokumentasjonen, eller slå av søk i SharePoint og OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratoren din må godkjenne tillatelsene Yogurt ber om. Send dem dokumentasjonen, eller slå av søk i SharePoint og OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "En notatmodell på noen få gigabyte lastes ned etter denne skjermen.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Ingen notatmodell lastes ned. Logg på AWS i Innstillinger etterpå.",
+  "Notes model on this computer": "Notatmodell på denne datamaskinen",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Skriv sammendrag med Amazon Bedrock (Claude) i stedet for en modell på denne datamaskinen",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, ubrukt så lenge sammendrag skrives på Bedrock. Den lastes ned igjen hvis du går tilbake til denne datamaskinen."
 }

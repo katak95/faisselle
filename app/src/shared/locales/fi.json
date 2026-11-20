@@ -842,5 +842,10 @@
   "Read the invite, related emails and documents": "Lue kutsu, liittyvät viestit ja asiakirjat",
   "Search SharePoint and OneDrive": "Hae SharePointista ja OneDrivesta",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Mitä näiden ihmisten kanssa on aiemmin sanottu, avoimet asiat, liittyvät viestit ja asiakirjat sekä kysyttävät kysymykset.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Järjestelmänvalvojan on hyväksyttävä Yogurtin pyytämät oikeudet. Lähetä hänelle ohjeet tai poista SharePoint- ja OneDrive-haku käytöstä."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Järjestelmänvalvojan on hyväksyttävä Yogurtin pyytämät oikeudet. Lähetä hänelle ohjeet tai poista SharePoint- ja OneDrive-haku käytöstä.",
+  "A notes model of a few gigabytes downloads after this screen.": "Tämän näytön jälkeen ladataan muutaman gigatavun muistiinpanomalli.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Muistiinpanomallia ei ladata. Kirjaudu sen jälkeen AWS:ään asetuksissa.",
+  "Notes model on this computer": "Muistiinpanomalli tällä tietokoneella",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Kirjoita yhteenvedot Amazon Bedrockilla (Claude) tämän tietokoneen mallin sijaan",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} Gt, käyttämättä niin kauan kuin yhteenvedot kirjoitetaan Bedrockissa. Se ladataan uudelleen, jos palaat tähän tietokoneeseen."
 }

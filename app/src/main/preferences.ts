@@ -29,7 +29,9 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
   /** the permissions this computer has (supportedKinds in platform.ts); a Mac has them all */
   kinds?: readonly PermissionKind[]; os?: string
   /** Windows and Linux: whether a calendar link is connected (the first run asks for one while none is) */
-  calendarLinked?: () => boolean }) {
+  calendarLinked?: () => boolean
+  /** the welcome screen was passed: the first notes model may start downloading (setup.ts beforeLocalNotes) */
+  onIntroDone?: () => void }) {
   const kinds = d.kinds ?? PERMISSION_KINDS
   const os = d.os ?? process.platform
   let plan: Promise<OnboardingPlan> | undefined
@@ -42,8 +44,8 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
     firstRunShowing = p.intro || p.steps.length > 0
     return p
   })()))
-  ipcMain.handle('onboarding:intro-seen', () => { updateSettings(d.file, { introSeen: true }) })
-  ipcMain.handle('onboarding:done', () => { firstRunShowing = false; updateSettings(d.file, { welcomed: true }) })
+  ipcMain.handle('onboarding:intro-seen', () => { updateSettings(d.file, { introSeen: true }); d.onIntroDone?.() })
+  ipcMain.handle('onboarding:done', () => { firstRunShowing = false; updateSettings(d.file, { welcomed: true }); d.onIntroDone?.() })
   // home's Finish setup: what wasn't put away (fake mode, like the first run, only when a test sets the permissions)
   ipcMain.handle('onboarding:nudge', async () => (d.ask ? nudge(await d.permissions.status(), loadSettings(d.file).setupDismissed ?? [], kinds) : []))
   ipcMain.handle('onboarding:dismiss-nudge', async () => {

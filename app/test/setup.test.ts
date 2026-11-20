@@ -792,3 +792,58 @@ describe('optional better notes model', () => {
     expect(c.state.notesUpgradeChanging).toBeUndefined()
   })
 })
+
+describe('notes on Bedrock', () => {
+  it('downloads no notes model when the notes are on Bedrock, only speech and meaning search', async () => {
+    const rec = recorder()
+    const { c } = setup({ download: rec.deps, cloudNotes: () => true })
+    await c.start(); await c.idle()
+    expect(rec.asked).not.toContain(starterUrl)
+    expect(rec.asked).not.toContain(bigUrl)
+    expect(rec.asked).toContain(embedUrl)
+    expect(c.notesPath()).toBeUndefined()
+  })
+
+  it('waits for the welcome screen: Bedrock picked there means the notes model never downloads', async () => {
+    let cloud = false, go!: () => void
+    const rec = recorder()
+    const { c } = setup({ download: rec.deps, cloudNotes: () => cloud, beforeLocalNotes: () => new Promise<void>((r) => { go = r }) })
+    await c.start()
+    expect(c.state.phase).toBe('ready')
+    expect(rec.asked).not.toContain(starterUrl)
+    cloud = true; go()
+    await c.idle()
+    expect(rec.asked).not.toContain(starterUrl)
+    expect(rec.asked).toContain(embedUrl)
+  })
+
+  it('stops the download when the notes move to Bedrock, and picks it up again when they come back', async () => {
+    let cloud = false
+    const rec = recorder((url) => url === starterUrl && !cloud)
+    const { c } = setup({ download: rec.deps, cloudNotes: () => cloud })
+    await c.start()
+    await vi.waitFor(() => expect(rec.asked).toContain(starterUrl))
+    cloud = true; c.cloudChosen()
+    expect(c.state.notesDownloading).toBeUndefined()
+    rec.release()
+    await c.idle()
+    expect(c.notesPath()).toBeUndefined()
+    expect(rec.asked).not.toContain(bigUrl)
+    cloud = false; c.localNotesWanted()
+    await vi.waitFor(() => { rec.release(); expect(c.notesPath()).toBeTruthy() })
+    expect(rec.asked.filter((u) => u === starterUrl)).toHaveLength(2)
+  })
+
+  it('removes the local notes models on request, and tells how much room they took', async () => {
+    const { c } = setup()
+    await c.start(); await c.idle()
+    expect(c.notesPath()).toBeTruthy()
+    const path = c.notesPath()!
+    writeFileSync(path, 'x'.repeat(1000))
+    expect(c.localNotesBytes()).toBeGreaterThanOrEqual(1000)
+    c.removeLocalNotes()
+    expect(existsSync(path)).toBe(false)
+    expect(c.notesPath()).toBeUndefined()
+    expect(c.localNotesBytes()).toBe(0)
+  })
+})

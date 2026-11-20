@@ -836,5 +836,10 @@
   "Read the invite, related emails and documents": "Basahin ang imbitasyon, mga kaugnay na email at dokumento",
   "Search SharePoint and OneDrive": "Maghanap sa SharePoint at OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ang napag-usapan dati kasama ang mga taong ito, mga bukas na usapin, mga kaugnay na email at dokumento, at mga tanong na itatanong.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Kailangang aprubahan ng administrator mo ang mga pahintulot na hinihingi ng Yogurt. Ipadala sa kanila ang docs, o i-off ang paghahanap sa SharePoint at OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Kailangang aprubahan ng administrator mo ang mga pahintulot na hinihingi ng Yogurt. Ipadala sa kanila ang docs, o i-off ang paghahanap sa SharePoint at OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "Pagkatapos ng screen na ito, magda-download ng model ng notes na ilang gigabyte.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Walang model ng notes na ida-download. Pagkatapos nito, mag-sign in sa AWS sa Settings.",
+  "Notes model on this computer": "Model ng notes sa computer na ito",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Isulat ang mga buod gamit ang Amazon Bedrock (Claude) sa halip na model sa computer na ito",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, hindi ginagamit habang sa Bedrock isinusulat ang mga buod. Ida-download ulit kapag bumalik ka sa computer na ito."
 }

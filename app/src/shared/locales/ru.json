@@ -864,5 +864,10 @@
   "Read the invite, related emails and documents": "Читать приглашение, связанные письма и документы",
   "Search SharePoint and OneDrive": "Искать в SharePoint и OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Что раньше обсуждали с этими людьми, открытые вопросы, связанные письма и документы и что спросить.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Администратор должен одобрить разрешения, которые запрашивает Yogurt. Отправьте ему документацию или отключите поиск в SharePoint и OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Администратор должен одобрить разрешения, которые запрашивает Yogurt. Отправьте ему документацию или отключите поиск в SharePoint и OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "После этого экрана загрузится модель заметок размером в несколько гигабайт.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Модель заметок загружаться не будет. Потом войдите в AWS в Настройках.",
+  "Notes model on this computer": "Модель заметок на этом компьютере",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Писать сводки через Amazon Bedrock (Claude), а не моделью на этом компьютере",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} ГБ, не используется, пока сводки пишутся в Bedrock. Загрузится снова, если вы вернётесь к этому компьютеру."
 }

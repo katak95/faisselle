@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "Đọc lời mời, email và tài liệu liên quan",
   "Search SharePoint and OneDrive": "Tìm trong SharePoint và OneDrive",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Những gì đã nói trước đây với những người này, việc còn mở, email và tài liệu liên quan, và câu hỏi nên đặt ra.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Quản trị viên cần phê duyệt các quyền Yogurt yêu cầu. Hãy gửi tài liệu hướng dẫn cho họ, hoặc tắt tìm kiếm SharePoint và OneDrive."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Quản trị viên cần phê duyệt các quyền Yogurt yêu cầu. Hãy gửi tài liệu hướng dẫn cho họ, hoặc tắt tìm kiếm SharePoint và OneDrive.",
+  "A notes model of a few gigabytes downloads after this screen.": "Sau màn hình này, một mô hình ghi chú vài gigabyte sẽ được tải xuống.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Không tải mô hình ghi chú nào. Sau đó hãy đăng nhập AWS trong Cài đặt.",
+  "Notes model on this computer": "Mô hình ghi chú trên máy tính này",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Viết tóm tắt bằng Amazon Bedrock (Claude) thay vì mô hình trên máy tính này",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, không dùng khi tóm tắt được viết trên Bedrock. Mô hình sẽ được tải lại nếu bạn quay về máy tính này."
 }

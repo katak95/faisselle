@@ -824,5 +824,10 @@
   "Read the invite, related emails and documents": "Meghívó, kapcsolódó e-mailek és dokumentumok olvasása",
   "Search SharePoint and OneDrive": "Keresés a SharePointban és a OneDrive-ban",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "Amit korábban ezekkel az emberekkel megbeszéltetek, nyitott kérdések, kapcsolódó e-mailek és dokumentumok, valamint felteendő kérdések.",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "A rendszergazdának jóvá kell hagynia a Yogurt által kért engedélyeket. Küldd el neki a leírást, vagy kapcsold ki a SharePoint- és OneDrive-keresést."
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "A rendszergazdának jóvá kell hagynia a Yogurt által kért engedélyeket. Küldd el neki a leírást, vagy kapcsold ki a SharePoint- és OneDrive-keresést.",
+  "A notes model of a few gigabytes downloads after this screen.": "E képernyő után letöltődik egy néhány gigabájtos jegyzetmodell.",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "Nem töltődik le jegyzetmodell. Utána jelentkezz be az AWS-be a Beállításokban.",
+  "Notes model on this computer": "Jegyzetmodell ezen a számítógépen",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "Összefoglalók írása Amazon Bedrockkal (Claude) a számítógépen futó modell helyett",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB, nincs használatban, amíg az összefoglalók a Bedrockon készülnek. Újra letöltődik, ha visszatérsz ehhez a számítógéphez."
 }

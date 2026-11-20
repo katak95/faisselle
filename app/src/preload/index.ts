@@ -258,6 +258,7 @@ const api: YogurtApi = {
     accounts: () => ipcRenderer.invoke('cloud:accounts'),
     roles: (accountId) => ipcRenderer.invoke('cloud:roles', accountId),
     test: () => ipcRenderer.invoke('cloud:test'),
+    removeLocal: () => ipcRenderer.invoke('cloud:remove-local'),
     onChange: (fn) => { const f = (_e: unknown, v: CloudNotesView) => fn(v); ipcRenderer.on('cloud:changed', f); return () => { ipcRenderer.off('cloud:changed', f) } },
   },
   mcp: {

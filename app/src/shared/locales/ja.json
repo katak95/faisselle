@@ -794,5 +794,10 @@
   "Read the invite, related emails and documents": "招待、関連メール、ドキュメントを読む",
   "Search SharePoint and OneDrive": "SharePoint と OneDrive を検索",
   "What was said before with these people, open points, related emails and documents, and questions to ask.": "これまでにこの人たちと話したこと、未解決の点、関連メールとドキュメント、聞くべきこと。",
-  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt が求める権限を管理者が承認する必要があります。ドキュメントを管理者に送るか、SharePoint と OneDrive の検索をオフにしてください。"
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt が求める権限を管理者が承認する必要があります。ドキュメントを管理者に送るか、SharePoint と OneDrive の検索をオフにしてください。",
+  "A notes model of a few gigabytes downloads after this screen.": "この画面のあと、数 GB のメモ用モデルをダウンロードします。",
+  "No notes model is downloaded. Sign in to AWS in Settings after this.": "メモ用モデルはダウンロードしません。このあと設定で AWS にサインインしてください。",
+  "Notes model on this computer": "このコンピューターのメモ用モデル",
+  "Write summaries with Amazon Bedrock (Claude) instead of a model on this computer": "このコンピューターのモデルではなく Amazon Bedrock（Claude）で要約を作成する",
+  "{size} GB, unused while summaries are written on Bedrock. It downloads again if you go back to this computer.": "{size} GB。要約を Bedrock で作成している間は使われません。このコンピューターに戻すと再度ダウンロードされます。"
 }

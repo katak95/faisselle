@@ -28,10 +28,13 @@ export function bedrockConfig(s: Settings, sso: Pick<Sso, 'status'>): BedrockCon
 export function hookCloud(d: { file: string; sso: Sso; canRunLocally(): boolean; changed(provider: NotesProvider): void
   send(v: CloudNotesView): void
   /** a short request to the model, to check the account, role and model work together */
-  test(): Promise<void> }) {
+  test(): Promise<void>
+  /** the local notes models' files on this computer, and removing them (on Bedrock) */
+  localNotesBytes(): number
+  removeLocalNotes(): Promise<void> }) {
   const view = (): CloudNotesView => {
     const s = loadSettings(d.file)
-    return { provider: notesProviderSetting(s), canRunLocally: d.canRunLocally(), sso: d.sso.status(), config: bedrockSettings(s), ready: !!bedrockConfig(s, d.sso) }
+    return { provider: notesProviderSetting(s), canRunLocally: d.canRunLocally(), sso: d.sso.status(), config: bedrockSettings(s), ready: !!bedrockConfig(s, d.sso), localBytes: d.localNotesBytes() }
   }
   const save = (patch: Partial<Saved>) => {
     const s = loadSettings(d.file)
@@ -78,6 +81,11 @@ export function hookCloud(d: { file: string; sso: Sso; canRunLocally(): boolean;
   ipcMain.handle('cloud:sign-out', () => { d.sso.signOut(); return view() })
   ipcMain.handle('cloud:accounts', () => d.sso.accounts())
   ipcMain.handle('cloud:roles', (_e, accountId: unknown) => (validAccountId(accountId) ? d.sso.roles(accountId) : []))
+  ipcMain.handle('cloud:remove-local', async () => {
+    if (notesProviderSetting(loadSettings(d.file)) !== 'bedrock') return view()
+    await d.removeLocalNotes()
+    const out = view(); d.send(out); return out
+  })
   ipcMain.handle('cloud:test', async () => {
     try { await d.test(); return { ok: true as const } } catch (e) { return { ok: false as const, message: e instanceof Error ? e.message : String(e) } }
   })

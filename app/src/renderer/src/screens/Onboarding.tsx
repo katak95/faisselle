@@ -96,10 +96,20 @@ function Welcome({ state, progress, onDone }: { state: SetupState; progress: Pro
   const c = screenCopy('welcome')
   const primary = useRef<HTMLButtonElement>(null)
   useFocus(primary, [])
+  // where summaries are written, asked before the notes model downloads (it waits for this screen)
+  const [cloud, setCloud] = useState(false)
+  const pick = (on: boolean) => { setCloud(on); void window.yogurt.cloud.setProvider(on ? 'bedrock' : 'local') }
   return (
     <Layout
       testId="intro-page" step="welcome" motionKey="welcome" art={<WelcomeArt />} title={c.title} text={c.text} progress={progress} state={state}
       actions={<button ref={primary} data-testid="intro-next" onClick={onDone} className="ob-button primary no-drag">{t('Get started')}</button>}
+      note={<div className="ob-note" data-testid="intro-notes-model">
+        <label className="flex items-center gap-2 no-drag">
+          <input type="checkbox" data-testid="intro-bedrock" checked={cloud} onChange={(e) => pick(e.target.checked)} />
+          {t('Write summaries with Amazon Bedrock (Claude) instead of a model on this computer')}
+        </label>
+        <span>{cloud ? t('No notes model is downloaded. Sign in to AWS in Settings after this.') : t('A notes model of a few gigabytes downloads after this screen.')}</span>
+      </div>}
     />
   )
 }

@@ -183,6 +183,10 @@ function createWindow() {
   presentMain()
 }
 
+/** the welcome screen was passed (or skipped): the first notes model may download, unless Bedrock was picked there */
+let passWelcome = () => {}
+const welcomePassed = new Promise<void>((r) => { passWelcome = r })
+
 /** First-run downloads: speech, speaker and notes models. Fake mode swaps in instant downloads and a fixed Mac. */
 /** Windows and Linux: what graphics the notes engine can use; null when it can't tell (or crashed checking: it then runs without them) */
 let probeGpu: () => Promise<GpuProbe | null> = async () => null
@@ -204,6 +208,11 @@ function createSetup(): SetupController {
     ...(platform === 'darwin' ? {} : { speed: { ...speedStore(speedFile()), measure: isFake() ? fakeMeasure() : (model: string) => measureSpeed(model, { binary: whisperServerPath(), vadModel: vadModelPath(), clip: speedClipPath() ?? '' }) } }),
     // the notes on Bedrock: no notes model to download
     cloudNotes: () => notesProviderSetting(loadSettings(join(userDataDir(), 'settings.json'))) === 'bedrock',
+    // the first run: the notes model waits until the welcome screen is passed, where Bedrock can be picked instead
+    beforeLocalNotes: () => {
+      const s = loadSettings(join(userDataDir(), 'settings.json'))
+      return (isFake() && !process.env.YOGURT_FAKE_PERMISSIONS) || s.introSeen || s.welcomed ? Promise.resolve() : welcomePassed
+    },
   })
 }
 /** what the speed check found (Windows and Linux) */
@@ -559,6 +568,7 @@ app.whenReady().then(() => {
     ...(calendarLinks && caps.calendarLink ? { calendarLinked: () => calendarLinks.status() === 'granted' } : {}),
     // fake mode asks the first-run questions only when a test sets the permissions
     ask: !isFake() || !!process.env.YOGURT_FAKE_PERMISSIONS,
+    onIntroDone: () => passWelcome(),
     setLogin: (on) => { if (!isFake()) setLoginItem(on) },
     setTrayVisible: (on) => menuBar?.setVisible(on),
     setShowNextMeeting: (on) => menuBar?.setShowNextMeeting(on),
@@ -712,10 +722,13 @@ app.whenReady().then(() => {
     send: (v) => win?.webContents.send('cloud:changed', v),
     changed: (p) => {
       if (p === 'local') setup.localNotesWanted()
-      else void model.switched().catch((e) => console.error('letting the local notes model go failed', e))
+      else { setup.cloudChosen(); void model.switched().catch((e) => console.error('letting the local notes model go failed', e)) }
       queue.modelArrived(); conversations.refresh()
     },
     test: async () => { const llm = await bedrockModel.llm(); await llm.chat('Reply with the single word OK.', () => {}, { maxTokens: 16 }) },
+    localNotesBytes: () => setup.localNotesBytes(),
+    // on Bedrock no new job reaches the local model (and the queue waits while Bedrock isn't signed in yet): let it go, then its files
+    removeLocalNotes: async () => { await localModel.unload(); setup.removeLocalNotes() },
   })
   // chat across meetings: every finished meeting chunked and embedded in the background, last in the queue
   const library = new Library(store.db)
