@@ -3,6 +3,7 @@ import type { CalendarSource } from '../calendar'
 import type { Meeting } from '../store'
 import type { M365 } from './client'
 import { eventsOf, mailTexts, messageIds, participantsQuery, plainText, TOOLS } from './tools'
+import { relatedDocuments, type DocRef } from './documents'
 
 /** what one meeting's context may hold: enough to understand it, never the whole mailbox */
 const INVITE_CHARS = 2000
@@ -17,11 +18,12 @@ const OUTLOOK: CalendarSource = { id: 'm365', name: 'Outlook', source: 'Microsof
 
 /**
  * Microsoft 365 as Yogurt uses it: the Outlook calendar beside the others (calendar.ts reads it like a calendar
- * link), and for one meeting its invite and the recent emails with the people in it, as text for the model.
+ * link), and for one meeting its invite, the recent emails with the people in it and (when turned on) related
+ * SharePoint and OneDrive documents, as text for the model.
  */
-export function createM365Context(o: { m365: M365; calendarOn(): boolean; account(): string | null }) {
+export function createM365Context(o: { m365: M365; calendarOn(): boolean; account(): string | null; /** SharePoint and OneDrive search is on */ documentsOn(): boolean }) {
   let events: { from: number; to: number; at: number; raw: unknown[] } | undefined
-  const contexts = new Map<string, { at: number; text: string | undefined }>()
+  const contexts = new Map<string, { at: number; value: unknown }>()
 
   const calendar: CalendarLinkSource = {
     status: () => (o.calendarOn() && o.m365.connected() ? 'granted' : 'notDetermined'),
@@ -45,8 +47,9 @@ export function createM365Context(o: { m365: M365; calendarOn(): boolean; accoun
     },
   }
 
+  type M = Pick<Meeting, 'id' | 'eventId' | 'attendees' | 'ownEmail' | 'title'>
   /** the invite's description (Outlook events only) and recent emails with the people invited */
-  async function read(m: Pick<Meeting, 'id' | 'eventId' | 'attendees' | 'ownEmail' | 'title'>): Promise<string | undefined> {
+  async function readMail(m: M): Promise<string> {
     const parts: string[] = []
     if (m.eventId?.startsWith('m365:')) {
       try {
@@ -68,23 +71,50 @@ export function createM365Context(o: { m365: M365; calendarOn(): boolean; accoun
     }
     let out = ''
     for (const p of parts) { if (out.length + p.length > CONTEXT_CHARS) break; out += (out ? '\n' : '') + p }
-    return out || undefined
+    return out
+  }
+
+  /** SharePoint and OneDrive documents (documents.ts), when that search is on */
+  async function readDocuments(m: M): Promise<{ text: string; refs: DocRef[] }> {
+    try {
+      const r = await relatedDocuments((name, args) => o.m365.call(name, args), m)
+      o.m365.documentsAnswered()
+      return r
+    } catch (e) {
+      console.warn('related documents could not be searched', e)
+      o.m365.documentsAnswered(e)
+      return { text: '', refs: [] }
+    }
+  }
+
+  /** each part kept a few minutes, so the notes, the action items, the email and Ask read it once */
+  const cached = async <T>(key: string, read: () => Promise<T>): Promise<T> => {
+    const c = contexts.get(key)
+    if (c && Date.now() - c.at < CONTEXT_MS) return c.value as T
+    const value = await read()
+    contexts.set(key, { at: Date.now(), value })
+    return value
   }
 
   return {
     calendar,
-    /** a meeting's context, kept a few minutes so the notes, the action items and the email read it once */
-    async meetingContext(m: Pick<Meeting, 'id' | 'eventId' | 'attendees' | 'ownEmail' | 'title'>): Promise<string | undefined> {
+    /**
+     * A meeting's context as text for the model: the invite and related emails, and with documents the related
+     * SharePoint and OneDrive documents too (when that search is on), with their links for the brief.
+     */
+    async meetingContext(m: M, opts: { documents?: boolean } = {}): Promise<MeetingContext | undefined> {
       if (!o.m365.connected()) return undefined
-      const c = contexts.get(m.id)
-      if (c && Date.now() - c.at < CONTEXT_MS) return c.text
-      const text = await read(m)
-      contexts.set(m.id, { at: Date.now(), text })
-      return text
+      const mail = await cached(`${m.id}:mail`, () => readMail(m))
+      const docs = opts.documents && o.documentsOn() ? await cached(`${m.id}:docs`, () => readDocuments(m)) : { text: '', refs: [] }
+      const text = [mail, docs.text].filter(Boolean).join('\n')
+      return text ? { text, documents: docs.refs } : undefined
     },
     forget() { events = undefined; contexts.clear() },
   }
 }
+
+/** what Microsoft 365 knows about one meeting: text for the model, and the documents' links for the brief */
+export type MeetingContext = { text: string; documents: DocRef[] }
 
 /** two calendar sources as one: what either has, connected when either is */
 export function bothSources(a: CalendarLinkSource | null, b: CalendarLinkSource): CalendarLinkSource {

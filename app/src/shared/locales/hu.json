@@ -788,7 +788,6 @@
   "Prepare a brief": "Felkészítő készítése",
   "Prepare again": "Újrakészítés",
   "Project status": "Projekt állapota",
-  "Read the invite and related emails": "Meghívó és kapcsolódó e-mailek olvasása",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Olvassa az Outlook-naptárat, a meghívót és a résztvevőkkel váltott friss e-maileket, hogy felkészítőket és jobb összefoglalókat írjon.",
   "Reading the summary…": "Összefoglaló olvasása…",
   "Refresh": "Frissítés",
@@ -813,7 +812,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Az átiratok, jegyzetek és kapcsolódó e-mailek az AWS-fiókod Amazon Bedrock szolgáltatásába kerülnek összefoglalók, felkészítők és e-mailek írásához.",
   "Use your organization's own app": "A szervezet saját alkalmazásának használata",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Amit korábban ezekkel az emberekkel megbeszéltetek, nyitott kérdések és felteendő kérdések. A meghívóhoz és a kapcsolódó e-mailekhez csatlakoztasd a Microsoft 365-öt a Beállításokban.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Amit korábban ezekkel az emberekkel megbeszéltetek, nyitott kérdések, kapcsolódó e-mailek és felteendő kérdések.",
   "Where summaries are written": "Hol készülnek az összefoglalók",
   "Write again": "Újraírás",
   "Write the email": "E-mail megírása",
@@ -821,5 +819,10 @@
   "Writing…": "Írás…",
   "Yogurt couldn't list the action items.": "A Yogurt nem tudta felsorolni a teendőket.",
   "Yogurt couldn't prepare the brief.": "A Yogurt nem tudta elkészíteni a felkészítőt.",
-  "Yogurt couldn't write the email.": "A Yogurt nem tudta megírni az e-mailt."
+  "Yogurt couldn't write the email.": "A Yogurt nem tudta megírni az e-mailt.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Megkeresi az értekezlethez kapcsolódó dokumentumokat felkészítőkhöz, összefoglalókhoz és válaszokhoz. Munkahelyi fiók és bővebb olvasási engedélyek kellenek hozzá, amelyeket általában rendszergazda hagy jóvá. Bekapcsoláskor újra be kell jelentkezned.",
+  "Read the invite, related emails and documents": "Meghívó, kapcsolódó e-mailek és dokumentumok olvasása",
+  "Search SharePoint and OneDrive": "Keresés a SharePointban és a OneDrive-ban",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Amit korábban ezekkel az emberekkel megbeszéltetek, nyitott kérdések, kapcsolódó e-mailek és dokumentumok, valamint felteendő kérdések.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "A rendszergazdának jóvá kell hagynia a Yogurt által kért engedélyeket. Küldd el neki a leírást, vagy kapcsold ki a SharePoint- és OneDrive-keresést."
 }

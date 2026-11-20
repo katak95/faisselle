@@ -5,8 +5,16 @@ import type { RawEvent } from '../calendarLink/ics'
  * answers in one place, so a new version of the server changes only this file.
  * Only these tools are turned on (and the server runs with --read-only): nothing can be sent, changed or deleted.
  */
-export const TOOLS = { login: 'login', verify: 'verify-login', logout: 'logout', calendarView: 'get-calendar-view', event: 'get-calendar-event', listMail: 'list-mail-messages', readMail: 'read-mail-text' } as const
-export const ENABLED_TOOLS = `^(${Object.values(TOOLS).join('|')})$`
+export const TOOLS = { login: 'login', verify: 'verify-login', logout: 'logout', calendarView: 'get-calendar-view', event: 'get-calendar-event', listMail: 'list-mail-messages', readMail: 'read-mail-text',
+  /** SharePoint and OneDrive (documents.ts): only with the work-account mode the person turned on */
+  search: 'search-query', download: 'download-bytes' } as const
+const BASE_TOOLS = [TOOLS.login, TOOLS.verify, TOOLS.logout, TOOLS.calendarView, TOOLS.event, TOOLS.listMail, TOOLS.readMail]
+/** the tools turned on: calendar and mail always, documents only when asked for */
+export const enabledTools = (documents: boolean) => `^(${[...BASE_TOOLS, ...(documents ? [TOOLS.search, TOOLS.download] : [])].join('|')})$`
+export const ENABLED_TOOLS = enabledTools(false)
+
+/** Microsoft refused the permissions (an admin has to approve them): AADSTS65001 and friends */
+export const needsAdminConsent = (message: string): boolean => /AADSTS(65001|65004|90094|90008)|admin(istrator)? (approval|consent)|consent_required|need admin/i.test(message)
 
 /** a tool call's answer, as the server gives it: one text block holding JSON */
 export type CallTool = (name: string, args: Record<string, unknown>) => Promise<unknown>

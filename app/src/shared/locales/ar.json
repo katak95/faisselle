@@ -856,7 +856,6 @@
   "Prepare a brief": "إعداد موجز",
   "Prepare again": "إعداد من جديد",
   "Project status": "حالة المشروع",
-  "Read the invite and related emails": "قراءة الدعوة والرسائل المرتبطة",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "يقرأ تقويم Outlook والدعوة والرسائل الأخيرة مع المشاركين، لإعداد الموجزات وكتابة ملخصات أفضل.",
   "Reading the summary…": "جارٍ قراءة الملخص…",
   "Refresh": "تحديث",
@@ -881,7 +880,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "تُرسل النصوص المفرّغة والملاحظات والرسائل المرتبطة إلى Amazon Bedrock في حساب AWS الخاص بك لكتابة الملخصات والموجزات والرسائل.",
   "Use your organization's own app": "استخدام تطبيق مؤسستك",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "ما قيل سابقًا مع هؤلاء الأشخاص والنقاط المفتوحة والأسئلة التي تُطرح. صِل Microsoft 365 في الإعدادات لإضافة الدعوة والرسائل المرتبطة.",
-  "What was said before with these people, open points, related emails and questions to ask.": "ما قيل سابقًا مع هؤلاء الأشخاص والنقاط المفتوحة والرسائل المرتبطة والأسئلة التي تُطرح.",
   "Where summaries are written": "أين تُكتب الملخصات",
   "Write again": "أعد الكتابة",
   "Write the email": "كتابة الرسالة",
@@ -889,5 +887,10 @@
   "Writing…": "جارٍ الكتابة…",
   "Yogurt couldn't list the action items.": "تعذّر على Yogurt سرد المهام.",
   "Yogurt couldn't prepare the brief.": "تعذّر على Yogurt إعداد الموجز.",
-  "Yogurt couldn't write the email.": "تعذّر على Yogurt كتابة الرسالة."
+  "Yogurt couldn't write the email.": "تعذّر على Yogurt كتابة الرسالة.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "يبحث عن المستندات المرتبطة بالاجتماع لإعداد الموجزات وكتابة الملخصات والإجابة عن الأسئلة. يتطلب حساب عمل وأذونات قراءة أوسع يوافق عليها المسؤول عادةً. عند تفعيله ستسجّل الدخول مجددًا.",
+  "Read the invite, related emails and documents": "قراءة الدعوة والرسائل والمستندات المرتبطة",
+  "Search SharePoint and OneDrive": "البحث في SharePoint وOneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "ما قيل سابقًا مع هؤلاء الأشخاص والنقاط المفتوحة والرسائل والمستندات المرتبطة والأسئلة التي تُطرح.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "يجب أن يوافق المسؤول على الأذونات التي يطلبها Yogurt. أرسل إليه الوثائق، أو أوقف البحث في SharePoint وOneDrive."
 }

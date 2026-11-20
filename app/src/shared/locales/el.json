@@ -803,7 +803,6 @@
   "Prepare a brief": "Προετοιμασία ενημέρωσης",
   "Prepare again": "Νέα προετοιμασία",
   "Project status": "Κατάσταση έργου",
-  "Read the invite and related emails": "Ανάγνωση πρόσκλησης και σχετικών email",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Διαβάζει το ημερολόγιο του Outlook, την πρόσκληση και τα πρόσφατα email με τους συμμετέχοντες, για ενημερώσεις και καλύτερες περιλήψεις.",
   "Reading the summary…": "Ανάγνωση περίληψης…",
   "Refresh": "Ανανέωση",
@@ -828,7 +827,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Οι απομαγνητοφωνήσεις, οι σημειώσεις και τα σχετικά email στέλνονται στο Amazon Bedrock του λογαριασμού σας AWS για περιλήψεις, ενημερώσεις και email.",
   "Use your organization's own app": "Χρήση της εφαρμογής του οργανισμού σας",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Τι ειπώθηκε πριν με αυτά τα άτομα, ανοιχτά θέματα και ερωτήσεις. Συνδέστε το Microsoft 365 στις Ρυθμίσεις για να προστεθούν η πρόσκληση και τα σχετικά email.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Τι ειπώθηκε πριν με αυτά τα άτομα, ανοιχτά θέματα, σχετικά email και ερωτήσεις.",
   "Where summaries are written": "Πού γράφονται οι περιλήψεις",
   "Write again": "Γράψτε ξανά",
   "Write the email": "Γράψτε το email",
@@ -836,5 +834,10 @@
   "Writing…": "Γράφεται…",
   "Yogurt couldn't list the action items.": "Το Yogurt δεν μπόρεσε να απαριθμήσει τις ενέργειες.",
   "Yogurt couldn't prepare the brief.": "Το Yogurt δεν μπόρεσε να προετοιμάσει την ενημέρωση.",
-  "Yogurt couldn't write the email.": "Το Yogurt δεν μπόρεσε να γράψει το email."
+  "Yogurt couldn't write the email.": "Το Yogurt δεν μπόρεσε να γράψει το email.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Βρίσκει έγγραφα σχετικά με μια σύσκεψη για ενημερώσεις, περιλήψεις και απαντήσεις σε ερωτήσεις. Απαιτεί εταιρικό λογαριασμό και ευρύτερα δικαιώματα ανάγνωσης, που συνήθως εγκρίνει ένας διαχειριστής. Όταν το ενεργοποιείτε, συνδέεστε ξανά.",
+  "Read the invite, related emails and documents": "Ανάγνωση πρόσκλησης, σχετικών email και εγγράφων",
+  "Search SharePoint and OneDrive": "Αναζήτηση σε SharePoint και OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Τι ειπώθηκε πριν με αυτά τα άτομα, ανοιχτά θέματα, σχετικά email και έγγραφα, και ερωτήσεις.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Ο διαχειριστής πρέπει να εγκρίνει τα δικαιώματα που ζητά το Yogurt. Στείλτε του την τεκμηρίωση ή απενεργοποιήστε την αναζήτηση σε SharePoint και OneDrive."
 }

@@ -800,7 +800,6 @@
   "Prepare a brief": "Forbered en brief",
   "Prepare again": "Forbered på nytt",
   "Project status": "Prosjektstatus",
-  "Read the invite and related emails": "Les invitasjonen og relaterte e-poster",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Leser Outlook-kalenderen din, invitasjonen og nye e-poster med deltakerne, for å forberede briefer og skrive bedre sammendrag.",
   "Reading the summary…": "Leser sammendraget…",
   "Refresh": "Oppdater",
@@ -825,7 +824,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transkripsjoner, notater og relaterte e-poster sendes til Amazon Bedrock i AWS-kontoen din for å skrive sammendrag, briefer og e-poster.",
   "Use your organization's own app": "Bruk organisasjonens egen app",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Hva som er sagt før med disse personene, åpne punkter og spørsmål å stille. Koble til Microsoft 365 i Innstillinger for å ta med invitasjonen og relaterte e-poster.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Hva som er sagt før med disse personene, åpne punkter, relaterte e-poster og spørsmål å stille.",
   "Where summaries are written": "Hvor sammendrag skrives",
   "Write again": "Skriv på nytt",
   "Write the email": "Skriv e-posten",
@@ -833,5 +831,10 @@
   "Writing…": "Skriver…",
   "Yogurt couldn't list the action items.": "Yogurt kunne ikke liste opp oppgavene.",
   "Yogurt couldn't prepare the brief.": "Yogurt kunne ikke forberede briefen.",
-  "Yogurt couldn't write the email.": "Yogurt kunne ikke skrive e-posten."
+  "Yogurt couldn't write the email.": "Yogurt kunne ikke skrive e-posten.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Finner dokumenter som hører til et møte, for å forberede briefer, skrive sammendrag og svare på spørsmål. Krever en jobbkonto og bredere lesetillatelser, som en administrator vanligvis godkjenner. Du logger på igjen når du slår det på.",
+  "Read the invite, related emails and documents": "Les invitasjonen, relaterte e-poster og dokumenter",
+  "Search SharePoint and OneDrive": "Søk i SharePoint og OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Hva som er sagt før med disse personene, åpne punkter, relaterte e-poster og dokumenter, og spørsmål å stille.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratoren din må godkjenne tillatelsene Yogurt ber om. Send dem dokumentasjonen, eller slå av søk i SharePoint og OneDrive."
 }

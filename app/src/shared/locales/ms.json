@@ -758,7 +758,6 @@
   "Prepare a brief": "Sediakan taklimat",
   "Prepare again": "Sediakan semula",
   "Project status": "Status projek",
-  "Read the invite and related emails": "Baca jemputan dan e-mel berkaitan",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Membaca kalendar Outlook anda, jemputan dan e-mel terkini dengan peserta, untuk menyediakan taklimat dan menulis ringkasan yang lebih baik.",
   "Reading the summary…": "Membaca ringkasan…",
   "Refresh": "Segar semula",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transkrip, nota dan e-mel berkaitan dihantar ke Amazon Bedrock dalam akaun AWS anda untuk menulis ringkasan, taklimat dan e-mel.",
   "Use your organization's own app": "Guna aplikasi organisasi anda sendiri",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Apa yang pernah dibincangkan dengan mereka, perkara terbuka dan soalan untuk ditanya. Sambungkan Microsoft 365 dalam Tetapan untuk menambah jemputan dan e-mel berkaitan.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Apa yang pernah dibincangkan dengan mereka, perkara terbuka, e-mel berkaitan dan soalan untuk ditanya.",
   "Where summaries are written": "Tempat ringkasan ditulis",
   "Write again": "Tulis semula",
   "Write the email": "Tulis e-mel",
@@ -791,5 +789,10 @@
   "Writing…": "Menulis…",
   "Yogurt couldn't list the action items.": "Yogurt tidak dapat menyenaraikan tindakan susulan.",
   "Yogurt couldn't prepare the brief.": "Yogurt tidak dapat menyediakan taklimat.",
-  "Yogurt couldn't write the email.": "Yogurt tidak dapat menulis e-mel."
+  "Yogurt couldn't write the email.": "Yogurt tidak dapat menulis e-mel.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Mencari dokumen berkaitan mesyuarat untuk menyediakan taklimat, menulis ringkasan dan menjawab soalan. Memerlukan akaun kerja dan kebenaran membaca yang lebih luas, yang biasanya diluluskan pentadbir. Anda log masuk semula apabila menghidupkannya.",
+  "Read the invite, related emails and documents": "Baca jemputan, e-mel dan dokumen berkaitan",
+  "Search SharePoint and OneDrive": "Cari dalam SharePoint dan OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Apa yang pernah dibincangkan dengan mereka, perkara terbuka, e-mel dan dokumen berkaitan serta soalan untuk ditanya.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Pentadbir anda perlu meluluskan kebenaran yang diminta Yogurt. Hantar dokumentasi kepada mereka, atau matikan carian SharePoint dan OneDrive."
 }

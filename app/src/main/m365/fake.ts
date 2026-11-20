@@ -1,5 +1,18 @@
+import yazl from 'yazl'
 import type { CallTool } from './tools'
 import { TOOLS } from './tools'
+
+/** a real (tiny) Word file, so fake mode reads a document the way a real one is read */
+export function fakeDocx(paragraphs: string[]): Promise<Buffer> {
+  const zip = new yazl.ZipFile()
+  const body = paragraphs.map((p) => `<w:p><w:r><w:t>${p.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</w:t></w:r></w:p>`).join('')
+  zip.addBuffer(Buffer.from(`<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}</w:body></w:document>`), 'word/document.xml')
+  zip.end()
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []
+    zip.outputStream.on('data', (c: Buffer) => chunks.push(c)).on('end', () => resolve(Buffer.concat(chunks))).on('error', reject)
+  })
+}
 
 /** fake mode: a Microsoft 365 with one Outlook meeting tomorrow and two emails, signed in once the code is "entered" */
 export function fakeM365Server(): () => Promise<{ call: CallTool; close(): Promise<void> }> {
@@ -21,6 +34,12 @@ export function fakeM365Server(): () => Promise<{ call: CallTool; close(): Promi
         { id: 'm1', from: 'Maya Chen', to: 'You', subject: 'Renewal pricing', received: '2026-11-18T10:00:00Z', text: 'Can we keep the 2025 price if we sign for two years?' },
         { id: 'm2', from: 'You', to: 'Maya Chen', subject: 'Re: Renewal pricing', received: '2026-11-18T12:00:00Z', text: 'Let us discuss it on Thursday.' },
       ])
+      if (name === TOOLS.search) return text({ value: [{ hitsContainers: [{ hits: [
+        { hitId: 'doc1', summary: 'Proposed <c0>Acme</c0> renewal: two years at the 2025 price<ddd/>', resource: { id: 'doc1', name: 'Acme renewal proposal.docx', webUrl: 'https://contoso.sharepoint.com/sites/sales/Shared%20Documents/Acme%20renewal%20proposal.docx', lastModifiedDateTime: '2026-11-12T10:00:00Z', lastModifiedBy: { user: { displayName: 'Maya Chen' } }, size: 2048, parentReference: { driveId: 'drive1' } } },
+        { hitId: 'doc2', summary: 'Q3 rollout plan for <c0>Acme</c0>', resource: { id: 'doc2', name: 'Q3 rollout.pptx', webUrl: 'https://contoso-my.sharepoint.com/personal/you/Documents/Q3%20rollout.pptx', lastModifiedDateTime: '2026-10-02T10:00:00Z', size: 0, parentReference: { driveId: 'drive2' } } },
+      ] }] }] })
+      if (name === TOOLS.download) return text({ contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', encoding: 'base64',
+        contentBytes: (await fakeDocx(['Acme renewal proposal', 'Two-year term with a 4% discount, signed before 15 December.'])).toString('base64') })
       return text({ error: `unknown tool ${name}` })
     },
     close: async () => {},

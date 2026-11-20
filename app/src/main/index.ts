@@ -534,14 +534,23 @@ app.whenReady().then(() => {
   // Microsoft 365, read only (Settings → Microsoft 365): the Outlook calendar beside the others, and related emails
   let m365Ipc: ReturnType<typeof hookM365> | undefined
   const m365 = createM365({ dataDir: userDataDir(), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
+    documents: () => loadSettings(m365File).m365?.documents === true,
     openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
     onChange: (st) => { m365Ipc?.push(); if (st.state === 'connected' || st.state === 'off') { m365Context.forget(); refreshCalendarConsumers() } },
     ...(isFake() ? { connect: fakeM365Server() } : {}) })
   const m365Context = createM365Context({ m365, calendarOn: () => loadSettings(m365File).m365?.calendar !== false,
+    documentsOn: () => loadSettings(m365File).m365?.documents === true,
     account: () => { const st = m365.status(); return st.state === 'connected' ? st.account : null } })
   m365Ipc = hookM365({ file: m365File, m365, send: (v) => win?.webContents.send('m365:changed', v),
     calendarChanged: () => { m365Context.forget(); refreshCalendarConsumers() },
-    restart: () => { void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() }) } })
+    restart: () => { void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() }) },
+    // the server starts again in the other mode; turned on, Microsoft is asked again for the wider permissions
+    documentsChanged: async (on) => {
+      m365Context.forget()
+      await m365.stop()
+      if (!loadSettings(m365File).m365?.enabled) return
+      if (on) void m365.signIn(true); else void m365.resume()
+    } })
   if (loadSettings(m365File).m365?.enabled) void m365.resume()
   if (calendarLinks) setCalendarLinkSource(bothSources(calendarLinks, m365Context.calendar), { alongside: !caps.calendarLink })
   const preferences = hookPreferences({
@@ -661,12 +670,16 @@ app.whenReady().then(() => {
   // fake mode: the fixed Mac (a bigger one) unless a test asks for a 16 GB one
   const smallMac = isFake() ? process.env.YOGURT_FAKE_SMALL_MAC === '1' : isSmallMac(os.totalmem())
   const memory = notesMemory(smallMac)
-  /** the meeting's invite and related emails, when Microsoft 365 is connected and the meeting doesn't turn it off */
-  const meetingContext = async (id: string): Promise<string | undefined> => {
+  /**
+   * The meeting's invite, related emails and (documents) related SharePoint and OneDrive documents, when Microsoft 365
+   * is connected and the meeting doesn't turn it off
+   */
+  const meetingContextFull = async (id: string, documents = true) => {
     const m = store.meeting(id)
     if (!m || store.extras(id).useContext === false) return undefined
-    return m365Context.meetingContext(m)
+    return m365Context.meetingContext(m, { documents })
   }
+  const meetingContext = async (id: string): Promise<string | undefined> => (await meetingContextFull(id))?.text
   const localModel = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // the notes on Amazon Bedrock instead (Settings → Notes model): signed in with AWS IAM Identity Center
   let cloud: ReturnType<typeof hookCloud> | undefined
@@ -742,7 +755,7 @@ app.whenReady().then(() => {
   })
   // beside the notes: the follow-up email, the brief before a meeting, the action items (extras.ts)
   const extras = hookExtras({
-    store, queue, model, me, language: meetingLanguage, context: meetingContext, contextAvailable: () => m365.connected(),
+    store, queue, model, me, language: meetingLanguage, context: (id, o) => meetingContextFull(id, o.documents), contextAvailable: () => m365.connected(),
     summaryLanguage: () => summaryLanguageSetting(loadSettings(settingsFile)),
     send: (v) => win?.webContents.send('extras:changed', v),
     rewrite: (id) => { void notes.writeAgain(id) },
@@ -837,6 +850,7 @@ app.whenReady().then(() => {
       if (v.chips.length === 1 && v.chips[0].kind === 'meeting') win?.webContents.send('chat:changed', { ...v, meetingId: v.chips[0].id })
     }, sendList: (l) => win?.webContents.send('conversations:list', l),
     waitsForMeeting, waitsForModel: () => !notesReady(),
+    context: meetingContext,
     // a meeting read in ahead during a recording only where reading ahead is allowed (32 GB and up; the fake Mac is big)
     warmAllowed: () => !activeMeeting() || (isFake() ? !smallMac : readAheadAllowed(os.totalmem())),
   })

@@ -816,7 +816,6 @@
   "Prepare a brief": "Préparer un brief",
   "Prepare again": "Préparer à nouveau",
   "Project status": "Point d’avancement projet",
-  "Read the invite and related emails": "Lire l’invitation et les e-mails liés",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Lire votre calendrier Outlook, ainsi que l’invitation et les e-mails récents avec les participants, pour préparer des briefs et mieux rédiger les résumés.",
   "Reading the summary…": "Lecture du résumé…",
   "Refresh": "Actualiser",
@@ -841,7 +840,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Les transcriptions, les notes et les e-mails liés sont envoyés à Amazon Bedrock dans votre compte AWS pour rédiger les résumés, les briefs et les e-mails.",
   "Use your organization's own app": "Utiliser l’application de votre organisation",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Ce qui a été dit avec ces personnes, les points ouverts et les questions à poser. Connectez Microsoft 365 dans les Réglages pour ajouter l’invitation et les e-mails liés.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Ce qui a été dit avec ces personnes, les points ouverts, les e-mails liés et les questions à poser.",
   "Where summaries are written": "Où les résumés sont rédigés",
   "Write again": "Réécrire",
   "Write the email": "Rédiger l’e-mail",
@@ -849,5 +847,10 @@
   "Writing…": "Rédaction…",
   "Yogurt couldn't list the action items.": "Yogurt n’a pas pu lister les actions.",
   "Yogurt couldn't prepare the brief.": "Yogurt n’a pas pu préparer le brief.",
-  "Yogurt couldn't write the email.": "Yogurt n’a pas pu rédiger l’e-mail."
+  "Yogurt couldn't write the email.": "Yogurt n’a pas pu rédiger l’e-mail.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Trouve les documents liés à une réunion pour préparer les briefs, rédiger les résumés et répondre aux questions. Nécessite un compte professionnel et des droits de lecture plus larges, qu’un administrateur approuve généralement. Vous vous reconnectez en l’activant.",
+  "Read the invite, related emails and documents": "Lire l’invitation, les e-mails et les documents liés",
+  "Search SharePoint and OneDrive": "Rechercher dans SharePoint et OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ce qui a été dit avec ces personnes, les points ouverts, les e-mails et documents liés, et les questions à poser.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Votre administrateur doit approuver les autorisations demandées par Yogurt. Envoyez-lui la documentation, ou désactivez la recherche SharePoint et OneDrive."
 }

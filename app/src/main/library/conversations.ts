@@ -39,6 +39,8 @@ type Deps = {
   /** reading a meeting in ahead of a question is fine now (no recording that needs the room) */
   warmAllowed?: () => boolean
   now?: () => number
+  /** a question about one meeting also reads its invite, related emails and documents (Microsoft 365) */
+  context?: (meetingId: string) => Promise<string | undefined>
 }
 
 /**

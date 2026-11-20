@@ -63,7 +63,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** the template new notes follow; the general notes when left out */
   defaultTemplate?: string
   /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
-  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean } }
+  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)

@@ -7,6 +7,7 @@ const main = join(import.meta.dirname, '../out/main/index.js')
 const shots = process.env.YOGURT_SHOTS
 
 test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up email and the brief', async () => {
+  test.setTimeout(150_000)
   const userData = mkdtempSync(join(tmpdir(), 'yogurt-bedrock-'))
   const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_FAKE: '1', YOGURT_USER_DATA: userData } })
   try {
@@ -29,6 +30,10 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
     await page.getByTestId('settings-m365-connect').click()
     await expect(page.getByTestId('settings-m365-status')).toContainText('Connected · you@example.com', { timeout: 15_000 })
     await expect(page.getByTestId('settings-m365-calendar')).toHaveAttribute('aria-checked', 'true')
+    // SharePoint and OneDrive: the server starts again in work-account mode and Microsoft is asked again
+    await page.getByTestId('settings-m365-documents').click()
+    await expect(page.getByTestId('settings-m365-documents')).toHaveAttribute('aria-checked', 'true')
+    await expect(page.getByTestId('settings-m365-status')).toContainText('Connected · you@example.com', { timeout: 15_000 })
 
     // a template of one's own, then the default
     await page.getByTestId('settings-template-new').click()
@@ -69,6 +74,9 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
       const brief = (await prompts()).find((p) => p.startsWith('You will prepare'))!
       expect(brief).toContain('Agenda: renewal terms, Q3 rollout.')
       expect(brief).toContain('Can we keep the 2025 price')
+      // and the related SharePoint document, read in full, with its link added by Yogurt
+      expect(brief).toContain('Two-year term with a 4% discount')
+      await expect(page.getByTestId('note-brief').getByRole('link', { name: 'Acme renewal proposal.docx' })).toHaveAttribute('href', /contoso\.sharepoint\.com/)
       if (shots) await page.getByTestId('note-brief').screenshot({ path: join(shots, 'note-brief.png') })
     }
   } finally { await app.close() }

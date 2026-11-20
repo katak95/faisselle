@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import type { M365Status } from '../../shared/types'
-import { deviceCode, ENABLED_TOOLS, toolJson, TOOLS, type CallTool } from './tools'
+import { deviceCode, enabledTools, needsAdminConsent, toolJson, TOOLS, type CallTool } from './tools'
 
 /**
  * Microsoft 365 as an MCP client: Yogurt starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
@@ -12,6 +12,8 @@ import { deviceCode, ENABLED_TOOLS, toolJson, TOOLS, type CallTool } from './too
  * folder.
  */
 export type M365Options = { dataDir: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
+  /** SharePoint and OneDrive search: work-account mode, with Microsoft Search's wider read permissions (read when the server starts) */
+  documents?: () => boolean
   /** tests and fake mode: a stand-in for the server */
   connect?: () => Promise<{ call: CallTool; close(): Promise<void> }> }
 
@@ -29,7 +31,8 @@ async function startServer(o: M365Options): Promise<{ call: CallTool; close(): P
     ...(o.app?.().clientId ? { MS365_MCP_CLIENT_ID: o.app!().clientId! } : {}),
     ...(o.app?.().tenantId ? { MS365_MCP_TENANT_ID: o.app!().tenantId! } : {}),
   })
-  const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', '--enabled-tools', ENABLED_TOOLS], env, stderr: 'pipe' })
+  const documents = o.documents?.() ?? false
+  const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)], env, stderr: 'pipe' })
   transport.stderr?.on('data', (b: Buffer) => { const line = b.toString().trim(); if (line) console.info('M365', line.slice(0, 500)) })
   const client = new Client({ name: 'Yogurt', version: '1' })
   await client.connect(transport)
@@ -43,6 +46,7 @@ export function createM365(o: M365Options) {
   let status: M365Status = { state: 'off' }
   let server: Promise<{ call: CallTool; close(): Promise<void> }> | undefined
   let polling = 0
+  let documentsRefused = false
   const set = (s: M365Status) => { status = s; o.onChange(s) }
   const connect = () => (server ??= (o.connect ?? (() => startServer(o)))().catch((e) => { server = undefined; throw e }))
   const call: CallTool = async (name, args) => toolJson(await (await connect()).call(name, args))
@@ -64,11 +68,12 @@ export function createM365(o: M365Options) {
       } catch (e) { console.warn('Microsoft 365 did not start', e); set({ state: 'error', message: e instanceof Error ? e.message : String(e) }) }
     },
     /** asks for a device code, opens the page, then checks every few seconds until the sign-in is done (10 minutes at most) */
-    async signIn() {
+    /** force: a new sign-in even when one holds, so Microsoft asks for newly needed permissions (documents turned on) */
+    async signIn(force = false) {
       const mine = ++polling
       set({ state: 'starting' })
       try {
-        const v = await call(TOOLS.login, { force: false }) as { status?: string; message?: string }
+        const v = await call(TOOLS.login, { force }) as { status?: string; message?: string }
         if (v?.status && /logged in|successful/i.test(v.status)) { const who = await verify(); set({ state: 'connected', account: who || null }); return }
         const dc = deviceCode(v?.message ?? '')
         if (!dc) throw new Error('Microsoft did not give a sign-in code')
@@ -84,7 +89,8 @@ export function createM365(o: M365Options) {
         if (mine === polling) set({ state: 'signed-out' })
       } catch (e) {
         console.warn('Microsoft 365 sign-in failed', e)
-        set({ state: 'error', message: e instanceof Error ? e.message : String(e) })
+        const message = e instanceof Error ? e.message : String(e)
+        set({ state: 'error', message, ...(needsAdminConsent(message) ? { consent: true } : {}) })
       }
     },
     cancel() { polling++; if (status.state === 'pending') set({ state: 'signed-out' }) },
@@ -104,6 +110,13 @@ export function createM365(o: M365Options) {
     async call(name: string, args: Record<string, unknown>) {
       if (status.state !== 'connected') throw new Error('Microsoft 365 is not connected')
       return call(name, args)
+    },
+    /** the documents search failed because an admin has to approve its permissions (Settings says so) */
+    documentsRefused: () => documentsRefused,
+    /** what the last documents search said: refused for want of consent, or fine */
+    documentsAnswered(e?: unknown) {
+      const refused = !!e && needsAdminConsent(e instanceof Error ? e.message : String(e))
+      if (refused !== documentsRefused) { documentsRefused = refused; o.onChange(status) }
     },
   }
 }

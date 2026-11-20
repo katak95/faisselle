@@ -831,7 +831,6 @@
   "Prepare a brief": "Připravit podklady",
   "Prepare again": "Připravit znovu",
   "Project status": "Stav projektu",
-  "Read the invite and related emails": "Číst pozvánku a související e-maily",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Čte váš kalendář Outlook, pozvánku a nedávné e-maily s účastníky, aby připravil podklady a psal lepší shrnutí.",
   "Reading the summary…": "Čte se shrnutí…",
   "Refresh": "Obnovit",
@@ -856,7 +855,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Přepisy, poznámky a související e-maily se posílají do Amazon Bedrock ve vašem účtu AWS, aby se napsala shrnutí, podklady a e-maily.",
   "Use your organization's own app": "Použít vlastní aplikaci organizace",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Co se s těmito lidmi řešilo dříve, otevřené body a otázky k položení. Připojte Microsoft 365 v Nastavení, abyste přidali pozvánku a související e-maily.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Co se s těmito lidmi řešilo dříve, otevřené body, související e-maily a otázky k položení.",
   "Where summaries are written": "Kde se píšou shrnutí",
   "Write again": "Napsat znovu",
   "Write the email": "Napsat e-mail",
@@ -864,5 +862,10 @@
   "Writing…": "Píše se…",
   "Yogurt couldn't list the action items.": "Yogurt nemohl vypsat úkoly.",
   "Yogurt couldn't prepare the brief.": "Yogurt nemohl připravit podklady.",
-  "Yogurt couldn't write the email.": "Yogurt nemohl napsat e-mail."
+  "Yogurt couldn't write the email.": "Yogurt nemohl napsat e-mail.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Najde dokumenty související se schůzkou, aby připravil podklady, napsal shrnutí a odpovídal na otázky. Vyžaduje pracovní účet a širší oprávnění ke čtení, která obvykle schvaluje správce. Po zapnutí se přihlásíte znovu.",
+  "Read the invite, related emails and documents": "Číst pozvánku, související e-maily a dokumenty",
+  "Search SharePoint and OneDrive": "Hledat v SharePointu a OneDrivu",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Co se s těmito lidmi řešilo dříve, otevřené body, související e-maily a dokumenty a otázky k položení.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Správce musí schválit oprávnění, o která Yogurt žádá. Pošlete mu dokumentaci, nebo vypněte hledání v SharePointu a OneDrivu."
 }

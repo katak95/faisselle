@@ -800,7 +800,6 @@
   "Prepare a brief": "Briefing voorbereiden",
   "Prepare again": "Opnieuw voorbereiden",
   "Project status": "Projectstatus",
-  "Read the invite and related emails": "Uitnodiging en verwante e-mails lezen",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Leest je Outlook-agenda en de uitnodiging en recente e-mails met de deelnemers, om briefings voor te bereiden en betere samenvattingen te schrijven.",
   "Reading the summary…": "Samenvatting lezen…",
   "Refresh": "Vernieuwen",
@@ -825,7 +824,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transcripties, notities en verwante e-mails worden naar Amazon Bedrock in je AWS-account gestuurd om samenvattingen, briefings en e-mails te schrijven.",
   "Use your organization's own app": "De eigen app van je organisatie gebruiken",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Wat er eerder met deze mensen is besproken, open punten en vragen om te stellen. Verbind Microsoft 365 in Instellingen om de uitnodiging en verwante e-mails toe te voegen.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Wat er eerder met deze mensen is besproken, open punten, verwante e-mails en vragen om te stellen.",
   "Where summaries are written": "Waar samenvattingen worden geschreven",
   "Write again": "Opnieuw schrijven",
   "Write the email": "E-mail schrijven",
@@ -833,5 +831,10 @@
   "Writing…": "Schrijven…",
   "Yogurt couldn't list the action items.": "Yogurt kon de actiepunten niet opsommen.",
   "Yogurt couldn't prepare the brief.": "Yogurt kon de briefing niet voorbereiden.",
-  "Yogurt couldn't write the email.": "Yogurt kon de e-mail niet schrijven."
+  "Yogurt couldn't write the email.": "Yogurt kon de e-mail niet schrijven.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Vindt documenten die bij een vergadering horen om briefings voor te bereiden, samenvattingen te schrijven en vragen te beantwoorden. Vereist een werkaccount en ruimere leesrechten, die meestal een beheerder goedkeurt. Bij het inschakelen meld je je opnieuw aan.",
+  "Read the invite, related emails and documents": "Uitnodiging, verwante e-mails en documenten lezen",
+  "Search SharePoint and OneDrive": "Zoeken in SharePoint en OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Wat er eerder met deze mensen is besproken, open punten, verwante e-mails en documenten, en vragen om te stellen.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Je beheerder moet de rechten goedkeuren die Yogurt vraagt. Stuur de documentatie door of zet het zoeken in SharePoint en OneDrive uit."
 }

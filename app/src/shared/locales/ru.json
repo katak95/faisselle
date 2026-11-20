@@ -828,7 +828,6 @@
   "Prepare a brief": "Подготовить справку",
   "Prepare again": "Подготовить заново",
   "Project status": "Статус проекта",
-  "Read the invite and related emails": "Читать приглашение и связанные письма",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Читает календарь Outlook, приглашение и недавние письма с участниками, чтобы готовить справки и писать сводки лучше.",
   "Reading the summary…": "Чтение сводки…",
   "Refresh": "Обновить",
@@ -853,7 +852,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Расшифровки, заметки и связанные письма отправляются в Amazon Bedrock в вашем аккаунте AWS, чтобы писать сводки, справки и письма.",
   "Use your organization's own app": "Использовать приложение вашей организации",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Что раньше обсуждали с этими людьми, открытые вопросы и что спросить. Подключите Microsoft 365 в Настройках, чтобы добавить приглашение и связанные письма.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Что раньше обсуждали с этими людьми, открытые вопросы, связанные письма и что спросить.",
   "Where summaries are written": "Где создаются сводки",
   "Write again": "Написать заново",
   "Write the email": "Написать письмо",
@@ -861,5 +859,10 @@
   "Writing…": "Пишется…",
   "Yogurt couldn't list the action items.": "Yogurt не смог составить список задач.",
   "Yogurt couldn't prepare the brief.": "Yogurt не смог подготовить справку.",
-  "Yogurt couldn't write the email.": "Yogurt не смог написать письмо."
+  "Yogurt couldn't write the email.": "Yogurt не смог написать письмо.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Находит документы, связанные со встречей, чтобы готовить справки, писать сводки и отвечать на вопросы. Нужны рабочий аккаунт и расширенные права на чтение, которые обычно одобряет администратор. При включении нужно войти снова.",
+  "Read the invite, related emails and documents": "Читать приглашение, связанные письма и документы",
+  "Search SharePoint and OneDrive": "Искать в SharePoint и OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Что раньше обсуждали с этими людьми, открытые вопросы, связанные письма и документы и что спросить.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Администратор должен одобрить разрешения, которые запрашивает Yogurt. Отправьте ему документацию или отключите поиск в SharePoint и OneDrive."
 }

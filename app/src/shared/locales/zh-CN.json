@@ -758,7 +758,6 @@
   "Prepare a brief": "准备简报",
   "Prepare again": "重新准备",
   "Project status": "项目进展",
-  "Read the invite and related emails": "读取邀请和相关邮件",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "读取你的 Outlook 日历，以及与参会者的邀请和近期邮件，用于准备简报和写出更好的摘要。",
   "Reading the summary…": "正在读取摘要…",
   "Refresh": "刷新",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "转写、笔记和相关邮件会发送到你 AWS 账户中的 Amazon Bedrock，用于撰写摘要、简报和邮件。",
   "Use your organization's own app": "使用你所在组织的应用",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "之前与这些人谈过的内容、未决事项和要问的问题。在设置中连接 Microsoft 365，即可加入邀请和相关邮件。",
-  "What was said before with these people, open points, related emails and questions to ask.": "之前与这些人谈过的内容、未决事项、相关邮件和要问的问题。",
   "Where summaries are written": "摘要在哪里生成",
   "Write again": "重新撰写",
   "Write the email": "撰写邮件",
@@ -791,5 +789,10 @@
   "Writing…": "正在撰写…",
   "Yogurt couldn't list the action items.": "Yogurt 无法列出待办事项。",
   "Yogurt couldn't prepare the brief.": "Yogurt 无法准备简报。",
-  "Yogurt couldn't write the email.": "Yogurt 无法撰写邮件。"
+  "Yogurt couldn't write the email.": "Yogurt 无法撰写邮件。",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "查找与会议相关的文档，用于准备简报、撰写摘要和回答问题。需要工作账户和更广的读取权限，通常由管理员批准。开启后需要重新登录。",
+  "Read the invite, related emails and documents": "读取邀请、相关邮件和文档",
+  "Search SharePoint and OneDrive": "搜索 SharePoint 和 OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "之前与这些人谈过的内容、未决事项、相关邮件和文档，以及要问的问题。",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "管理员需要批准 Yogurt 请求的权限。请把说明文档发给管理员，或关闭 SharePoint 和 OneDrive 搜索。"
 }

@@ -810,7 +810,6 @@
   "Prepare a brief": "הכנת תדריך",
   "Prepare again": "הכנה מחדש",
   "Project status": "סטטוס פרויקט",
-  "Read the invite and related emails": "קריאת ההזמנה והמיילים הקשורים",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "קורא את יומן Outlook, את ההזמנה ואת המיילים האחרונים עם המשתתפים, כדי להכין תדריכים ולכתוב סיכומים טובים יותר.",
   "Reading the summary…": "קורא את הסיכום…",
   "Refresh": "רענון",
@@ -835,7 +834,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "תמלולים, הערות ומיילים קשורים נשלחים ל-Amazon Bedrock בחשבון ה-AWS שלכם כדי לכתוב סיכומים, תדריכים ומיילים.",
   "Use your organization's own app": "שימוש באפליקציה של הארגון",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "מה נאמר בעבר עם האנשים האלה, נקודות פתוחות ושאלות לשאול. חברו את Microsoft 365 בהגדרות כדי להוסיף את ההזמנה ואת המיילים הקשורים.",
-  "What was said before with these people, open points, related emails and questions to ask.": "מה נאמר בעבר עם האנשים האלה, נקודות פתוחות, מיילים קשורים ושאלות לשאול.",
   "Where summaries are written": "איפה נכתבים הסיכומים",
   "Write again": "כתיבה מחדש",
   "Write the email": "כתיבת המייל",
@@ -843,5 +841,10 @@
   "Writing…": "כותב…",
   "Yogurt couldn't list the action items.": "Yogurt לא הצליח לרשום את המשימות.",
   "Yogurt couldn't prepare the brief.": "Yogurt לא הצליח להכין את התדריך.",
-  "Yogurt couldn't write the email.": "Yogurt לא הצליח לכתוב את המייל."
+  "Yogurt couldn't write the email.": "Yogurt לא הצליח לכתוב את המייל.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "מוצא מסמכים שקשורים לפגישה כדי להכין תדריכים, לכתוב סיכומים ולענות על שאלות. נדרשים חשבון עבודה והרשאות קריאה רחבות יותר, שמנהל בדרך כלל מאשר. בהפעלה תתחברו מחדש.",
+  "Read the invite, related emails and documents": "קריאת ההזמנה, המיילים והמסמכים הקשורים",
+  "Search SharePoint and OneDrive": "חיפוש ב-SharePoint וב-OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "מה נאמר בעבר עם האנשים האלה, נקודות פתוחות, מיילים ומסמכים קשורים ושאלות לשאול.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "המנהל צריך לאשר את ההרשאות ש-Yogurt מבקש. שלחו לו את התיעוד, או כבו את החיפוש ב-SharePoint וב-OneDrive."
 }

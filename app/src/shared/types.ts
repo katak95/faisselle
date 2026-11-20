@@ -198,6 +198,8 @@ export type YogurtApi = {
     signOut(): Promise<M365View>
     setCalendar(on: boolean): Promise<M365View>
     setApp(clientId: string, tenantId: string): Promise<M365View>
+    /** SharePoint and OneDrive search: the server starts again in work-account mode and asks to sign in again */
+    setDocuments(on: boolean): Promise<M365View>
     onChange(fn: (v: M365View) => void): () => void
   }
   /** AI apps on this Mac reading meetings through MCP (Settings) */
@@ -565,7 +567,10 @@ export type M365Status =
   /** waiting for the person to enter the code on Microsoft's page */
   | { state: 'pending'; code: string; url: string }
   | { state: 'connected'; account: string | null }
-  | { state: 'error'; message: string }
-export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string }
+  /** consent: Microsoft wants an administrator to approve the permissions */
+  | { state: 'error'; message: string; consent?: boolean }
+export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string
+  /** SharePoint and OneDrive search is on; documentsRefused: Microsoft refused it until an administrator approves */
+  documents: boolean; documentsRefused: boolean }
 
 export type TemplatesView = { custom: import('./templates').CustomTemplate[]; defaultId: string }

@@ -828,7 +828,6 @@
   "Prepare a brief": "Підготувати довідку",
   "Prepare again": "Підготувати знову",
   "Project status": "Стан проєкту",
-  "Read the invite and related emails": "Читати запрошення та пов’язані листи",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Читає календар Outlook, запрошення і нещодавні листи з учасниками, щоб готувати довідки й писати кращі підсумки.",
   "Reading the summary…": "Читання підсумку…",
   "Refresh": "Оновити",
@@ -853,7 +852,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Транскрипти, нотатки та пов’язані листи надсилаються в Amazon Bedrock у вашому обліковому записі AWS, щоб писати підсумки, довідки й листи.",
   "Use your organization's own app": "Використати застосунок вашої організації",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Що раніше обговорювали з цими людьми, відкриті питання і що запитати. Підключіть Microsoft 365 у Параметрах, щоб додати запрошення та пов’язані листи.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Що раніше обговорювали з цими людьми, відкриті питання, пов’язані листи і що запитати.",
   "Where summaries are written": "Де створюються підсумки",
   "Write again": "Написати знову",
   "Write the email": "Написати лист",
@@ -861,5 +859,10 @@
   "Writing…": "Пишеться…",
   "Yogurt couldn't list the action items.": "Yogurt не зміг скласти список завдань.",
   "Yogurt couldn't prepare the brief.": "Yogurt не зміг підготувати довідку.",
-  "Yogurt couldn't write the email.": "Yogurt не зміг написати лист."
+  "Yogurt couldn't write the email.": "Yogurt не зміг написати лист.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Знаходить документи, пов’язані із зустріччю, щоб готувати довідки, писати підсумки й відповідати на запитання. Потрібні робочий обліковий запис і ширші права на читання, які зазвичай схвалює адміністратор. Після ввімкнення потрібно увійти знову.",
+  "Read the invite, related emails and documents": "Читати запрошення, пов’язані листи та документи",
+  "Search SharePoint and OneDrive": "Шукати в SharePoint і OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Що раніше обговорювали з цими людьми, відкриті питання, пов’язані листи й документи та що запитати.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Адміністратор має схвалити дозволи, які запитує Yogurt. Надішліть йому документацію або вимкніть пошук у SharePoint і OneDrive."
 }

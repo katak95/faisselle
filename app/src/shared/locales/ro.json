@@ -817,7 +817,6 @@
   "Prepare a brief": "Pregătește un briefing",
   "Prepare again": "Pregătește din nou",
   "Project status": "Stadiul proiectului",
-  "Read the invite and related emails": "Citește invitația și e-mailurile legate",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Citește calendarul Outlook, invitația și e-mailurile recente cu participanții, pentru a pregăti briefinguri și rezumate mai bune.",
   "Reading the summary…": "Se citește rezumatul…",
   "Refresh": "Reîmprospătează",
@@ -842,7 +841,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transcrierile, notițele și e-mailurile legate sunt trimise la Amazon Bedrock în contul tău AWS pentru a scrie rezumate, briefinguri și e-mailuri.",
   "Use your organization's own app": "Folosește aplicația organizației tale",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Ce s-a spus înainte cu aceste persoane, puncte deschise și întrebări de pus. Conectează Microsoft 365 din Setări pentru a adăuga invitația și e-mailurile legate.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Ce s-a spus înainte cu aceste persoane, puncte deschise, e-mailuri legate și întrebări de pus.",
   "Where summaries are written": "Unde sunt scrise rezumatele",
   "Write again": "Scrie din nou",
   "Write the email": "Scrie e-mailul",
@@ -850,5 +848,10 @@
   "Writing…": "Se scrie…",
   "Yogurt couldn't list the action items.": "Yogurt nu a putut lista acțiunile.",
   "Yogurt couldn't prepare the brief.": "Yogurt nu a putut pregăti briefingul.",
-  "Yogurt couldn't write the email.": "Yogurt nu a putut scrie e-mailul."
+  "Yogurt couldn't write the email.": "Yogurt nu a putut scrie e-mailul.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Găsește documentele legate de o întâlnire pentru briefinguri, rezumate și răspunsuri la întrebări. Necesită un cont de serviciu și permisiuni de citire mai largi, aprobate de obicei de un administrator. Când îl activezi, te conectezi din nou.",
+  "Read the invite, related emails and documents": "Citește invitația, e-mailurile și documentele legate",
+  "Search SharePoint and OneDrive": "Caută în SharePoint și OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ce s-a spus înainte cu aceste persoane, puncte deschise, e-mailuri și documente legate și întrebări de pus.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administratorul trebuie să aprobe permisiunile cerute de Yogurt. Trimite-i documentația sau dezactivează căutarea în SharePoint și OneDrive."
 }

@@ -836,7 +836,6 @@
   "Prepare a brief": "Przygotuj brief",
   "Prepare again": "Przygotuj ponownie",
   "Project status": "Status projektu",
-  "Read the invite and related emails": "Czytaj zaproszenie i powiązane e-maile",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Czyta kalendarz Outlook oraz zaproszenie i ostatnie e-maile z uczestnikami, aby przygotowywać briefy i pisać lepsze podsumowania.",
   "Reading the summary…": "Czytanie podsumowania…",
   "Refresh": "Odśwież",
@@ -861,7 +860,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transkrypcje, notatki i powiązane e-maile są wysyłane do Amazon Bedrock na Twoim koncie AWS, aby pisać podsumowania, briefy i e-maile.",
   "Use your organization's own app": "Użyj aplikacji swojej organizacji",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Co wcześniej mówiono z tymi osobami, otwarte sprawy i pytania do zadania. Połącz Microsoft 365 w Ustawieniach, aby dodać zaproszenie i powiązane e-maile.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Co wcześniej mówiono z tymi osobami, otwarte sprawy, powiązane e-maile i pytania do zadania.",
   "Where summaries are written": "Gdzie powstają podsumowania",
   "Write again": "Napisz ponownie",
   "Write the email": "Napisz e-mail",
@@ -869,5 +867,10 @@
   "Writing…": "Pisanie…",
   "Yogurt couldn't list the action items.": "Yogurt nie mógł wypisać zadań.",
   "Yogurt couldn't prepare the brief.": "Yogurt nie mógł przygotować briefu.",
-  "Yogurt couldn't write the email.": "Yogurt nie mógł napisać e-maila."
+  "Yogurt couldn't write the email.": "Yogurt nie mógł napisać e-maila.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Znajduje dokumenty związane ze spotkaniem, aby przygotować brief, napisać podsumowanie i odpowiadać na pytania. Wymaga konta służbowego i szerszych uprawnień do odczytu, które zwykle zatwierdza administrator. Po włączeniu zalogujesz się ponownie.",
+  "Read the invite, related emails and documents": "Czytaj zaproszenie, powiązane e-maile i dokumenty",
+  "Search SharePoint and OneDrive": "Szukaj w SharePoint i OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Co wcześniej mówiono z tymi osobami, otwarte sprawy, powiązane e-maile i dokumenty oraz pytania do zadania.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Administrator musi zatwierdzić uprawnienia, o które prosi Yogurt. Wyślij mu dokumentację albo wyłącz wyszukiwanie w SharePoint i OneDrive."
 }

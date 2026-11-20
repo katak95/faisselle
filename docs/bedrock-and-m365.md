@@ -44,6 +44,26 @@ tools: `login`, `verify-login`, `logout`, `get-calendar-view`, `get-calendar-eve
 
 The server's token cache lives in Yogurt's data folder (`m365-token-cache.json`).
 
+### SharePoint and OneDrive (optional)
+
+Settings → Microsoft 365 → **Search SharePoint and OneDrive**. Off by default.
+
+- When it is on, the server starts in work-account mode (`--org-mode`) and also turns on `search-query` (Microsoft
+  Search) and `download-bytes`. Still read only, and nothing else is turned on. You sign in again so Microsoft asks for
+  the new permissions.
+- Microsoft Search's tool asks for these delegated permissions: `Files.Read.All`, `Sites.Read.All`, `People.Read`,
+  `Chat.Read`, `ChannelMessage.Read.All` (plus `Mail.Read` and `Calendars.Read`). Yogurt only searches documents
+  (`driveItem`, `listItem`); it never reads chats or channels, but the tool can't be turned on without asking for them.
+  Most tenants need an **administrator to approve** them once: Settings says so when Microsoft refuses.
+- For each meeting, Yogurt searches with the meeting title's meaningful words and the companies of the people invited
+  (from their email addresses), in documents changed in the last 12 months. It takes up to 8 hits with Microsoft's
+  snippets, and reads in full the 3 most relevant ones under 8 MB (Word, PowerPoint, Excel, PDF, text), each cut to
+  3,000 characters.
+- The documents are used by the **brief** (with a "Related documents" list of links, built by Yogurt from the
+  search, never by the model), the **summary** (as background only) and **Ask** about a meeting. The follow-up email
+  doesn't use them.
+- Each note's **Read the invite, related emails and documents** turns all of this off for that meeting.
+
 ## Summaries, action items, follow-up email, brief
 
 - **Summary templates** (Settings): General, One-on-one, Client call, Retrospective, Job interview, Project status,

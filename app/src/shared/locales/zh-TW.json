@@ -758,7 +758,6 @@
   "Prepare a brief": "準備簡報",
   "Prepare again": "重新準備",
   "Project status": "專案進度",
-  "Read the invite and related emails": "讀取邀請與相關郵件",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "讀取你的 Outlook 行事曆，以及與與會者的邀請和近期郵件，用來準備簡報並寫出更好的摘要。",
   "Reading the summary…": "正在讀取摘要…",
   "Refresh": "重新整理",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "逐字稿、筆記與相關郵件會傳送到你 AWS 帳戶中的 Amazon Bedrock，用來撰寫摘要、簡報與郵件。",
   "Use your organization's own app": "使用你組織的應用程式",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "先前與這些人談過的內容、待解決事項與該問的問題。在設定中連接 Microsoft 365，即可加入邀請與相關郵件。",
-  "What was said before with these people, open points, related emails and questions to ask.": "先前與這些人談過的內容、待解決事項、相關郵件與該問的問題。",
   "Where summaries are written": "摘要在哪裡產生",
   "Write again": "重新撰寫",
   "Write the email": "撰寫郵件",
@@ -791,5 +789,10 @@
   "Writing…": "正在撰寫…",
   "Yogurt couldn't list the action items.": "Yogurt 無法列出待辦事項。",
   "Yogurt couldn't prepare the brief.": "Yogurt 無法準備簡報。",
-  "Yogurt couldn't write the email.": "Yogurt 無法撰寫郵件。"
+  "Yogurt couldn't write the email.": "Yogurt 無法撰寫郵件。",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "尋找與會議相關的文件，用來準備簡報、撰寫摘要與回答問題。需要公司帳戶與更廣的讀取權限，通常由管理員核准。開啟後需重新登入。",
+  "Read the invite, related emails and documents": "讀取邀請、相關郵件與文件",
+  "Search SharePoint and OneDrive": "搜尋 SharePoint 與 OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "先前與這些人談過的內容、待解決事項、相關郵件與文件，以及該問的問題。",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "管理員需要核准 Yogurt 要求的權限。請將說明文件傳給管理員，或關閉 SharePoint 與 OneDrive 搜尋。"
 }

@@ -28,6 +28,7 @@ export function M365Settings() {
             st?.state === 'connected' ? t('Connected{account}. Yogurt only reads: it never sends, changes or deletes anything.', { account: st.account ? ` · ${st.account}` : '' })
             : st?.state === 'pending' ? t('On the Microsoft page, enter the code {code}', { code: st.code })
             : st?.state === 'starting' ? t('Connecting…')
+            : st?.state === 'error' && st.consent ? t('Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
             : st?.state === 'error' ? t("Microsoft 365 didn't connect. Try again, or ask your administrator to allow the app.")
             : t('Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.')}</p>
           {st?.state === 'pending' && <a className="settings-description underline" href={st.url} target="_blank" rel="noreferrer">{t('Open the Microsoft page again')}</a>}
@@ -44,6 +45,15 @@ export function M365Settings() {
           <p className="settings-description">{t('Outlook meetings in the agenda, with reminders to record.')}</p>
         </div>
         <button data-testid="settings-m365-calendar" role="switch" aria-checked={v!.calendar} aria-label={t('Show the Outlook calendar')} onClick={() => void window.yogurt.m365.setCalendar(!v!.calendar).then(setV)} className="settings-toggle"><span className="settings-toggle-knob" /></button>
+      </div>}
+      {(st?.state === 'connected' || v?.documents) && <div className="settings-row">
+        <div className="settings-row-copy">
+          <p className="settings-label">{t('Search SharePoint and OneDrive')}</p>
+          <p className="settings-description" data-testid="settings-m365-documents-description">{v?.documentsRefused
+            ? t('Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
+            : t('Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.')}</p>
+        </div>
+        <button data-testid="settings-m365-documents" role="switch" aria-checked={!!v?.documents} aria-label={t('Search SharePoint and OneDrive')} onClick={() => void window.yogurt.m365.setDocuments(!v?.documents).then(setV)} className="settings-toggle"><span className="settings-toggle-knob" /></button>
       </div>}
       <div className="settings-row">
         <div className="settings-row-copy">

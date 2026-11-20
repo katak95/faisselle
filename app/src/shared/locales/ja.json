@@ -758,7 +758,6 @@
   "Prepare a brief": "ブリーフを準備",
   "Prepare again": "もう一度準備",
   "Project status": "プロジェクトの状況",
-  "Read the invite and related emails": "招待と関連メールを読む",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Outlook のカレンダーと、参加者との招待や最近のメールを読み、ブリーフの準備やより良い要約に役立てます。",
   "Reading the summary…": "要約を読み込み中…",
   "Refresh": "更新",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "文字起こし、メモ、関連メールは、要約・ブリーフ・メールを作成するために、お使いの AWS アカウントの Amazon Bedrock に送信されます。",
   "Use your organization's own app": "組織独自のアプリを使う",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "これまでにこの人たちと話したこと、未解決の点、聞くべきこと。設定で Microsoft 365 を接続すると、招待と関連メールも加わります。",
-  "What was said before with these people, open points, related emails and questions to ask.": "これまでにこの人たちと話したこと、未解決の点、関連メール、聞くべきこと。",
   "Where summaries are written": "要約を作成する場所",
   "Write again": "書き直す",
   "Write the email": "メールを作成",
@@ -791,5 +789,10 @@
   "Writing…": "作成中…",
   "Yogurt couldn't list the action items.": "Yogurt はアクションアイテムを一覧にできませんでした。",
   "Yogurt couldn't prepare the brief.": "Yogurt はブリーフを準備できませんでした。",
-  "Yogurt couldn't write the email.": "Yogurt はメールを作成できませんでした。"
+  "Yogurt couldn't write the email.": "Yogurt はメールを作成できませんでした。",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "会議に関連するドキュメントを探し、ブリーフの準備、要約の作成、質問への回答に使います。職場アカウントと、通常は管理者が承認する広い読み取り権限が必要です。オンにするともう一度サインインします。",
+  "Read the invite, related emails and documents": "招待、関連メール、ドキュメントを読む",
+  "Search SharePoint and OneDrive": "SharePoint と OneDrive を検索",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "これまでにこの人たちと話したこと、未解決の点、関連メールとドキュメント、聞くべきこと。",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt が求める権限を管理者が承認する必要があります。ドキュメントを管理者に送るか、SharePoint と OneDrive の検索をオフにしてください。"
 }

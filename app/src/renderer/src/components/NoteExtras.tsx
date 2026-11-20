@@ -121,7 +121,15 @@ export function MeetingBrief({ id }: { id: string }) {
   const v = useExtras(id)
   if (!v) return null
   const writing = writingFor(v, 'brief'), failed = failedFor(v, 'brief')
-  return <section data-testid="note-brief" className="note-extras-section" aria-labelledby="note-brief-heading">
+  // a document's link opens in the browser (main's window-open handler), not as an edit in the text
+  const openLink = (e: React.MouseEvent) => {
+    const a = (e.target as HTMLElement).closest('a')
+    const href = a?.getAttribute('href') ?? ''
+    if (!a || !/^https:\/\//.test(href)) return
+    e.preventDefault(); e.stopPropagation()
+    window.open(href, '_blank', 'noopener')
+  }
+  return <section data-testid="note-brief" className="note-extras-section" aria-labelledby="note-brief-heading" onClickCapture={openLink}>
     <div className="note-extras-heading">
       <h2 id="note-brief-heading"><Sparkles size={15} aria-hidden="true" />{t('Brief')}</h2>
       <div className="flex gap-2">
@@ -132,7 +140,7 @@ export function MeetingBrief({ id }: { id: string }) {
       </div>
     </div>
     {!v.brief && !writing && <p className="text-[13px] text-muted">{v.contextAvailable
-      ? t('What was said before with these people, open points, related emails and questions to ask.')
+      ? t('What was said before with these people, open points, related emails and documents, and questions to ask.')
       : t('What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.')}</p>}
     {failed && <InlineError testId="note-brief-failed"><span>{t("Yogurt couldn't prepare the brief.")}</span></InlineError>}
     {(writing || v.brief) && <Editor testId="note-brief-text" label={t('Brief')} className="enhanced" markdown={writing ? writing.draft : v.brief ?? ''} streaming={!!writing} editable={!writing}
@@ -149,7 +157,7 @@ export function NoteExtras({ id, people }: { id: string; people: Person[] }) {
       <TemplatePicker id={id} current={v.templateId} />
       {v.contextAvailable && <label className="flex items-center gap-2 text-[12px] text-muted">
         <input data-testid="note-use-context" type="checkbox" checked={v.useContext !== false} onChange={(e) => void window.yogurt.extras.useContext(id, e.target.checked)} />
-        {t('Read the invite and related emails')}
+        {t('Read the invite, related emails and documents')}
       </label>}
     </div>
     <Actions id={id} v={v} />

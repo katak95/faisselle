@@ -806,7 +806,6 @@
   "Prepare a brief": "Valmistele taustakooste",
   "Prepare again": "Valmistele uudelleen",
   "Project status": "Projektin tilanne",
-  "Read the invite and related emails": "Lue kutsu ja siihen liittyvät viestit",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Lukee Outlook-kalenterisi sekä kutsun ja tuoreet viestit osallistujien kanssa, jotta taustakoosteet ja yhteenvedot olisivat parempia.",
   "Reading the summary…": "Luetaan yhteenvetoa…",
   "Refresh": "Päivitä",
@@ -831,7 +830,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Litteroinnit, muistiinpanot ja liittyvät viestit lähetetään AWS-tilisi Amazon Bedrockiin yhteenvetojen, taustakoosteiden ja viestien kirjoittamiseksi.",
   "Use your organization's own app": "Käytä organisaatiosi omaa sovellusta",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Mitä näiden ihmisten kanssa on aiemmin sanottu, avoimet asiat ja kysyttävät kysymykset. Yhdistä Microsoft 365 asetuksissa lisätäksesi kutsun ja liittyvät viestit.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Mitä näiden ihmisten kanssa on aiemmin sanottu, avoimet asiat, liittyvät viestit ja kysyttävät kysymykset.",
   "Where summaries are written": "Missä yhteenvedot kirjoitetaan",
   "Write again": "Kirjoita uudelleen",
   "Write the email": "Kirjoita viesti",
@@ -839,5 +837,10 @@
   "Writing…": "Kirjoitetaan…",
   "Yogurt couldn't list the action items.": "Yogurt ei pystynyt listaamaan tehtäviä.",
   "Yogurt couldn't prepare the brief.": "Yogurt ei pystynyt valmistelemaan taustakoostetta.",
-  "Yogurt couldn't write the email.": "Yogurt ei pystynyt kirjoittamaan viestiä."
+  "Yogurt couldn't write the email.": "Yogurt ei pystynyt kirjoittamaan viestiä.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Etsii kokoukseen liittyvät asiakirjat taustakoosteita, yhteenvetoja ja kysymyksiin vastaamista varten. Vaatii työtilin ja laajemmat lukuoikeudet, jotka yleensä järjestelmänvalvoja hyväksyy. Kirjaudut uudelleen, kun otat sen käyttöön.",
+  "Read the invite, related emails and documents": "Lue kutsu, liittyvät viestit ja asiakirjat",
+  "Search SharePoint and OneDrive": "Hae SharePointista ja OneDrivesta",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Mitä näiden ihmisten kanssa on aiemmin sanottu, avoimet asiat, liittyvät viestit ja asiakirjat sekä kysyttävät kysymykset.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Järjestelmänvalvojan on hyväksyttävä Yogurtin pyytämät oikeudet. Lähetä hänelle ohjeet tai poista SharePoint- ja OneDrive-haku käytöstä."
 }

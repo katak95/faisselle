@@ -800,7 +800,6 @@
   "Prepare a brief": "Maghanda ng brief",
   "Prepare again": "Ihanda ulit",
   "Project status": "Status ng proyekto",
-  "Read the invite and related emails": "Basahin ang imbitasyon at mga kaugnay na email",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Binabasa ang Outlook calendar mo, ang imbitasyon at mga bagong email sa mga kasali, para maghanda ng brief at sumulat ng mas magandang buod.",
   "Reading the summary…": "Binabasa ang buod…",
   "Refresh": "I-refresh",
@@ -825,7 +824,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Ipinapadala ang mga transcript, notes, at kaugnay na email sa Amazon Bedrock sa AWS account mo para isulat ang mga buod, brief, at email.",
   "Use your organization's own app": "Gamitin ang sariling app ng organisasyon mo",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Ang napag-usapan dati kasama ang mga taong ito, mga bukas na usapin, at mga tanong na itatanong. Ikonekta ang Microsoft 365 sa Settings para idagdag ang imbitasyon at mga kaugnay na email.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Ang napag-usapan dati kasama ang mga taong ito, mga bukas na usapin, mga kaugnay na email, at mga tanong na itatanong.",
   "Where summaries are written": "Kung saan isinusulat ang mga buod",
   "Write again": "Isulat ulit",
   "Write the email": "Isulat ang email",
@@ -833,5 +831,10 @@
   "Writing…": "Isinusulat…",
   "Yogurt couldn't list the action items.": "Hindi nailista ng Yogurt ang mga gagawin.",
   "Yogurt couldn't prepare the brief.": "Hindi naihanda ng Yogurt ang brief.",
-  "Yogurt couldn't write the email.": "Hindi naisulat ng Yogurt ang email."
+  "Yogurt couldn't write the email.": "Hindi naisulat ng Yogurt ang email.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Hinahanap ang mga dokumentong kaugnay ng meeting para maghanda ng brief, sumulat ng buod, at sumagot sa mga tanong. Kailangan ng work account at mas malawak na pahintulot sa pagbasa, na kadalasang inaaprubahan ng administrator. Magsa-sign in ka ulit kapag binuksan mo ito.",
+  "Read the invite, related emails and documents": "Basahin ang imbitasyon, mga kaugnay na email at dokumento",
+  "Search SharePoint and OneDrive": "Maghanap sa SharePoint at OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Ang napag-usapan dati kasama ang mga taong ito, mga bukas na usapin, mga kaugnay na email at dokumento, at mga tanong na itatanong.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Kailangang aprubahan ng administrator mo ang mga pahintulot na hinihingi ng Yogurt. Ipadala sa kanila ang docs, o i-off ang paghahanap sa SharePoint at OneDrive."
 }

@@ -9,6 +9,8 @@ import { contextIntro, languageName, tidyNotes, type Llm } from './notes/enhance
 import { isBuiltIn, isCustomId } from '../shared/templates'
 import { isId } from './ipcArgs'
 import { LOCALES } from '../shared/i18n'
+import type { DocRef } from './m365/documents'
+import type { MeetingContext } from './m365/context'
 
 /**
  * What is written beside a meeting's notes, on request: the follow-up email (from the notes and action items), the
@@ -43,7 +45,9 @@ export function followUpPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'
   ].join('\n')
 }
 
-export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; startsAt: number | null; earlier: Array<{ title: string; at: number; notes: string; open: ActionItem[] }>; context?: string; me: string; language: string }): string {
+export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; startsAt: number | null; earlier: Array<{ title: string; at: number; notes: string; open: ActionItem[] }>; context?: string; me: string; language: string
+  /** related documents were found: the brief ends with their heading, and Yogurt adds the links */
+  documents?: boolean }): string {
   return [
     `You will prepare "You"${i.me ? ` (${i.me})` : ''} for an upcoming meeting.`,
     '',
@@ -62,8 +66,25 @@ export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; 
     '- "## Open points": promises and questions still open, who owes what.',
     '- "## Questions to ask": three to five useful questions or points to raise.',
     '- Headings in the brief\'s language. "- " bullets of up to about 20 words. Leave out a section with nothing to put in it, except "## Questions to ask".',
-    '- Only what the earlier meetings, the invite and the emails say. Never make anything up; if little is known, say so in one bullet.',
+    '- Only what the earlier meetings, the invite, the emails and the documents say. Never make anything up; if little is known, say so in one bullet.',
+    ...(i.documents ? ['- Where a document matters, say which one by its title and why, in the sections above. Last, write only the heading "## Related documents" in the brief\'s language, with nothing under it: the links are added after.'] : []),
   ].join('\n')
+}
+
+/**
+ * The brief with the documents' links under its last heading: the one the model wrote for them ("## Related
+ * documents", in the brief's language), or an English one when it left it out.
+ */
+export function withDocumentLinks(md: string, docs: DocRef[]): string {
+  if (!docs.length) return md
+  const esc = (s: string) => s.replace(/([\[\]])/g, '\\$1')
+  const href = (u: string) => { let v = u; try { v = encodeURI(decodeURI(u)) } catch { v = encodeURI(u) } return v.replace(/\(/g, '%28').replace(/\)/g, '%29') }
+  const links = docs.filter((x) => /^https:\/\//.test(x.url)).map((x) => `- [${esc(x.name)}](${href(x.url)})${x.modified ? ` · ${x.modified}` : ''}`).join('\n')
+  if (!links) return md
+  const lines = md.trimEnd().split('\n')
+  const last = lines.at(-1) ?? ''
+  if (/^## /.test(last)) return `${lines.join('\n')}\n${links}`
+  return `${md.trimEnd()}\n## Related documents\n${links}`
 }
 
 const actionsFromNotesPrompt = (notes: string) => ['Here are the notes of a meeting:', '<notes>', notes, '</notes>', '', actionsPrompt()].join('\n')
@@ -112,7 +133,7 @@ export function hookExtras(d: {
   /** the language most of the meeting was in */
   language(id: string): string | null
   /** the meeting's invite and related emails, when Microsoft 365 is connected and the meeting allows it */
-  context(id: string, signal: AbortSignal): Promise<string | undefined>
+  context(id: string, o: { documents: boolean }): Promise<MeetingContext | undefined>
   contextAvailable(): boolean
   /** "Write again" with this template */
   rewrite(id: string): void
@@ -151,7 +172,8 @@ export function hookExtras(d: {
   const followup = (id: string) => run(id, 'followup', async (llm, signal, onToken) => {
     const m = d.store.meeting(id), notes = d.store.notes(id).enhanced
     if (!m || !notes) throw new Error('No notes yet')
-    const context = await d.context(id, signal).catch(() => undefined)
+    // the invite and emails only: the person chose to leave documents out of the email
+    const context = (await d.context(id, { documents: false }).catch(() => undefined))?.text
     let raw = ''
     const out = await llm.chat(followUpPrompt({ meeting: m, notes, actions: d.store.extras(id).actions ?? [], me: d.me(), language: langOf(id), context }), (t) => {
       const before = bodySoFar(raw); raw += t; const after = bodySoFar(raw)
@@ -172,11 +194,13 @@ export function hookExtras(d: {
       title: x.title, at: x.startedAt, notes: (d.store.notes(x.id).enhanced ?? d.store.notes(x.id).mine).slice(0, EARLIER_NOTES_CHARS),
       open: (d.store.extras(x.id).actions ?? []).filter((a) => !a.done),
     }))
-    const context = await d.context(id, signal).catch(() => undefined)
-    const md = tidyNotes(await llm.chat(briefPrompt({ meeting: m, startsAt, earlier, context, me: d.me(), language: langOf(id) }), onToken, { maxTokens: 1800 }))
+    const ctx = await d.context(id, { documents: true }).catch(() => undefined)
+    const docs = ctx?.documents ?? []
+    const md = tidyNotes(await llm.chat(briefPrompt({ meeting: m, startsAt, earlier, context: ctx?.text, me: d.me(), language: langOf(id), documents: docs.length > 0 }), onToken, { maxTokens: 1800 }))
     if (signal.aborted) return
     if (!md) throw new Error('The model did not write a brief')
-    d.store.setExtras(id, { brief: md, briefAt: Date.now() })
+    // the links come from the search itself, never from the model: none can be made up
+    d.store.setExtras(id, { brief: withDocumentLinks(md, docs), briefAt: Date.now() })
   })
 
   const actions = (id: string) => run(id, 'actions', async (llm, signal) => {

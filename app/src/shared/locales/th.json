@@ -758,7 +758,6 @@
   "Prepare a brief": "เตรียมบรีฟ",
   "Prepare again": "เตรียมใหม่",
   "Project status": "สถานะโครงการ",
-  "Read the invite and related emails": "อ่านคำเชิญและอีเมลที่เกี่ยวข้อง",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "อ่านปฏิทิน Outlook คำเชิญ และอีเมลล่าสุดกับผู้เข้าร่วม เพื่อเตรียมบรีฟและเขียนสรุปให้ดีขึ้น",
   "Reading the summary…": "กำลังอ่านสรุป…",
   "Refresh": "รีเฟรช",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "บทถอดความ โน้ต และอีเมลที่เกี่ยวข้องจะถูกส่งไปยัง Amazon Bedrock ในบัญชี AWS ของคุณ เพื่อเขียนสรุป บรีฟ และอีเมล",
   "Use your organization's own app": "ใช้แอปขององค์กรคุณเอง",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "สิ่งที่เคยพูดกับคนเหล่านี้ ประเด็นที่ค้างอยู่ และคำถามที่ควรถาม เชื่อมต่อ Microsoft 365 ในการตั้งค่าเพื่อเพิ่มคำเชิญและอีเมลที่เกี่ยวข้อง",
-  "What was said before with these people, open points, related emails and questions to ask.": "สิ่งที่เคยพูดกับคนเหล่านี้ ประเด็นที่ค้างอยู่ อีเมลที่เกี่ยวข้อง และคำถามที่ควรถาม",
   "Where summaries are written": "ที่ที่เขียนสรุป",
   "Write again": "เขียนใหม่",
   "Write the email": "เขียนอีเมล",
@@ -791,5 +789,10 @@
   "Writing…": "กำลังเขียน…",
   "Yogurt couldn't list the action items.": "Yogurt แสดงรายการสิ่งที่ต้องทำไม่ได้",
   "Yogurt couldn't prepare the brief.": "Yogurt เตรียมบรีฟไม่ได้",
-  "Yogurt couldn't write the email.": "Yogurt เขียนอีเมลไม่ได้"
+  "Yogurt couldn't write the email.": "Yogurt เขียนอีเมลไม่ได้",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "ค้นหาเอกสารที่เกี่ยวข้องกับการประชุม เพื่อเตรียมบรีฟ เขียนสรุป และตอบคำถาม ต้องใช้บัญชีที่ทำงานและสิทธิ์อ่านที่กว้างขึ้น ซึ่งปกติผู้ดูแลเป็นผู้อนุมัติ เมื่อเปิดใช้ คุณจะต้องลงชื่อเข้าใช้อีกครั้ง",
+  "Read the invite, related emails and documents": "อ่านคำเชิญ อีเมล และเอกสารที่เกี่ยวข้อง",
+  "Search SharePoint and OneDrive": "ค้นหาใน SharePoint และ OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "สิ่งที่เคยพูดกับคนเหล่านี้ ประเด็นที่ค้างอยู่ อีเมลและเอกสารที่เกี่ยวข้อง และคำถามที่ควรถาม",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "ผู้ดูแลต้องอนุมัติสิทธิ์ที่ Yogurt ขอ ส่งเอกสารให้ผู้ดูแล หรือปิดการค้นหาใน SharePoint และ OneDrive"
 }

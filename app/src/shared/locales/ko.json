@@ -758,7 +758,6 @@
   "Prepare a brief": "브리핑 준비",
   "Prepare again": "다시 준비",
   "Project status": "프로젝트 현황",
-  "Read the invite and related emails": "초대와 관련 이메일 읽기",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Outlook 캘린더와 참석자와의 초대 및 최근 이메일을 읽어 브리핑을 준비하고 더 나은 요약을 작성해요.",
   "Reading the summary…": "요약 읽는 중…",
   "Refresh": "새로 고침",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "전사, 노트, 관련 이메일은 요약·브리핑·이메일을 작성하기 위해 내 AWS 계정의 Amazon Bedrock으로 전송돼요.",
   "Use your organization's own app": "조직 전용 앱 사용",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "이 사람들과 이전에 나눈 이야기, 미해결 사항, 물어볼 질문. 설정에서 Microsoft 365를 연결하면 초대와 관련 이메일도 추가돼요.",
-  "What was said before with these people, open points, related emails and questions to ask.": "이 사람들과 이전에 나눈 이야기, 미해결 사항, 관련 이메일, 물어볼 질문.",
   "Where summaries are written": "요약을 작성하는 곳",
   "Write again": "다시 쓰기",
   "Write the email": "이메일 쓰기",
@@ -791,5 +789,10 @@
   "Writing…": "작성 중…",
   "Yogurt couldn't list the action items.": "Yogurt가 할 일 목록을 만들지 못했어요.",
   "Yogurt couldn't prepare the brief.": "Yogurt가 브리핑을 준비하지 못했어요.",
-  "Yogurt couldn't write the email.": "Yogurt가 이메일을 쓰지 못했어요."
+  "Yogurt couldn't write the email.": "Yogurt가 이메일을 쓰지 못했어요.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "회의와 관련된 문서를 찾아 브리핑 준비, 요약 작성, 질문 답변에 사용해요. 회사 계정과 보통 관리자가 승인하는 더 넓은 읽기 권한이 필요해요. 켜면 다시 로그인해요.",
+  "Read the invite, related emails and documents": "초대, 관련 이메일, 문서 읽기",
+  "Search SharePoint and OneDrive": "SharePoint와 OneDrive 검색",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "이 사람들과 이전에 나눈 이야기, 미해결 사항, 관련 이메일과 문서, 물어볼 질문.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Yogurt가 요청하는 권한을 관리자가 승인해야 해요. 문서를 관리자에게 보내거나 SharePoint와 OneDrive 검색을 끄세요."
 }

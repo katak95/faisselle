@@ -758,7 +758,6 @@
   "Prepare a brief": "Siapkan ringkasan persiapan",
   "Prepare again": "Siapkan lagi",
   "Project status": "Status proyek",
-  "Read the invite and related emails": "Baca undangan dan email terkait",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Membaca kalender Outlook Anda, undangan, dan email terbaru dengan peserta, untuk menyiapkan ringkasan persiapan dan menulis ringkasan yang lebih baik.",
   "Reading the summary…": "Membaca ringkasan…",
   "Refresh": "Segarkan",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Transkrip, catatan, dan email terkait dikirim ke Amazon Bedrock di akun AWS Anda untuk menulis ringkasan, ringkasan persiapan, dan email.",
   "Use your organization's own app": "Gunakan aplikasi organisasi Anda sendiri",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Apa yang pernah dibahas dengan orang-orang ini, hal yang masih terbuka, dan pertanyaan untuk diajukan. Hubungkan Microsoft 365 di Pengaturan untuk menambahkan undangan dan email terkait.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Apa yang pernah dibahas dengan orang-orang ini, hal yang masih terbuka, email terkait, dan pertanyaan untuk diajukan.",
   "Where summaries are written": "Tempat ringkasan ditulis",
   "Write again": "Tulis ulang",
   "Write the email": "Tulis email",
@@ -791,5 +789,10 @@
   "Writing…": "Menulis…",
   "Yogurt couldn't list the action items.": "Yogurt tidak bisa membuat daftar tindak lanjut.",
   "Yogurt couldn't prepare the brief.": "Yogurt tidak bisa menyiapkan ringkasan persiapan.",
-  "Yogurt couldn't write the email.": "Yogurt tidak bisa menulis email."
+  "Yogurt couldn't write the email.": "Yogurt tidak bisa menulis email.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Mencari dokumen yang terkait dengan rapat untuk menyiapkan ringkasan persiapan, menulis ringkasan, dan menjawab pertanyaan. Perlu akun kerja dan izin baca yang lebih luas, yang biasanya disetujui admin. Anda masuk lagi saat menyalakannya.",
+  "Read the invite, related emails and documents": "Baca undangan, email, dan dokumen terkait",
+  "Search SharePoint and OneDrive": "Cari di SharePoint dan OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Apa yang pernah dibahas dengan orang-orang ini, hal yang masih terbuka, email dan dokumen terkait, serta pertanyaan untuk diajukan.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Admin Anda harus menyetujui izin yang diminta Yogurt. Kirimkan dokumentasinya, atau matikan pencarian SharePoint dan OneDrive."
 }

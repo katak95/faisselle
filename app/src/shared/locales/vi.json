@@ -758,7 +758,6 @@
   "Prepare a brief": "Chuẩn bị bản chuẩn bị",
   "Prepare again": "Chuẩn bị lại",
   "Project status": "Tình trạng dự án",
-  "Read the invite and related emails": "Đọc lời mời và email liên quan",
   "Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.": "Đọc lịch Outlook, lời mời và email gần đây với người tham dự để chuẩn bị trước và viết tóm tắt tốt hơn.",
   "Reading the summary…": "Đang đọc bản tóm tắt…",
   "Refresh": "Làm mới",
@@ -783,7 +782,6 @@
   "Transcripts, notes and related emails are sent to Amazon Bedrock in your AWS account to write summaries, briefs and emails.": "Bản chép lời, ghi chú và email liên quan được gửi đến Amazon Bedrock trong tài khoản AWS của bạn để viết tóm tắt, bản chuẩn bị và email.",
   "Use your organization's own app": "Dùng ứng dụng riêng của tổ chức bạn",
   "What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.": "Những gì đã nói trước đây với những người này, việc còn mở và câu hỏi nên đặt ra. Kết nối Microsoft 365 trong Cài đặt để thêm lời mời và email liên quan.",
-  "What was said before with these people, open points, related emails and questions to ask.": "Những gì đã nói trước đây với những người này, việc còn mở, email liên quan và câu hỏi nên đặt ra.",
   "Where summaries are written": "Nơi viết bản tóm tắt",
   "Write again": "Viết lại",
   "Write the email": "Viết email",
@@ -791,5 +789,10 @@
   "Writing…": "Đang viết…",
   "Yogurt couldn't list the action items.": "Yogurt không liệt kê được việc cần làm.",
   "Yogurt couldn't prepare the brief.": "Yogurt không chuẩn bị được bản chuẩn bị.",
-  "Yogurt couldn't write the email.": "Yogurt không viết được email."
+  "Yogurt couldn't write the email.": "Yogurt không viết được email.",
+  "Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.": "Tìm tài liệu liên quan đến cuộc họp để chuẩn bị trước, viết tóm tắt và trả lời câu hỏi. Cần tài khoản công việc và quyền đọc rộng hơn, thường do quản trị viên phê duyệt. Khi bật, bạn sẽ đăng nhập lại.",
+  "Read the invite, related emails and documents": "Đọc lời mời, email và tài liệu liên quan",
+  "Search SharePoint and OneDrive": "Tìm trong SharePoint và OneDrive",
+  "What was said before with these people, open points, related emails and documents, and questions to ask.": "Những gì đã nói trước đây với những người này, việc còn mở, email và tài liệu liên quan, và câu hỏi nên đặt ra.",
+  "Your administrator has to approve the permissions Yogurt asks for. Send them the docs, or turn off SharePoint and OneDrive search.": "Quản trị viên cần phê duyệt các quyền Yogurt yêu cầu. Hãy gửi tài liệu hướng dẫn cho họ, hoặc tắt tìm kiếm SharePoint và OneDrive."
 }

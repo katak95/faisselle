@@ -155,7 +155,7 @@ export function enhancePrompt(i: PromptInput): string {
 }
 
 /** what the context block is, for every prompt that has one */
-export const contextIntro = 'What else is known about this meeting: its calendar invite and recent emails with the people in it. Use it to understand names, projects and what was meant, and to spell things right. Never write something from it as if it was said in the meeting:'
+export const contextIntro = 'What else is known about this meeting: its calendar invite, recent emails with the people in it and related documents from SharePoint and OneDrive. Use it to understand names, projects, figures and what was meant, and to spell things right. Never write something from it as if it was said in the meeting:'
 
 /** A template's sections replace the free topics; the facts, the rules above and the next steps stay. */
 function templateInstruction(tp?: TemplatePrompt): string[] {
