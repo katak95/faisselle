@@ -8,6 +8,8 @@ Yogurt is MIT licensed (see [LICENSE](LICENSE)). It includes or uses third-party
   - Speech: whisper.cpp / ggml, Silero VAD, cpp-httplib, nlohmann/json.
   - Audio recorders: libopus and the `ogg` crate (BSD-3-Clause).
   - Windows and Linux: the NVIDIA CUDA runtime inside node-llama-cpp's CUDA backends, and the web2 word list.
+- Microsoft 365 (optional, read only): the Softeria `ms-365-mcp-server` (MIT) ships as-is in `node_modules` and runs as its own process; its licence is in its package.
+- Amazon Bedrock (optional): the Claude SDK for AWS Bedrock and the AWS SDK for JavaScript (Apache-2.0) are bundled into the main process and listed in `LICENSES.txt`.
 - The app's JavaScript dependencies are listed in `LICENSES.txt`, generated at build time next to the renderer bundle (`out/renderer`) and the main-process bundle (`out/main`).
 
 ## Models

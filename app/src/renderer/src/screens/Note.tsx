@@ -15,6 +15,7 @@ import type { MeetingView, NoteSaveResult, NoteSide, NoteView, SetupState, Widge
 import { t } from '../../../shared/i18n'
 import { osWords } from '../keys'
 import { Modal, ModalClose } from '../components/Modal'
+import { MeetingBrief, NoteExtras } from '../components/NoteExtras'
 import { NotesModelWait } from '../components/NotesModelWait'
 import { SummaryWaiting } from '../components/SummaryWaiting'
 import { Editor } from '../components/Editor'
@@ -460,6 +461,8 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
                   onChange={(md) => { typing.current = true; const next = { ...current.current!, mine: md }; current.current = next; setNotes(next); mineSave.change(md) }}
                   onBlur={() => { typing.current = false; mineSave.flush() }}
                 /> : <Enhanced key={id} presentation={summaryState} focus={primary === 'notes' && at?.ms === null ? at : undefined} notes={notes} disabled={starting} onChange={(md) => { setEditedHere(true); const next = { ...current.current!, enhanced: md }; current.current = next; setNotes(next); enhancedSave.change(md) }} onBlur={enhancedSave.flush} onRetry={requestRewrite} />}
+                {shown === 'enhanced' && notes.status === 'done' && notes.enhanced != null && <NoteExtras id={id} people={m.attendees} />}
+                {shown === 'mine' && (m.state === 'prepared' || (m.eventStartedAt != null && m.eventStartedAt > Date.now())) && <MeetingBrief id={id} />}
           </NoteReadingPane>
           {(primary === 'transcript' || transcriptVisited) && <section hidden={primary !== 'transcript'} id="note-transcript-panel" role="tabpanel" aria-labelledby="note-transcript-tab" className="note-content note-transcript-pane">
             <Transcript notice={

@@ -16,6 +16,8 @@ import { useScrollMemory } from '../useScrollMemory'
 import { appShortcuts } from '../components/Shortcuts'
 import { CalendarSettings } from '../components/CalendarSettings'
 import { CloudNotesSettings } from '../components/CloudNotesSettings'
+import { TemplateSettings } from '../components/TemplateSettings'
+import { M365Settings } from '../components/M365Settings'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -252,6 +254,10 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
           </div>
 
           <CloudNotesSettings />
+
+          <TemplateSettings />
+
+          <M365Settings />
 
           <Backup onImported={() => { void window.yogurt.settings.get().then(setPrefs) }} />
 

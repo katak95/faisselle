@@ -2,7 +2,7 @@ import { audioUpload } from './audioUpload'
 import type { WidgetLayout } from '../shared/widgetMorph'
 import { contextBridge, ipcRenderer } from 'electron'
 import { capabilities, platformOf } from '../shared/platform'
-import type { ChatView, CloudNotesView, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
+import type { ChatView, CloudNotesView, ExtrasView, M365View, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
 
 const api: YogurtApi = {
   reportRendererError: report => ipcRenderer.send('renderer:error', report),
@@ -221,6 +221,31 @@ const api: YogurtApi = {
     nudge: () => ipcRenderer.invoke('onboarding:nudge'),
     dismissNudge: () => ipcRenderer.invoke('onboarding:dismiss-nudge'),
     restoreNudge: () => ipcRenderer.invoke('onboarding:restore-nudge'),
+  },
+  extras: {
+    get: (id) => ipcRenderer.invoke('extras:get', id),
+    write: (id, kind) => ipcRenderer.invoke('extras:write', id, kind),
+    setActions: (id, items) => ipcRenderer.invoke('extras:set-actions', id, items),
+    setFollowUp: (id, f) => ipcRenderer.invoke('extras:set-followup', id, f),
+    setBrief: (id, md) => ipcRenderer.invoke('extras:set-brief', id, md),
+    useContext: (id, on) => ipcRenderer.invoke('extras:use-context', id, on),
+    setTemplate: (id, t) => ipcRenderer.invoke('extras:template', id, t),
+    onChange: (fn) => { const f = (_e: unknown, v: ExtrasView) => fn(v); ipcRenderer.on('extras:changed', f); return () => { ipcRenderer.off('extras:changed', f) } },
+  },
+  templates: {
+    get: () => ipcRenderer.invoke('templates:get'),
+    setDefault: (id) => ipcRenderer.invoke('templates:default', id),
+    save: (t) => ipcRenderer.invoke('templates:save', t),
+    remove: (id) => ipcRenderer.invoke('templates:remove', id),
+  },
+  m365: {
+    get: () => ipcRenderer.invoke('m365:get'),
+    signIn: () => ipcRenderer.invoke('m365:sign-in'),
+    cancel: () => ipcRenderer.invoke('m365:cancel'),
+    signOut: () => ipcRenderer.invoke('m365:sign-out'),
+    setCalendar: (on) => ipcRenderer.invoke('m365:calendar', on),
+    setApp: (c, t) => ipcRenderer.invoke('m365:app', c, t),
+    onChange: (fn) => { const f = (_e: unknown, v: M365View) => fn(v); ipcRenderer.on('m365:changed', f); return () => { ipcRenderer.off('m365:changed', f) } },
   },
   cloud: {
     get: () => ipcRenderer.invoke('cloud:get'),

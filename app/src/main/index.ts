@@ -76,6 +76,12 @@ import { createSso } from './aws/sso'
 import { awsSsoApi } from './aws/ssoApi'
 import { fakeSsoApi } from './aws/fakeSso'
 import { bedrockConfig, hookCloud } from './cloudNotes'
+import { createM365 } from './m365/client'
+import { bothSources, createM365Context } from './m365/context'
+import { fakeM365Server } from './m365/fake'
+import { hookM365 } from './m365/ipc'
+import { hookExtras } from './extras'
+import { hookTemplates, templateFor } from './templateSettings'
 import { notesProviderSetting } from './settings'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -484,6 +490,7 @@ function startDetection() {
       notice: () => prompts.notice(),
       noticeClick: () => prompts.clickNotice(),
       chatMeetings: async () => { const ids = chatMeetings(storeRef!); await indexerRef?.schedule(); return ids },
+      upcomingMeeting: () => storeRef!.createMeeting({ title: 'Acme renewal', startedAt: Date.now() + 86_400_000, endedAt: null, eventId: 'm365:evt1', app: null, state: 'prepared', attendees: [{ name: 'Maya Chen', email: 'maya@acme.example' }] }).id,
       crashCapture: () => { (activeCapture() as unknown as { proc: { kill(s: NodeJS.Signals): boolean } } | null)?.proc.kill('SIGKILL') },
     })
   }
@@ -523,7 +530,20 @@ app.whenReady().then(() => {
     open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64'))
       : sealed.startsWith('b:') ? Buffer.from(sealed.slice(2), 'base64').toString() : sealed.replace(/^p:/, '')),
   }) : null
-  if (calendarLinks) setCalendarLinkSource(calendarLinks, { alongside: !caps.calendarLink })
+  const m365File = join(userDataDir(), 'settings.json')
+  // Microsoft 365, read only (Settings → Microsoft 365): the Outlook calendar beside the others, and related emails
+  let m365Ipc: ReturnType<typeof hookM365> | undefined
+  const m365 = createM365({ dataDir: userDataDir(), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
+    openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
+    onChange: (st) => { m365Ipc?.push(); if (st.state === 'connected' || st.state === 'off') { m365Context.forget(); refreshCalendarConsumers() } },
+    ...(isFake() ? { connect: fakeM365Server() } : {}) })
+  const m365Context = createM365Context({ m365, calendarOn: () => loadSettings(m365File).m365?.calendar !== false,
+    account: () => { const st = m365.status(); return st.state === 'connected' ? st.account : null } })
+  m365Ipc = hookM365({ file: m365File, m365, send: (v) => win?.webContents.send('m365:changed', v),
+    calendarChanged: () => { m365Context.forget(); refreshCalendarConsumers() },
+    restart: () => { void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() }) } })
+  if (loadSettings(m365File).m365?.enabled) void m365.resume()
+  if (calendarLinks) setCalendarLinkSource(bothSources(calendarLinks, m365Context.calendar), { alongside: !caps.calendarLink })
   const preferences = hookPreferences({
     recordingPillChanged: on => recordingPillChanged(on),
     file: join(userDataDir(), 'settings.json'), permissions, kinds: supportedKinds(caps), os: platform,
@@ -641,6 +661,12 @@ app.whenReady().then(() => {
   // fake mode: the fixed Mac (a bigger one) unless a test asks for a 16 GB one
   const smallMac = isFake() ? process.env.YOGURT_FAKE_SMALL_MAC === '1' : isSmallMac(os.totalmem())
   const memory = notesMemory(smallMac)
+  /** the meeting's invite and related emails, when Microsoft 365 is connected and the meeting doesn't turn it off */
+  const meetingContext = async (id: string): Promise<string | undefined> => {
+    const m = store.meeting(id)
+    if (!m || store.extras(id).useContext === false) return undefined
+    return m365Context.meetingContext(m)
+  }
   const localModel = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // the notes on Amazon Bedrock instead (Settings → Notes model): signed in with AWS IAM Identity Center
   let cloud: ReturnType<typeof hookCloud> | undefined
@@ -707,9 +733,21 @@ app.whenReady().then(() => {
     store, queue, model, language: meetingLanguage, onStop: onMeetingStopSaved, named: (id) => callNames.finished(id), earlier: (id) => readAhead.parts(id), me,
     transcribed: async (id) => { await recordingFinished(id); await transcriptFinished(id) },
     send: (v) => win?.webContents.send('notes:changed', v),
+    // the template the meeting's notes follow, and what Microsoft 365 knows about it (shared/templates.ts, m365/)
+    template: (id) => templateFor(loadSettings(settingsFile), store.extras(id).templateId),
+    context: meetingContext,
+    actionsChanged: (id) => extras.push(id),
     // the notes are written: the meeting goes into the library for chat across meetings
     changed: () => { win?.webContents.send('meetings:changed'); void indexer.schedule() },
   })
+  // beside the notes: the follow-up email, the brief before a meeting, the action items (extras.ts)
+  const extras = hookExtras({
+    store, queue, model, me, language: meetingLanguage, context: meetingContext, contextAvailable: () => m365.connected(),
+    summaryLanguage: () => summaryLanguageSetting(loadSettings(settingsFile)),
+    send: (v) => win?.webContents.send('extras:changed', v),
+    rewrite: (id) => { void notes.writeAgain(id) },
+  })
+  hookTemplates({ file: settingsFile })
   let finishing = false, discardUnsaved = false
   const savedTranscriptions = createSavedTranscriptions({
     store, ready: () => !!setup.installed()?.asr, recording: () => !!activeMeeting() || !!resumingId || finishing,

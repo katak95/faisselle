@@ -170,6 +170,36 @@ export type YogurtApi = {
     test(): Promise<{ ok: true } | { ok: false; message: string }>
     onChange(fn: (v: CloudNotesView) => void): () => void
   }
+  /** what is written beside a meeting's notes: action items, follow-up email, brief (main/extras.ts) */
+  extras: {
+    get(meetingId: string): Promise<ExtrasView | null>
+    write(meetingId: string, kind: ExtrasKind): Promise<void>
+    setActions(meetingId: string, items: import('./actions').ActionItem[]): Promise<void>
+    setFollowUp(meetingId: string, f: FollowUp): Promise<void>
+    setBrief(meetingId: string, md: string): Promise<void>
+    useContext(meetingId: string, on: boolean): Promise<void>
+    /** follow this template and write the notes again */
+    setTemplate(meetingId: string, templateId: string): Promise<void>
+    onChange(fn: (v: ExtrasView) => void): () => void
+  }
+  /** Settings → Summary templates */
+  templates: {
+    get(): Promise<TemplatesView>
+    setDefault(id: string): Promise<TemplatesView>
+    /** no id: a new one */
+    save(t: { id?: string; name: string; instructions: string }): Promise<TemplatesView>
+    remove(id: string): Promise<TemplatesView>
+  }
+  /** Settings → Microsoft 365 (read only) */
+  m365: {
+    get(): Promise<M365View>
+    signIn(): Promise<M365View>
+    cancel(): Promise<M365View>
+    signOut(): Promise<M365View>
+    setCalendar(on: boolean): Promise<M365View>
+    setApp(clientId: string, tenantId: string): Promise<M365View>
+    onChange(fn: (v: M365View) => void): () => void
+  }
   /** AI apps on this Mac reading meetings through MCP (Settings) */
   mcp: {
     status(): Promise<McpStatus>
@@ -501,3 +531,41 @@ export type CloudNotesView = {
   /** signed in, with an account and role: notes can be written on Bedrock */
   ready: boolean
 }
+
+export type FollowUp = { subject: string; body: string }
+/** what is written beside a meeting's notes (main/extras.ts) */
+export type MeetingExtras = {
+  /** the summary template its notes follow (shared/templates.ts); the default one when null */
+  templateId: string | null
+  /** null: never taken from the notes (yet) */
+  actions: import('./actions').ActionItem[] | null
+  followup: FollowUp | null; followupAt: number | null
+  /** Markdown: the brief written before the meeting */
+  brief: string | null; briefAt: number | null
+  /** read the invite and related emails when writing for it; null: on whenever Microsoft 365 is connected */
+  useContext: boolean | null
+}
+export type ExtrasKind = 'actions' | 'followup' | 'brief'
+/** a meeting's extras as the note shows them, with what is being written now */
+export type ExtrasView = MeetingExtras & {
+  meetingId: string
+  /** being written now, with the text so far */
+  writing?: { kind: ExtrasKind; draft: string }
+  /** the last try failed, with why in words */
+  failed?: { kind: ExtrasKind; message: string }
+  /** Microsoft 365 is connected: the invite and emails can be read */
+  contextAvailable: boolean
+}
+
+/** Microsoft 365 (read only), as Settings shows it */
+export type M365Status =
+  | { state: 'off' }
+  | { state: 'starting' }
+  | { state: 'signed-out' }
+  /** waiting for the person to enter the code on Microsoft's page */
+  | { state: 'pending'; code: string; url: string }
+  | { state: 'connected'; account: string | null }
+  | { state: 'error'; message: string }
+export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string }
+
+export type TemplatesView = { custom: import('./templates').CustomTemplate[]; defaultId: string }

@@ -12,6 +12,16 @@ export class FakeEngine implements Engine {
   async chat(req: ChatRequest, onToken: (text: string) => void, signal?: AbortSignal): Promise<string> {
     const prompt = req.messages.at(-1)?.content ?? ''
     fakePrompts.notes.push(prompt)
+    // the action items, the follow-up email and the brief (notes/actions.ts, extras.ts)
+    if (prompt.includes('Now list the action items from this meeting as JSON')) return this.stream(JSON.stringify({ items: [
+      { owner: 'You', task: 'Send the launch email', due: 'Wednesday morning' },
+      { owner: 'Maya', task: 'Put the site live', due: 'Tuesday' },
+    ] }), onToken, signal)
+    if (prompt.includes('Write the follow-up email')) return this.stream(JSON.stringify({ subject: 'Launch plan: next steps',
+      body: 'Hi all,\n\nThanks for the time today. Here is what we agreed:\n- The site goes live on Tuesday.\n- The email goes out on Wednesday morning.\n\nBest,\nYou' }), onToken, signal)
+    if (prompt.startsWith('You will prepare')) return this.stream([
+      '## Purpose', '- Agree on the renewal terms.', '## People', '- **Maya Chen:** the client contact.', '## Questions to ask', '- Can we keep the price for two years?',
+    ].join('\n'), onToken, signal)
     if (prompt.startsWith('Suggest one existing folder')) {
       const data = JSON.parse(prompt.slice(prompt.indexOf('{')))
       // sure only of a folder the meeting's title names, like "Customer call with Acme" for Acme

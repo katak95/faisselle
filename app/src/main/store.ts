@@ -8,6 +8,8 @@ import { attendeeMembership, matchingOwnEmail, ownAddress, personEmail } from '.
 import type { FolderSuggestionRecord } from '../shared/folderSuggestion'
 import { unusedPreparedNote } from '../shared/agendaNote'
 import { speakerOrder } from '../shared/speakerColors'
+import type { MeetingExtras } from '../shared/types'
+import { cleanActions } from '../shared/actions'
 import { DatabaseSync } from 'node:sqlite'
 import { randomUUID } from 'node:crypto'
 import { sourceOf, type TitleSource } from './titles'
@@ -267,6 +269,10 @@ export class Store {
     if (!hadPeople) backfillPeople(this.db)
     // chat across meetings: its chunks, vectors and saved conversations (library/store.ts)
     libraryTables(this.db)
+    // what is written beside the notes: the template they follow, the action items, the follow-up email and the brief
+    this.db.exec(`CREATE TABLE IF NOT EXISTS meeting_extras (
+      meeting_id TEXT PRIMARY KEY REFERENCES meetings(id) ON DELETE CASCADE,
+      template_id TEXT, actions TEXT, followup TEXT, followup_at INTEGER, brief TEXT, brief_at INTEGER, use_context INTEGER)`)
     // voices told apart by letter (Speaker A, B) are gone: a database from then loses the letters, so those lines say Them
     if (this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'speakers'").get()) {
       this.db.exec("UPDATE segments SET speaker = NULL WHERE track = 'them'; DROP TABLE speakers")
@@ -545,6 +551,43 @@ export class Store {
     const edited = patch.edited ?? cur.edited
     this.db.prepare('INSERT INTO notes (meeting_id, mine, enhanced, edited) VALUES (?, ?, ?, ?) ON CONFLICT(meeting_id) DO UPDATE SET mine = excluded.mine, enhanced = excluded.enhanced, edited = excluded.edited')
       .run(meetingId, mine, enhanced, edited ? 1 : 0)
+  }
+
+  /** the template, action items, follow-up email and brief written beside the notes (shared/types.ts MeetingExtras) */
+  extras(meetingId: string): MeetingExtras {
+    const r = this.db.prepare('SELECT * FROM meeting_extras WHERE meeting_id = ?').get(meetingId) as Row | undefined
+    const json = <T>(v: unknown, fallback: T): T => { try { return v == null ? fallback : JSON.parse(String(v)) as T } catch { return fallback } }
+    return {
+      templateId: r?.template_id == null ? null : String(r.template_id),
+      actions: r?.actions == null ? null : cleanActions(json(r.actions, [])),
+      followup: json<MeetingExtras['followup']>(r?.followup, null),
+      followupAt: r?.followup_at == null ? null : Number(r.followup_at),
+      brief: r?.brief == null ? null : String(r.brief),
+      briefAt: r?.brief_at == null ? null : Number(r.brief_at),
+      useContext: r?.use_context == null ? null : Number(r.use_context) === 1,
+    }
+  }
+  setExtras(meetingId: string, patch: Partial<MeetingExtras>) {
+    if (!this.meeting(meetingId)) return
+    const cur = this.extras(meetingId), next = { ...cur, ...patch }
+    this.db.prepare(`INSERT INTO meeting_extras (meeting_id, template_id, actions, followup, followup_at, brief, brief_at, use_context) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(meeting_id) DO UPDATE SET template_id = excluded.template_id, actions = excluded.actions, followup = excluded.followup, followup_at = excluded.followup_at,
+      brief = excluded.brief, brief_at = excluded.brief_at, use_context = excluded.use_context`)
+      .run(meetingId, next.templateId, next.actions == null ? null : JSON.stringify(next.actions), next.followup == null ? null : JSON.stringify(next.followup),
+        next.followupAt, next.brief, next.briefAt, next.useContext == null ? null : next.useContext ? 1 : 0)
+  }
+  /** the meetings before this time that someone in this list was at, latest first: what a brief recalls */
+  meetingsWith(emails: string[], before: number, limit = 5): Meeting[] {
+    const want = new Set(emails.map((e) => e.toLowerCase()).filter(Boolean))
+    if (!want.size) return []
+    const rows = this.db.prepare(`SELECT * FROM meetings WHERE started_at < ? AND trashed_at IS NULL AND state = 'done' ORDER BY started_at DESC LIMIT 400`).all(before) as Row[]
+    const out: Meeting[] = []
+    for (const r of rows) {
+      const m = this.readMeeting(r)
+      if (m.attendees.some((a) => a.email && want.has(a.email.toLowerCase()))) out.push(m)
+      if (out.length >= limit) break
+    }
+    return out
   }
 
   /** Who was at the meeting when the enhanced notes were last written (null: not recorded) */

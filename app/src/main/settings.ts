@@ -57,7 +57,13 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
   notesProvider?: 'bedrock'
   /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
-  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string } }
+  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
+  /** summary templates the person wrote (shared/templates.ts) */
+  templates?: Array<{ id: string; name: string; instructions: string }>
+  /** the template new notes follow; the general notes when left out */
+  defaultTemplate?: string
+  /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
+  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)
