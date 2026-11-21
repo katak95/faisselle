@@ -15,7 +15,9 @@ function createCard(kind: PromptView['kind'], os = 'darwin'): BrowserWindow {
   const { workArea } = screen.getPrimaryDisplay()
   const width = 381, height = 60
   const background = () => nativeTheme.shouldUseDarkColors ? '#29292B' : '#FFFFFF'
-  const type = floatingType(os)
+  // A Mac: the Take notes card is a non-activating panel like the widget, so clicking it (its X included) never makes
+  // Figolu the active app and brings its window forward. The stop card takes keyboard focus, so it stays a plain window.
+  const type = floatingType(os, kind === 'start' ? 'panel' : undefined)
   const w = new BrowserWindow({
     ...(type ? { type } : {}),
     width, height, x: workArea.x + workArea.width - width - 16, y: workArea.y + 12,
@@ -38,7 +40,7 @@ function createCard(kind: PromptView['kind'], os = 'darwin'): BrowserWindow {
  * Main decides what the buttons mean; this only shows the card and passes the click on.
  */
 export function createPrompts(d: {
-  /** is a Yogurt window on screen? If not, a system notification says it too */
+  /** is a Figolu window on screen? If not, a system notification says it too */
   windowVisible(): boolean
   takeNotes(p: Prompt): void
   stop(meetingId: string): void
@@ -53,7 +55,7 @@ export function createPrompts(d: {
   let card: BrowserWindow | undefined
   let view: PromptView | null = null
   let prompt: Prompt | null = null
-  /** the system notification said with the card, while nothing of Yogurt is on screen; kept so its click still arrives */
+  /** the system notification said with the card, while nothing of Figolu is on screen; kept so its click still arrives */
   let notice: { title: string; body: string; click: () => void; n?: Notification } | null = null
 
   const close = () => {
@@ -111,7 +113,7 @@ export function createPrompts(d: {
     offer(p: Prompt) { prompt = p; show({ kind: 'start', key: p.key, app: p.app, title: p.title }) },
     askStop(m: Meeting) { prompt = null; show({ kind: 'stop', meetingId: m.id, title: m.title }) },
     hide: close,
-    /** the recording stopped by itself because the call ended: no card, a notification while Yogurt is away; clicking it opens the note to resume */
+    /** the recording stopped by itself because the call ended: no card, a notification while Figolu is away; clicking it opens the note to resume */
     stopped(m: Meeting) {
       close()
       if (d.windowVisible()) return

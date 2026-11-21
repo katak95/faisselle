@@ -1,7 +1,7 @@
 import { Loading } from './Loading'
 import { LoadingContent } from './LoadingContent'
 import { useEffect, useRef, useState, type CSSProperties, type DragEvent, type KeyboardEvent, type RefObject } from 'react'
-import { ArrowDown, ArrowUp, Ellipsis, Palette, Pencil, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Ellipsis, Palette, Pencil, Plus, Trash2 } from './Icons'
 import { Reorder, useDragControls } from 'motion/react'
 import { useReducedMotion, usePopoverPresence } from '../motion'
 import type { Folder } from '../../../shared/types'
@@ -36,7 +36,7 @@ export function FoldersNav({ folders, route, go, collapsed = false, sidebarMotio
       if (!await window.yogurt.folders.reorder(next)) throw new Error('Folder list changed')
     } catch {
       setOrder(undefined)
-      toasts.add({ title: t("Yogurt couldn't make that change. Try again.") })
+      toasts.add({ title: t("Figolu couldn't make that change. Try again.") })
     } finally { setBusy(false) }
   }
   const move = (id: string, step: number) => {
@@ -59,7 +59,7 @@ export function FoldersNav({ folders, route, go, collapsed = false, sidebarMotio
         })}
       </Reorder.Group></LoadingContent>
       <button data-testid="folder-create" data-sidebar="menu-button" aria-label={t('New folder')} title={collapsed ? t('New folder') : undefined} className="workspace-nav workspace-folder-new" onClick={() => setNaming({})}>
-        <Plus size={16} strokeWidth={1.7} aria-hidden="true" /><span>{t('New folder')}</span>
+        <Plus size={16} aria-hidden="true" /><span>{t('New folder')}</span>
       </button>
     </nav>
     {appearance && <FolderAppearanceDialog folder={appearance} onDone={() => setAppearance(undefined)} />}
@@ -131,7 +131,7 @@ function FolderItem({ folder, collapsed, sidebarMotion, current, go, onRename, o
         const ids = draggedMeetings(e.dataTransfer.getData(MEETING_DRAG))
         if (ids.length) {
           e.preventDefault()
-          void addMeetingsToFolder(folder.id, ids).catch(() => toasts.add({ title: t("Yogurt couldn't add this note to the folder. Try again.") }))
+          void addMeetingsToFolder(folder.id, ids).catch(() => toasts.add({ title: t("Figolu couldn't add this note to the folder. Try again.") }))
         }
       }}>
       <FolderGlyph appearance={folder} /><span>{folder.name}</span>

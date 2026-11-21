@@ -504,7 +504,7 @@ describe('meetings recorded before transcripts were tracked (#30)', () => {
     const finished = s.createMeeting({ title: 'notes came out empty', startedAt: 5, endedAt: 6, eventId: null, app: null, attendees: [], state: 'done' })
     const heard = s.createMeeting({ title: 'had words', startedAt: 3, endedAt: 4, eventId: null, app: null, attendees: [], state: 'stopped' })
     s.addSegments([{ meetingId: heard.id, track: 'them', startMs: 0, endMs: 900, text: 'hello', speaker: null }])
-    // as an older Yogurt left it: nothing marked, and the store never looked
+    // as an older Figolu left it: nothing marked, and the store never looked
     ;(s as unknown as { db: { exec(q: string): void } }).db.exec('PRAGMA user_version = 0')
     s.close()
     s = openStore(file)
@@ -529,4 +529,12 @@ it('a store already marked by 0.3.31 (only stopped meetings) is marked again for
   expect(s.untranscribedMeetings().map((m) => m.id)).toEqual([done.id])
   s.close()
   rmSync(dir, { recursive: true, force: true })
+})
+
+it('keeps where an imported meeting came from, and its id there, so it is brought in once', () => {
+  const s = fresh()
+  const m = s.createMeeting({ ...base, state: 'done', startedAt: 1000, source: 'import', sourceId: 'granola-123' })
+  expect(s.meeting(m.id)).toMatchObject({ source: 'import', sourceId: 'granola-123' })
+  expect(s.meetingFromSource('import', 'granola-123')?.id).toBe(m.id)
+  expect(s.meetingFromSource('import', 'other')).toBeUndefined()
 })

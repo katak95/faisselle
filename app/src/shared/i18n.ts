@@ -50,7 +50,7 @@ export const dirOf = (id: string): 'rtl' | 'ltr' => (LOCALES.find((l) => l.id ==
 const ALIASES: Record<string, string> = { no: 'nb', nn: 'nb', tl: 'fil', iw: 'he', in: 'id', pt: 'pt-BR', zh: 'zh-CN' }
 const TRADITIONAL = /^zh-(hant|tw|hk|mo)\b/
 
-/** The first of the computer's languages that Yogurt has; English when none */
+/** The first of the computer's languages that Figolu has; English when none */
 export function matchLocale(preferred: readonly string[]): string {
   for (const raw of preferred) {
     const tag = raw.replace(/_/g, '-').toLowerCase()
@@ -102,3 +102,6 @@ export function onLanguage(l: () => void) {
 export const t = (text: string, vars?: Vars) => translate(tables, current, text, vars)
 /** Marks text to translate where it's shown (lists and constants); returns it unchanged */
 export const msg = (text: string) => text
+
+/** Some languages use different counters for items and people. */
+export const moreItems = (count: number) => t('and {count} others', { count })

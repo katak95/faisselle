@@ -1,8 +1,8 @@
-# A release: `sh app/scripts/release.sh 0.3.0` sets the version, tags v0.3.0 and pushes; this builds Yogurt for Mac
+# A release: `sh app/scripts/release.sh 0.3.0` sets the version, tags v0.3.0 and pushes; this builds Figolu for Mac
 # (Apple Silicon), Windows (x64, unsigned) and Linux (x86_64 AppImage) and publishes one GitHub release with all
 # three, only once every build and its checks have worked.
-# Download links point at releases/latest/download/Yogurt-mac-arm64.dmg, Yogurt-windows-x64.exe and
-# Yogurt-linux-x86_64.AppImage, and installed copies update themselves from the same release
+# Download links point at releases/latest/download/Figolu-mac-arm64.dmg, Figolu-windows-x64.exe and
+# Figolu-linux-x86_64.AppImage, and installed copies update themselves from the same release
 # (latest-mac.yml, latest.yml, latest-linux.yml; app/src/main/updates.ts).
 # Running it by hand (Actions → Release → Run workflow) only builds: the files are attached to the run, nothing is published.
 # Windows and Linux are built by preview.yml, with the same checks (helpers run from the install folder, whisper-server
@@ -56,12 +56,13 @@ jobs:
           sha=$(echo "$r" | jq -r .target_commitish)
           echo "$sha" | grep -qE '^[0-9a-f]{40}$' || { echo "::error::$DRAFT must point at a commit (gh release create --target <sha>), not $sha"; exit 1; }
           version=$(gh api "repos/$REPO/contents/app/package.json?ref=$sha" --jq .content | base64 -d | jq -r .version)
-          [ "v$version" = "$DRAFT" ] || { echo "::error::The app at $sha is $version, not ${DRAFT#v}"; exit 1; }
+          # Figolu: the draft is a Figolu version of the Yogurt version at that commit (app/scripts/version.mjs)
+          [ "$(( $(echo "${DRAFT#v}" | cut -d. -f3) / 100 ))" = "$(echo "$version" | cut -d. -f3)" ] || { echo "::error::$DRAFT is not a Figolu version of Yogurt $version"; exit 1; }
           assets=$(echo "$r" | jq -r '.assets[].name')
-          for f in Yogurt-mac-arm64.dmg Yogurt-mac-arm64.zip latest-mac.yml; do
+          for f in Figolu-mac-arm64.dmg Figolu-mac-arm64.zip latest-mac.yml; do
             echo "$assets" | grep -qx "$f" || { echo "::error::$DRAFT has no $f: add the Mac built by hand first"; exit 1; }
           done
-          echo "$assets" | grep -qE '^(Yogurt-windows-|Yogurt-linux-|latest\.yml|latest-linux\.yml)' && { echo "::error::$DRAFT has Windows or Linux files already"; exit 1; }
+          echo "$assets" | grep -qE '^(Figolu-windows-|Figolu-linux-|latest\.yml|latest-linux\.yml)' && { echo "::error::$DRAFT has Windows or Linux files already"; exit 1; }
           echo "::notice::Building Windows and Linux for $DRAFT at $sha"
           echo "build=true" >> "$GITHUB_OUTPUT"; echo "mac=false" >> "$GITHUB_OUTPUT"; echo "ref=$sha" >> "$GITHUB_OUTPUT"
 
@@ -80,9 +81,13 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: The tag matches the app's version
+      # Figolu: the version is the tag's (Yogurt X.Y.Z is Figolu X.Y.(Z×100)…, app/scripts/version.mjs); app/package.json keeps Yogurt's
+      - name: Figolu's version, from the tag
         if: github.event_name == 'push' && github.ref_type == 'tag'
-        run: test "v$(node -p "require('./app/package.json').version")" = "${{ github.ref_name }}"
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          node -e 'const [, , z] = require("./app/package.json").version.split(".").map(Number), [, , f] = process.argv[1].split(".").map(Number); if (Math.floor(f / 100) !== z) { console.error(`${process.argv[1]} is not a Figolu version of Yogurt ${require("./app/package.json").version}`); process.exit(1) }' "$v"
+          cd app && npm pkg set version="$v"
       - name: A release is signed and notarized
         if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
@@ -92,8 +97,9 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          # Figolu: without Apple's certificate the Mac is built unsigned (it runs, but can't update itself)
           for v in CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
-            [ -n "$(printenv $v)" ] || { echo "::error::$v is missing: a release must be signed and notarized"; exit 1; }
+            [ -n "$(printenv $v)" ] || { echo "::warning::$v is missing: this Mac build is not signed and notarized, so installed Macs won't update by themselves"; exit 0; }
           done
       - name: Typecheck
         run: pnpm -r typecheck
@@ -119,9 +125,9 @@ jobs:
         env:
           SIGNED: ${{ secrets.MAC_CERT_P12_BASE64 != '' }}
         run: |
-          node app/scripts/asar-check.mjs app/dist/mac-arm64/Yogurt.app/Contents/Resources/app.asar
-          pnpm -C app exec electron scripts/engine-smoke.cjs dist/mac-arm64/Yogurt.app/Contents/Resources/app.asar
-          if [ "$SIGNED" = true ]; then codesign --verify --deep --strict app/dist/mac-arm64/Yogurt.app; fi
+          node app/scripts/asar-check.mjs app/dist/mac-arm64/Figolu.app/Contents/Resources/app.asar
+          pnpm -C app exec electron scripts/engine-smoke.cjs dist/mac-arm64/Figolu.app/Contents/Resources/app.asar
+          if [ "$SIGNED" = true ]; then codesign --verify --deep --strict app/dist/mac-arm64/Figolu.app; fi
       # the app inside is notarized by electron-builder; the disk image is checked when downloaded too
       - name: Notarize the disk image
         env:
@@ -130,9 +136,9 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           [ -n "$APPLE_ID" ] || exit 0
-          xcrun notarytool submit app/dist/Yogurt-mac-arm64.dmg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
-          xcrun stapler staple app/dist/Yogurt-mac-arm64.dmg
-          spctl -a -t open --context context:primary-signature -v app/dist/Yogurt-mac-arm64.dmg
+          xcrun notarytool submit app/dist/Figolu-mac-arm64.dmg --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" --wait
+          xcrun stapler staple app/dist/Figolu-mac-arm64.dmg
+          spctl -a -t open --context context:primary-signature -v app/dist/Figolu-mac-arm64.dmg
           # stapling changed the disk image: its checksum in latest-mac.yml again
           node app/scripts/refresh-latest.mjs app/dist/latest-mac.yml
       - uses: actions/upload-artifact@v4
@@ -153,6 +159,8 @@ jobs:
     with:
       ref: ${{ needs.plan.outputs.ref }}
       release: true
+      # Figolu: the version is the tag's
+      version: ${{ github.ref_type == 'tag' && github.ref_name || inputs.draft }}
     # the Windows installer is signed with Artifact Signing: GitHub hands the build a short-lived sign-in token (no stored secret)
     permissions:
       contents: read
@@ -173,7 +181,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls -la files
-          gh release create "${{ github.ref_name }}" files/* --repo "${{ github.repository }}" --title "Yogurt ${GITHUB_REF_NAME#v}" --generate-notes --latest
+          gh release create "${{ github.ref_name }}" files/* --repo "${{ github.repository }}" --title "Figolu ${GITHUB_REF_NAME#v}" --generate-notes --latest
 
   # a draft with a Mac built by hand gets the Windows and Linux files; it stays a draft
   draft:
@@ -198,3 +206,18 @@ jobs:
           gh release upload "$DRAFT" files/* --repo "$REPO"
           gh api "repos/$REPO/releases/$id" --jq '.assets[].name'
           echo "::notice::Added to the draft $DRAFT. Check it, then publish: gh release edit $DRAFT --draft=false --latest"
+
+  # ask Vercel to rebuild the site so the Updates page shows this release
+  refresh-site:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rebuild the website
+        env:
+          DEPLOY_HOOK: ${{ secrets.SITE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::notice::SITE_DEPLOY_HOOK is not set, so the site was not rebuilt"
+            exit 0
+          fi
+          curl --fail --silent --show-error --output /dev/null --request POST "$DEPLOY_HOOK"

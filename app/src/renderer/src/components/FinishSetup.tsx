@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Ellipsis, SlidersHorizontal, X } from 'lucide-react'
+import { Ellipsis, SlidersHorizontal, X } from './Icons'
 import { Menu } from '@base-ui/react/menu'
 import type { MissingPermission } from '../../../shared/types'
 import { finishSetupReason, permissionCopy } from '../permissionCopy'
@@ -12,7 +12,7 @@ import { toasts } from './TrashToast'
 
 /**
  * The sidebar's "Finish setup": what was put off in the first run, the ones recording needs first, each with its own
- * Turn on. Put away, it stays away until something else goes missing. Rechecked whenever Yogurt comes forward.
+ * Turn on. Put away, it stays away until something else goes missing. Rechecked whenever Figolu comes forward.
  */
 /** the permissions this computer has (no calendar or names from calls on Windows and Linux) */
 const kinds = () => supportedKinds(window.yogurt.capabilities)
@@ -59,11 +59,11 @@ export function FinishSetup({ collapsed = false }: { collapsed?: boolean }) {
           restoring = true
           ++readRevision.current
           try { await window.yogurt.onboarding.restoreNudge(); ++readRevision.current; reload(); toasts.close(id) }
-          catch { toasts.update(id, { title: t("Yogurt couldn't make that change. Try again."), timeout: 0 }) }
+          catch { toasts.update(id, { title: t("Figolu couldn't make that change. Try again."), timeout: 0 }) }
           finally { restoring = false }
         } },
       })
-    } catch { toasts.add({ title: t("Yogurt couldn't make that change. Try again.") }) }
+    } catch { toasts.add({ title: t("Figolu couldn't make that change. Try again.") }) }
     finally { hiding.current = false }
   }
   useEffect(() => {
@@ -110,7 +110,7 @@ export function FinishSetup({ collapsed = false }: { collapsed?: boolean }) {
     <button ref={trigger} data-testid="finish-setup-open" data-sidebar="menu-button" aria-label={title} title={collapsed ? title : undefined} className="setup-checklist-trigger workspace-nav" aria-haspopup="dialog" aria-expanded={open}
       onClick={() => { reload(); setOpen((v) => !v) }}>
       {essential ? <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="var(--accent)" /></svg>
-        : <SlidersHorizontal size={16} strokeWidth={1.75} aria-hidden="true" />}
+        : <SlidersHorizontal size={16} aria-hidden="true" />}
       <span>{title}</span>
     </button>
     {open && createPortal(<dialog ref={panel} data-testid="finish-setup" aria-label={title} className="finish-setup"

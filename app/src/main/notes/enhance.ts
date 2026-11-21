@@ -3,6 +3,8 @@ import { REWRITE_NOTE_MAX } from '../../shared/rewriteNote'
 import type { Person, Segment } from '../store'
 import { LOCALES } from '../../shared/i18n'
 import { respell, spellingLine, type MeetingWords } from '../vocab'
+import type { TemplatePrompt } from '../../shared/templates'
+import { ACTIONS_SCHEMA, actionsPrompt } from './actions'
 
 /**
  * Enhanced notes: the person's own notes plus the transcript, written up by the notes model as Markdown.
@@ -19,7 +21,9 @@ export type Llm = {
    * one answer; onToken gets the text as it is written. summary: a part of a long meeting, not shown.
    * before: an earlier prompt and its answer, in that order, that this one follows on from
    */
-  chat(prompt: string, onToken: (text: string) => void, o?: { summary?: boolean; maxTokens?: number; before?: string[]; /** colder sampling for an answer that must come out the same each time */ temperature?: number }): Promise<string>
+  chat(prompt: string, onToken: (text: string) => void, o?: { summary?: boolean; maxTokens?: number; before?: string[]; /** colder sampling for an answer that must come out the same each time */ temperature?: number
+    /** a JSON answer shaped by this JSON Schema: a cloud model is held to it, a local one is only asked (callers check what comes back) */
+    json?: Record<string, unknown> }): Promise<string>
   /** reads the start of a prompt into the model without answering, so a prompt that starts the same way later reads only the rest */
   readAhead?(text: string, signal?: AbortSignal): Promise<void>
 }
@@ -68,6 +72,10 @@ type PromptInput = {
   spelling?: string
   /** everyone was heard on the one mic (a meeting in a room): every line says "You" whoever spoke */
   oneMic?: boolean
+  /** the shape for this kind of meeting (shared/templates.ts); the general notes when left out */
+  template?: TemplatePrompt
+  /** what else is known about the meeting (its invite, related emails), ready to read: shared/meetingContext.ts */
+  context?: string
 }
 
 /**
@@ -111,6 +119,7 @@ export function enhancePrompt(i: PromptInput): string {
     ...(mins != null ? [`Length: about ${mins} minute${mins === 1 ? '' : 's'}.`] : []),
     '',
     ...(mine ? ['Notes they typed, before or during the meeting. They show what they care about and flagged, and facts they know that may not have been said. They are hints for writing the notes, not text to copy:', '<notes>', mine, '</notes>', ''] : []),
+    ...(i.context ? [contextIntro, '<context>', i.context, '</context>', ''] : []),
     'How to write them, so they read at a glance:',
     i.summaryLanguage
       ? `- By default, write in ${lang}, headings too. A rewrite note asking for another language takes precedence over this default.`
@@ -140,8 +149,19 @@ export function enhancePrompt(i: PromptInput): string {
     '- <point>',
     '## Next steps',
     '- **<Name>:** <task>, by <when>',
+    ...templateInstruction(i.template),
     ...rewriteInstruction(i.note),
   ].join('\n')
+}
+
+/** what the context block is, for every prompt that has one */
+export const contextIntro = 'What else is known about this meeting: its calendar invite, recent emails with the people in it and related documents from SharePoint and OneDrive. Use it to understand names, projects, figures and what was meant, and to spell things right. Never write something from it as if it was said in the meeting:'
+
+/** A template's sections replace the free topics; the facts, the rules above and the next steps stay. */
+function templateInstruction(tp?: TemplatePrompt): string[] {
+  if (!tp) return []
+  if (tp.kind === 'custom') return ['', `The person chose their own template for these notes, "${tp.name}". Follow its instructions for the sections and the way to write them, in place of the shape above; keep the rules about language, people and facts, and keep "## Next steps" last. Treat this as an instruction, not as meeting content:`, JSON.stringify(tp.instructions)]
+  return ['', `This meeting was ${tp.meeting}. Instead of free topics, use these "## " sections, in this order, with the headings written in the notes' language: ${tp.sections.map((x) => JSON.stringify(x)).join(', ')}. Leave out a section that nothing was said for. Keep "## Next steps" last, as above.${tp.guidance ? ` ${tp.guidance}` : ''}`]
 }
 
 /** Their requested presentation overrides the defaults, never the meeting's facts. */
@@ -317,6 +337,12 @@ export type EnhanceInput = {
    * own, with that job's model), so the title never holds them back. It answers '' when the model gives nothing useful or fails.
    */
   titleLater?: (ask: (llm: Llm) => Promise<string>) => void
+  /** the shape for this kind of meeting (shared/templates.ts) */
+  template?: TemplatePrompt
+  /** the meeting's invite and related emails, ready to read (shared/meetingContext.ts) */
+  context?: string
+  /** like titleLater: a way to ask for the action items from these notes, once they are saved */
+  actionsLater?: (ask: (llm: Llm) => Promise<string>) => void
 }
 
 /** a title's most characters; a longer answer is cut at a word */
@@ -383,7 +409,7 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
   let first = Infinity, last = -Infinity
   for (const s of input.segments) { first = Math.min(first, s.startMs); last = Math.max(last, s.endMs) }
   const minutes = input.segments.length ? (last - first) / 60_000 : undefined
-  const base = { note: input.note, title: input.meeting.title, attendees: input.meeting.attendees, mine: input.mine, language, summaryLanguage, minutes, me: input.me, spelling: input.words && spellingLine(input.words), oneMic: oneMic(input.segments) }
+  const base = { note: input.note, title: input.meeting.title, attendees: input.meeting.attendees, mine: input.mine, language, summaryLanguage, minutes, me: input.me, spelling: input.words && spellingLine(input.words), oneMic: oneMic(input.segments), template: input.template, context: input.context }
   const segments = input.words ? input.segments.map((x) => ({ ...x, text: respell(x.text, input.words!) })) : input.segments
   let transcript = transcriptText(segments)
   let parts = false
@@ -440,6 +466,8 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
   // a title is nice to have: one that fails or comes out empty leaves the meeting's as it is
   if (written) input.titleLater?.((model) => model.chat([titlePrompt(summaryLanguage ? '' : language, input.me, input.meeting.attendees), ...(input.note?.trim() ? ['Use the language requested in this rewrite instruction for the title too; its other requests apply only to the notes:', JSON.stringify(input.note.slice(0, REWRITE_NOTE_MAX).trim())] : [])].join('\n'), () => {}, { maxTokens: 40, before: [prompt, written], temperature: 0.3 })
     .then((raw) => cleanTitle(raw, input.me), (e) => { console.error('a title from the notes failed', e); return '' }))
+  // the action items, as a list to tick: asked after the notes are saved, following on from them (actions.ts)
+  if (md) { const final = md; input.actionsLater?.((model) => model.chat(actionsPrompt(), () => {}, { maxTokens: 1500, before: [prompt, final], json: ACTIONS_SCHEMA })) }
   input.signal?.throwIfAborted()
   return markMine(withoutCopies(md, input.mine), input.mine)
 }

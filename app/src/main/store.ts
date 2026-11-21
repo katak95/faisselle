@@ -8,6 +8,8 @@ import { attendeeMembership, matchingOwnEmail, ownAddress, personEmail } from '.
 import type { FolderSuggestionRecord } from '../shared/folderSuggestion'
 import { unusedPreparedNote } from '../shared/agendaNote'
 import { speakerOrder } from '../shared/speakerColors'
+import type { MeetingExtras } from '../shared/types'
+import { cleanActions } from '../shared/actions'
 import { DatabaseSync } from 'node:sqlite'
 import { randomUUID } from 'node:crypto'
 import { sourceOf, type TitleSource } from './titles'
@@ -267,6 +269,12 @@ export class Store {
     if (!hadPeople) backfillPeople(this.db)
     // chat across meetings: its chunks, vectors and saved conversations (library/store.ts)
     libraryTables(this.db)
+    // what is written beside the notes: the template they follow, the action items, the follow-up email and the brief
+    this.db.exec(`CREATE TABLE IF NOT EXISTS meeting_extras (
+      meeting_id TEXT PRIMARY KEY REFERENCES meetings(id) ON DELETE CASCADE,
+      template_id TEXT, actions TEXT, followup TEXT, followup_at INTEGER, brief TEXT, brief_at INTEGER, use_context INTEGER)`)
+    // the Confluence page a meeting was sent to (atlassian/publish.ts), added after the table was
+    if (!(this.db.prepare('PRAGMA table_info(meeting_extras)').all() as Row[]).some((r) => r.name === 'confluence')) this.db.exec('ALTER TABLE meeting_extras ADD COLUMN confluence TEXT')
     // voices told apart by letter (Speaker A, B) are gone: a database from then loses the letters, so those lines say Them
     if (this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'speakers'").get()) {
       this.db.exec("UPDATE segments SET speaker = NULL WHERE track = 'them'; DROP TABLE speakers")
@@ -322,8 +330,8 @@ export class Store {
     const ownEmail = m.eventId ? ownAddress(m.ownEmail) : null
     this.rememberOwnEmail(ownEmail)
     const titleSource = m.titleSource ?? sourceOf(m.title, m.eventId)
-    this.db.prepare('INSERT INTO meetings (id, title, started_at, ended_at, event_id, app, attendees, state, language, title_source, duration_ms, event_started_at, event_ended_at, event_title, event_calendar_name, event_calendar_source, source, transcription_pending, own_email, keep_attendees) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, m.title, m.startedAt, m.endedAt, m.eventId, m.app, JSON.stringify(m.attendees), m.state, language, titleSource, m.durationMs ?? null, m.eventStartedAt ?? null, m.eventEndedAt ?? null, m.eventTitle ?? null, m.eventCalendarName ?? null, m.eventCalendarSource ?? null, m.source ?? null, Number(!!m.transcriptionPending), ownEmail, Number(!!m.keepAttendees))
+    this.db.prepare('INSERT INTO meetings (id, title, started_at, ended_at, event_id, app, attendees, state, language, title_source, duration_ms, event_started_at, event_ended_at, event_title, event_calendar_name, event_calendar_source, source, source_id, transcription_pending, own_email, keep_attendees) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(id, m.title, m.startedAt, m.endedAt, m.eventId, m.app, JSON.stringify(m.attendees), m.state, language, titleSource, m.durationMs ?? null, m.eventStartedAt ?? null, m.eventEndedAt ?? null, m.eventTitle ?? null, m.eventCalendarName ?? null, m.eventCalendarSource ?? null, m.source ?? null, m.sourceId ?? null, Number(!!m.transcriptionPending), ownEmail, Number(!!m.keepAttendees))
     rememberPeople(this.db, m.attendees)
     return this.meeting(id)!
   }
@@ -391,6 +399,11 @@ export class Store {
     const r = this.db.prepare('SELECT * FROM meetings WHERE id = ?').get(id) as Row | undefined
     return r ? this.readMeeting(r) : undefined
   }
+  /** a meeting brought in from another app, by that app's own id for it (backups and imports keep it) */
+  meetingFromSource(source: string, sourceId: string): Meeting | undefined {
+    const r = this.db.prepare('SELECT * FROM meetings WHERE source = ? AND source_id = ? LIMIT 1').get(source, sourceId) as Row | undefined
+    return r ? this.readMeeting(r) : undefined
+  }
   /** EventKit ids include the occurrence date, so recurring meetings keep separate notes. */
   meetingForEvent(eventId: string): Meeting | undefined {
     const r = this.db.prepare('SELECT * FROM meetings WHERE event_id = ? AND trashed_at IS NULL ORDER BY started_at DESC, rowid DESC LIMIT 1').get(eventId) as Row | undefined
@@ -403,6 +416,11 @@ export class Store {
     return (rows as Row[]).map(r => this.readMeeting(r))
   }
 
+  /** Waiting or queued labels on meetings with nothing left to transcribe (recordings, not uploads or replacements): cleared, their ids returned */
+  clearFinishedTranscriptionStates(): string[] {
+    return (this.db.prepare(`UPDATE meetings SET transcription_state=NULL WHERE transcription_pending=0 AND transcription_again=0 AND COALESCE(source,'')!='audio-file'
+      AND transcription_state IN ('queued','transcribing','waiting-model','waiting-recording') RETURNING id`).all() as Array<{ id: string }>).map(r => r.id)
+  }
   clearTranscriptionState(id:string) { this.db.prepare('UPDATE meetings SET transcription_state=NULL,transcription_again=0 WHERE id=?').run(id);this.clearTranscriptionDraft(id) }
   interruptAudioPreparations() {
     this.db.prepare("UPDATE meetings SET transcription_state='error',transcription_pending=0 WHERE source='audio-file' AND transcription_state='preparing'").run()
@@ -545,6 +563,44 @@ export class Store {
     const edited = patch.edited ?? cur.edited
     this.db.prepare('INSERT INTO notes (meeting_id, mine, enhanced, edited) VALUES (?, ?, ?, ?) ON CONFLICT(meeting_id) DO UPDATE SET mine = excluded.mine, enhanced = excluded.enhanced, edited = excluded.edited')
       .run(meetingId, mine, enhanced, edited ? 1 : 0)
+  }
+
+  /** the template, action items, follow-up email and brief written beside the notes (shared/types.ts MeetingExtras) */
+  extras(meetingId: string): MeetingExtras {
+    const r = this.db.prepare('SELECT * FROM meeting_extras WHERE meeting_id = ?').get(meetingId) as Row | undefined
+    const json = <T>(v: unknown, fallback: T): T => { try { return v == null ? fallback : JSON.parse(String(v)) as T } catch { return fallback } }
+    return {
+      templateId: r?.template_id == null ? null : String(r.template_id),
+      actions: r?.actions == null ? null : cleanActions(json(r.actions, [])),
+      followup: json<MeetingExtras['followup']>(r?.followup, null),
+      followupAt: r?.followup_at == null ? null : Number(r.followup_at),
+      brief: r?.brief == null ? null : String(r.brief),
+      briefAt: r?.brief_at == null ? null : Number(r.brief_at),
+      useContext: r?.use_context == null ? null : Number(r.use_context) === 1,
+      confluence: json<MeetingExtras['confluence']>(r?.confluence, null),
+    }
+  }
+  setExtras(meetingId: string, patch: Partial<MeetingExtras>) {
+    if (!this.meeting(meetingId)) return
+    const cur = this.extras(meetingId), next = { ...cur, ...patch }
+    this.db.prepare(`INSERT INTO meeting_extras (meeting_id, template_id, actions, followup, followup_at, brief, brief_at, use_context, confluence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(meeting_id) DO UPDATE SET template_id = excluded.template_id, actions = excluded.actions, followup = excluded.followup, followup_at = excluded.followup_at,
+      brief = excluded.brief, brief_at = excluded.brief_at, use_context = excluded.use_context, confluence = excluded.confluence`)
+      .run(meetingId, next.templateId, next.actions == null ? null : JSON.stringify(next.actions), next.followup == null ? null : JSON.stringify(next.followup),
+        next.followupAt, next.brief, next.briefAt, next.useContext == null ? null : next.useContext ? 1 : 0, next.confluence == null ? null : JSON.stringify(next.confluence))
+  }
+  /** the meetings before this time that someone in this list was at, latest first: what a brief recalls */
+  meetingsWith(emails: string[], before: number, limit = 5): Meeting[] {
+    const want = new Set(emails.map((e) => e.toLowerCase()).filter(Boolean))
+    if (!want.size) return []
+    const rows = this.db.prepare(`SELECT * FROM meetings WHERE started_at < ? AND trashed_at IS NULL AND state = 'done' ORDER BY started_at DESC LIMIT 400`).all(before) as Row[]
+    const out: Meeting[] = []
+    for (const r of rows) {
+      const m = this.readMeeting(r)
+      if (m.attendees.some((a) => a.email && want.has(a.email.toLowerCase()))) out.push(m)
+      if (out.length >= limit) break
+    }
+    return out
   }
 
   /** Who was at the meeting when the enhanced notes were last written (null: not recorded) */

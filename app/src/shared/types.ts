@@ -1,3 +1,4 @@
+import type { MeterPacket } from './speechWave'
 import type { AudioUploadFile, AudioUploadStatus } from './audioUpload'
 import type { RendererError } from './rendererError'
 import type { WidgetLayout, WidgetSurface } from './widgetMorph'
@@ -54,7 +55,7 @@ export type YogurtApi = {
     state(): Promise<WidgetView | null>
     onState(cb: (v: WidgetView | null) => void): () => void
     /** sound levels 0..1, about 10 a second */
-    onLevel(cb: (lv: { me: number; them: number }) => void): () => void
+    onLevel(cb: (lv: MeterPacket) => void): () => void
     open(): void
     stop(): void
     layout(): Promise<WidgetLayout | null>
@@ -148,7 +149,7 @@ export type YogurtApi = {
     onChange(cb: (v: NoteView) => void): () => void
   }
   share: {
-    /** opens the Mac share menu for the public Yogurt website, anchored in renderer CSS pixels */
+    /** opens the Mac share menu for the public Figolu website, anchored in renderer CSS pixels */
     appLink(x: number, y: number): Promise<boolean>
     /** puts the notes or the transcript on the clipboard as text and HTML; nothing: there was nothing to copy */
     copy(meetingId: string, what: 'notes' | 'transcript', side: 'mine' | 'enhanced'): Promise<'copied' | 'nothing' | 'failed'>
@@ -156,10 +157,70 @@ export type YogurtApi = {
     save(meetingId: string, side: 'mine' | 'enhanced'): Promise<'saved' | 'cancelled' | 'failed'>
   }
   /** every meeting in one file and back (Settings): import adds the ones that are not here, never changes one that is */
+  /** Settings → Notes model: this computer or Claude on Amazon Bedrock, signed in with AWS IAM Identity Center */
+  cloud: {
+    get(): Promise<CloudNotesView>
+    setProvider(p: 'local' | 'bedrock'): Promise<CloudNotesView>
+    /** only the fields given change; a field that isn't valid stays as it was */
+    setConfig(c: Partial<CloudNotesView['config']>): Promise<CloudNotesView>
+    signIn(): Promise<CloudNotesView>
+    cancelSignIn(): Promise<CloudNotesView>
+    signOut(): Promise<CloudNotesView>
+    accounts(): Promise<Array<{ id: string; name: string }>>
+    roles(accountId: string): Promise<string[]>
+    test(): Promise<{ ok: true } | { ok: false; message: string }>
+    /** on Bedrock: removes the local notes models' files (they download again if the notes come back here) */
+    removeLocal(): Promise<CloudNotesView>
+    onChange(fn: (v: CloudNotesView) => void): () => void
+  }
+  /** what is written beside a meeting's notes: action items, follow-up email, brief (main/extras.ts) */
+  extras: {
+    get(meetingId: string): Promise<ExtrasView | null>
+    write(meetingId: string, kind: ExtrasKind): Promise<void>
+    setActions(meetingId: string, items: import('./actions').ActionItem[]): Promise<void>
+    setFollowUp(meetingId: string, f: FollowUp): Promise<void>
+    setBrief(meetingId: string, md: string): Promise<void>
+    useContext(meetingId: string, on: boolean): Promise<void>
+    /** follow this template and write the notes again */
+    setTemplate(meetingId: string, templateId: string): Promise<void>
+    onChange(fn: (v: ExtrasView) => void): () => void
+  }
+  /** Settings → Summary templates */
+  templates: {
+    get(): Promise<TemplatesView>
+    setDefault(id: string): Promise<TemplatesView>
+    /** no id: a new one */
+    save(t: { id?: string; name: string; instructions: string }): Promise<TemplatesView>
+    remove(id: string): Promise<TemplatesView>
+  }
+  /** Settings → Atlassian: Confluence, signed in through Atlassian's MCP server */
+  atlassian: {
+    get(): Promise<AtlassianView>
+    signIn(): Promise<AtlassianView>
+    cancel(): Promise<AtlassianView>
+    signOut(): Promise<AtlassianView>
+    setSite(id: string): Promise<AtlassianView>
+    onChange(fn: (v: AtlassianView) => void): () => void
+    /** the meeting's report to its Confluence page: made the first time, updated after */
+    send(meetingId: string): Promise<{ status: 'sent' | 'updated'; url: string } | { status: 'failed'; message: string; kind: string }>
+  }
+  /** Settings → Microsoft 365 (read only) */
+  m365: {
+    get(): Promise<M365View>
+    signIn(): Promise<M365View>
+    cancel(): Promise<M365View>
+    signOut(): Promise<M365View>
+    setCalendar(on: boolean): Promise<M365View>
+    setApp(clientId: string, tenantId: string): Promise<M365View>
+    /** SharePoint and OneDrive search: the server starts again in work-account mode and asks to sign in again */
+    setDocuments(on: boolean): Promise<M365View>
+    onChange(fn: (v: M365View) => void): () => void
+  }
   /** AI apps on this Mac reading meetings through MCP (Settings) */
   mcp: {
     status(): Promise<McpStatus>
     set(on: boolean): Promise<McpStatus>
+    setChanges(on: boolean): Promise<McpStatus>
     onClients(fn: (clients: string[]) => void): () => void
   }
   updates: {
@@ -254,12 +315,12 @@ export type YogurtApi = {
     addLink(url: string): Promise<{ ok: true; id: string; name: string } | { ok: false; error: 'bad-url' | 'unreachable' | 'not-calendar' | 'public-address' }>
     removeLink(id: string): Promise<boolean>
   }
-  /** what Yogurt may use: read it, ask for it (the Mac's own prompt), or open its pane of System Settings */
+  /** what Figolu may use: read it, ask for it (the Mac's own prompt), or open its pane of System Settings */
   permissions: {
     status(): Promise<PermissionStatus>
     request(kind: PermissionKind): Promise<Access>
     open(kind: PermissionKind): Promise<void>
-    /** quit and open Yogurt again, for a permission the Mac applies only then; false while recording */
+    /** quit and open Figolu again, for a permission the Mac applies only then; false while recording */
     relaunch(): Promise<boolean>
   }
   /** first run: the intro and the questions still to ask (none once answered or put off); home's Finish setup after */
@@ -276,7 +337,7 @@ export type YogurtApi = {
   }
   settings: {
     /** myName: what the person is called in meetings (their Mac's full name, macName, when they never changed it) */
-    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Yogurt's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
+    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Figolu's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; includeRecordingCredit: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
     /** blank goes back to the Mac's full name */
     setName(name: string): Promise<void>
     setTheme(v: Theme): Promise<void>
@@ -287,6 +348,7 @@ export type YogurtApi = {
     setAppVisibility(choice: AppVisibility): Promise<void>
     setStopWhenCallEnds(on: boolean): Promise<void>
     setRecordingReminder(on: boolean): Promise<void>
+    setIncludeRecordingCredit(on: boolean): Promise<void>
     setKeepRecordings(on: boolean): Promise<void>
     /** saves the whole list; gives back what was kept */
     setJargon(terms: string[]): Promise<string[]>
@@ -464,6 +526,86 @@ export type ConversationView = {
 export type ConversationSummary = { id: string; title: string; updatedAt: number; chips: ContextTarget[]; draft: string }
 
 /** enabled: in Settings. clients: apps connected now. command: the program to give an AI app */
-export type McpStatus = { enabled: boolean; clients: string[]; command: string }
+/** changes: AI apps may also change meetings, notes and a few settings (off unless turned on) */
+export type McpStatus = { enabled: boolean; changes: boolean; clients: string[]; command: string }
 /** Settings → Updates. available: this build updates itself (not in development or a preview); next: the version found */
 export type UpdateStatus = { version: string; available: boolean; on: boolean; state: 'idle' | 'checking' | 'latest' | 'downloading' | 'ready' | 'error'; next?: string; dismissed?: boolean }
+
+/** the AWS sign-in for Bedrock, as Settings shows it */
+export type SsoStatus =
+  | { state: 'signed-out' }
+  /** waiting for the person to approve in the browser: the code they should see there */
+  | { state: 'pending'; userCode: string; url: string }
+  | { state: 'signed-in'; startUrl: string; expiresAt: number }
+  /** the token ran out and could not be refreshed: sign in again */
+  | { state: 'expired'; startUrl: string }
+  | { state: 'error'; message: string }
+
+export type CloudNotesView = {
+  provider: 'local' | 'bedrock'
+  /** a notes model fits this computer (it can go back to local) */
+  canRunLocally: boolean
+  sso: SsoStatus
+  config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
+  /** signed in, with an account and role: notes can be written on Bedrock */
+  ready: boolean
+  /** the local notes models' files on this computer (0: none), which Bedrock lets the person remove */
+  localBytes: number
+}
+
+export type FollowUp = { subject: string; body: string }
+/** what is written beside a meeting's notes (main/extras.ts) */
+export type MeetingExtras = {
+  /** the summary template its notes follow (shared/templates.ts); the default one when null */
+  templateId: string | null
+  /** null: never taken from the notes (yet) */
+  actions: import('./actions').ActionItem[] | null
+  followup: FollowUp | null; followupAt: number | null
+  /** Markdown: the brief written before the meeting */
+  brief: string | null; briefAt: number | null
+  /** read the invite and related emails when writing for it; null: on whenever Microsoft 365 is connected */
+  useContext: boolean | null
+  /** the Confluence page this meeting was sent to (sending again updates it) */
+  confluence: ConfluencePage | null
+}
+export type ExtrasKind = 'actions' | 'followup' | 'brief'
+/** a meeting's extras as the note shows them, with what is being written now */
+export type ExtrasView = MeetingExtras & {
+  meetingId: string
+  /** being written now, with the text so far */
+  writing?: { kind: ExtrasKind; draft: string }
+  /** the last try failed, with why in words */
+  failed?: { kind: ExtrasKind; message: string }
+  /** Microsoft 365 is connected: the invite and emails can be read */
+  contextAvailable: boolean
+}
+
+/** Microsoft 365 (read only), as Settings shows it */
+export type M365Status =
+  | { state: 'off' }
+  | { state: 'starting' }
+  | { state: 'signed-out' }
+  /** waiting for the person to enter the code on Microsoft's page */
+  | { state: 'pending'; code: string; url: string }
+  | { state: 'connected'; account: string | null }
+  /** consent: Microsoft wants an administrator to approve the permissions */
+  | { state: 'error'; message: string; consent?: boolean }
+export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string
+  /** SharePoint and OneDrive search is on; documentsRefused: Microsoft refused it until an administrator approves */
+  documents: boolean; documentsRefused: boolean }
+
+export type TemplatesView = { custom: import('./templates').CustomTemplate[]; defaultId: string }
+
+/** Atlassian (Confluence), as Settings shows it */
+export type AtlassianStatus =
+  | { state: 'off' }
+  | { state: 'starting' }
+  | { state: 'signed-out' }
+  /** the browser is open on Atlassian's sign-in */
+  | { state: 'pending' }
+  | { state: 'connected'; site: string; siteUrl: string; account: string | null; sites: Array<{ id: string; name: string; url: string }> }
+  /** admin: the site or organisation doesn't let Figolu (or Atlassian's MCP server) in */
+  | { state: 'error'; message: string; admin?: boolean }
+export type AtlassianView = { status: AtlassianStatus; siteId: string; space: { key: string; url?: string } | null }
+/** a meeting sent to Confluence: where it went, and when */
+export type ConfluencePage = { pageId: string; url: string; at: number }

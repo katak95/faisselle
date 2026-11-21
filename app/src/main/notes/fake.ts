@@ -12,6 +12,16 @@ export class FakeEngine implements Engine {
   async chat(req: ChatRequest, onToken: (text: string) => void, signal?: AbortSignal): Promise<string> {
     const prompt = req.messages.at(-1)?.content ?? ''
     fakePrompts.notes.push(prompt)
+    // the action items, the follow-up email and the brief (notes/actions.ts, extras.ts)
+    if (prompt.includes('Now list the action items from this meeting as JSON')) return this.stream(JSON.stringify({ items: [
+      { owner: 'You', task: 'Send the launch email', due: 'Wednesday morning' },
+      { owner: 'Maya', task: 'Put the site live', due: 'Tuesday' },
+    ] }), onToken, signal)
+    if (prompt.includes('Write the follow-up email')) return this.stream(JSON.stringify({ subject: 'Launch plan: next steps',
+      body: 'Hi all,\n\nThanks for the time today. Here is what we agreed:\n- The site goes live on Tuesday.\n- The email goes out on Wednesday morning.\n\nBest,\nYou' }), onToken, signal)
+    if (prompt.startsWith('You will prepare')) return this.stream([
+      '## Purpose', '- Agree on the renewal terms.', '## People', '- **Maya Chen:** the client contact.', '## Questions to ask', '- Can we keep the price for two years?',
+    ].join('\n'), onToken, signal)
     if (prompt.startsWith('Suggest one existing folder')) {
       const data = JSON.parse(prompt.slice(prompt.indexOf('{')))
       // sure only of a folder the meeting's title names, like "Customer call with Acme" for Acme
@@ -93,4 +103,23 @@ function fakeVector(text: string): number[] {
   // never all zero: a text with no words still has a direction
   v[0] += 0.01
   return v
+}
+
+/**
+ * Fake mode on Bedrock: the Anthropic client's messages.stream, answered by the fake engine, so the notes on
+ * "Bedrock" read the same as the local ones in tests.
+ */
+export function fakeMessagesClient(engine: Engine): import('./bedrock').MessagesClient {
+  type Params = { messages: Array<{ role: 'user' | 'assistant'; content: Array<{ text: string }> }>; max_tokens: number }
+  const stream = (p: Params, o?: { signal?: AbortSignal }) => {
+    const listeners: Array<(t: string) => void> = []
+    const done = Promise.resolve().then(() => engine.chat({ messages: p.messages.map((m) => ({ role: m.role, content: m.content.map((c) => c.text).join('') })), maxTokens: p.max_tokens },
+      (t) => { for (const l of listeners) l(t) }, o?.signal))
+    const s = {
+      on(ev: string, fn: (t: string) => void) { if (ev === 'text') listeners.push(fn); return s },
+      finalMessage: async () => ({ stop_reason: 'end_turn', content: [{ type: 'text', text: await done }], usage: { input_tokens: 0, output_tokens: 0 } }),
+    }
+    return s
+  }
+  return { messages: { stream } } as unknown as import('./bedrock').MessagesClient
 }

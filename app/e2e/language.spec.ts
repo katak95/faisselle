@@ -1,3 +1,4 @@
+import { openFromCorner } from './cornerNavigation'
 import { _electron as electron, expect, test, type ElectronApplication } from '@playwright/test'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -21,7 +22,7 @@ test('the interface follows the Mac’s language until one is picked', async () 
   const { app, page } = await launch('ja-JP,en-US')
   try {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     await expect(page.getByTestId('settings-heading')).toHaveText('設定')
     const picker = page.getByTestId('settings-app-language')
     await expect(picker).toHaveValue('')
@@ -35,9 +36,9 @@ test('picking a language in Settings changes everything at once, menus too, and 
   const a = await launch('en-US')
   let { app, page } = a
   try {
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     await expect(page.getByTestId('settings-heading')).toHaveText('Settings')
-    expect(await tray(app)).toContain('Open Yogurt')
+    expect(await tray(app)).toContain('Open Figolu')
     expect(await menuBar(app)).toContain('Edit')
 
     const picker = page.getByTestId('settings-app-language')
@@ -46,7 +47,7 @@ test('picking a language in Settings changes everything at once, menus too, and 
     await expect(page.getByTestId('settings-heading')).toHaveText('Einstellungen')
     await expect(page.locator('html')).toHaveAttribute('lang', 'de')
     await expect(page.getByRole('navigation', { name: 'Arbeitsbereich' })).toBeVisible()
-    await expect.poll(() => tray(app)).toContain('Yogurt öffnen')
+    await expect.poll(() => tray(app)).toContain('Figolu öffnen')
     await expect.poll(() => menuBar(app)).toContain('Bearbeiten')
 
     // Arabic reads right to left: the sidebar moves to the right, text starts on the right
@@ -62,14 +63,14 @@ test('picking a language in Settings changes everything at once, menus too, and 
     ;({ app, page } = await launch('en-US', a.userData))
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     await expect(page.getByTestId('settings-app-language')).toHaveValue('ar')
 
     // back to the Mac's language
     await page.getByTestId('settings-app-language').selectOption('')
     await expect(page.getByTestId('settings-heading')).toHaveText('Settings')
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
-    await expect.poll(() => tray(app)).toContain('Open Yogurt')
+    await expect.poll(() => tray(app)).toContain('Open Figolu')
   } finally { await app.close() }
 })
 
@@ -77,7 +78,7 @@ test('summary language defaults to the meeting and persists independently of app
   const a = await launch('en-US')
   let { app, page } = a
   try {
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     const picker = page.getByTestId('settings-summary-language')
     await expect(picker).toHaveValue('')
     await expect(picker.locator('option').first()).toHaveText('Same as the meeting')
@@ -88,7 +89,7 @@ test('summary language defaults to the meeting and persists independently of app
     await expect.poll(() => page.evaluate(() => window.yogurt.settings.get().then(s => s.summaryLanguage))).toBe('fr')
     await app.close()
     ;({ app, page } = await launch('en-US', a.userData))
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     await expect(page.getByTestId('settings-summary-language')).toHaveValue('fr')
     await page.getByTestId('settings-summary-language').selectOption('')
     await expect.poll(() => page.evaluate(() => window.yogurt.settings.get().then(s => s.summaryLanguage))).toBe('')

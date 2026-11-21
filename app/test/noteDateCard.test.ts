@@ -37,7 +37,7 @@ function render(status?: CalendarStatus, { picking = false, linked = false, cale
 it.each([
   ['notDetermined', 'Calendar access is off', 'Connect calendar'],
   ['denied', 'Calendar access is off', 'Open System Settings'],
-  ['error', "Yogurt couldn't read your calendar", 'Try again'],
+  ['error', "Figolu couldn't read your calendar", 'Try again'],
 ] as const)('keeps date and duration with a normal recovery action for %s', (status, message, action) => {
   for (const picking of [false, true]) {
     const html = render(status, { picking })
@@ -102,11 +102,11 @@ it('shows a choice on a one-event day and only the event details once linked', (
   const choose = render('granted', { events: [event] })
   expect(choose).not.toContain('No event linked')
   expect(choose).toContain('Select calendar event')
-  expect(choose).toContain('lucide-plus')
+  expect(choose).toContain('data-icon="Plus"')
   expect(choose).not.toMatch(/aria-(checked|selected)="true"|Linked event|note-date-unlink/)
   for (const html of [choose, render('granted')]) expect(html).not.toContain('Only calendars enabled in Settings appear here.')
   const linked = render('granted', { linked: true, event, picking: true, snapshot: { title: 'Therapy' } })
-  expect(linked).not.toMatch(/Linked event|lucide-check/)
+  expect(linked).not.toMatch(/Linked event|data-icon="Check"/)
   expect(linked).toContain('Eric Busy')
   expect(linked).toContain('Unlink calendar event')
   expect(linked).not.toContain('No event linked')
@@ -128,7 +128,7 @@ it('uses existing short translations for every recovery and empty state in all 3
   expect(LOCALES).toHaveLength(32)
   for (const { id } of LOCALES) {
     setLanguage(id)
-    for (const key of ['Calendar access is off', "Yogurt couldn't read your calendar", 'Connect calendar', 'Open System Settings', 'Try again', 'No events', 'Select calendar event', 'Previous day', 'Next day']) {
+    for (const key of ['Calendar access is off', "Figolu couldn't read your calendar", 'Connect calendar', 'Open System Settings', 'Try again', 'No events', 'Select calendar event', 'Previous day', 'Next day']) {
       expect(t(key)).toBeTruthy()
       expect(t(key)).not.toMatch(/[:：—\n]/)
       if (id !== 'en') expect(t(key)).not.toBe(key)

@@ -1,12 +1,13 @@
 import { InlineError, ReadError } from './InlineError'
+import { TranscriptionNotice, type TranscriptNotice } from './Transcription'
 import {transcriptReplacement} from '../../../shared/transcriptReplacement'
 import { citationTargetIndex } from '../../../shared/citations'
 import { SPEAKER_COLORS } from '../../../shared/speakerColors'
 import { ScrollFade } from './ScrollFade'
 import { Loading } from './Loading'
 import { useLoadingState } from '../useLoadingState'
-import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type CSSProperties, type KeyboardEvent, type MouseEvent } from 'react'
-import { AudioLines, ArrowDown } from 'lucide-react'
+import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from 'react'
+import { AudioLines, ArrowDown } from './Icons'
 import type { Segment, TranscriptPartial } from '../../../shared/types'
 import { t } from '../../../shared/i18n'
 import { useLanguage } from '../i18n'
@@ -180,7 +181,7 @@ const Row = memo(function Row({ line: l, focused, name, playing, playable, focus
  * while it records; after the meeting a line plays from that moment, and the player sits at the bottom. The header searches it.
  */
 export function Transcript({ id, notice, processing=false, replacing=false, recording, inline = false, active = true, onClose, focus, toolbar }: {
-  id: string; notice?:ReactNode; processing?:boolean; replacing?:boolean; recording: boolean; inline?: boolean; active?: boolean; toolbar?: HTMLElement | null; onClose?: () => void
+  id: string; notice?: TranscriptNotice; processing?:boolean; replacing?:boolean; recording: boolean; inline?: boolean; active?: boolean; toolbar?: HTMLElement | null; onClose?: () => void
   /** a line to show and mark (an answer's source): ms into the meeting; seq: each time it is asked for */
   focus?: { ms: number; match?: string; seq: number }
 }) {
@@ -266,7 +267,7 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
   const onScroll = () => {
     const el = list.current
     if (!el) return
-    // not Yogurt's own glide, so theirs (the scroll bar dragged, a trackpad's glide): playing keeps its hands off while it lasts
+    // not Figolu's own glide, so theirs (the scroll bar dragged, a trackpad's glide): playing keeps its hands off while it lasts
     if (ours.current === null) { handsOn.current = performance.now(); theyScrolled() }
     stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < STICK_PX
     setBehind(!stick.current)
@@ -283,7 +284,7 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
   const following = useRef(true)
   /** where the line being played went while they looked elsewhere, for Back to playing */
   const [away, setAway] = useState<'up' | 'down' | null>(null)
-  /** stops Yogurt's own glide while it moves; its scroll events are not taken for theirs */
+  /** stops Figolu's own glide while it moves; its scroll events are not taken for theirs */
   const ours = useRef<ReturnType<typeof followGlide> | null>(null)
   /** when they last turned the wheel, pressed a key or touched the list: a glide started then would swallow their scroll */
   const handsOn = useRef(0)
@@ -303,7 +304,7 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
     const to = followTarget(r, view, always)
     if (to === null || !ours.current && Math.abs(to - el.scrollTop) < 2) return
     if (!ours.current) {
-      // The final scroll event arrives after done. A fresh seek in that frame still belongs to Yogurt.
+      // The final scroll event arrives after done. A fresh seek in that frame still belongs to Figolu.
       const motion = followGlide(el, () => requestAnimationFrame(() => {
         if (ours.current === motion && !motion.active) ours.current = null
       }))
@@ -330,7 +331,7 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
     following.current = inView(r, view)
     setAway(following.current ? null : r.top < view.scrollTop ? 'up' : 'down')
   }
-  // a wheel, a key, a touch or a press (the scroll bar too): a glide of Yogurt's still moving is stopped, so it can't carry them back
+  // a wheel, a key, a touch or a press (the scroll bar too): a glide of Figolu's still moving is stopped, so it can't carry them back
   const theirs = () => {
     replacementFollow.current=false
     handsOn.current = performance.now()
@@ -390,6 +391,8 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
     setFinding(open)
     if (open) { setShowAll(true); stick.current = false; ours.current?.stop(); ours.current = null }
   }, [])
+  const empty = loaded && !failed && timeline.length === 0 && (!processing || !!notice)
+  const noticeContent = notice && <TranscriptionNotice notice={notice} centered={empty} hasLines={timeline.length > 0} />
   const Surface = inline ? 'section' : 'aside'
 
   return (
@@ -398,12 +401,17 @@ export function Transcript({ id, notice, processing=false, replacing=false, reco
       <TranscriptFind key={id} lines={lines} list={list} active={active} playbackInset={playbackInset} beforeScroll={() => visibility.current?.programmatic()} onFinding={find} toolbar={toolbar} onClose={!inline ? onClose : undefined} />
       <div className="transcript-scroll-wrap relative flex min-h-0 flex-1 flex-col">
         <ScrollFade enabled={active && loaded}><ol id="transcript-lines" data-loaded={loaded} data-loading-phase={loadingPhase} data-testid="transcript" data-replacing={replacing&&processing} ref={list} onScroll={onScroll} onWheel={theirs} onTouchStart={theirs} onPointerDown={theirs} onKeyDownCapture={theirs} onKeyDown={onKeyDown} className="loading-content transcript-loading-content flex flex-1 flex-col gap-2 overflow-y-auto px-4 pb-4 pt-2 text-sm leading-[1.55]">
-          {notice&&<li className="transcription-notice-slot">{notice}</li>}
-          {processing&&!replacing&&timeline.length===0&&<li className="transcription-placeholder" aria-hidden="true"><p className="turn-head"><span className="loading-bar" style={{width:42}}/></p><p className="bubble bubble-them"><span className="loading-bar" style={{width:180}}/></p></li>}
+          {!empty && noticeContent && <li className="transcription-notice-slot">{noticeContent}</li>}
+          {processing&&!notice&&!replacing&&timeline.length===0&&<li className="transcription-placeholder" aria-hidden="true"><p className="turn-head"><span className="loading-bar" style={{width:42}}/></p><p className="bubble bubble-them"><span className="loading-bar" style={{width:180}}/></p></li>}
           {failed && (timeline.length || processing || playable || notice ? <li><InlineError testId="transcript-read-error" retry={() => retry.current()} /></li>
             : <li className="flex flex-1"><ReadError testId="transcript-read-error" retry={() => retry.current()} /></li>)}
           {!failed && loadingPhase !== 'ready' && timeline.length===0 && <li className="loading-placeholder"><Loading layout="transcript" /></li>}
-          {!failed && loaded && !processing && allLines.length === 0 && liveSaid.length === 0 && <li data-testid="transcript-empty" className="note-empty empty-state"><div className="empty-state-content"><div className="empty-tile"><AudioLines size={28} strokeWidth={1.5} aria-hidden="true" /></div>{t('Nothing heard yet.')}</div></li>}
+          {empty && <li data-testid="transcript-empty" className="note-empty empty-state">
+            <div className="empty-state-content">
+              <div className="empty-tile"><AudioLines size={28} aria-hidden="true" /></div>
+              {noticeContent ?? t('Nothing heard yet.')}
+            </div>
+          </li>}
           {drawn.earlier > 0 && <li className="flex justify-center"><button data-testid="transcript-earlier" onClick={() => { visibility.current?.programmatic(); stick.current = false; setShowAll(true) }} className="ghost-btn">{t('Show earlier lines')}</button></li>}
           {drawn.runs.map(run => <Fragment key={run.k}>
             {turns(run.lines).map((turn) => {

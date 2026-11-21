@@ -1,4 +1,4 @@
-// Yogurt's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
+// Figolu's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
 // Internet Accounts) through EventKit, and which apps are using the microphone (Core Audio, macOS 14+).
 // Prints JSON; errors go to stderr with exit 1.
 //   yogurt-mac calendar-status       → {"status":"granted"|"denied"|"notDetermined"}
@@ -51,7 +51,7 @@ func status() -> String {
   }
 }
 
-func needAccess() { if status() != "granted" { fail("Yogurt doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
+func needAccess() { if status() != "granted" { fail("Figolu doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
 
 // MARK: Core Audio
 
@@ -157,7 +157,7 @@ let players = ["com.apple.Music", "com.spotify.client"]
 func running(_ id: String) -> Bool { !NSRunningApplication.runningApplications(withBundleIdentifier: id).isEmpty }
 /**
  * One command to a player, only if it's still running right now (it may have quit since the last look, and
- * `tell` would start it again). The first time, the Mac asks the person to let Yogurt control it; a no reads as nothing.
+ * `tell` would start it again). The first time, the Mac asks the person to let Figolu control it; a no reads as nothing.
  */
 func tell(_ id: String, _ what: String) -> String? {
   guard running(id) else { return nil }
@@ -174,7 +174,7 @@ func pausePlayers() -> [String] {
 func resumePlayers(_ ids: [String]) -> [String] {
   ids.filter { players.contains($0) && running($0) && !playing($0) }.filter { id in _ = tell(id, "play"); return true }
 }
-/** May Yogurt control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
+/** May Figolu control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
 func automation(_ id: String, ask: Bool) -> String {
   var target = AEAddressDesc()
   let created = id.withCString { AECreateDesc(typeApplicationBundleID, $0, strlen($0), &target) }
@@ -211,8 +211,8 @@ func browserTitle(_ id: String) -> String? {
 
 /**
  * Who is in a call and who is talking, as the call app shows it: its meeting windows copied out of the accessibility
- * tree, read-only (nothing is clicked or changed in the app). Only the call app Yogurt was told about, the frontmost
- * one first. Yogurt reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
+ * tree, read-only (nothing is clicked or changed in the app). Only the call app Figolu was told about, the frontmost
+ * one first. Figolu reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
  * an assistive app asks, so they are asked the way screen readers do (AXManualAccessibility): see askTree.
  */
 let axKeys = [kAXRoleAttribute, kAXSubroleAttribute, kAXDescriptionAttribute, kAXTitleAttribute, kAXValueAttribute, kAXIdentifierAttribute, "AXDOMClassList", kAXChildrenAttribute, kAXSizeAttribute] as [String]
@@ -334,39 +334,42 @@ func hasCallControl(_ w: AXUIElement, budget: Int = 1500) -> Bool {
   return false
 }
 
-func callWindows(_ app: AXUIElement, _ id: String) -> [AXUIElement] {
+func isMeetTitle(_ t: String) -> Bool { t.range(of: #"\bMeet\b"#, options: .regularExpression) != nil }
+
+/// The call windows, and the tab title when the one window was chosen by it because its accessibility title does not say Meet (Ardia's is "Ardia").
+func callWindows(_ app: AXUIElement, _ id: String) -> (wins: [AXUIElement], tab: String?) {
   let all = (axAttr(app, kAXWindowsAttribute) as? [AXUIElement]) ?? []
   if id == "us.zoom.xos" {
-    return all.filter { w in
+    return (all.filter { w in
       let ident = axText(axAttr(w, kAXIdentifierAttribute)) ?? "", title = axText(axAttr(w, kAXTitleAttribute)) ?? ""
       // while the person shares their screen Zoom hides the meeting window and shows its floating video window
       // ("zoom floating video window"), which still shows the tiles and who is talking
       return ident.hasPrefix("zm.meeting") || title.hasPrefix("Zoom Meeting") || title.hasPrefix("Zoom Webinar") || title == "zoom floating video window"
-    }
+    }, nil)
   }
   // Teams keeps its chat and calendar in windows shaped like the call's: only a window with a call control (Leave,
   // Mute) is a call, so an open chat can't hide a call in another app (#72). The same controls as Linux (calls.rs).
-  if id.hasPrefix("com.microsoft.teams") { return all.filter { hasCallControl($0) } }
+  if id.hasPrefix("com.microsoft.teams") { return (all.filter { hasCallControl($0) }, nil) }
   // Webex's meeting surfaces have stable accessibility identifiers; exclude its home window so it cannot hide another
   // call app when a recording was started by hand.
   if id == "Cisco-Systems.Spark" || id == "com.cisco.webexmeetingsapp" {
-    return all.filter { w in
+    return (all.filter { w in
       let ident = axText(axAttr(w, kAXIdentifierAttribute)) ?? ""
       return ident == "FloatingMediaWindow" || ident == "PopOutWindow"
-    }
+    }, nil)
   }
   // a browser: only windows whose front tab is a Meet call
-  let meet = all.filter { w in (axText(axAttr(w, kAXTitleAttribute)) ?? "").range(of: #"\bMeet\b"#, options: .regularExpression) != nil }
-  if !meet.isEmpty || !chromium.contains(id) { return meet }
+  let meet = all.filter { w in isMeetTitle(axText(axAttr(w, kAXTitleAttribute)) ?? "") }
+  if !meet.isEmpty || !chromium.contains(id) { return (meet, nil) }
   // Ardia names its windows "Ardia": the Meet words are only in the tab title, which AppleScript reads, and the tab
   // belongs to the focused window (#123)
-  guard let title = browserTitle(id), title.range(of: #"\bMeet\b"#, options: .regularExpression) != nil,
-        let w = axAttr(app, kAXFocusedWindowAttribute), CFGetTypeID(w) == AXUIElementGetTypeID() else { return [] }
-  return [w as! AXUIElement]
+  guard let title = browserTitle(id), isMeetTitle(title),
+        let w = axAttr(app, kAXFocusedWindowAttribute), CFGetTypeID(w) == AXUIElementGetTypeID() else { return ([], nil) }
+  return ([w as! AXUIElement], title)
 }
 
 func watchCalls(every: Int, ids: [String]) {
-  // Yogurt closes stdin to stop the watch (and a crashed Yogurt closes it too)
+  // Figolu closes stdin to stop the watch (and a crashed Figolu closes it too)
   DispatchQueue.global().async { _ = FileHandle.standardInput.readDataToEndOfFile(); DispatchQueue.main.sync { resetTrees() }; exit(0) }
   let line = { (v: [String: Any]) in
     guard let d = try? JSONSerialization.data(withJSONObject: v) else { return }
@@ -383,15 +386,15 @@ func watchCalls(every: Int, ids: [String]) {
       let front = NSWorkspace.shared.frontmostApplication?.processIdentifier
       let running = ids.compactMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0).first }
         .sorted { a, _ in a.processIdentifier == front }
-      var found: (NSRunningApplication, AXUIElement, [AXUIElement])?
+      var found: (NSRunningApplication, AXUIElement, [AXUIElement], String?)?
       for r in running {
         let app = AXUIElementCreateApplication(r.processIdentifier)
         AXUIElementSetMessagingTimeout(app, 0.3)
         askTree(app, r)
-        let wins = callWindows(app, r.bundleIdentifier ?? "")
-        if !wins.isEmpty { found = (r, app, wins); break }
+        let (wins, tab) = callWindows(app, r.bundleIdentifier ?? "")
+        if !wins.isEmpty { found = (r, app, wins, tab); break }
       }
-      if let (target, app, wins) = found, let id = target.bundleIdentifier {
+      if let (target, app, wins, tab) = found, let id = target.bundleIdentifier {
         askTree(app, target, force: true)
         // Asking the whole browser can still leave only its tabs and sidebar; asking the window itself makes it build
         // the page (tested on a live Meet call in Ardia, #123). It is one cheap call, so every reading asks again.
@@ -400,9 +403,15 @@ func watchCalls(every: Int, ids: [String]) {
         }
         let zoom = id == "us.zoom.xos"
         var budget = zoom ? 1500 : 4000
+        // the tab title belongs to the window that was focused when it was read
+        let focused = axAttr(app, kAXFocusedWindowAttribute)
         let out = wins.prefix(4).map { w -> [String: Any] in
           var o: [String: Any] = ["tree": axCopy(w, depth: 0, maxDepth: zoom ? 14 : 40, budget: &budget, zoom: zoom)]
-          if let x = axText(axAttr(w, kAXTitleAttribute)) { o["title"] = x }
+          // The parser skips a window whose title does not say Meet. Ardia's accessibility title is the app name, so the tab title is what gets written.
+          let axTitle = axText(axAttr(w, kAXTitleAttribute)) ?? ""
+          var title = axTitle
+          if !isMeetTitle(axTitle), let tab, let focused, CFEqual(w, focused) { title = tab }
+          if !title.isEmpty { o["title"] = title }
           if let x = axText(axAttr(w, kAXIdentifierAttribute)) { o["id"] = x }
           return o
         }
@@ -460,7 +469,7 @@ case "events":
     if let l = e.location, !l.isEmpty { o["location"] = l }
     if let n = e.notes, !n.isEmpty { o["notes"] = String(n.prefix(2000)) }
     if let u = e.url { o["url"] = u.absoluteString }
-    // the person using this Mac, apart: their address says which company they are with (Yogurt spells it right)
+    // the person using this Mac, apart: their address says which company they are with (Figolu spells it right)
     if let me = e.attendees?.first(where: { $0.isCurrentUser }) {
       if me.url.absoluteString.hasPrefix("mailto:") { o["me"] = String(me.url.absoluteString.dropFirst(7)) }
       if me.participantStatus == .declined { o["declined"] = true }

@@ -46,7 +46,7 @@ impl OpusWriter {
         head.extend_from_slice(&0i16.to_le_bytes()); // gain
         head.push(0); // mapping family
         w.pw.write_packet(head, serial, PacketWriteEndInfo::EndPage, 0)?;
-        let vendor = b"Yogurt";
+        let vendor = b"Figolu";
         let mut tags = b"OpusTags".to_vec();
         tags.extend_from_slice(&(vendor.len() as u32).to_le_bytes());
         tags.extend_from_slice(vendor);

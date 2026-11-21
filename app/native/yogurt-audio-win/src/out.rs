@@ -6,7 +6,7 @@ use std::sync::Mutex;
 static BROKEN: AtomicBool = AtomicBool::new(false);
 static LOCK: Mutex<()> = Mutex::new(());
 
-/// Problems go to stderr (unbuffered), which Yogurt writes to its log
+/// Problems go to stderr (unbuffered), which Figolu writes to its log
 pub fn log(s: &str) {
     eprintln!("{s}");
 }
@@ -51,7 +51,7 @@ pub fn n(v: f64) -> String {
     format!("{v}")
 }
 
-/// Writes one message; false once Yogurt has gone (the pipe closed)
+/// Writes one message; false once Figolu has gone (the pipe closed)
 pub fn send(json: &str, payload: Option<&[f32]>) -> bool {
     let _g = LOCK.lock().unwrap_or_else(|e| e.into_inner());
     let mut buf = Vec::with_capacity(json.len() + 1 + payload.map_or(0, |p| p.len() * 4));

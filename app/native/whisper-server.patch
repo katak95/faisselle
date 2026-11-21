@@ -27,7 +27,7 @@ index 1675f33a..31995e46 100644
      return size;
  }
  
-+// Yogurt: with a discrete graphics card and an integrated one (a desktop with an iGPU driving the displays, a gaming
++// Figolu: with a discrete graphics card and an integrated one (a desktop with an iGPU driving the displays, a gaming
 +// laptop), the integrated one often comes first and transcription ran on it, many times slower. Count only discrete
 +// cards when there is one; with none, integrated ones count as before (Apple Silicon, most laptops).
 +static bool whisper_dev_is_counted_gpu(ggml_backend_dev_t dev) {

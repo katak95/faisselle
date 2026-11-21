@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from '../components/Icons'
 import type { OnboardingPlan, OnboardingStep, PermissionKind, SetupState } from '../../../shared/types'
 import { screensOf, type OnboardingScreen } from '../../../shared/onboarding'
 import { Wordmark } from '../components/Logo'
@@ -91,15 +91,25 @@ function useFocus(ref: RefObject<HTMLButtonElement | null>, deps: unknown[]) {
   useEffect(() => { ref.current?.focus() }, deps)
 }
 
-/** What Yogurt is, in the website's words */
+/** What Figolu is, in the website's words */
 function Welcome({ state, progress, onDone }: { state: SetupState; progress: Progress; onDone(): void }) {
   const c = screenCopy('welcome')
   const primary = useRef<HTMLButtonElement>(null)
   useFocus(primary, [])
+  // where summaries are written, asked before the notes model downloads (it waits for this screen)
+  const [cloud, setCloud] = useState(false)
+  const pick = (on: boolean) => { setCloud(on); void window.yogurt.cloud.setProvider(on ? 'bedrock' : 'local') }
   return (
     <Layout
       testId="intro-page" step="welcome" motionKey="welcome" art={<WelcomeArt />} title={c.title} text={c.text} progress={progress} state={state}
       actions={<button ref={primary} data-testid="intro-next" onClick={onDone} className="ob-button primary no-drag">{t('Get started')}</button>}
+      note={<div className="ob-note" data-testid="intro-notes-model">
+        <label className="flex items-center gap-2 no-drag">
+          <input type="checkbox" data-testid="intro-bedrock" checked={cloud} onChange={(e) => pick(e.target.checked)} />
+          {t('Write summaries with Amazon Bedrock (Claude) instead of a model on this computer')}
+        </label>
+        <span>{cloud ? t('No notes model is downloaded. Sign in to AWS in Settings after this.') : t('A notes model of a few gigabytes downloads after this screen.')}</span>
+      </div>}
     />
   )
 }
@@ -116,7 +126,7 @@ function CalendarLinkScreen({ state, progress, onNext }: { state: SetupState; pr
   return (
     <Layout
       testId="onboarding-step" step="calendar" kind="calendar" motionKey={connected ? 'calendar-done' : 'calendar'}
-      art={<ScreenArt id="calendar" on={connected ? ['calendar'] : []} />} progress={progress} state={state}
+      art={<ScreenArt kind="calendar" />} progress={progress} state={state}
       title={connected ? t('All set') : t('Connect your calendar')}
       text={connected ? t('{name} is connected. You can change this any time in Settings.', { name: connected }) : sc.text}
       actions={connected
@@ -130,21 +140,18 @@ function CalendarLinkScreen({ state, progress, onNext }: { state: SetupState; pr
 /** Recording permissions share one progress segment. Each native request needs its own Allow press. */
 function PermissionScreen({ screen, state, progress, onNext }: { screen: OnboardingScreen; state: SetupState; progress: Progress; onNext(): void }) {
   const [k, setK] = useState(0)
-  // what the picture shows as on: whatever this screen didn't need to ask, and whatever was turned on here
-  const [lit, setLit] = useState<PermissionKind[]>(() => screen.kinds.filter((x) => !screen.steps.some((s) => s.kind === x)))
   const [leaving, setLeaving] = useState(false)
   const step = screen.steps[k]
   const on = () => {
-    setLit((l) => [...l, step.kind])
     if (k + 1 < screen.steps.length) { setK(k + 1); return }
-    // a picture that shows what is on stays a moment, so the person sees it come alive
+    // Keep the existing transition out of the grouped recording step.
     if (screen.kinds.length > 1) { setLeaving(true); setTimeout(onNext, 700) } else onNext()
   }
-  return <Ask key={step.kind} screen={screen} step={step} lit={lit} leaving={leaving} state={state} progress={progress} onOn={on} onLater={onNext} />
+  return <Ask key={step.kind} screen={screen} step={step} leaving={leaving} state={state} progress={progress} onOn={on} onLater={onNext} />
 }
 
-function Ask({ screen, step, lit, leaving, state, progress, onOn, onLater }: {
-  screen: OnboardingScreen; step: OnboardingStep; lit: PermissionKind[]; leaving: boolean; state: SetupState; progress: Progress; onOn(): void; onLater(): void
+function Ask({ screen, step, leaving, state, progress, onOn, onLater }: {
+  screen: OnboardingScreen; step: OnboardingStep; leaving: boolean; state: SetupState; progress: Progress; onOn(): void; onLater(): void
 }) {
   const { kind } = step
   const c = permissionCopy(kind)
@@ -159,15 +166,15 @@ function Ask({ screen, step, lit, leaving, state, progress, onOn, onLater }: {
   const label = back ? t('Continue') : away || denied ? t('Open System Settings') : t('Allow')
   const note = away ? <GuideNote kind={kind} />
     : flow.phase === 'failed' ? <p data-testid="step-access-status" role="status" className="ob-note">{t("Couldn't check access. Try again.")}</p>
-      : flow.phase === 'idle' && denied ? <p data-testid="step-access-status" role="status" className="ob-note">{t('This was turned off before, so only System Settings can turn it on. Yogurt shows you where.')}</p>
+      : flow.phase === 'idle' && denied ? <p data-testid="step-access-status" role="status" className="ob-note">{t('This was turned off before, so only System Settings can turn it on. Figolu shows you where.')}</p>
         : null
   // the picture changes only when there is a new thing to show: System Settings, or the screen's own drawing
-  const art = away ? <SettingsArt kind={kind} /> : <ScreenArt id={screen.id} on={back ? [...lit, kind] : lit} />
+  const art = away ? <SettingsArt kind={kind} /> : <ScreenArt kind={kind} />
   return (
     <Layout
       testId="onboarding-step" step={screen.id} kind={kind} motionKey={away ? `${screen.id}-away` : screen.id}
       art={art} progress={progress} state={state} note={note}
-      title={away ? t('Turn on Yogurt in System Settings') : back ? t('All set') : sc.title}
+      title={away ? t('Turn on Figolu in System Settings') : back ? t('All set') : sc.title}
       text={away ? c.where : back ? t('{name} is on. You can change this any time in Settings.', { name: c.name }) : sc.text}
       actions={<>
         <button ref={primary} data-testid="step-allow" aria-describedby="step-reason" disabled={busy}
@@ -180,7 +187,7 @@ function Ask({ screen, step, lit, leaving, state, progress, onOn, onLater }: {
   )
 }
 
-/** Under the buttons while System Settings is open: that Yogurt notices by itself, what to do if it isn't listed, and a reopen for the ones that need it */
+/** Under the buttons while System Settings is open: that Figolu notices by itself, what to do if it isn't listed, and a reopen for the ones that need it */
 function GuideNote({ kind }: { kind: PermissionKind }) {
   const [failed, setFailed] = useState(false)
   return (
@@ -189,14 +196,14 @@ function GuideNote({ kind }: { kind: PermissionKind }) {
       <details key={kind} className="ob-guide-help">
         <summary>{t('Still not working?')}</summary>
         <div className="ob-guide-help-content">
-        {(kind === 'accessibility' || kind === 'systemAudio') && <p>{t('Not in the list? Click +, then choose Yogurt in Applications.')}</p>}
-        <p>{t('If you turned access on and this stays open, restart Yogurt.')}</p>
+        {(kind === 'accessibility' || kind === 'systemAudio') && <p>{t('Not in the list? Click +, then choose Figolu in Applications.')}</p>}
+        <p>{t('If you turned access on and this stays open, restart Figolu.')}</p>
         <button data-testid="settings-guide-relaunch" className="workspace-button no-drag" onClick={() => {
           void window.yogurt.permissions.relaunch().then((ok) => setFailed(!ok), () => setFailed(true))
-        }}>{t('Restart Yogurt')}</button>
+        }}>{t('Restart Figolu')}</button>
       </div>
       </details>
-      {failed && <p role="alert" className="ob-note-line ob-note-error">{t("Yogurt couldn't reopen. Quit it from the menu bar and open it again.")}</p>}
+      {failed && <p role="alert" className="ob-note-line ob-note-error">{t("Figolu couldn't reopen. Quit it from the menu bar and open it again.")}</p>}
     </div>
   )
 }

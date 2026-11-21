@@ -5,6 +5,8 @@ import type { NoteSaveResult, NoteSide, NoteStatus, NoteView } from '../../share
 import { cleanTitle, enhance, languageName, titlePrompt, type Llm, type PartSummary } from './enhance'
 import { meetingWords } from '../vocab'
 import type { Queue } from './queue'
+import type { TemplatePrompt } from '../../shared/templates'
+import { keepTicks, parseActions } from '../../shared/actions'
 
 /** The notes wait for the transcript and the names from the call, but never longer than this for the names */
 export const NAMES_WAIT_MS = 60_000
@@ -20,7 +22,7 @@ const DRAFT_EVERY_MS = 50
  * the one model queue, streamed to the window as they are written, then saved. "Write again" goes the same way.
  */
 export function hookNotes(p: {
-  store: Pick<Store, 'meeting' | 'notes' | 'setNotes' | 'writtenWith' | 'setWrittenWith' | 'segments' | 'updateMeeting' | 'unenhancedMeetings'>
+  store: Pick<Store, 'meeting' | 'notes' | 'setNotes' | 'writtenWith' | 'setWrittenWith' | 'segments' | 'updateMeeting' | 'unenhancedMeetings'> & Partial<Pick<Store, 'extras' | 'setExtras'>>
   queue: Queue
   model: Pick<NotesModel, 'llm'> & Partial<Pick<NotesModel, 'needsLoad'>>
   /** Windows and Linux: say when the notes wait for the model to load (a Mac shows what it always did) */
@@ -45,6 +47,12 @@ export function hookNotes(p: {
   peopleRewriteMs?: number
   /** the person's own name, so the invite's other person is known */
   me?: () => string
+  /** the summary template this meeting's notes follow (shared/templates.ts) */
+  template?: (id: string) => TemplatePrompt | undefined
+  /** the meeting's invite and related emails, ready to read (Microsoft 365); undefined when there is none */
+  context?: (id: string, signal: AbortSignal) => Promise<string | undefined>
+  /** the action items were taken from the notes just written */
+  actionsChanged?: (id: string) => void
 }) {
   const stopped = new Set<string>()
   const stopping = new Map<string, Promise<void>>()
@@ -142,7 +150,13 @@ export function hookNotes(p: {
       // a generic title (or one made from earlier notes) gets one from these notes; theirs or the calendar's never
       const retitle = (x: Meeting) => x.titleSource === 'generic' || x.titleSource === 'auto'
       let askTitle: ((llm: Llm) => Promise<string>) | undefined
-      const md = await enhance({ signal, meeting: m, mine, segments, language, note, summaryLanguage: p.summaryLanguage?.(), me: p.me?.(), words: meetingWords(m), ...(retitle(m) ? { titleLater: (ask) => { askTitle = ask } } : {}) }, llm, (t) => {
+      let askActions: ((llm: Llm) => Promise<string>) | undefined
+      // what else is known (the invite, related emails): nice to have, never a reason for the notes to fail
+      const context = await p.context?.(id, signal).catch((e) => { console.warn('the meeting context could not be read', e); return undefined })
+      signal.throwIfAborted()
+      const md = await enhance({ signal, meeting: m, mine, segments, language, note, summaryLanguage: p.summaryLanguage?.(), me: p.me?.(), words: meetingWords(m), template: p.template?.(id), context,
+        ...(p.actionsChanged && p.store.setExtras ? { actionsLater: (ask) => { askActions = ask } } : {}),
+        ...(retitle(m) ? { titleLater: (ask) => { askTitle = ask } } : {}) }, llm, (t) => {
         if (quiet || signal.aborted) return
         draft += t
         if (timer) return
@@ -160,6 +174,7 @@ export function hookNotes(p: {
         p.store.setWrittenWith(id, used.stamp)
         p.send({ ...view(id), rewrittenFrom: was.enhanced ?? '' })
         queueTitle(id, askTitle, m.attendees)
+        queueActions(id, askActions)
         p.summarized?.(id)
         return
       }
@@ -169,6 +184,7 @@ export function hookNotes(p: {
       p.store.setWrittenWith(id, used.stamp)
       finish(m, 'done')
       queueTitle(id, askTitle, m.attendees)
+      queueActions(id, askActions)
       p.summarized?.(id)
     } catch (e) {
       if (timer) clearTimeout(timer)
@@ -205,6 +221,26 @@ export function hookNotes(p: {
       if (!t || signal.aborted || !current()) return
       p.store.updateMeeting(id, { title: t, titleSource: 'auto' })
       p.changed(id)
+    }, 'enhance', id).catch(() => {})
+  }
+
+  /**
+   * The action items from the notes just saved, as a job of its own (like the title): a list the person can tick.
+   * Items still there after a rewrite keep their tick. An answer that isn't a list leaves the old one.
+   */
+  const queueActions = (id: string, ask?: (llm: Llm) => Promise<string>) => {
+    if (!ask || !p.store.setExtras || !p.store.extras) return
+    const saved = currentNotes(id).enhanced
+    void p.queue.enqueue(async (signal) => {
+      // written again (or edited) meanwhile: those notes get their own list
+      if (currentNotes(id).enhanced !== saved) return
+      const llm = await p.model.llm(signal)
+      const raw = await ask(llm)
+      if (signal.aborted || currentNotes(id).enhanced !== saved) return
+      const items = parseActions(raw)
+      if (!items) { console.warn('NOTES', `no action list came back for ${id}`); return }
+      p.store.setExtras!(id, { actions: keepTicks(items, p.store.extras!(id).actions ?? []) })
+      p.actionsChanged?.(id)
     }, 'enhance', id).catch(() => {})
   }
 
@@ -314,6 +350,19 @@ export function hookNotes(p: {
       p.store.setWrittenWith(id, stampBefore.get(id)!)
       stampBefore.delete(id)
       p.send(view(id))
+    },
+    /**
+     * Another app (MCP) replaces a side. It leaves the editor's revisions alone, so the next keystroke still saves, and
+     * never overwrites an edit not saved yet or a summary being written.
+     */
+    replace(id: string, side: NoteSide, md: string): 'saved' | 'busy' | 'too-long' | 'failed' {
+      if (!p.store.meeting(id)) return 'failed'
+      if (md.length > NOTES_MAX) return 'too-long'
+      const status = live.get(id)?.status
+      if (edits.get(id)?.[side]?.text !== undefined || (side === 'enhanced' && (status === 'waiting' || status === 'writing'))) return 'busy'
+      try { p.store.setNotes(id, side === 'mine' ? { mine: md } : { enhanced: md, edited: true }) } catch (e) { console.error('notes from another app were not saved', id, side, e); return 'failed' }
+      p.send(view(id))
+      return 'saved'
     },
     setMine: (id: string, md: string, revision?: number) => saveEdit(id, 'mine', md, revision),
     setEnhanced: (id: string, md: string, revision?: number) => saveEdit(id, 'enhanced', md, revision),

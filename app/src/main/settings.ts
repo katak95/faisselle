@@ -32,17 +32,21 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   axAsked?: boolean
   /** AI apps on this Mac (Claude, Cursor, …) may read meetings through MCP; off unless the person turned it on */
   aiApps?: boolean
+  /** those AI apps may also change meetings, notes and a few settings (never delete for good); off unless turned on */
+  aiAppChanges?: boolean
   /** a recording stops by itself when its call ends; on unless turned off (false: ask first) */
   stopWhenCallEnds?: boolean
   /** a quiet reminder to ask everyone before recording; on unless turned off */
   recordingReminder?: boolean
+  /** Credit on copied summaries and saved Markdown; on unless turned off. */
+  includeRecordingCredit?: boolean
   /** keep audio after its transcript and summary are saved; on unless turned off */
   keepRecordings?: boolean
   /** Only meetings ending after this opt-out may lose their audio automatically. */
   recordingsOffAt?: number
   /** the mic to record with (its Core Audio UID); Auto, the Mac's own input, when left out or not plugged in */
   mic?: string
-  /** Calendars excluded from Yogurt's agenda and meeting detection. Others stay visible. */
+  /** Calendars excluded from Figolu's agenda and meeting detection. Others stay visible. */
   hiddenCalendarIds?: string[]
   /** Hide events without a call link; off unless enabled. */
   hideEventsWithoutCallLink?: boolean
@@ -53,7 +57,19 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** the default for newly written summaries; the meeting's language when left out */
   summaryLanguage?: string
   /** new versions download by themselves; on unless turned off */
-  autoUpdate?: boolean }
+  autoUpdate?: boolean
+  /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
+  notesProvider?: 'bedrock'
+  /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
+  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
+  /** summary templates the person wrote (shared/templates.ts) */
+  templates?: Array<{ id: string; name: string; instructions: string }>
+  /** the template new notes follow; the general notes when left out */
+  defaultTemplate?: string
+  /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
+  /** Atlassian (Confluence): connected unless off, the site picked, and where reports go on each site (atlassian/) */
+  atlassian?: { enabled?: boolean; siteId?: string; places?: Record<string, { spaceId: string; spaceKey?: string; spaceUrl?: string; parentId?: string }> }
+  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)
@@ -62,6 +78,7 @@ export const summaryLanguageSetting = (s: Settings): string => isLocale(s.summar
 
 /** "Stop recording when the call ends": on by default */
 export const stopsWhenCallEnds = (s: Settings): boolean => s.stopWhenCallEnds !== false
+export const includesRecordingCredit = (s: Settings): boolean => s.includeRecordingCredit !== false
 export const recordingReminderOn = (s: Settings): boolean => s.recordingReminder !== false
 /** Old recordings stay, even if their summaries are saved or rewritten after opting out. */
 export const keepsRecording = (s: Settings, endedAt: number | null): boolean =>
@@ -94,5 +111,7 @@ export function updateSettings(path: string, patch: Partial<Settings>): Settings
   return next
 }
 
-/** The language picked in Settings; the computer's when none (or one Yogurt no longer has) */
+/** The language picked in Settings; the computer's when none (or one Figolu no longer has) */
 export const localeOf = (s: Settings, system: string): string => (isLocale(s.language) ? s.language : system)
+
+export const notesProviderSetting = (s: Settings): 'local' | 'bedrock' => (s.notesProvider === 'bedrock' ? 'bedrock' : 'local')

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { fileNameFor, shareTarget, toClipboard, toMarkdownFile, toPlainText, transcriptDoc } from '../src/shared/exportNotes'
+import { language, setLanguage } from '../src/shared/i18n'
 import { docToMd } from '../src/shared/markdown'
 import type { Meeting, Segment } from '../src/shared/types'
 
@@ -29,6 +30,17 @@ describe('toClipboard', () => {
     expect(out).toContain('<p>a &lt;b&gt;bold&lt;/b&gt; &amp; &quot;q&quot;</p>')
     expect(out).toContain('<li>1 &lt; 2</li>')
   })
+  it('keeps the translated credit in the local word order, including its link', () => {
+    const previous = language()
+    try {
+      setLanguage('ja')
+      const { text, html } = toClipboard('計画', true)
+      expect(text).toBe('計画\n\nFigolu で録音 · github.com')
+      expect(html).toContain('>Figolu</a> で録音 · github.com')
+    } finally {
+      setLanguage(previous)
+    }
+  })
   it('does not link anything but web and mail addresses', () => {
     expect(toClipboard('[x](javascript:run)').html).toBe('<p>x</p>')
   })
@@ -54,8 +66,8 @@ describe('toMarkdownFile', () => {
     expect(file).toContain('**Maya** (0:06)\n\nHello \\*there\\*')
     expect(file).toContain('**Them** (1:10)\n\nHm.')
   })
-  it('says on the date line that Yogurt recorded it, with a link', () => {
-    expect(file.split('\n')[2]).toMatch(/^.*2026.* · Recorded with \[Yogurt\]\(https:\/\/yogurt\.so\)$/)
+  it('says on the date line that Figolu recorded it, with a link', () => {
+    expect(file.split('\n')[2]).toMatch(/^.*2026.* · Recorded with \[Figolu\]\(https:\/\/github\.com\/katak95\/figolu\)$/)
   })
   it('leaves out the transcript section when nothing was heard', () => expect(toMarkdownFile(meeting, 'x', [])).not.toContain('Transcript'))
 })

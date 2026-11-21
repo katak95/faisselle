@@ -1,5 +1,5 @@
 import { asrCandidates, pick, pickAsr, pickBySpeed, speedKey, type Catalog, type CatalogAsr, type Choice, type Hardware } from '@yogurt/picker'
-import { rmSync } from 'node:fs'
+import { rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { ChecksumError, DiskSpaceError, ensureFile, fileNameFor, isVerified, partialDownloadGB, type DownloadDeps } from './downloader'
@@ -32,6 +32,13 @@ export type SetupDeps = {
   upgradePreference?: { load(): boolean; save(skipped: boolean): void }
   /** Windows and Linux: the speed check picks the speech model (a Mac never has it: turbo, as always) */
   speed?: SpeedDeps
+  /** the notes are written on Amazon Bedrock: no notes model to download (speech and meaning search stay local) */
+  cloudNotes?: () => boolean
+  /**
+   * First run: the notes model waits for this before it downloads, so the person can pick Bedrock on the welcome
+   * screen first. Speech and meaning search don't wait.
+   */
+  beforeLocalNotes?: () => Promise<void>
 }
 
 /** Where the models ended up, for the parts of the app that use them; llm once the first notes model is in (after ready) */
@@ -65,6 +72,10 @@ export class SetupController {
   private background: Promise<void> | undefined
   private backgroundItem: Item | undefined
   private firstItem: Item | undefined
+  /** the first notes model's download is running (or done): started once, when the notes are written here */
+  private firstStarted = false
+  /** stops the first notes model's download (the notes moved to Bedrock); it picks up where it stopped if they come back */
+  private firstAbort: AbortController | undefined
   private upgradeAbort: AbortController | undefined
   private upgradeDownload: Promise<void> | undefined
   private upgradeChange: Promise<void> | undefined
@@ -202,19 +213,23 @@ export class SetupController {
       const [hw, catalog] = await Promise.all([this.deps.getHardware(), this.deps.getCatalog()])
       const llm = pick(hw, catalog.models)
       const weak = tooWeak(hw, !!llm.recommended)
-      if (!llm.recommended || weak) return this.set({ phase: 'error', fraction: 0, message: weak ?? '' })
+      // on Bedrock the notes model is in the cloud: a computer too small for one still records and transcribes
+      const cloud = this.deps.cloudNotes?.() ?? false
+      if ((!llm.recommended || weak) && !cloud) return this.set({ phase: 'error', fraction: 0, message: weak ?? '' })
 
       // The first notes model is the starter when it downloads faster than the pick; otherwise the pick itself.
-      const starter = llm.starter && llm.starter.build.sizeGB < llm.recommended.build.sizeGB ? llm.starter : llm.recommended
-      const later = starter === llm.recommended ? undefined : llm.recommended
-      console.info('NOTES', `notes models for this computer: ${starter.model.id}${later ? `, then ${later.model.id}` : ''} (graphics ${hw.gpu.kind}${hw.gpu.name ? ` ${hw.gpu.name}` : ''}, ${hw.totalRamGB} GB)`)
+      const recommended = llm.recommended && !weak ? llm.recommended : undefined
+      const starter = recommended && (llm.starter && llm.starter.build.sizeGB < recommended.build.sizeGB ? llm.starter : recommended)
+      const later = starter === recommended ? undefined : recommended
+      if (starter) console.info('NOTES', `notes models for this computer: ${starter.model.id}${later ? `, then ${later.model.id}` : ''} (graphics ${hw.gpu.kind}${hw.gpu.name ? ` ${hw.gpu.name}` : ''}, ${hw.totalRamGB} GB)`)
+      else console.info('NOTES', 'no notes model fits this computer: the notes are written on Bedrock')
       const dirs = { asr: join(this.deps.modelsDir, 'asr'), llm: join(this.deps.modelsDir, 'llm'), embed: join(this.deps.modelsDir, 'embed') }
 
       // Speech first: ready (recording works) once it is in. The notes models come after.
       let asr = pickAsr(hw, catalog)
       const asrItem = (m: CatalogAsr): Item => ({ url: m.url, sha256: m.sha256, bytes: m.bytes, dir: dirs.asr, fileName: fileNameFor(m.url) })
       // whisper-server is built into the app (catalog.whisperServer.bundled), so only the speech model is downloaded for it.
-      const starterItem = llmItem(dirs.llm, starter)
+      const starterItem = starter && llmItem(dirs.llm, starter)
       this.firstItem = starterItem
       this.backgroundItem = later && llmItem(dirs.llm, later)
       const bigger = this.backgroundItem
@@ -236,7 +251,7 @@ export class SetupController {
       const waitFor: Item[] = [asrItem(speed ? keep ?? candidates[0] : asr.model)]
       const total = waitFor.reduce((n, i) => n + i.bytes, 0)
       // room for the first notes model too, so it never runs out of disk after ready
-      await this.checkDisk([...waitFor, ...(hasUpgrade ? [] : [starterItem]), embedItem])
+      await this.checkDisk([...waitFor, ...(hasUpgrade || cloud || !starterItem ? [] : [starterItem]), embedItem])
 
       let done = 0
       const report = (item: Item, fraction: number) => this.set({ phase: 'downloading', fraction: Math.min(1, (done + item.bytes * fraction) / total) })
@@ -268,9 +283,9 @@ export class SetupController {
       this.paths = { asr: asrPath }
       if (hasUpgrade) {
         this.paths.recommendedLlm = join(bigger!.dir, bigger!.fileName)
-        if (isVerified(starterItem.dir, starterItem.fileName, this.sha(starterItem))) this.paths.llm = join(starterItem.dir, starterItem.fileName)
+        if (starterItem && isVerified(starterItem.dir, starterItem.fileName, this.sha(starterItem))) this.paths.llm = join(starterItem.dir, starterItem.fileName)
       }
-      this.set({ phase: 'ready', fraction: 1, notesUpgradeBytes: bigger?.bytes, notesUpgradeSkipped: skipped, notesUpgradeInstalled: hasUpgrade })
+      this.set({ phase: 'ready', fraction: 1, notesUpgradeBytes: cloud ? undefined : bigger?.bytes, notesUpgradeSkipped: skipped, notesUpgradeInstalled: hasUpgrade })
       this.startNotes(starterItem, embedItem)
     } catch (err) {
       console.error('setup failed', err)
@@ -296,17 +311,75 @@ export class SetupController {
       if (t.gpuOff) gpuOff = true
       console.log(`speed check: ${m.id} took ${t.rtf === null ? 'too long' : `${t.rtf.toFixed(2)} x`} the clip's length`)
       return t.rtf
-    })
+    // small may lag a little behind live: base and tiny are very weak outside English (#107)
+    }, { lagsOk: (m) => m.id.startsWith('whisper-small') })
     for (const [id, p] of paths) if (id !== r.model?.id) rmSync(p, { force: true })
     return { path: r.model && paths.get(r.model.id), result: { model: r.model?.id ?? null, rtf: r.rtf, ...(gpuOff ? { gpuOff } : {}) } }
   }
 
   /**
-   * The first notes model downloads while Yogurt already records: it is tried until it lands (meetings recorded
+   * The first notes model downloads while Figolu already records: it is tried until it lands (meetings recorded
    * meanwhile get their notes then). The bigger one follows.
    */
-  private startNotes(first: Item, embed: Item) {
-    this.background = (async () => {
+  private startNotes(first: Item | undefined, embed: Item) {
+    const cloud = () => this.deps.cloudNotes?.() ?? false
+    // the notes model waits for the welcome screen (Bedrock can be picked there), then follows Settings
+    const hold = (this.deps.beforeLocalNotes?.() ?? Promise.resolve()).catch(() => {})
+    let local = false
+    // the order stays: the first notes model, then the embedding model, then the bigger notes model
+    this.background = hold.then(() => { local = !!first && !cloud(); return local ? this.downloadFirst(first!) : undefined }).then(() => this.startEmbedding(embed))
+    this.background = this.background.then(() => { if (local && !cloud() && this.backgroundItem) return this.startBackground(this.backgroundItem) })
+  }
+
+  /**
+   * The notes moved to Bedrock: the notes models' downloads stop (what came in is kept, so coming back picks up
+   * where it stopped). Nothing that is already in is removed; removeLocalNotes() does that.
+   */
+  cloudChosen(): void {
+    this.firstAbort?.abort()
+    this.upgradeAbort?.abort()
+    this.retryNotes?.()
+    this.set({ ...this._state, notesDownloading: undefined, notesFraction: undefined, notesEtaSec: undefined, notesTotalBytes: undefined, notesError: undefined,
+      notesUpgradeDownloading: undefined, notesUpgradePending: undefined, notesUpgradeFraction: undefined, notesUpgradeEtaSec: undefined, notesUpgradeTotalBytes: undefined })
+  }
+
+  /** the notes models' files on this computer, finished or not (Settings offers to remove them on Bedrock) */
+  localNotesBytes(): number {
+    let n = 0
+    for (const i of [this.firstItem, this.backgroundItem]) {
+      if (!i) continue
+      for (const suffix of ['', '.part']) { try { n += statSync(join(i.dir, i.fileName) + suffix).size } catch { /* not there */ } }
+    }
+    return n
+  }
+
+  /**
+   * On Bedrock: the notes models' files go (the model must be let go first: unload()). Coming back to this computer
+   * downloads the first one again.
+   */
+  removeLocalNotes(): void {
+    this.cloudChosen()
+    for (const i of [this.firstItem, this.backgroundItem]) if (i) this.removeFiles(join(i.dir, i.fileName))
+    if (this.paths) this.paths = { ...this.paths, llm: undefined, recommendedLlm: undefined }
+    this.firstStarted = false
+    this.set({ ...this._state, notesUpgradeInstalled: false })
+  }
+
+  /** The notes moved back from Bedrock to this computer: its notes model downloads now if it never did. */
+  localNotesWanted(): void {
+    if (this._state.phase !== 'ready' || this.firstStarted || !this.firstItem || this.notesPath()) return
+    const first = this.firstItem
+    void this.downloadFirst(first).then(() => { if (this.backgroundItem) return this.startBackground(this.backgroundItem) })
+  }
+
+  /** whether notes can be written on this computer (a model was picked for it) */
+  canRunLocally(): boolean { return !!this.firstItem || !!this.paths?.recommendedLlm }
+
+  private downloadFirst(first: Item): Promise<void> {
+    this.firstStarted = true
+    const abort = new AbortController()
+    this.firstAbort = abort
+    return (async () => {
       const waits = this.deps.notesRetryMs ?? NOTES_RETRY_MS
       // Waiting notes show whole percents; every 10% goes in the log.
       let shown = -1, logged = -1
@@ -318,15 +391,17 @@ export class SetupController {
       const already = isVerified(first.dir, first.fileName, this.sha(first))
       if (!already && !this.paths?.recommendedLlm) console.info('NOTES', `downloading the notes model ${first.fileName}`)
       for (let i = 0; !this.paths?.recommendedLlm; i++) {
+        if (abort.signal.aborted) { console.info('NOTES', 'the notes model download stopped: the notes are written on Bedrock'); this.firstStarted = false; return }
         shown = -1
         this.set({ ...this._state, notesError: undefined, ...(already ? {} : { notesDownloading: true, notesFraction: 0, notesTotalBytes: first.bytes, notesEtaSec: undefined }) })
         try {
-          const path = await this.fetch(first, already ? undefined : progress)
+          const path = await this.fetch(first, already ? undefined : (p) => { if (!abort.signal.aborted) progress(p) }, abort.signal)
           if (this.paths) this.paths = { ...this.paths, llm: path }
           if (!already) console.info('NOTES', 'the notes model is in')
           this.set({ ...this._state, notesFraction: undefined, notesDownloading: undefined, notesTotalBytes: undefined, notesEtaSec: undefined, notesUpgradePending: !!this.backgroundItem && !this._state.notesUpgradeSkipped })
           break
         } catch (err) {
+          if (abort.signal.aborted) continue
           console.warn('the notes model did not download yet, trying again', err)
           await new Promise<void>((resolve) => {
             const wake = () => { clearTimeout(timer); this.retryNotes = undefined; resolve() }
@@ -338,8 +413,6 @@ export class SetupController {
       }
       for (const l of this.notesListeners) { try { l() } catch (e) { console.error('notes model listener failed', e) } }
     })()
-    this.background = this.background.then(() => this.startEmbedding(embed))
-    this.background = this.background.then(() => { if (this.backgroundItem) return this.startBackground(this.backgroundItem) })
   }
 
   /**
@@ -361,7 +434,7 @@ export class SetupController {
     })()
   }
 
-  /** The bigger notes model downloads while Yogurt is already usable. Failing here is not an error screen. */
+  /** The bigger notes model downloads while Figolu is already usable. Failing here is not an error screen. */
   private startBackground(item: Item): Promise<void> {
     if (this._state.notesUpgradeSkipped || this.upgradeChange || this.paths?.recommendedLlm) return Promise.resolve()
     if (this.upgradeAbort) return this.upgradeDownload!

@@ -389,7 +389,7 @@ describe('hookNotes', () => {
     expect(s.prompts).toHaveLength(1)
     expect(s.notes.view(s.m.id).peopleChanged).toBe(true)
   })
-  it('notes written before Yogurt kept who was there are not marked out of date for their attendees', async () => {
+  it('notes written before Figolu kept who was there are not marked out of date for their attendees', async () => {
     const s = setup()
     s.store.updateMeeting(s.m.id, { attendees: [{ name: 'Ann Lee', email: null }] })
     s.store.setNotes(s.m.id, { enhanced: '## Old' })
@@ -627,4 +627,29 @@ it('combines the current summary language with a one-time rewrite note', async (
   await s.notes.writeAgain(s.m.id)
   expect(s.prompts.at(-1)).toContain('By default, write in French')
   expect(s.prompts.at(-1)).not.toContain('"in Spanish"')
+})
+
+describe('notes replaced from another app (MCP)', () => {
+  it("replaces either side without moving the editor's revisions, and the window hears it", () => {
+    const s = setup()
+    expect(s.notes.setMine(s.m.id, 'typed here', 4).status).toBe('saved')
+    expect(s.notes.replace(s.m.id, 'mine', 'from Claude')).toBe('saved')
+    expect(s.notes.replace(s.m.id, 'enhanced', '## From Claude')).toBe('saved')
+    expect(s.store.notes(s.m.id)).toEqual({ mine: 'from Claude', enhanced: '## From Claude', edited: true })
+    expect(s.sent.at(-1)).toMatchObject({ mine: 'from Claude', enhanced: '## From Claude' })
+    // the editor's next revision still saves
+    expect(s.notes.setMine(s.m.id, 'typed again', 5).status).toBe('saved')
+    expect(s.store.notes(s.m.id).mine).toBe('typed again')
+  })
+  it('waits for an unsaved edit or a summary being written, and refuses one too long', async () => {
+    const s = setup({ load: new Promise(() => {}) })
+    vi.spyOn(s.store, 'setNotes').mockImplementationOnce(() => { throw new Error('SQLITE_BUSY') })
+    s.notes.setMine(s.m.id, 'unsaved', 1)
+    expect(s.notes.replace(s.m.id, 'mine', 'x')).toBe('busy')
+    void s.notes.writeAgain(s.m.id)
+    await new Promise((r) => setTimeout(r, 10))
+    expect(s.notes.replace(s.m.id, 'enhanced', 'x')).toBe('busy')
+    expect(s.notes.replace(s.m.id, 'enhanced', 'x'.repeat(NOTES_MAX + 1))).toBe('too-long')
+    expect(s.notes.replace('nope', 'mine', 'x')).toBe('failed')
+  })
 })

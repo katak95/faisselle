@@ -1,3 +1,4 @@
+import { openFromCorner } from './cornerNavigation'
 import { _electron as electron, expect, test } from '@playwright/test'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -14,7 +15,7 @@ test('delete distinguishes a recording from removal failure and keeps the note a
     await page.reload()
     // Delete forever lives in the Trash: every meeting goes there first
     await page.evaluate(async () => { for (const c of await window.yogurt.meetings.cards({ limit: 10 })) await window.yogurt.meetings.trash(c.id) })
-    await page.getByTestId('nav-trash').click()
+    await openFromCorner(page, 'nav-trash')
     await expect(page.getByTestId('trash-row')).toHaveCount(1)
     await page.getByTestId('trash-row').hover()
     await page.getByTestId('trash-delete').click()
@@ -29,7 +30,7 @@ test('delete distinguishes a recording from removal failure and keeps the note a
       await page.getByTestId('delete-yes').click()
       await expect(page.getByTestId('delete-confirm')).toContainText(result === 'recording'
         ? 'Stop the recording first, then try again.'
-        : "Yogurt couldn't finish deleting this note.")
+        : "Figolu couldn't finish deleting this note.")
       if (result !== 'recording') await expect(page.getByTestId('delete-confirm')).not.toContainText('Stop the recording')
       await expect(page.getByTestId('trash-row')).toHaveCount(1)
       await expect(page.getByTestId('delete-yes')).toBeEnabled()

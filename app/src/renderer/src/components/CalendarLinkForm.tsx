@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { ExternalLink, LoaderCircle } from 'lucide-react'
+import { ExternalLink, LoaderCircle } from './Icons'
 import { calendarAddress } from '../../../shared/calendarLink'
 import { t } from '../../../shared/i18n'
 
@@ -28,7 +28,7 @@ const steps = (p: Provider): string[] => p === 'google'
 
 const ERRORS = {
   'bad-url': () => t('Enter an https:// or webcal:// calendar address.'),
-  'unreachable': () => t('Yogurt couldn\'t reach that address. Check your connection and the address.'),
+  'unreachable': () => t('Figolu couldn\'t reach that address. Check your connection and the address.'),
   'not-calendar': () => t('That address isn\'t a calendar. Copy the iCal address, not the page\'s address.'),
   'public-address': () => t('That\'s the public address, which only works if your calendar is public. Copy "Secret address in iCal format" instead.'),
 }

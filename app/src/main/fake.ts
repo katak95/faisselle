@@ -70,7 +70,7 @@ const ask = (k: keyof typeof fakeAccess) => { if (fakeAccess[k] === 'unknown') f
 export const askFakeNotifications = () => { ask('notifications'); return fakeAccess.notifications }
 /** fake mode: every media-pause, media-resume and media-auth the helper was asked for; YOGURT_FAKE_MUSIC=1 has Music playing */
 export const mediaCalls: string[][] = []
-/** also on disk, so a test can see what happened while Yogurt quit */
+/** also on disk, so a test can see what happened while Figolu quit */
 const logMedia = (args: string[]) => { mediaCalls.push(args); try { appendFileSync(join(userDataDir(), 'fake-media.log'), args.join(' ') + '\n') } catch { /* tests only */ } }
 let musicPlaying = process.env.YOGURT_FAKE_MUSIC === '1'
 const standupAt = Date.now() + 5 * 60_000
@@ -123,7 +123,7 @@ export const fakeHelper: Helper = async (args) => {
     case 'media-auth': mediaCalls.push(args); playerAsked = true; return { players: [] }
     case 'mic-auth': ask('mic'); return {}
     case 'audio-auth': ask('systemAudio'); return {}
-    // like the Mac: asking only puts Yogurt in the list unless YOGURT_FAKE_AX_PROMPT=grant; it is turned on in System Settings
+    // like the Mac: asking only puts Figolu in the list unless YOGURT_FAKE_AX_PROMPT=grant; it is turned on in System Settings
     case 'ax-auth': if (process.env.YOGURT_FAKE_AX_PROMPT === 'grant') ask('accessibility'); return { trusted: fakeAccess.accessibility === 'granted' }
     case 'media-pause': { logMedia(args); const paused = musicPlaying ? ['com.apple.Music'] : []; musicPlaying = false; return { paused } }
     case 'media-resume': logMedia(args); if (args.includes('com.apple.Music')) musicPlaying = true; return { resumed: args.slice(1) }
@@ -159,9 +159,11 @@ export const fakeNow = () => Date.now() + skew
  *   notice() / noticeClick()      the system notification shown with the card (null: none); a click on it
  *   micDevices(list | null)       the Mac's mics are now these ({uid, name, default}; null: the usual three)
  *   chatMeetings()                two finished meetings with transcripts and notes, indexed for chat across meetings (their ids)
+ *   upcomingMeeting()             a note prepared for tomorrow's meeting with Maya Chen, for its brief (its id)
+ *   confluencePages()             the pages sent to the fake Confluence
  *   prompts()                     what whisper and the notes model were given so far
  */
-export function installFakeHooks(h: { silence(ms: number | null): Promise<void>; signals(r: Reading): Promise<void>; advance(ms: number): Promise<void>; widget(): unknown; main(): unknown; go(route: string): void; crashCapture(): void; warn(code: string): void; bigMeeting(n: number): string; manyMeetings(o: number | { n: number; clean?: boolean }): void; calendarChanged(): void; tray(): string[]; trayClick(id: string): void; trayAccelerators(): Record<string, string | undefined>; permissions(): Promise<unknown>; notice(): unknown; noticeClick(): void; chatMeetings(): Promise<string[]> }) {
+export function installFakeHooks(h: { silence(ms: number | null): Promise<void>; signals(r: Reading): Promise<void>; advance(ms: number): Promise<void>; widget(): unknown; main(): unknown; go(route: string): void; crashCapture(): void; warn(code: string): void; bigMeeting(n: number): string; manyMeetings(o: number | { n: number; clean?: boolean }): void; calendarChanged(): void; tray(): string[]; trayClick(id: string): void; trayAccelerators(): Record<string, string | undefined>; permissions(): Promise<unknown>; notice(): unknown; noticeClick(): void; chatMeetings(): Promise<string[]>; upcomingMeeting(): string; confluencePages(): unknown[] }) {
   // kept: hooks other modules added before these
   ;(globalThis as Record<string, unknown>).__fake__ = {
     ...((globalThis as Record<string, unknown>).__fake__ as object | undefined),
@@ -188,6 +190,8 @@ export function installFakeHooks(h: { silence(ms: number | null): Promise<void>;
     notice: h.notice,
     noticeClick: h.noticeClick,
     chatMeetings: h.chatMeetings,
+    upcomingMeeting: h.upcomingMeeting,
+    confluencePages: h.confluencePages,
     calendarEvents: (events: unknown[] | null) => { setFakeCalendar({ events }); h.calendarChanged() },
     calendarStatus: (status: string) => setFakeCalendar({ status }),
     micDevices: (list: FakeMic[] | null) => setFakeMics(list),

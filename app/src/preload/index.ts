@@ -1,8 +1,9 @@
+import type { MeterPacket } from '../shared/speechWave'
 import { audioUpload } from './audioUpload'
 import type { WidgetLayout } from '../shared/widgetMorph'
 import { contextBridge, ipcRenderer } from 'electron'
 import { capabilities, platformOf } from '../shared/platform'
-import type { ChatView, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
+import type { AtlassianView, ChatView, CloudNotesView, ExtrasView, M365View, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
 
 const api: YogurtApi = {
   reportRendererError: report => ipcRenderer.send('renderer:error', report),
@@ -34,7 +35,7 @@ const api: YogurtApi = {
       return () => { ipcRenderer.removeListener('widget:state', on) }
     },
     onLevel: (cb) => {
-      const on = (_e: unknown, lv: { me: number; them: number }) => cb(lv)
+      const on = (_e: unknown, lv: MeterPacket) => cb(lv)
       ipcRenderer.on('widget:level', on)
       return () => { ipcRenderer.removeListener('widget:level', on) }
     },
@@ -222,9 +223,58 @@ const api: YogurtApi = {
     dismissNudge: () => ipcRenderer.invoke('onboarding:dismiss-nudge'),
     restoreNudge: () => ipcRenderer.invoke('onboarding:restore-nudge'),
   },
+  extras: {
+    get: (id) => ipcRenderer.invoke('extras:get', id),
+    write: (id, kind) => ipcRenderer.invoke('extras:write', id, kind),
+    setActions: (id, items) => ipcRenderer.invoke('extras:set-actions', id, items),
+    setFollowUp: (id, f) => ipcRenderer.invoke('extras:set-followup', id, f),
+    setBrief: (id, md) => ipcRenderer.invoke('extras:set-brief', id, md),
+    useContext: (id, on) => ipcRenderer.invoke('extras:use-context', id, on),
+    setTemplate: (id, t) => ipcRenderer.invoke('extras:template', id, t),
+    onChange: (fn) => { const f = (_e: unknown, v: ExtrasView) => fn(v); ipcRenderer.on('extras:changed', f); return () => { ipcRenderer.off('extras:changed', f) } },
+  },
+  templates: {
+    get: () => ipcRenderer.invoke('templates:get'),
+    setDefault: (id) => ipcRenderer.invoke('templates:default', id),
+    save: (t) => ipcRenderer.invoke('templates:save', t),
+    remove: (id) => ipcRenderer.invoke('templates:remove', id),
+  },
+  atlassian: {
+    get: () => ipcRenderer.invoke('atlassian:get'),
+    signIn: () => ipcRenderer.invoke('atlassian:sign-in'),
+    cancel: () => ipcRenderer.invoke('atlassian:cancel'),
+    signOut: () => ipcRenderer.invoke('atlassian:sign-out'),
+    setSite: (id) => ipcRenderer.invoke('atlassian:site', id),
+    onChange: (fn) => { const f = (_e: unknown, v: AtlassianView) => fn(v); ipcRenderer.on('atlassian:changed', f); return () => { ipcRenderer.off('atlassian:changed', f) } },
+    send: (id) => ipcRenderer.invoke('share:confluence', id),
+  },
+  m365: {
+    get: () => ipcRenderer.invoke('m365:get'),
+    signIn: () => ipcRenderer.invoke('m365:sign-in'),
+    cancel: () => ipcRenderer.invoke('m365:cancel'),
+    signOut: () => ipcRenderer.invoke('m365:sign-out'),
+    setCalendar: (on) => ipcRenderer.invoke('m365:calendar', on),
+    setApp: (c, t) => ipcRenderer.invoke('m365:app', c, t),
+    setDocuments: (on) => ipcRenderer.invoke('m365:documents', on),
+    onChange: (fn) => { const f = (_e: unknown, v: M365View) => fn(v); ipcRenderer.on('m365:changed', f); return () => { ipcRenderer.off('m365:changed', f) } },
+  },
+  cloud: {
+    get: () => ipcRenderer.invoke('cloud:get'),
+    setProvider: (p) => ipcRenderer.invoke('cloud:provider', p),
+    setConfig: (c) => ipcRenderer.invoke('cloud:config', c),
+    signIn: () => ipcRenderer.invoke('cloud:sign-in'),
+    cancelSignIn: () => ipcRenderer.invoke('cloud:cancel'),
+    signOut: () => ipcRenderer.invoke('cloud:sign-out'),
+    accounts: () => ipcRenderer.invoke('cloud:accounts'),
+    roles: (accountId) => ipcRenderer.invoke('cloud:roles', accountId),
+    test: () => ipcRenderer.invoke('cloud:test'),
+    removeLocal: () => ipcRenderer.invoke('cloud:remove-local'),
+    onChange: (fn) => { const f = (_e: unknown, v: CloudNotesView) => fn(v); ipcRenderer.on('cloud:changed', f); return () => { ipcRenderer.off('cloud:changed', f) } },
+  },
   mcp: {
     status: () => ipcRenderer.invoke('mcp:status'),
     set: (on) => ipcRenderer.invoke('mcp:set', on),
+    setChanges: (on) => ipcRenderer.invoke('mcp:set-changes', on),
     onClients: (fn) => { const f = (_e: unknown, c: string[]) => fn(c); ipcRenderer.on('mcp:clients', f); return () => { ipcRenderer.off('mcp:clients', f) } },
   },
   updates: {
@@ -251,6 +301,7 @@ const api: YogurtApi = {
     setOpenAtLogin: (on) => ipcRenderer.invoke('settings:login', on),
     setName: (name) => ipcRenderer.invoke('settings:name', name),
     setStopWhenCallEnds: (on) => ipcRenderer.invoke('settings:auto-stop', on),
+    setIncludeRecordingCredit: (on) => ipcRenderer.invoke('settings:recording-credit', on),
     setRecordingReminder: (on) => ipcRenderer.invoke('settings:recording-reminder', on),
     setKeepRecordings: (on) => ipcRenderer.invoke('settings:keep-recordings', on),
     setJargon: (terms) => ipcRenderer.invoke('settings:jargon', terms),

@@ -9,8 +9,8 @@ const paths = (text: string) => [...text.matchAll(/ d="([^"]+)"/g)].map((m) => m
 
 // The app draws the logo from shared/logo.ts; the icons are rendered from build/*.svg. They must stay one drawing.
 describe('logo', () => {
-  it('retains the approved organic quotation contours exactly', () => {
-    expect(createHash('sha256').update(MARK).digest('hex')).toBe('0fc9bdced4f92d52e61dd66ef66c45034ef3d8d88292a419d8551b5d674cd028')
+  it('keeps the f that scripts/brand.py drew (run it again after a design change, and update this)', () => {
+    expect(createHash('sha256').update(MARK).digest('hex')).toBe('0afc32a5abd87013639619a23fe3be165c89e4463179d054ccbc4bea4192e4de')
   })
   it('matches build/logo.svg', () => {
     expect(paths(svg('logo.svg'))).toEqual([MARK])
@@ -18,16 +18,16 @@ describe('logo', () => {
   it('matches build/wordmark.svg', () => {
     expect(paths(svg('wordmark.svg'))).toEqual([MARK, WORD])
   })
-  it('matches the original quotation in build/icon.svg', () => {
+  it('matches the mark in build/icon.svg', () => {
     expect(paths(svg('icon.svg')).join('')).toBe(MARK)
   })
-  it('fills 58% of the Mac tile and centres the original 100-unit mark canvas', () => {
+  it('centres the 100-unit mark on the 824-wide Mac tile, at about 60% of it', () => {
     const icon = svg('icon.svg')
     const mark = icon.match(/<path[^>]*transform="translate\(([^ ]+) ([^)]+)\) scale\(([^)]+)\)"/)!
     expect(mark).not.toBeNull()
     const [, x, y, scale] = mark.map(Number)
-    expect(90.17375 * scale / 236).toBeCloseTo(.58, 6)
-    expect(x + 50 * scale).toBeCloseTo(128, 6)
-    expect(y + 50 * scale).toBeCloseTo(128, 6)
+    expect(100 * scale / 824).toBeCloseTo(.607, 3)
+    expect(x + 50 * scale).toBeCloseTo(512, 6)
+    expect(y + 50 * scale).toBeCloseTo(512, 6)
   })
 })

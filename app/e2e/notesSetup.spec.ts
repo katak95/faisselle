@@ -41,7 +41,7 @@ async function go(page: Page, route: string) {
 async function expectClear(page: Page) {
   await expect.poll(() => page.getByTestId('notes-setup-open').evaluate(el => {
     const box = el.getBoundingClientRect()
-    const others = document.querySelectorAll('.workspace-sidebar-toggle, [data-testid="recording-return"], [data-testid="note-menu-button"], #workspace-actions button')
+    const others = document.querySelectorAll('.workspace-sidebar-toggle, [data-testid="recording-return"], [data-testid="note-menu-button"], .workspace-toolbar-actions button')
     return box.width >= 44 && box.x >= 0 && box.right <= innerWidth && [...others].every(other => {
       const rect = other.getBoundingClientRect()
       return rect.width > 0 && rect.x >= 0 && rect.right <= innerWidth
@@ -92,7 +92,7 @@ test('both AI stages live beside recording, open below, retry failures and disap
       await setSetup(app, state)
       await expect(trigger).toHaveAccessibleName(`${label} · 27%`)
       await expect(trigger).toHaveAttribute('title', `${label} · 27%`)
-      await expect(trigger.locator('.lucide-chevron-down')).toHaveCount(0)
+      await expect(trigger.locator('[data-icon="ChevronDown"]')).toHaveCount(0)
       await expect(page.locator('.workspace-toolbar').getByTestId('notes-setup-open')).toHaveCount(1)
       await expect(trigger).toHaveCSS('font-weight', '400')
       const start = (await page.getByTestId('new-note').boundingBox())!
@@ -149,7 +149,7 @@ test('both AI stages live beside recording, open below, retry failures and disap
         })
       }, state)
       await page.getByTestId('notes-setup-retry').click()
-      await expect(popup).toContainText("Yogurt couldn't restart the download.")
+      await expect(popup).toContainText("Figolu couldn't restart the download.")
       await page.getByTestId('notes-setup-retry').click()
       await expect(trigger).toHaveAccessibleName(`${label} · 27%`)
       await setSetup(app, ready)
@@ -296,7 +296,7 @@ test('skipping from the popover confirms only success, opens Settings, and dismi
     await setSetup(app, upgrade)
     await page.getByTestId('notes-setup-open').click()
     await page.getByTestId('notes-setup-skip').click()
-    await expect(page.getByRole('alert')).toHaveText("Yogurt couldn't change the notes model.")
+    await expect(page.getByRole('alert')).toHaveText("Figolu couldn't change the notes model.")
     await expect(toast).toHaveCount(0)
     for (const dismiss of ['settings', 'close', 'timeout']) {
       if (dismiss !== 'settings') {
@@ -383,7 +383,7 @@ test('Settings shows restore progress without a title-bar download and keeps the
       await expect(row).not.toContainText('Getting the smaller model')
       await expect(row).not.toContainText('The larger model keeps running summaries and Ask')
       if (fail) {
-        await expect(row.getByRole('alert')).toHaveText("Yogurt couldn't change the notes model.")
+        await expect(row.getByRole('alert')).toHaveText("Figolu couldn't change the notes model.")
         await expect(action).toHaveText('Remove')
       } else {
         await expect(row.getByRole('alert')).toHaveCount(0)

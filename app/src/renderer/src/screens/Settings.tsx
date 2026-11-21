@@ -2,7 +2,7 @@ import { AboutYogurt } from '../components/AboutYogurt'
 import { retryToast, toasts } from '../components/TrashToast'
 import { LoadingContent } from '../components/LoadingContent'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Check, ChevronDown, Copy, Download, ExternalLink, Globe, Lock, Upload, FileText } from 'lucide-react'
+import { Check, ChevronDown, Copy, Download, ExternalLink, Globe, Lock, Upload, FileText } from '../components/Icons'
 import type { Access, AppVisibility, McpStatus, PermissionKind, PermissionStatus, SetupState, Theme, UpdateStatus } from '../../../shared/types'
 import { notesDownloadText, notesUpgradeSize } from '../notesSetup'
 import { permissionCopy } from '../permissionCopy'
@@ -15,6 +15,10 @@ import { SpokenSetting } from '../components/SpokenSetting'
 import { useScrollMemory } from '../useScrollMemory'
 import { appShortcuts } from '../components/Shortcuts'
 import { CalendarSettings } from '../components/CalendarSettings'
+import { CloudNotesSettings } from '../components/CloudNotesSettings'
+import { TemplateSettings } from '../components/TemplateSettings'
+import { M365Settings } from '../components/M365Settings'
+import { AtlassianSettings } from '../components/AtlassianSettings'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -24,9 +28,9 @@ export function NextMeetingSetting({ visible, on, onChange }: { visible: boolean
     <div className="settings-row-copy">
       <label htmlFor="settings-next-meeting" className="settings-label">{t('Show the next meeting')}</label>
       <p id="next-meeting-description" className="settings-description">{osWords({
-        mac: t('Beside the Yogurt icon in the menu bar.'),
-        windows: t('In the tooltip of the Yogurt icon in the notification area.'),
-        linux: t('In the tooltip of the Yogurt icon in the tray.'),
+        mac: t('Beside the Figolu icon in the menu bar.'),
+        windows: t('In the tooltip of the Figolu icon in the notification area.'),
+        linux: t('In the tooltip of the Figolu icon in the tray.'),
       })}</p>
     </div>
     <button id="settings-next-meeting" role="switch" aria-checked={on} aria-describedby="next-meeting-description" onClick={() => onChange(!on)} className="settings-toggle">
@@ -37,8 +41,8 @@ export function NextMeetingSetting({ visible, on, onChange }: { visible: boolean
 
 const THEMES = () => [['system', osWords({ mac: t('Match my Mac'), windows: t('Match Windows'), linux: t('Match my system') })], ['light', t('Light')], ['dark', t('Dark')]] as const
 // each computer's own words for starting at login and its icon's place: the menu bar, the notification area, the tray
-const loginLabel = () => osWords({ mac: t('Open Yogurt when your Mac starts'), windows: t('Open Yogurt when Windows starts'), linux: t('Open Yogurt when you log in') })
-const trayLabel = () => window.yogurt.os === 'win32' ? t('Show Yogurt in the notification area') : t('Show Yogurt in the tray')
+const loginLabel = () => osWords({ mac: t('Open Figolu when your Mac starts'), windows: t('Open Figolu when Windows starts'), linux: t('Open Figolu when you log in') })
+const trayLabel = () => window.yogurt.os === 'win32' ? t('Show Figolu in the notification area') : t('Show Figolu in the tray')
 
 const settingsRetried = new EventTarget()
 
@@ -75,7 +79,7 @@ function useSettingSave(actionId: string, refresh: () => void) {
   return { save, busy }
 }
 
-/** Settings, kept small: what Yogurt may use, your name, open at login, stop when the call ends, light or dark, a backup and updates. Nothing technical. */
+/** Settings, kept small: what Figolu may use, your name, open at login, stop when the call ends, light or dark, a backup and updates. Nothing technical. */
 /** focus: the setting requested by the entry point */
 export function Settings({ revision = 0, focus }: { revision?: number; focus?: string }) {
   const [perms, setPerms] = useState<PermissionStatus>()
@@ -161,7 +165,7 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
             <div className="settings-row">
               <div className="settings-row-copy">
                 <label htmlFor="settings-name" className="settings-label">{t('Your name')}</label>
-                <p className="settings-description">{t('Yogurt uses your name to identify you in calls.')}</p>
+                <p className="settings-description">{t('Figolu uses your name to identify you in calls.')}</p>
               </div>
               <input id="settings-name" data-testid="settings-name" disabled={general.busy} value={name} maxLength={80} autoComplete="name" spellCheck={false}
                 onChange={(e) => setName(e.target.value)} onBlur={saveName} onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
@@ -178,7 +182,7 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
               </button>
             </div>
             {onMac() ? <div className="settings-row">
-              <label htmlFor="settings-visibility" className="settings-label settings-row-copy truncate">{t('Show Yogurt in')}</label>
+              <label htmlFor="settings-visibility" className="settings-label settings-row-copy truncate">{t('Show Figolu in')}</label>
               <span className="settings-select-wrap">
                 <select id="settings-visibility" data-testid="settings-visibility" value={prefs?.appVisibility ?? 'both'} disabled={!prefs}
                   onChange={(e) => void visibility(e.target.value as AppVisibility)} className="settings-select">
@@ -201,8 +205,8 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
               <div className="settings-row-copy">
                 <label htmlFor="recording-pill-toggle" className="settings-label">{t('Show floating recording pill')}</label>
                 <p id="recording-pill-description" className="settings-description">{prefs?.showInMenuBar === false
-                  ? t('Show Yogurt in the menu bar to hide the pill.')
-                  : t('Appears while you record with Yogurt in the background.')}</p>
+                  ? t('Show Figolu in the menu bar to hide the pill.')
+                  : t('Appears while you record with Figolu in the background.')}</p>
               </div>
               <button id="recording-pill-toggle" data-testid="recording-pill-toggle" role="switch" disabled={general.busy} aria-checked={prefs?.showRecordingPill ?? true}
                 aria-disabled={!prefs?.showInMenuBar} aria-describedby="recording-pill-description"
@@ -232,10 +236,25 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
               await window.yogurt.settings.setKeepRecordings(on)
               setPrefs(p => p && { ...p, keepRecordings: on })
             }} />
+            <div className="settings-row">
+              <div className="settings-row-copy">
+                <label htmlFor="recording-credit" className="settings-label">{t('Add “{credit}”', { credit: t('Recorded with {app}', { app: 'Figolu' }) })}</label>
+                <p id="recording-credit-description" className="settings-description">{t('On copied summaries and saved Markdown files.')}</p>
+              </div>
+              <button id="recording-credit" role="switch" aria-checked={prefs?.includeRecordingCredit ?? true} aria-describedby="recording-credit-description"
+                disabled={!prefs || general.busy} className="settings-toggle" onClick={() => {
+                  if (!prefs) return
+                  const on = !prefs.includeRecordingCredit
+                  void general.save(async () => {
+                    await window.yogurt.settings.setIncludeRecordingCredit(on)
+                    setPrefs(p => p && { ...p, includeRecordingCredit: on })
+                  }, 'recording-credit-retry')
+                }}><span className="settings-toggle-knob" /></button>
+            </div>
             <NotesModel reveal={focus === 'notes-model'} />
           </LoadingContent></div>
 
-          <h2 className="settings-section-heading">{t('What Yogurt can use')}</h2>
+          <h2 className="settings-section-heading">{t('What Figolu can use')}</h2>
           <LoadingContent pending={!perms}><ul className="settings-group">
             {supportedKinds(window.yogurt.capabilities).map((k) => <PermissionRow key={k} kind={k} status={perms?.[k]} onAsk={() => void window.yogurt.permissions.request(k).then(reload)} />)}
           </ul></LoadingContent>
@@ -250,6 +269,14 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
             <Jargon />
           </div>
 
+          <CloudNotesSettings />
+
+          <TemplateSettings />
+
+          <M365Settings />
+
+          <AtlassianSettings />
+
           <Backup onImported={() => { void window.yogurt.settings.get().then(setPrefs) }} />
 
           <AiApps />
@@ -263,7 +290,7 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
               <div className="settings-row" key={keys}><dt>{label}</dt><dd><kbd>{keys}</kbd></dd></div>)}
           </dl>
 
-          <p className="settings-privacy"><Lock size={12} aria-hidden="true" />{t('Yogurt stores your meetings, notes and audio on this computer.')}</p>
+          <p className="settings-privacy"><Lock size={12} aria-hidden="true" />{t('Figolu stores your meetings, notes and audio on this computer.')}</p>
         </div>
       </div>
     </div>
@@ -303,7 +330,7 @@ function NotesModel({ reveal = false }: { reveal?: boolean }) {
         : t("More detailed, accurate notes. Replaces the current model, so you don't keep both.")}</p>
       {setup.notesRestoreFraction !== undefined && <p className="settings-description">{t('The larger model keeps running summaries and Ask until then, and is removed after.')}</p>}
       {setup.notesUpgradeError && <p className="settings-description">{setup.notesUpgradeError}</p>}
-      {failed && <p role="alert" className="settings-description">{t("Yogurt couldn't change the notes model.")}</p>}
+      {failed && <p role="alert" className="settings-description">{t("Figolu couldn't change the notes model.")}</p>}
     </div>
     <button data-testid="settings-notes-model-action" className="workspace-button settings-action" aria-busy={busy || setup.notesUpgradeChanging} disabled={busy || setup.notesUpgradeChanging} onClick={() => void act()}>
       {setup.notesUpgradeInstalled ? (busy || setup.notesUpgradeChanging ? t('Removing…') : t('Remove')) : downloading ? t('Skip') : t('Download ({size} GB)', { size: notesUpgradeSize(setup.notesUpgradeBytes) })}
@@ -322,10 +349,10 @@ function AppLanguage() {
   const system = LOCALES.find((l) => l.id === s?.systemLocale)?.name ?? 'English'
   return (
     <LoadingContent pending={!s} testId="language-loading"><div className="settings-row">
-      <span className="settings-permission-icon"><Globe size={17} strokeWidth={1.75} aria-hidden="true" /></span>
+      <span className="settings-permission-icon"><Globe size={17} aria-hidden="true" /></span>
       <div className="settings-row-copy">
         <label htmlFor="settings-app-language" className="settings-label">{t('App language')}</label>
-        <p className="settings-description">{t("This changes the language of Yogurt's menus and buttons.")}</p>
+        <p className="settings-description">{t("This changes the language of Figolu's menus and buttons.")}</p>
       </div>
       <span className="settings-select-wrap">
       <select id="settings-app-language" data-testid="settings-app-language" value={s?.language ?? ''} disabled={!s} onChange={(e) => pick(e.target.value)} className="settings-select">
@@ -348,7 +375,7 @@ function SummaryLanguage() {
   }
   return (
     <LoadingContent pending={language === undefined}><div className="settings-row">
-      <span className="settings-permission-icon"><FileText size={17} strokeWidth={1.75} aria-hidden="true" /></span>
+      <span className="settings-permission-icon"><FileText size={17} aria-hidden="true" /></span>
       <div className="settings-row-copy">
         <label htmlFor="settings-summary-language" className="settings-label">{t('Summary language')}</label>
         <p id="settings-summary-language-description" className="settings-description">{t('Used for new summaries and when you write them again.')}</p>
@@ -372,7 +399,7 @@ export function PermissionRow({ kind, status, onAsk }: { kind: PermissionKind; s
   const granted = status === 'granted'
   return (
     <li data-testid="permission-row" data-kind={kind} data-status={status ?? ''} className="settings-row">
-      <span className="settings-permission-icon"><Icon size={17} strokeWidth={1.75} aria-hidden="true" /></span>
+      <span className="settings-permission-icon"><Icon size={17} aria-hidden="true" /></span>
       <div className="settings-row-copy">
         <p className="settings-permission-label">
           {c.name}
@@ -423,8 +450,8 @@ function Backup({ onImported }: { onImported(): void }) {
     if (r.ok) { onImported(); setSaid({ kind: 'imported', added: r.added, skipped: r.skipped }); return }
     const text = {
       cancelled: '', recording: t('You can import once the recording stops.'),
-      newer: t('This backup is from a newer Yogurt. Update Yogurt, then try again.'),
-      invalid: t("That file isn't a Yogurt backup."),
+      newer: t('This backup is from a newer Figolu. Update Figolu, then try again.'),
+      invalid: t("That file isn't a Figolu backup."),
       failed: t("Couldn't import that backup. Try again."),
     }[r.error]
     if (text) setSaid({ kind: 'error', text })
@@ -463,7 +490,7 @@ function Backup({ onImported }: { onImported(): void }) {
   )
 }
 
-/** AI apps on this Mac reading meetings through MCP: off until turned on, with what that means */
+/** AI apps on this Mac using meetings through MCP: reading off until turned on, changes off until turned on too, with what that means */
 function AiApps() {
   const [status, setStatus] = useState<McpStatus>()
   const [copied, setCopied] = useState(false)
@@ -473,6 +500,7 @@ function AiApps() {
   }, [])
   const change = useSettingSave('ai-apps-retry', useCallback(() => { void window.yogurt.mcp.status().then(setStatus) }, []))
   const toggle = () => status && change.save(async () => { setStatus(await window.yogurt.mcp.set(!status.enabled)) })
+  const toggleChanges = () => status && change.save(async () => { setStatus(await window.yogurt.mcp.setChanges(!status.changes)) })
   const copy = () => { if (status) void navigator.clipboard.writeText(status.command).then(() => setCopied(true)) }
   const on = !!status?.enabled
   return (
@@ -489,6 +517,17 @@ function AiApps() {
           </button>
         </div>
 
+        {on && status &&
+          <div className="settings-row">
+            <div className="settings-row-copy">
+              <p className="settings-label">{t('Let AI apps make changes')}</p>
+              <p className="settings-description">{t('They can file and rename meetings, edit notes, start and stop recording, and bring in meetings from other notes apps. Nothing is deleted for good: removed meetings go to the Trash.')}</p>
+            </div>
+            <button data-testid="ai-apps-changes-toggle" disabled={change.busy} role="switch" aria-checked={status.changes} aria-label={t('Let AI apps make changes')} onClick={toggleChanges} className="settings-toggle">
+              <span className="settings-toggle-knob" />
+            </button>
+          </div>
+        }
         {on && status &&
           <div className="settings-row">
             <div className="settings-row-copy">
@@ -510,7 +549,7 @@ function AiApps() {
   )
 }
 
-/** the version, and in a build that updates itself: the switch, what it's doing, Check now, and Restart Yogurt once a new version is ready */
+/** the version, and in a build that updates itself: the switch, what it's doing, Check now, and Restart Figolu once a new version is ready */
 function Updates() {
   const [status, setStatus] = useState<UpdateStatus>()
   const [blocked, setBlocked] = useState(false)
@@ -523,7 +562,7 @@ function Updates() {
   const restart = () => void window.yogurt.updates.restart().then((ok) => setBlocked(!ok))
   const said = status?.available ? {
     idle: '', latest: t('Up to date'), checking: t('Checking for updates…'), error: t("Couldn't check for updates."),
-    downloading: t('Downloading version {version}…', { version: status.next ?? '' }), ready: t('Yogurt {version} is ready', { version: status.next ?? '' }),
+    downloading: t('Downloading version {version}…', { version: status.next ?? '' }), ready: t('Figolu {version} is ready', { version: status.next ?? '' }),
   }[status.state] : ''
   return (
     <>
@@ -532,10 +571,10 @@ function Updates() {
         {status?.available &&
           <div className="settings-row">
             <div className="settings-row-copy">
-              <p className="settings-label">{t('Update Yogurt automatically')}</p>
+              <p className="settings-label">{t('Update Figolu automatically')}</p>
               <p className="settings-description">{t('New versions download in the background and install when you quit.')}</p>
             </div>
-            <button data-testid="updates-toggle" disabled={change.busy} role="switch" aria-checked={status.on} aria-label={t('Update Yogurt automatically')} onClick={toggle} className="settings-toggle">
+            <button data-testid="updates-toggle" disabled={change.busy} role="switch" aria-checked={status.on} aria-label={t('Update Figolu automatically')} onClick={toggle} className="settings-toggle">
               <span className="settings-toggle-knob" />
             </button>
           </div>}
@@ -547,7 +586,7 @@ function Updates() {
             {blocked && <p className="settings-description">{t('You can restart once the recording stops.')}</p>}
           </div>
           {status?.state === 'ready' &&
-            <button data-testid="updates-restart" onClick={restart} className="workspace-button settings-action primary">{t('Restart Yogurt')}</button>}
+            <button data-testid="updates-restart" onClick={restart} className="workspace-button settings-action primary">{t('Restart Figolu')}</button>}
           {status?.available && status.on && (status.state === 'idle' || status.state === 'latest' || status.state === 'error') &&
             <button data-testid="updates-check" onClick={() => void window.yogurt.updates.check()} className="workspace-button settings-action">{status.state === 'error' ? t('Try again') : t('Check now')}</button>}
         </div>

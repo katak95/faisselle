@@ -2,7 +2,7 @@ import { usePopoverPresence } from '../motion'
 import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
-import { ChevronRight, Ellipsis, FolderIcon, ListChecks, Trash2 } from 'lucide-react'
+import { ChevronRight, Ellipsis, Folder as FolderIcon, ListChecks, Trash2 } from './Icons'
 import { t } from '../../../shared/i18n'
 import { deleteMeetingFromKey } from '../meetingRowKeys'
 import { FolderPicker } from './FolderPicker'
@@ -76,7 +76,7 @@ export function MeetingRow({ id, recording, children, selected, targets, members
     </div>, document.body)}
     {namingFolder && <FolderName onDone={(made) => {
       setNamingFolder(false); focusRow()
-      if (made) void addMeetingsToFolder(made.id, folderTargets).catch(() => toasts.add({ title: t("Yogurt couldn't make that change. Try again.") }))
+      if (made) void addMeetingsToFolder(made.id, folderTargets).catch(() => toasts.add({ title: t("Figolu couldn't make that change. Try again.") }))
     }} />}
   </li>
 }

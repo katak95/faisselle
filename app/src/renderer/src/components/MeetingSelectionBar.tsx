@@ -2,7 +2,7 @@ import { usePopoverPresence } from '../motion'
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
-import { Folder, Trash2, X } from 'lucide-react'
+import { Folder, Trash2, X } from './Icons'
 import { t } from '../../../shared/i18n'
 import { addMeetingsToFolder } from '../folders'
 import type { FolderMemberships } from '../folderSelection'
@@ -65,7 +65,7 @@ export function MeetingSelectionBar({ ids, memberships, list, busy, clear, trash
     </div>
     {naming && <FolderName onDone={made => {
       setNaming(false); trigger.current?.focus()
-      if (made) void addMeetingsToFolder(made.id, ids).catch(() => toasts.add({ title: t("Yogurt couldn't add this note to the folder. Try again.") }))
+      if (made) void addMeetingsToFolder(made.id, ids).catch(() => toasts.add({ title: t("Figolu couldn't add this note to the folder. Try again.") }))
     }} />}
   </>, document.body)
 }

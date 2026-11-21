@@ -321,7 +321,7 @@ describe('SetupController', () => {
   it('a Mac too small for any notes model says so, as it always did', async () => {
     const { c, rec } = setup({ getHardware: async () => ({ ...mac8, totalRamGB: 4 }) })
     await c.start(); await c.idle()
-    expect(c.state).toMatchObject({ phase: 'error', message: 'Yogurt needs a Mac with at least 8 GB of memory.' })
+    expect(c.state).toMatchObject({ phase: 'error', message: 'Figolu needs a Mac with at least 8 GB of memory.' })
     expect(rec.asked).toEqual([])
   })
 
@@ -330,7 +330,7 @@ describe('SetupController', () => {
       const pc: Hardware = { os, arch: 'x64', cpuModel: 'Intel Core i3', totalRamGB: 4, freeDiskGB: 500, gpu: { kind: 'none', name: '', vramGB: 0 } }
       const { c, rec } = setup({ getHardware: async () => pc })
       await c.start(); await c.idle()
-      expect(c.state).toMatchObject({ phase: 'error', message: "Yogurt runs entirely on your computer, and this one isn't strong enough. It needs at least 8 GB of memory." })
+      expect(c.state).toMatchObject({ phase: 'error', message: "Figolu runs entirely on your computer, and this one isn't strong enough. It needs at least 8 GB of memory." })
       expect(rec.asked).toEqual([])
     }
   })
@@ -476,16 +476,23 @@ describe('the speed check (Windows and Linux): speech models timed on this compu
     expect(s.stored()).toBeUndefined()
   })
 
-  it('on the processor alone: small first (never turbo), then smaller until one keeps up; the result is stored', async () => {
+  it('on the processor alone: small first (never turbo), kept even when it lags a little, since base is weak outside English (#107); the result is stored', async () => {
     const s = speed({ 'whisper-small-q5_1': 0.88, 'whisper-base-q5_1': 0.42, 'whisper-tiny-q5_1': 0.19 })
     const { c, rec } = setup({ getHardware: async () => cpuPc, speed: s.deps })
     await c.start(); await c.idle()
     expect(c.state.phase).toBe('ready')
-    expect(s.timed).toEqual(['whisper-small-q5_1', 'whisper-base-q5_1'])
+    expect(s.timed).toEqual(['whisper-small-q5_1'])
     expect(rec.asked).not.toContain(turboUrl)
+    expect(c.installed()?.asr).toContain('ggml-small-q5_1.bin')
+    expect(s.stored()).toMatchObject({ key: speedKey(cpuPc), model: 'whisper-small-q5_1', rtf: { 'whisper-small-q5_1': 0.88 } })
+  })
+  it('small slower than the clip itself: then smaller until one keeps up', async () => {
+    const s = speed({ 'whisper-small-q5_1': 1.3, 'whisper-base-q5_1': 0.42, 'whisper-tiny-q5_1': 0.19 })
+    const { c, rec } = setup({ getHardware: async () => cpuPc, speed: s.deps })
+    await c.start(); await c.idle()
+    expect(s.timed).toEqual(['whisper-small-q5_1', 'whisper-base-q5_1'])
     expect(rec.asked).not.toContain(url('whisper-tiny-q5_1'))
     expect(c.installed()?.asr).toContain('ggml-base-q5_1.bin')
-    expect(s.stored()).toMatchObject({ key: speedKey(cpuPc), model: 'whisper-base-q5_1', rtf: { 'whisper-small-q5_1': 0.88, 'whisper-base-q5_1': 0.42 } })
   })
 
   it('with graphics turbo is timed first and kept when it keeps up', async () => {
@@ -790,5 +797,60 @@ describe('optional better notes model', () => {
     expect(existsSync(bigger)).toBe(true)
     expect(c.state.notesUpgradeInstalled).toBe(true)
     expect(c.state.notesUpgradeChanging).toBeUndefined()
+  })
+})
+
+describe('notes on Bedrock', () => {
+  it('downloads no notes model when the notes are on Bedrock, only speech and meaning search', async () => {
+    const rec = recorder()
+    const { c } = setup({ download: rec.deps, cloudNotes: () => true })
+    await c.start(); await c.idle()
+    expect(rec.asked).not.toContain(starterUrl)
+    expect(rec.asked).not.toContain(bigUrl)
+    expect(rec.asked).toContain(embedUrl)
+    expect(c.notesPath()).toBeUndefined()
+  })
+
+  it('waits for the welcome screen: Bedrock picked there means the notes model never downloads', async () => {
+    let cloud = false, go!: () => void
+    const rec = recorder()
+    const { c } = setup({ download: rec.deps, cloudNotes: () => cloud, beforeLocalNotes: () => new Promise<void>((r) => { go = r }) })
+    await c.start()
+    expect(c.state.phase).toBe('ready')
+    expect(rec.asked).not.toContain(starterUrl)
+    cloud = true; go()
+    await c.idle()
+    expect(rec.asked).not.toContain(starterUrl)
+    expect(rec.asked).toContain(embedUrl)
+  })
+
+  it('stops the download when the notes move to Bedrock, and picks it up again when they come back', async () => {
+    let cloud = false
+    const rec = recorder((url) => url === starterUrl && !cloud)
+    const { c } = setup({ download: rec.deps, cloudNotes: () => cloud })
+    await c.start()
+    await vi.waitFor(() => expect(rec.asked).toContain(starterUrl))
+    cloud = true; c.cloudChosen()
+    expect(c.state.notesDownloading).toBeUndefined()
+    rec.release()
+    await c.idle()
+    expect(c.notesPath()).toBeUndefined()
+    expect(rec.asked).not.toContain(bigUrl)
+    cloud = false; c.localNotesWanted()
+    await vi.waitFor(() => { rec.release(); expect(c.notesPath()).toBeTruthy() })
+    expect(rec.asked.filter((u) => u === starterUrl)).toHaveLength(2)
+  })
+
+  it('removes the local notes models on request, and tells how much room they took', async () => {
+    const { c } = setup()
+    await c.start(); await c.idle()
+    expect(c.notesPath()).toBeTruthy()
+    const path = c.notesPath()!
+    writeFileSync(path, 'x'.repeat(1000))
+    expect(c.localNotesBytes()).toBeGreaterThanOrEqual(1000)
+    c.removeLocalNotes()
+    expect(existsSync(path)).toBe(false)
+    expect(c.notesPath()).toBeUndefined()
+    expect(c.localNotesBytes()).toBe(0)
   })
 })

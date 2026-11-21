@@ -2,7 +2,7 @@ import { withoutPreamble } from '../shared/answerPreamble'
 import type { Meeting, Notes, Segment, Store } from './store'
 import type { NotesModel } from './notes/model'
 import type { Queue } from './notes/queue'
-import { transcriptHead, transcriptText } from './notes/enhance'
+import { transcriptHead, transcriptText, contextIntro } from './notes/enhance'
 import { meetingWords, respell, spellingLine } from './vocab'
 import type { AskStep, ChatTurn, ChatView } from '../shared/types'
 
@@ -52,7 +52,7 @@ function turnsOf(segments: Segment[]): Array<{ text: string; ids: number[] }> {
 }
 
 /** What follows the transcript: the meeting, and its notes (the enhanced ones, or what the person typed while there are none yet) */
-export function contextTail(meeting: Pick<Meeting, 'title' | 'attendees'>, notes: Notes, spelling = ''): string {
+export function contextTail(meeting: Pick<Meeting, 'title' | 'attendees'>, notes: Notes, spelling = '', extra = ''): string {
   const people = meeting.attendees.map((a) => a.name).filter(Boolean)
   const written = notes.enhanced?.trim()
   const mine = notes.mine.trim()
@@ -64,6 +64,8 @@ export function contextTail(meeting: Pick<Meeting, 'title' | 'attendees'>, notes
     ...(spelling ? [spelling] : []),
     ...(written ? ['', 'The notes on this meeting:', '<notes>', written, '</notes>']
       : mine ? ['', 'Notes the person typed during the meeting:', '<notes>', mine, '</notes>'] : []),
+    // the invite, related emails and documents (Microsoft 365): background, never what was said
+    ...(extra ? ['', contextIntro, '<context>', extra, '</context>'] : []),
   ].join('\n')
 }
 
@@ -75,10 +77,10 @@ export function contextTail(meeting: Pick<Meeting, 'title' | 'attendees'>, notes
  */
 export function chatContext(
   meeting: Pick<Meeting, 'title' | 'attendees'>, notes: Notes, segments: Segment[], maxTokens: number,
-  o: { hits?: number[]; count?: Count; spelling?: string } = {},
+  o: { hits?: number[]; count?: Count; spelling?: string; extra?: string } = {},
 ): string {
   const count = o.count ?? guess
-  const tail = contextTail(meeting, notes, o.spelling)
+  const tail = contextTail(meeting, notes, o.spelling, o.extra)
   const turns = turnsOf(segments)
   const whole = transcriptHead + turns.map((t) => t.text).join('\n') + '\n' + tail
   const cost = (s: string) => count(s) + 1
@@ -145,21 +147,29 @@ export function chatPrompt(i: { context: string; question: string; history: Hist
   ].join('\n')
 }
 
-type Deps = { store: Pick<Store, 'meeting' | 'notes' | 'segments' | 'segmentHits'>; queue: Pick<Queue, 'enqueue'>; model: Pick<NotesModel, 'llm'> & Partial<Pick<NotesModel, 'needsLoad'>> }
+type Deps = { store: Pick<Store, 'meeting' | 'notes' | 'segments' | 'segmentHits'>; queue: Pick<Queue, 'enqueue'>; model: Pick<NotesModel, 'llm'> & Partial<Pick<NotesModel, 'needsLoad'>>
+  /** the meeting's invite, related emails and documents (Microsoft 365), as text; read before the question waits for the model */
+  context?: (meetingId: string) => Promise<string | undefined> }
 type Model = Awaited<ReturnType<NotesModel['llm']>>
 
 /** What the model reads about the meeting for this question, sized to the room left by the question and history */
-async function prepare(d: Pick<Deps, 'store'>, llm: Model, m: Meeting, question: string, history: History, recording: boolean): Promise<{ context: string; recent: History }> {
+async function prepare(d: Pick<Deps, 'store'>, llm: Model, m: Meeting, question: string, history: History, recording: boolean, extraIn = ''): Promise<{ context: string; recent: History }> {
   const total = llm.contextSize - ANSWER_TOKENS - MARGIN_TOKENS
+  // the meeting's context (Microsoft 365) takes at most a quarter of the room too, cut at a line
+  let extra = extraIn
+  if (extra) {
+    const [n] = await llm.count([extra])
+    if (n > total / 4) extra = extra.slice(0, Math.floor(extra.length * (total / 4 / n) * 0.9)).replace(/\n[^\n]*$/, '') + '\n…'
+  }
   // the notes take at most a quarter of the room: long ones are cut at a line
   let notes = d.store.notes(m.id)
   const words = meetingWords(m)
   const spelling = spellingLine(words)
-  let [tailTokens] = await llm.count([contextTail(m, notes, spelling)])
+  let [tailTokens] = await llm.count([contextTail(m, notes, spelling, extra)])
   if (tailTokens > total / 4) {
     const cut = (t: string) => { const keep = Math.floor(t.length * (total / 4 / tailTokens) * 0.9); return t.slice(0, keep).replace(/\n[^\n]*$/, '') + '\n…' }
     notes = notes.enhanced?.trim() ? { ...notes, enhanced: cut(notes.enhanced) } : { ...notes, mine: cut(notes.mine) }
-    ;[tailTokens] = await llm.count([contextTail(m, notes, spelling)])
+    ;[tailTokens] = await llm.count([contextTail(m, notes, spelling, extra)])
   }
   // earlier questions go oldest first until at least half the room is left for the transcript
   let recent = history.slice(-HISTORY_TURNS)
@@ -169,13 +179,13 @@ async function prepare(d: Pick<Deps, 'store'>, llm: Model, m: Meeting, question:
   // the turns, heads and tail counted by the model's own tokenizer, so a transcript that fits is read whole
   // lines saved before the meeting had these people get their spellings too
   const segments = d.store.segments(m.id).map((x) => ({ ...x, text: respell(x.text, words) }))
-  const tail = contextTail(m, notes, spelling)
+  const tail = contextTail(m, notes, spelling, extra)
   const texts = [...new Set([transcriptHead, excerptHead, tail, ...transcriptText(segments).split('\n')])]
   const counted = await llm.count(texts)
   const known = new Map(texts.map((l, k) => [l, counted[k]]))
   const count: Count = (s) => known.get(s) ?? guess(s)
   const hits = question.trim() ? d.store.segmentHits(m.id, question) : []
-  return { context: chatContext(m, notes, segments, total - overhead, { hits, count, spelling }), recent }
+  return { context: chatContext(m, notes, segments, total - overhead, { hits, count, spelling, extra }), recent }
 }
 
 /**
@@ -201,6 +211,9 @@ export function warm(d: Deps, meetingId: string): Promise<void> {
  * quietly. When the queue stops the job (a recording needs the room) it runs again from the start: onRestart.
  * onStep: what it is doing before the first words (loading the model, then reading the meeting).
  */
+/** how long a question waits, at its turn, for Microsoft 365 still answering: then it goes without */
+const CONTEXT_WAIT_MS = 15_000
+
 export async function* ask(d: Deps, meetingId: string, question: string, history: History,
   o: { signal?: AbortSignal; onStart?: () => void; onRestart?: () => void; onComplete?: (answer: string) => void; onStep?: (step: AskStep) => void } = {}): AsyncIterable<string> {
   const buf: string[] = []
@@ -210,6 +223,9 @@ export async function* ask(d: Deps, meetingId: string, question: string, history
   const finish = (e?: unknown) => { if (done) return; failed = e; done = true; wake?.() }
   // a stop ends it at once, even while it still waits in the queue (the job then does nothing when its turn comes)
   o.signal?.addEventListener('abort', () => finish(), { once: true })
+  // Microsoft 365 is asked at once, while the question waits its turn and the model loads; the question still joins
+  // the queue right away, as without it
+  const extra = d.context?.(meetingId).catch((e) => { console.warn('the meeting context could not be read', e); return undefined })
 
   d.queue.enqueue(async (stop) => {
     if (o.signal?.aborted) return
@@ -221,7 +237,7 @@ export async function* ask(d: Deps, meetingId: string, question: string, history
       if (d.model.needsLoad?.()) o.onStep?.({ kind: 'loading' })
       const llm = await d.model.llm(signal)
       const recording = m.state === 'recording'
-      const { context, recent } = await prepare(d, llm, m, question, history, recording)
+      const { context, recent } = await prepare(d, llm, m, question, history, recording, (await Promise.race([extra, new Promise<undefined>((r) => setTimeout(r, CONTEXT_WAIT_MS))])) ?? '')
       if (signal.aborted) return
       o.onStep?.({ kind: 'reading', title: m.title })
       // the engine ends an answer it is told to stop and returns what it had (no error)

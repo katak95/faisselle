@@ -36,6 +36,73 @@ beforeEach(() => {
 })
 
 describe('start cards', () => {
+  // A real call: Zoom lets go of the mic for a few seconds when someone switches headsets or toggles mute, and the
+  // calendar event can end while the call goes on. None of that is a new call: one offer per call, never a stream of them.
+  it('a mic blip in the middle of a call neither takes the card down nor offers again', async () => {
+    reading = { micApps: [zoom], events: [] }
+    await w.tick()
+    for (const gap of [3_000, 20_000, 90_000]) {
+      reading = { micApps: [], events: [] }; clock += gap; await w.tick()
+      reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    }
+    expect(log).toEqual(['offer:app:us.zoom.xos'])
+  })
+  it('a closed card stays closed through mic blips for the rest of that call', async () => {
+    reading = { micApps: [zoom], events: [] }
+    await w.tick()
+    w.dismiss('app:us.zoom.xos')
+    for (let i = 0; i < 4; i++) {
+      reading = { micApps: [], events: [] }; clock += 10_000; await w.tick()
+      reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    }
+    expect(log.filter((l) => l.startsWith('offer'))).toHaveLength(1)
+  })
+  it('the calendar event ending while the call goes on is not a new call', async () => {
+    const e = ev({ end: clock + 30 * MIN })
+    reading = { micApps: [zoom], events: [e] }
+    await w.tick()
+    clock += 60 * MIN
+    reading = { micApps: [zoom], events: [] }
+    await w.tick(); clock += 3_000; await w.tick()
+    expect(log.filter((l) => l.startsWith('offer'))).toEqual([`offer:event:e1:${e.start}`])
+  })
+  it('after a recording ends, the call app coming back is a new call: back-to-back meetings each get an offer', async () => {
+    reading = { micApps: [zoom], events: [] }
+    await w.tick()
+    active = meeting(); await w.tick()
+    active = null; w.cleared(); await w.tick()
+    reading = { micApps: [], events: [] }; clock += 3_000; await w.tick()
+    reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    expect(log.filter((l) => l.startsWith('offer'))).toEqual(['offer:app:us.zoom.xos', 'offer:app:us.zoom.xos'])
+  })
+  it('a recording started and stopped between two looks still closes its call', async () => {
+    reading = { micApps: [zoom], events: [] }
+    await w.tick()
+    // Take notes, then Stop, both before the next look
+    w.cleared(); w.cleared()
+    reading = { micApps: [], events: [] }; clock += 3_000; await w.tick()
+    reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    expect(log.filter((l) => l.startsWith('offer'))).toEqual(['offer:app:us.zoom.xos', 'offer:app:us.zoom.xos'])
+  })
+  it('a different calendar meeting starting on the same app is a new call', async () => {
+    const first = ev({ id: 'e1', start: clock, end: clock + 30 * MIN })
+    reading = { micApps: [zoom], events: [first] }
+    await w.tick()
+    w.dismiss(`event:e1:${first.start}`)
+    clock += 31 * MIN
+    const next = ev({ id: 'e2', title: 'Next', start: clock - MIN, end: clock + 30 * MIN })
+    reading = { micApps: [zoom], events: [next] }
+    await w.tick()
+    expect(log.filter((l) => l.startsWith('offer'))).toEqual([`offer:event:e1:${first.start}`, `offer:event:e2:${next.start}`])
+  })
+  it('two minutes off the mic ends the call: the next one gets its own offer', async () => {
+    reading = { micApps: [zoom], events: [] }
+    await w.tick()
+    w.dismiss('app:us.zoom.xos')
+    reading = { micApps: [], events: [] }; await w.tick(); clock += 2 * MIN; await w.tick()
+    reading = { micApps: [zoom], events: [] }; await w.tick()
+    expect(log.filter((l) => l.startsWith('offer'))).toHaveLength(2)
+  })
   it('offers nothing while the first run is still being set up, then offers the call once it is done', async () => {
     let ready = false
     const x = new Watcher({ read: async () => reading, now: () => clock, active: () => active, bindApp: (_id, app) => (active = { ...active!, app }),
@@ -56,7 +123,7 @@ describe('start cards', () => {
     reading = { micApps: [zoom], events: [] }
     await w.tick()
     reading = { micApps: [], events: [] }
-    await w.tick()
+    await w.tick(); clock += 2 * MIN; await w.tick()
     reading = { micApps: [zoom], events: [] }
     await w.tick()
     expect(log).toEqual(['offer:app:us.zoom.xos', 'hide', 'offer:app:us.zoom.xos'])
@@ -68,7 +135,7 @@ describe('start cards', () => {
     await w.tick(); await w.tick()
     expect(log).toEqual(['offer:app:us.zoom.xos'])
     reading = { micApps: [], events: [] }
-    await w.tick()
+    await w.tick(); clock += 2 * MIN; await w.tick()
     expect(w.dismissed.size).toBe(0)
     reading = { micApps: [zoom], events: [] }
     await w.tick()
@@ -80,17 +147,17 @@ describe('start cards', () => {
     await w.tick()
     expect(w.dismissed.has('app:us.zoom.xos')).toBe(true)
   })
-  it('finishing in Yogurt while the call app still holds the mic: no card for that call, and the next call still gets one', async () => {
+  it('finishing in Figolu while the call app still holds the mic: no card for that call, and the next call still gets one', async () => {
     reading = { micApps: [zoom], events: [] }
     active = meeting()
     await w.tick(); await w.tick()
-    // Finish in Yogurt; Zoom keeps the mic a few seconds longer
+    // Finish in Figolu; Zoom keeps the mic a few seconds longer
     active = null; w.cleared()
     await w.tick(); clock += 5000; await w.tick()
     expect(log.filter((l) => l.startsWith('offer'))).toEqual([])
     // the call ends, and a new one starts later
     reading = { micApps: [], events: [] }
-    await w.tick()
+    await w.tick(); clock += 2 * MIN; await w.tick()
     reading = { micApps: [zoom], events: [] }
     await w.tick()
     expect(log.filter((l) => l.startsWith('offer'))).toEqual(['offer:app:us.zoom.xos'])
@@ -216,6 +283,31 @@ describe('stops by itself when the call ends', () => {
     reading = { micApps: [zoom], events: [] }; await w.tick()
     reading = { micApps: [], events: [] }; clock += 30_000; await w.tick()
     expect(log).toEqual(['stop'])
+  })
+  // #100: Join and record is plainly a call. It starts with no call app (the browser or Zoom opens after), so it would
+  // count as started by hand; once its call app has been on the mic and the call ends, it stops by itself like a card start.
+  it('Join and record stops by itself once its call has ended, like a recording started from the card', async () => {
+    active = meeting({ app: null })
+    w.joined('m1')
+    reading = { micApps: [], events: [] }; await w.tick()
+    reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    expect(active!.app).toBe('Zoom')
+    reading = { micApps: [], events: [] }; clock += 5_000; await w.tick()
+    expect(log).toEqual(['auto:m1'])
+  })
+  it('Join and record whose call never reached the mic is not stopped', async () => {
+    active = meeting({ app: null })
+    w.joined('m1')
+    reading = { micApps: [], events: [] }
+    await w.tick(); clock += 10 * MIN; await w.tick()
+    expect(log.filter((l) => l.startsWith('auto'))).toEqual([])
+  })
+  it('New note and the agenda stay started by hand: asked, never stopped by itself', async () => {
+    active = meeting({ app: null })
+    reading = { micApps: [], events: [] }; await w.tick()
+    reading = { micApps: [zoom], events: [] }; clock += 3_000; await w.tick()
+    reading = { micApps: [], events: [] }; clock += 31_000; await w.tick()
+    expect(log.filter((l) => l.startsWith('auto'))).toEqual([])
   })
   it('a recording started by hand with no call is never stopped', async () => {
     active = meeting({ app: null })
