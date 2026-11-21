@@ -39,12 +39,12 @@ export function AboutYogurt() {
     if (current === attempt.current) setError(opened ? null : 'share')
   }
 
-  const message = error === 'copy' ? t("Figolu couldn't copy.") : error === 'share' ? t("Figolu couldn't open the share menu.") : ''
+  const message = error === 'copy' ? t("Faisselle couldn't copy.") : error === 'share' ? t("Faisselle couldn't open the share menu.") : ''
   return <section aria-labelledby="about-yogurt">
-    <h2 id="about-yogurt" className="settings-section-heading">{t('About Figolu')}</h2>
+    <h2 id="about-yogurt" className="settings-section-heading">{t('About Faisselle')}</h2>
     <div className="settings-group settings-backup">
       <p className="settings-label grid">
-        <span className={`col-start-1 row-start-1 ${error ? 'invisible' : ''}`}>{t('Like Figolu? Sharing it or starring it on GitHub helps us keep building it.')}</span>
+        <span className={`col-start-1 row-start-1 ${error ? 'invisible' : ''}`}>{t('Like Faisselle? Sharing it or starring it on GitHub helps us keep building it.')}</span>
         <span role="status" className={error ? 'col-start-1 row-start-1 text-danger' : 'sr-only'}>{message || (copied ? done : '')}</span>
       </p>
       <div className="settings-backup-actions settings-about-actions">

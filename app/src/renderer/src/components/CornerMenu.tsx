@@ -120,7 +120,7 @@ export function CornerMenu({ section, recording, go, shortcuts }: { section: str
         </Tooltip.Root>
         <Menu.Portal>
           <Menu.Positioner side="top" align="start" sideOffset={8} collisionPadding={8} positionMethod="fixed" className="corner-position">
-            <Menu.Popup aria-label={t('Figolu menu')} data-testid="corner-menu" data-motion="instant" className="menu-entry corner-menu"
+            <Menu.Popup aria-label={t('Faisselle menu')} data-testid="corner-menu" data-motion="instant" className="menu-entry corner-menu"
               finalFocus={destination.current ? false : undefined}>
               {cornerRows.map(id => {
                 const Icon = id === 'github' || id === 'discord' ? null : glyphs[id]
@@ -141,7 +141,7 @@ export function CornerMenu({ section, recording, go, shortcuts }: { section: str
                   {recording && <span className="corner-detail">{t('You can restart after recording')}</span>}</span>
                 <span className="corner-row-dot" aria-hidden="true" />
               </Menu.Item>}
-              {ready && failed && !recording && <p className="corner-detail" role="alert">{t("Figolu couldn't restart. Try again.")}</p>}
+              {ready && failed && !recording && <p className="corner-detail" role="alert">{t("Faisselle couldn't restart. Try again.")}</p>}
             </Menu.Popup>
           </Menu.Positioner>
         </Menu.Portal>

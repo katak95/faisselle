@@ -297,7 +297,7 @@ describe('finished meeting notifications', () => {
     expect(widget.snapshot().notice).toMatchObject({ title: 'Meeting captured', body: 'Review' })
     expect(state.notifications).toHaveLength(0)
   })
-  it('skips the success banner when Figolu was in front, but still warns', async () => {
+  it('skips the success banner when Faisselle was in front, but still warns', async () => {
     vi.resetModules()
     const { createWidget } = await import('../src/main/widget')
     widget = createWidget({ open, stop: vi.fn(), foreground: () => true })
@@ -313,8 +313,8 @@ describe('finished meeting notifications', () => {
   it('uses the existing save warning and does not notify again when Retry succeeds', async () => {
     state.stopPending = true
     finish(); await Promise.resolve()
-    expect(widget.snapshot().notice?.title).toBe('Recording stopped. Open Figolu to finish saving.')
-    expect(widget.snapshot().view?.note?.text).toBe('Recording stopped. Open Figolu to finish saving.')
+    expect(widget.snapshot().notice?.title).toBe('Recording stopped. Open Faisselle to finish saving.')
+    expect(widget.snapshot().view?.note?.text).toBe('Recording stopped. Open Faisselle to finish saving.')
     state.stopPending = false; state.change!(stopped)
     await Promise.resolve()
     expect(state.notifications).toHaveLength(1)
@@ -358,7 +358,7 @@ describe('finished meeting notifications', () => {
 })
 
 describe('hidden, the recorder does no work (the audit: its 4/s clock and meter kept running behind the main window)', () => {
-  it('is throttled like any hidden window while Figolu is in front, and runs freely while it floats', async () => {
+  it('is throttled like any hidden window while Faisselle is in front, and runs freely while it floats', async () => {
     let front = true
     const { createWidget } = await import('../src/main/widget')
     const w = createWidget({ open, stop: vi.fn(), foreground: () => front })
@@ -382,7 +382,7 @@ it('hides an expanded pill immediately and keeps the note recording and warning 
   showRecordingPill = false; widget.visibilityChanged()
   expect(hide).toHaveBeenCalled()
   state.recording!({ t: 'warn', code: 'falling-behind' })
-  expect(widget.snapshot()).toMatchObject({ visible: false, view: { kind: 'recording', note: { text: 'Figolu is falling behind. Some lines may be missing.' } } })
+  expect(widget.snapshot()).toMatchObject({ visible: false, view: { kind: 'recording', note: { text: 'Faisselle is falling behind. Some lines may be missing.' } } })
   expect(win.webContents.send).toHaveBeenCalledWith('widget:reset')
   expect(show).not.toHaveBeenCalled()
   expect(state.notifications).toHaveLength(0)

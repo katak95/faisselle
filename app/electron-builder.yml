@@ -1,16 +1,16 @@
-appId: com.katak95.figolu.app
-productName: Figolu
+appId: com.katak95.faisselle.app
+productName: Faisselle
 copyright: Copyright © 2026 Frigade
 # GitHub Releases: every v* tag builds Mac, Windows and Linux (.github/workflows/release.yml).
-# Fixed file names, so releases/latest/download/Figolu-mac-arm64.dmg (and the Windows and Linux ones) point at the newest.
+# Fixed file names, so releases/latest/download/Faisselle-mac-arm64.dmg (and the Windows and Linux ones) point at the newest.
 # Installed copies update from the same release (latest-mac.yml, latest.yml, latest-linux.yml; src/main/updates.ts).
 publish:
   provider: github
   owner: katak95
-  repo: figolu
+  repo: faisselle
   releaseType: release
 extraMetadata:
-  name: figolu
+  name: faisselle
 directories:
   # dist/ only: with another output folder electron-builder packs the whole project
   output: dist
@@ -44,7 +44,7 @@ electronFuses:
   enableNodeCliInspectArguments: false
   onlyLoadAppFromAsar: true
   enableEmbeddedAsarIntegrityValidation: true
-# Linux: `figolu` becomes a launcher that starts Electron on X11 on a Wayland desktop (build/linux-launcher.sh)
+# Linux: `faisselle` becomes a launcher that starts Electron on X11 on a Wayland desktop (build/linux-launcher.sh)
 afterPack: scripts/linux-launcher.cjs
 asarUnpack:
   # the notes model's engine loads native binaries; they can't run from inside the asar archive
@@ -58,11 +58,11 @@ mac:
     # this Mac build only needs the Apple Silicon engine binaries
     - "!**/node_modules/@node-llama-cpp/{linux,win,mac-x64}*/**"
     - "!**/node_modules/node-llama-cpp/bins/{linux,win,mac-x64}*/**"
-  artifactName: Figolu-mac-${arch}.${ext}
+  artifactName: Faisselle-mac-${arch}.${ext}
   target:
     - target: dmg
       arch: [arm64]
-    # what an installed Figolu downloads to update itself (src/main/updates.ts)
+    # what an installed Faisselle downloads to update itself (src/main/updates.ts)
     - target: zip
       arch: [arm64]
   icon: build/icon.icns
@@ -77,15 +77,15 @@ mac:
   extendInfo:
     # a Dock app, with its menu bar icon too
     LSUIElement: false
-    NSMicrophoneUsageDescription: Figolu records your voice in meetings so it can write the transcript and your notes. Nothing leaves your Mac.
-    NSAudioCaptureUsageDescription: Figolu records the sound of your calls so it can write down what others say. Nothing leaves your Mac.
-    NSCalendarsFullAccessUsageDescription: Figolu reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
-    NSCalendarsUsageDescription: Figolu reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
-    NSAppleEventsUsageDescription: Figolu checks the browser tab's name to tell when you're in a call, and pauses your music while it records.
-    # Electron's own defaults ("This app needs access to..."): Figolu never asks for these, so plain words instead
-    NSCameraUsageDescription: Figolu doesn't use the camera.
-    NSBluetoothAlwaysUsageDescription: Figolu doesn't use Bluetooth.
-    NSBluetoothPeripheralUsageDescription: Figolu doesn't use Bluetooth.
+    NSMicrophoneUsageDescription: Faisselle records your voice in meetings so it can write the transcript and your notes. Nothing leaves your Mac.
+    NSAudioCaptureUsageDescription: Faisselle records the sound of your calls so it can write down what others say. Nothing leaves your Mac.
+    NSCalendarsFullAccessUsageDescription: Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
+    NSCalendarsUsageDescription: Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
+    NSAppleEventsUsageDescription: Faisselle checks the browser tab's name to tell when you're in a call, and pauses your music while it records.
+    # Electron's own defaults ("This app needs access to..."): Faisselle never asks for these, so plain words instead
+    NSCameraUsageDescription: Faisselle doesn't use the camera.
+    NSBluetoothAlwaysUsageDescription: Faisselle doesn't use Bluetooth.
+    NSBluetoothPeripheralUsageDescription: Faisselle doesn't use Bluetooth.
   # signs with the Developer ID certificate in the keychain (or CSC_LINK on CI); notarized by scripts/release-mac.sh or CI
 # Windows and Linux: unsigned, built by .github/workflows/preview.yml (by hand, or for a release from release.yml).
 win:
@@ -103,7 +103,7 @@ win:
     - { from: resources/speed, to: speed }
     # the tray's colour icons (tray.ts; @2x next to them), a Mac uses its template tray.png
     - { from: resources, to: ., filter: ["tray-color*.png", "tray-recording*.png"] }
-  artifactName: Figolu-windows-${arch}.${ext}
+  artifactName: Faisselle-windows-${arch}.${ext}
   # a release signs the DLLs and native modules too, not just the programs: with Windows Code Integrity on, an unsigned
   # whisper.dll or ggml.dll is blocked from loading and speech setup fails (#99)
   signExts: [".dll", ".node"]
@@ -126,7 +126,7 @@ linux:
     - "!**/node_modules/@node-llama-cpp/{mac,win,linux-arm,linux-riscv}*/**"
     - "!**/node_modules/node-llama-cpp/bins/{mac,win,linux-arm,linux-riscv}*/**"
   # the default comes from the package name, which isn't a good file name
-  executableName: figolu
+  executableName: faisselle
   # added to the extra resources above (unlike files, these merge): the word list for lowercase respelling (scripts/native.mjs; a Mac has its own)
   extraResources:
     - { from: resources/dict, to: dict }
@@ -134,18 +134,18 @@ linux:
     - { from: resources/speed, to: speed }
     # the tray's colour icons (tray.ts; @2x next to them), a Mac uses its template tray.png
     - { from: resources, to: ., filter: ["tray-color*.png", "tray-recording*.png"] }
-  artifactName: Figolu-linux-${arch}.${ext}
+  artifactName: Faisselle-linux-${arch}.${ext}
   target:
     - target: AppImage
       arch: [x64]
   # Electron's app_id/WM_CLASS is desktopName minus .desktop: the installed file must use the same name, and
-  # StartupWMClass follows it. Without this the .desktop says StartupWMClass=Figolu but the window is "figolu".
+  # StartupWMClass follows it. Without this the .desktop says StartupWMClass=Faisselle but the window is "faisselle".
   syncDesktopName: true
   # one PNG per hicolor size: KDE's icon lookup ignores 1024x1024, which hicolor's index.theme doesn't declare
   icon: build/icons
   category: Office
 dmg:
-  title: Figolu
+  title: Faisselle
   # build/background.png (+ @2x), from build/dmg-background.svg
   background: build/background.png
   iconSize: 128

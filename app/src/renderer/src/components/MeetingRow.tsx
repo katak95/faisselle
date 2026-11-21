@@ -76,7 +76,7 @@ export function MeetingRow({ id, recording, children, selected, targets, members
     </div>, document.body)}
     {namingFolder && <FolderName onDone={(made) => {
       setNamingFolder(false); focusRow()
-      if (made) void addMeetingsToFolder(made.id, folderTargets).catch(() => toasts.add({ title: t("Figolu couldn't make that change. Try again.") }))
+      if (made) void addMeetingsToFolder(made.id, folderTargets).catch(() => toasts.add({ title: t("Faisselle couldn't make that change. Try again.") }))
     }} />}
   </li>
 }

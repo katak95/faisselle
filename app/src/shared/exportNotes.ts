@@ -1,6 +1,6 @@
 import { transcriptSpeaker } from './transcript'
 /**
- * Notes out of Figolu: plain text and simple HTML for the clipboard (Gmail, Docs and Slack paste them cleanly), and a
+ * Notes out of Faisselle: plain text and simple HTML for the clipboard (Gmail, Docs and Slack paste them cleanly), and a
  * Markdown file with the notes and the transcript. Built from the same document the editor uses (markdown.ts), so
  * what is copied is what is shown. The person's own words keep their text, not their styling.
  */
@@ -97,9 +97,9 @@ export function toClipboard(md: string, includeCredit = false): { text: string; 
   const doc = mdToDoc(md)
   const text = docText(doc), html = docHtml(doc)
   if (!includeCredit || !text.trim()) return { text, html }
-  const link = `<a href="${projectWebsite}" style="color:inherit">Figolu</a>`
+  const link = `<a href="${projectWebsite}" style="color:inherit">Faisselle</a>`
   return {
-    text: `${text}\n\n${recordedWith('Figolu')} · ${siteName}`,
+    text: `${text}\n\n${recordedWith('Faisselle')} · ${siteName}`,
     html: `${html}<p style="margin:1em 0 0;color:#767676"><small>${recordedWith(link)} · ${siteName}</small></p>`,
   }
 }
@@ -133,12 +133,12 @@ export function transcriptDoc(lines: Segment[], o: { gap?: boolean } = {}): PMNo
 
 // ---------- file ----------
 
-/** The Markdown file: title, date and a link to Figolu, people, the notes, then the transcript with names */
+/** The Markdown file: title, date and a link to Faisselle, people, the notes, then the transcript with names */
 export function toMarkdownFile(meeting: Meeting, notes: string, segments: Segment[], includeCredit = true): string {
   const when = new Date(meeting.startedAt).toLocaleString(language(), { dateStyle: 'long', timeStyle: 'short' })
   const title = meeting.title.replace(/\s+/g, ' ').trim()
   // a small credit on the date line: whoever the file is shared with can find the app
-  const dateLine = includeCredit ? `${when} · ${recordedWith(`[Figolu](${projectWebsite})`)}` : when
+  const dateLine = includeCredit ? `${when} · ${recordedWith(`[Faisselle](${projectWebsite})`)}` : when
   const head = [`# ${escapeText(title)}`, '', dateLine]
   const people = meeting.attendees.map((a) => a.name.trim()).filter(Boolean)
   if (people.length) head.push('', t('With: {names}', { names: people.join(', ') }))

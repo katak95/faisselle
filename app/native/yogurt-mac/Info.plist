@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>CFBundleIdentifier</key><string>com.katak95.figolu.mac-helper</string>
-  <key>CFBundleName</key><string>Figolu</string>
-  <key>NSCalendarsFullAccessUsageDescription</key><string>Figolu reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.</string>
-  <key>NSCalendarsUsageDescription</key><string>Figolu reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.</string>
-  <key>NSAppleEventsUsageDescription</key><string>Figolu checks the browser tab's name to tell when you're in a call, and pauses your music while it records.</string>
-  <key>NSMicrophoneUsageDescription</key><string>Figolu records your voice in meetings so it can write the transcript and your notes. Nothing leaves your Mac.</string>
-  <key>NSAudioCaptureUsageDescription</key><string>Figolu records the sound of your calls so it can write down what others say. Nothing leaves your Mac.</string>
+  <key>CFBundleIdentifier</key><string>com.katak95.faisselle.mac-helper</string>
+  <key>CFBundleName</key><string>Faisselle</string>
+  <key>NSCalendarsFullAccessUsageDescription</key><string>Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.</string>
+  <key>NSCalendarsUsageDescription</key><string>Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.</string>
+  <key>NSAppleEventsUsageDescription</key><string>Faisselle checks the browser tab's name to tell when you're in a call, and pauses your music while it records.</string>
+  <key>NSMicrophoneUsageDescription</key><string>Faisselle records your voice in meetings so it can write the transcript and your notes. Nothing leaves your Mac.</string>
+  <key>NSAudioCaptureUsageDescription</key><string>Faisselle records the sound of your calls so it can write down what others say. Nothing leaves your Mac.</string>
 </dict></plist>

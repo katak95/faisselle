@@ -293,7 +293,7 @@ html.widget, .widget-pill[data-illustration] { --pill:#232326;--pill-ink:#F7F7FA
 .note-prose strong { font-weight: 600; }
 .note-prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 .note-prose p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--muted); float: inline-start; height: 0; pointer-events: none; }
-/* enhanced: Figolu's words a shade lighter, the person's own (and headings, names) in full ink */
+/* enhanced: Faisselle's words a shade lighter, the person's own (and headings, names) in full ink */
 .note-prose.enhanced { color: var(--written); }
 .note-prose.enhanced h1, .note-prose.enhanced h2, .note-prose.enhanced h3 { color: var(--heading); }
 .note-prose.enhanced strong, .note-prose .mine { color: var(--ink); }

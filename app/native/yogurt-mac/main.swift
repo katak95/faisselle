@@ -1,4 +1,4 @@
-// Figolu's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
+// Faisselle's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
 // Internet Accounts) through EventKit, and which apps are using the microphone (Core Audio, macOS 14+).
 // Prints JSON; errors go to stderr with exit 1.
 //   yogurt-mac calendar-status       → {"status":"granted"|"denied"|"notDetermined"}
@@ -16,8 +16,10 @@
 //   yogurt-mac media-resume ID...    → {"resumed":[bundle ids]}: plays those again, unless they are already playing
 //   yogurt-mac mic-devices           → {"devices":[{"uid","name","default":bool}]}: every microphone, and which one the Mac uses now
 //   yogurt-mac ax-auth               → asks for Accessibility once (the system's own prompt), then {"trusted":bool}
-//   yogurt-mac call-watch MS ID...   → one JSON line every MS ms until stdin closes: the call app's meeting windows as
-//                                       accessibility trees {"t","app","windows":[{"title","id","tree"}]}, or {"t","error"}
+//   yogurt-mac call-watch MS [--pid N]... ID...
+//                                    → one JSON line every MS ms until stdin closes: the call app's meeting windows as
+//                                       accessibility trees {"t","app","windows":[{"title","id","tree"}]}, or {"t","error"};
+//                                       with --pid, only the app processes those mic processes belong to
 import AVFoundation
 import AppKit
 import CoreAudio
@@ -51,7 +53,7 @@ func status() -> String {
   }
 }
 
-func needAccess() { if status() != "granted" { fail("Figolu doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
+func needAccess() { if status() != "granted" { fail("Faisselle doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
 
 // MARK: Core Audio
 
@@ -157,7 +159,7 @@ let players = ["com.apple.Music", "com.spotify.client"]
 func running(_ id: String) -> Bool { !NSRunningApplication.runningApplications(withBundleIdentifier: id).isEmpty }
 /**
  * One command to a player, only if it's still running right now (it may have quit since the last look, and
- * `tell` would start it again). The first time, the Mac asks the person to let Figolu control it; a no reads as nothing.
+ * `tell` would start it again). The first time, the Mac asks the person to let Faisselle control it; a no reads as nothing.
  */
 func tell(_ id: String, _ what: String) -> String? {
   guard running(id) else { return nil }
@@ -174,7 +176,7 @@ func pausePlayers() -> [String] {
 func resumePlayers(_ ids: [String]) -> [String] {
   ids.filter { players.contains($0) && running($0) && !playing($0) }.filter { id in _ = tell(id, "play"); return true }
 }
-/** May Figolu control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
+/** May Faisselle control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
 func automation(_ id: String, ask: Bool) -> String {
   var target = AEAddressDesc()
   let created = id.withCString { AECreateDesc(typeApplicationBundleID, $0, strlen($0), &target) }
@@ -211,8 +213,8 @@ func browserTitle(_ id: String) -> String? {
 
 /**
  * Who is in a call and who is talking, as the call app shows it: its meeting windows copied out of the accessibility
- * tree, read-only (nothing is clicked or changed in the app). Only the call app Figolu was told about, the frontmost
- * one first. Figolu reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
+ * tree, read-only (nothing is clicked or changed in the app). Only the call app Faisselle was told about, the frontmost
+ * one first. Faisselle reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
  * an assistive app asks, so they are asked the way screen readers do (AXManualAccessibility): see askTree.
  */
 let axKeys = [kAXRoleAttribute, kAXSubroleAttribute, kAXDescriptionAttribute, kAXTitleAttribute, kAXValueAttribute, kAXIdentifierAttribute, "AXDOMClassList", kAXChildrenAttribute, kAXSizeAttribute] as [String]
@@ -368,8 +370,21 @@ func callWindows(_ app: AXUIElement, _ id: String) -> (wins: [AXUIElement], tab:
   return ([w as! AXUIElement], title)
 }
 
-func watchCalls(every: Int, ids: [String]) {
-  // Figolu closes stdin to stop the watch (and a crashed Figolu closes it too)
+/// The app a process on the mic belongs to: itself, or the app above it (Zoom's CptHost runs under zoom.us)
+func owningApp(_ pid: pid_t, ids: [String]) -> NSRunningApplication? {
+  var pid = pid
+  for _ in 0..<8 {
+    if let r = NSRunningApplication(processIdentifier: pid), let id = r.bundleIdentifier, ids.contains(id) { return r }
+    var info = proc_bsdinfo()
+    let size = Int32(MemoryLayout<proc_bsdinfo>.size)
+    guard proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, size) == size, info.pbi_ppid > 1 else { return nil }
+    pid = pid_t(info.pbi_ppid)
+  }
+  return nil
+}
+
+func watchCalls(every: Int, ids: [String], pids: [pid_t] = []) {
+  // Faisselle closes stdin to stop the watch (and a crashed Faisselle closes it too)
   DispatchQueue.global().async { _ = FileHandle.standardInput.readDataToEndOfFile(); DispatchQueue.main.sync { resetTrees() }; exit(0) }
   let line = { (v: [String: Any]) in
     guard let d = try? JSONSerialization.data(withJSONObject: v) else { return }
@@ -384,7 +399,9 @@ func watchCalls(every: Int, ids: [String]) {
       // the frontmost of the apps asked about that shows a call, else the first one that does
       lastControlLook = ""
       let front = NSWorkspace.shared.frontmostApplication?.processIdentifier
-      let running = ids.compactMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0).first }
+      // With the processes on the mic given, only their apps: two Zoom meetings are two processes, and the one not
+      // being recorded must never give this meeting its names (#98)
+      let running = (pids.isEmpty ? ids.compactMap { NSRunningApplication.runningApplications(withBundleIdentifier: $0).first } : pids.compactMap { owningApp($0, ids: ids) })
         .sorted { a, _ in a.processIdentifier == front }
       var found: (NSRunningApplication, AXUIElement, [AXUIElement], String?)?
       for r in running {
@@ -469,7 +486,7 @@ case "events":
     if let l = e.location, !l.isEmpty { o["location"] = l }
     if let n = e.notes, !n.isEmpty { o["notes"] = String(n.prefix(2000)) }
     if let u = e.url { o["url"] = u.absoluteString }
-    // the person using this Mac, apart: their address says which company they are with (Figolu spells it right)
+    // the person using this Mac, apart: their address says which company they are with (Faisselle spells it right)
     if let me = e.attendees?.first(where: { $0.isCurrentUser }) {
       if me.url.absoluteString.hasPrefix("mailto:") { o["me"] = String(me.url.absoluteString.dropFirst(7)) }
       if me.participantStatus == .declined { o["declined"] = true }
@@ -510,10 +527,12 @@ case "media-resume":
 case "ax-auth":
   out(["trusted": AXIsProcessTrustedWithOptions([kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary)])
 case "call-watch":
-  guard args.count >= 3, let every = Int(args[1]) else { fail("call-watch MS BUNDLE_ID...") }
-  watchCalls(every: max(100, every), ids: Array(args.dropFirst(2)))
+  guard args.count >= 3, let every = Int(args[1]) else { fail("call-watch MS [--pid N]... BUNDLE_ID...") }
+  var rest = Array(args.dropFirst(2)), pids: [pid_t] = []
+  while rest.count >= 2, rest[0] == "--pid", let pid = pid_t(rest[1]) { pids.append(pid); rest.removeFirst(2) }
+  watchCalls(every: max(100, every), ids: rest, pids: pids)
 case "mic-devices":
   out(["devices": inputDevices()])
 default:
-  fail("usage: yogurt-mac calendar-status | calendar-auth | events FROM TO | mic-apps | running-apps ID... | browser-title ID | permissions | media-auth | mic-auth | audio-auth | media-pause | media-resume ID... | mic-devices | ax-auth | call-watch MS ID...")
+  fail("usage: yogurt-mac calendar-status | calendar-auth | events FROM TO | mic-apps | running-apps ID... | browser-title ID | permissions | media-auth | mic-auth | audio-auth | media-pause | media-resume ID... | mic-devices | ax-auth | call-watch MS [--pid N]... ID...")
 }

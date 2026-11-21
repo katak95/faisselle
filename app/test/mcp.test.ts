@@ -40,7 +40,7 @@ describe('the MCP server', () => {
     }
     const mac = "A meeting's recording as files on this Mac: one per side (track me: the person's microphone; them: the other side of the call), AAC in .m4a. Gives paths, which apps on this Mac can open."
     const here = await audioText()
-    expect(here).toEqual([expect.stringMatching(/^Figolu holds the person's meeting notes, transcripts and recordings on this Mac\. Use list_meetings or search to find a meeting, then get_meeting, get_transcript or get_audio\./), mac])
+    expect(here).toEqual([expect.stringMatching(/^Faisselle holds the person's meeting notes, transcripts and recordings on this Mac\. Use list_meetings or search to find a meeting, then get_meeting, get_transcript or get_audio\./), mac])
     expect(await audioText('darwin')).toEqual(here)
     for (const p of ['win32', 'linux']) {
       const [instructions, audio] = await audioText(p)

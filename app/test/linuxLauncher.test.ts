@@ -9,10 +9,10 @@ import { wrapLinuxBinary } from '../scripts/linux-launcher.cjs'
 // an in-app relaunch couldn't mount the AppImage again on Wayland
 function launch(env: Record<string, string>, args: string[] = []): string[] {
   const dir = mkdtempSync(join(tmpdir(), 'yogurt-launcher-'))
-  writeFileSync(join(dir, 'figolu'), '#!/bin/sh\nfor a in "$@"; do echo "$a"; done\n')
-  chmodSync(join(dir, 'figolu'), 0o755)
-  wrapLinuxBinary(dir, 'figolu')
-  const out = execFileSync(join(dir, 'figolu'), args, { env: { PATH: process.env.PATH!, ...env }, encoding: 'utf8' })
+  writeFileSync(join(dir, 'faisselle'), '#!/bin/sh\nfor a in "$@"; do echo "$a"; done\n')
+  chmodSync(join(dir, 'faisselle'), 0o755)
+  wrapLinuxBinary(dir, 'faisselle')
+  const out = execFileSync(join(dir, 'faisselle'), args, { env: { PATH: process.env.PATH!, ...env }, encoding: 'utf8' })
   return out.split('\n').filter(Boolean)
 }
 
@@ -28,7 +28,7 @@ it.skipIf(process.platform === 'win32')('X11 alone, Wayland without XWayland, or
 
 it.skipIf(process.platform === 'win32')('wrapping twice keeps the real binary', () => {
   const dir = mkdtempSync(join(tmpdir(), 'yogurt-launcher-'))
-  copyFileSync('/bin/echo', join(dir, 'figolu'))
-  wrapLinuxBinary(dir, 'figolu')
-  expect(() => wrapLinuxBinary(dir, 'figolu')).toThrow()
+  copyFileSync('/bin/echo', join(dir, 'faisselle'))
+  wrapLinuxBinary(dir, 'faisselle')
+  expect(() => wrapLinuxBinary(dir, 'faisselle')).toThrow()
 })

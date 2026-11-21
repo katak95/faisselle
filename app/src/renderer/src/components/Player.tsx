@@ -203,7 +203,7 @@ export function DeleteRecording({ id, onCancel, onDeleted }: { id: string; onCan
   return <Modal testId="recording-delete-confirm" role="alertdialog" title={t('Delete audio?')}
     description={t('The audio is deleted for good. Your transcript and notes stay.')} busy={busy} onCancel={onCancel}>
     {failed && <InlineError testId="recording-delete-failed" className="inline-error-in-dialog"><span>{failed === 'not-transcribed' ? t('Keep the audio until the transcript is saved.')
-      : failed === 'recording' ? t('Stop the recording first, then try again.') : t("Figolu couldn't delete the audio.")}</span></InlineError>}
+      : failed === 'recording' ? t('Stop the recording first, then try again.') : t("Faisselle couldn't delete the audio.")}</span></InlineError>}
     <div className="modal-actions">
       <button data-testid="recording-delete-yes" className="modal-button danger" disabled={busy} onClick={() => void yes()}>{t('Delete audio')}</button>
       <ModalClose data-testid="recording-delete-cancel" data-dialog-cancel className="workspace-button" disabled={busy}>{t('Cancel')}</ModalClose>

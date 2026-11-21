@@ -27,7 +27,7 @@ import { pathToFileURL } from 'node:url'
 import { isFake, userDataDir } from './paths'
 import { logToFile } from './log'
 import { includesRecordingCredit, loadSettings, localeOf, keepsRecording, recordingReminderOn, spokenSetting, stopsWhenCallEnds, updateSettings, visibilityOf, summaryLanguageSetting } from './settings'
-import { CALL_GONE_MS, useCallApps, watchEveryMs } from './detect'
+import { CALL_GONE_MS, micPids, useCallApps, watchEveryMs, type MicApp } from './detect'
 import { systemLocale } from './locale'
 import { language as uiLanguage, onLanguage, setLanguage, t } from '../shared/i18n'
 import bundledCatalog from '../../../catalog/catalog.json'
@@ -93,9 +93,9 @@ import type { NoteSaveResult, StartResult } from '../shared/types'
 // the transcript's player streams each meeting's audio from here; seeking needs stream support (before ready)
 protocol.registerSchemesAsPrivileged([{ scheme: AUDIO_SCHEME, privileges: { standard: true, secure: true, stream: true } }])
 
-app.setName('Figolu')
+app.setName('Faisselle')
 // Windows shows notifications only for an app with this id (the installer's shortcut carries the same one, electron-builder appId)
-if (process.platform === 'win32') app.setAppUserModelId('com.katak95.figolu.app')
+if (process.platform === 'win32') app.setAppUserModelId('com.katak95.faisselle.app')
 app.setPath('userData', userDataDir())
 // before anything goes online: a company's own HTTPS certificate, installed in the system, is trusted too (#115)
 const systemCerts = trustSystemCertificates()
@@ -109,7 +109,7 @@ process.on('uncaughtException', (err) => console.error('uncaught exception', err
 // Linux on Wayland: once more through XWayland, so the widget and the card can float (display.ts)
 const x11 = x11Relaunch(process.platform, process.argv, process.env, process.execPath)
 if (x11) { stripAppImageEnv(); app.relaunch(x11); app.exit(0) }
-// One Figolu at a time: a second launch focuses the existing window
+// One Faisselle at a time: a second launch focuses the existing window
 else if (!app.requestSingleInstanceLock()) app.quit()
 let win: BrowserWindow | undefined
 let allowQuit = false
@@ -118,7 +118,7 @@ let updateMainMenu = () => {}
 let menuBar: ReturnType<typeof createTray> | undefined
 /** test runs: no window on screen, never takes focus from what the person is doing */
 const BACKGROUND = process.env.YOGURT_BACKGROUND === '1'
-// an AI app's yogurt-mcp starting Figolu while it was still opening (--hidden) brings no window forward
+// an AI app's yogurt-mcp starting Faisselle while it was still opening (--hidden) brings no window forward
 app.on('second-instance', (_e, argv) => { if (app.isReady() && !startedHidden(process.platform, argv)) showMain() })
 
 /** Links open in the user's browser, never inside the app window. */
@@ -138,7 +138,7 @@ function createWindow() {
   const place = placeWindow(remember ? loadWindowState(stateFile) : null, screen.getAllDisplays().map((d) => d.workArea), { width: 1100, height: 760, minWidth: 720, minHeight: 520 })
   win = new BrowserWindow({
     x: place.x, y: place.y, width: place.width, height: place.height, minWidth: 720, minHeight: 520,
-    title: 'Figolu',
+    title: 'Faisselle',
     ...windowChrome(process.platform, nativeTheme.shouldUseDarkColors),
     show: false,
     // hidden pages would otherwise pause timers and animations
@@ -259,7 +259,7 @@ function goTo(next: string, resume = false) {
   if (!win) createWindow()
   win?.webContents.send('nav:go', route, resumeRequested)
   presented++
-  // The card and widget never take focus, so their explicit navigation brings Figolu forward.
+  // The card and widget never take focus, so their explicit navigation brings Faisselle forward.
   presentMain(true)
 }
 /** how many times the window was asked to come forward (tests run it hidden, so they check this) */
@@ -270,9 +270,9 @@ let refreshCalendarConsumers = () => {}
 /** a call is on (recording or not): the corner never offers Restart then */
 /** fake mode: the System Settings panes the permission steps and Settings would have opened */
 const systemSettings: string[] = []
-/** fake mode: how many times Figolu would have quit and opened again for a permission */
+/** fake mode: how many times Faisselle would have quit and opened again for a permission */
 let relaunched = 0
-/** fake mode: how many times Figolu would have restarted to install a new version */
+/** fake mode: how many times Faisselle would have restarted to install a new version */
 let updateRestarts = 0
 
 async function readCalendar(...range: Parameters<typeof upcoming>): Promise<CalEvent[]> {
@@ -307,6 +307,9 @@ const macName = () => (isFake() ? process.env.YOGURT_FAKE_FULL_NAME ?? 'Sam Rive
 /** starting and pausing a recording the way home and the widget do, for AI apps (set once detection starts) */
 let recordingControls: { start(o: { eventId?: string; title?: string }): Promise<StartResult>; pause(id: unknown, paused: unknown): boolean } | undefined
 
+/** the processes of a call app on the mic at the last reading (set once detection starts): names come only from them (#98) */
+let micPidsNow: (app: string) => number[] = () => []
+
 /** fake mode's hooks reach the store and the notes through these */
 let storeRef: Store | undefined
 let indexerRef: { schedule(): Promise<unknown> } | undefined
@@ -316,10 +319,13 @@ function startDetection() {
   if (isFake()) setHelper(fakeHelper)
   const signals = createSignals({ helper: runHelper, events: readCalendar })
   refreshCalendarConsumers = () => signals.invalidateCalendar()
+  let lastReading: { micApps: MicApp[]; runningApps?: string[] } | undefined
+  // yogurt-system (Windows, Linux) reads no single process yet; the Mac helper does
+  if (process.platform === 'darwin') micPidsNow = (app) => (lastReading ? micPids(lastReading.micApps, lastReading.runningApps, app) : [])
   const now = isFake() ? fakeNow : Date.now
   let fakeSilence: number | undefined
   const watcher: Watcher = new Watcher({
-    read: (at) => signals.read(at), now, active: activeMeeting, bindApp: bindMeetingApp,
+    read: async (at) => (lastReading = await signals.read(at)), now, active: activeMeeting, bindApp: bindMeetingApp,
     offer: (p) => prompts.offer(p), askStop: (m) => prompts.askStop(m), hide: () => prompts.hide(),
     // the call ended: the same stop as the widget's Stop button, then say so
     autoStop: (m) => { widget.callEnded(m.id); stopMeeting(m.id); prompts.stopped(m) },
@@ -428,7 +434,7 @@ function startDetection() {
   ipcMain.handle('meetings:set-paused', (_e, id: unknown, paused: unknown) => pauseRecording(id, paused))
   recordingControls = { start: startNotes, pause: pauseRecording }
   ipcMain.handle('meetings:retry-stop-save', (_e, id: unknown) => isId(id) && retryStopSave(id))
-  // the menu bar: open, new note or stop, quit; Figolu stays there with its window closed
+  // the menu bar: open, new note or stop, quit; Faisselle stays there with its window closed
   const tray = createTray({
     show: !BACKGROUND, visible: visibility.showInMenuBar, showNextMeeting: preferences.showNextMeeting,
     showRecordingPill: () => showRecordingPill,
@@ -460,7 +466,7 @@ function startDetection() {
     widget.visibilityChanged()
     tray.refresh()
   }
-  // cheap, and only while Figolu runs; more often while recording, so the end of a quiet call is noticed promptly
+  // cheap, and only while Faisselle runs; more often while recording, so the end of a quiet call is noticed promptly
   let timer: NodeJS.Timeout | undefined
   const watchLoop = () => { timer = setTimeout(() => { void watcher.tick().catch((e) => console.error('detect failed', e)).finally(watchLoop) }, watchEveryMs(!!activeMeeting())) }
   watchLoop()
@@ -520,12 +526,12 @@ app.whenReady().then(() => {
   nativeTheme.themeSource = settings.theme ?? 'system'
   setLanguage(localeOf(settings, systemLocale()))
   updateMainMenu = installAppMenu(() => win, showMain, process.platform)
-  // the interface language's generic titles, so one Figolu gave in that language is known as generic
+  // the interface language's generic titles, so one Faisselle gave in that language is known as generic
   const generic = () => setGenericTitles({ meeting: t('Meeting'), appCall: t('{app} call', { app: '\u0000' }) })
   generic()
   onLanguage(generic)
   if (isFake()) setHelper(fakeHelper)
-  // a moved or reinstalled Figolu loses its login item: put it back if the person wanted it
+  // a moved or reinstalled Faisselle loses its login item: put it back if the person wanted it
   if (!isFake()) syncLoginItem(settings.openAtLogin)
   // Windows and Linux: the calendar is a pasted private calendar address, kept sealed with the system keychain
   // a Mac: the same links, next to its own calendars (Settings → Calendars → Add a calendar link)
@@ -593,7 +599,7 @@ app.whenReady().then(() => {
     transcribed: async (id) => { await recordingFinished(id); await transcriptFinished(id) },
     // people seen in the call joined the meeting: unedited notes already written get written again for them
     changed: (id) => { win?.webContents.send('transcript:speakers', id); sendWidgetTranscript('transcript:speakers', id); win?.webContents.send('meetings:changed'); notes.applyPeople(id) },
-    onStart: onMeetingStart, onStop: onMeetingStop, onCapture: onCaptureStart, onBind: onMeetingBound,
+    onStart: onMeetingStart, onStop: onMeetingStop, onCapture: onCaptureStart, onBind: onMeetingBound, micPids: (app) => micPidsNow(app),
   })
   // Windows and Linux: whisper left the graphics card in a meeting, so the speed check (timed with it) runs again next start
   onWhisperGpuOff(() => speedStore(speedFile()).forget())
@@ -975,8 +981,8 @@ app.whenReady().then(() => {
       const flushed = await flushRenderer()
       const saved = notes.retryDrafts()
       if (!flushed || !saved) {
-        const options = { type: 'warning' as const, title: t("Figolu couldn't finish saving"),
-          message: t("Figolu couldn't finish saving"), detail: t('Return to your notes to try again. Quitting now may discard your latest changes.'),
+        const options = { type: 'warning' as const, title: t("Faisselle couldn't finish saving"),
+          message: t("Faisselle couldn't finish saving"), detail: t('Return to your notes to try again. Quitting now may discard your latest changes.'),
           buttons: [t('Return to notes'), t('Quit without saving')], defaultId: 0, cancelId: 0, noLink: true }
         const answer = win && !win.isDestroyed() ? await dialog.showMessageBox(win, options) : await dialog.showMessageBox(options)
         if (answer.response !== 1) {
@@ -1079,7 +1085,7 @@ app.whenReady().then(() => {
   ipcMain.handle('meetings:restore', (_e, id: unknown) => { restoreMeeting(id) })
   ipcMain.handle('meetings:trashed', () => store.trashed())
   ipcMain.handle('meetings:empty-trash', () => emptyTrash({ store, remove: removeForGood }))
-  // a meeting in the Trash for 30 days goes for good: at launch, and twice a day for a Figolu that stays open
+  // a meeting in the Trash for 30 days goes for good: at launch, and twice a day for a Faisselle that stays open
   const purge = () => void purgeTrash({ store, remove: removeForGood })
   purge(); setInterval(purge, 12 * 60 * 60 * 1000).unref()
   const tidyPrepared = () => {
@@ -1212,5 +1218,5 @@ app.whenReady().then(() => {
   app.on('activate', showMain)
 })
 
-// on a Mac Figolu lives on in the menu bar, so it still notices calls; Quit is in its menu
+// on a Mac Faisselle lives on in the menu bar, so it still notices calls; Quit is in its menu
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit() })

@@ -41,7 +41,7 @@ it('gives both prompts the same compact frame and top-right placement', () => {
   prompts.askStop({id:'meeting',title:'Design review'} as any)
   expect(state.windows[1].options).toMatchObject({width:381,height:60,x:803,y:12,focusable:true})
 })
-it("a Mac's Take notes card is a non-activating panel, so its X never brings Figolu forward; Windows and Linux make it a tool window that never takes focus", async () => {
+it("a Mac's Take notes card is a non-activating panel, so its X never brings Faisselle forward; Windows and Linux make it a tool window that never takes focus", async () => {
   prompts.offer({key:'call',app:'Zoom',title:''} as any)
   expect(state.windows[0].options.type).toBe('panel')
   prompts.askStop({id:'meeting',title:'Design review'} as any)

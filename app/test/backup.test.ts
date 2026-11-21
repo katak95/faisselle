@@ -220,7 +220,7 @@ describe('backup file', { timeout: 20_000 }, () => {
   })
 
   it.each([false, true])('keeps an existing backup and the original export error even if cleanup fails: %s', async (cleanupFails) => {
-    const s = fresh(), dest = tmp(), out = join(dest, 'Figolu backup.zip')
+    const s = fresh(), dest = tmp(), out = join(dest, 'Faisselle backup.zip')
     fill(s, 'New meeting', 'new')
     const original = Buffer.from('previous backup bytes that must survive')
     writeFileSync(out, original)
@@ -232,7 +232,7 @@ describe('backup file', { timeout: 20_000 }, () => {
     if (cleanupFails) vi.mocked(rm).mockRejectedValueOnce(new Error('cleanup denied'))
     await expect(exportBackup({ db: s.db, meetingsDir: tmp(), out, appVersion: '1.2.3' })).rejects.toThrow('ENOSPC')
     expect(readFileSync(out)).toEqual(original)
-    expect(readdirSync(dest)).toEqual(['Figolu backup.zip'])
+    expect(readdirSync(dest)).toEqual(['Faisselle backup.zip'])
   })
 
   it.each([false, true])('round-trips the recording pill preference (%s) in the archive', async showRecordingPill => {
@@ -243,21 +243,21 @@ describe('backup file', { timeout: 20_000 }, () => {
   })
 
   it('successfully replaces the same backup path with a complete, importable archive', async () => {
-    const s = fresh(), dest = tmp(), out = join(dest, 'Figolu backup.zip'), recordings = tmp()
+    const s = fresh(), dest = tmp(), out = join(dest, 'Faisselle backup.zip'), recordings = tmp()
     const first = fill(s, 'First meeting', 'first')
     await exportBackup({ db: s.db, meetingsDir: recordings, out, appVersion: '1.2.3', now: 1 })
     const original = readFileSync(out)
     const second = fill(s, 'Second meeting', 'second')
     expect(await exportBackup({ db: s.db, meetingsDir: recordings, out, appVersion: '1.2.3', now: 2 })).toEqual({ meetings: 2 })
     expect(readFileSync(out)).not.toEqual(original)
-    expect(readdirSync(dest)).toEqual(['Figolu backup.zip'])
+    expect(readdirSync(dest)).toEqual(['Faisselle backup.zip'])
     const restored = fresh()
     expect(await importBackup({ db: restored.db, meetingsDir: tmp(), zip: out })).toEqual({ ok: true, added: 2, skipped: 0 })
     expect(restored.meeting(first.id)?.title).toBe('First meeting')
     expect(restored.meeting(second.id)?.title).toBe('Second meeting')
   })
 
-  it('exports the database, the recordings and a manifest to one zip, and imports it into an empty Figolu', async () => {
+  it('exports the database, the recordings and a manifest to one zip, and imports it into an empty Faisselle', async () => {
     const a = fresh(), aDir = tmp()
     const m = fill(a, 'Weekly sync', 'budget')
     mkdirSync(join(aDir, m.id), { recursive: true })
@@ -265,7 +265,7 @@ describe('backup file', { timeout: 20_000 }, () => {
     mkdirSync(join(aDir, m.id, 'original'))
     writeFileSync(join(aDir, m.id, 'original', 'me-source-hash.m4a'), 'retained full-quality voice')
     writeFileSync(join(aDir, m.id, 'them.live.f32'), 'a scratch copy')
-    const out = join(tmp(), 'Figolu backup.zip')
+    const out = join(tmp(), 'Faisselle backup.zip')
     expect(await exportBackup({ db: a.db, meetingsDir: aDir, out, appVersion: '1.2.3', now: 42 })).toEqual({ meetings: 1 })
 
     const look = tmp()
@@ -295,7 +295,7 @@ describe('backup file', { timeout: 20_000 }, () => {
     writeFileSync(join(aDir, m.id, 'them.1.ogg'), 'opus part')
     writeFileSync(join(aDir, m.id, 'them.m4a'), 'aac voice')
     cross()
-    const out = join(tmp(), 'Figolu backup.zip')
+    const out = join(tmp(), 'Faisselle backup.zip')
     await exportBackup({ db: a.db, meetingsDir: aDir, out, appVersion: '1', now: 1 })
     const b = fresh(), bDir = tmp()
     expect(await importBackup({ db: b.db, meetingsDir: bDir, zip: out })).toEqual({ ok: true, added: 1, skipped: 0 })
@@ -312,7 +312,7 @@ describe('backup file', { timeout: 20_000 }, () => {
     a.addToFolder(f.id, keep.id); a.addToFolder(f.id, gone.id)
     for (const m of [keep, gone]) { mkdirSync(join(aDir, m.id), { recursive: true }); writeFileSync(join(aDir, m.id, 'me.m4a'), 'voice') }
     a.trashMeeting(gone.id, 5)
-    const out = join(tmp(), 'Figolu backup.zip')
+    const out = join(tmp(), 'Faisselle backup.zip')
     expect(await exportBackup({ db: a.db, meetingsDir: aDir, out, appVersion: '1', now: 1 })).toEqual({ meetings: 1 })
     const look = tmp()
     await unpack(out, look)
@@ -326,7 +326,7 @@ describe('backup file', { timeout: 20_000 }, () => {
     expect(a.meeting(gone.id)?.trashedAt).toBe(5)
   })
 
-  it('refuses a backup from a newer Figolu and anything that is not a backup, adding nothing', async () => {
+  it('refuses a backup from a newer Faisselle and anything that is not a backup, adding nothing', async () => {
     const b = fresh(), bDir = tmp()
     const src = tmp()
     writeFileSync(join(src, 'manifest.json'), JSON.stringify({ format: BACKUP_FORMAT + 1, app: '9.0.0', createdAt: 1, meetings: 0 }))

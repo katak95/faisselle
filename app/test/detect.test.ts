@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { callAppId, tabTitleApp, CALL_GONE_MS, callGone, watchEveryMs, decide, ended, isOwnMicApp, useCallApps, type Signals } from '../src/main/detect'
+import { callAppId, micPids, tabTitleApp, CALL_GONE_MS, callGone, watchEveryMs, decide, ended, isOwnMicApp, useCallApps, type Signals } from '../src/main/detect'
 import type { CalEvent } from '../src/main/calendar'
 
 const NOW = Date.parse('2026-10-29T15:00:00Z')
@@ -198,8 +198,8 @@ describe('call apps on Windows and Linux', () => {
       expect(decide(sig({ micApps: [{ bundleId: id, name: id }] }), NOW, none)?.app).toBe(name)
     expect(decide(sig({ micApps: [{ bundleId: 'org.mozilla.firefox', name: 'Firefox', title: 'Zoom Meeting — Mozilla Firefox' }] }), NOW, none)?.app).toBe('Firefox')
   }))
-  it("Figolu's own recorder on the mic is never a call", () => {
-    for (const [p, ids] of [['win32', ['yogurt-audio.exe', 'figolu.exe']], ['linux', ['yogurt-audio', 'figolu', 'figolu-bin', 'Figolu']]] as const) on(p, () => {
+  it("Faisselle's own recorder on the mic is never a call", () => {
+    for (const [p, ids] of [['win32', ['yogurt-audio.exe', 'faisselle.exe']], ['linux', ['yogurt-audio', 'faisselle', 'faisselle-bin', 'Faisselle']]] as const) on(p, () => {
       for (const id of ids) {
         expect(isOwnMicApp(id)).toBe(true)
         expect(decide(sig({ micApps: [{ bundleId: id, name: id, title: 'Zoom meeting' }] }), NOW, none)).toBeNull()
@@ -207,5 +207,18 @@ describe('call apps on Windows and Linux', () => {
       expect(isOwnMicApp('zoom.exe')).toBe(false)
     })
     expect(isOwnMicApp('yogurt-audio')).toBe(false)
+  })
+})
+
+describe('micPids: the processes of a call app on the mic (#98)', () => {
+  it('the app\'s own processes and its helpers, never another app\'s', () => {
+    const mic = [
+      { bundleId: 'us.zoom.xos', name: 'zoom.us', pid: 501 },
+      { bundleId: 'us.zoom.CptHost', name: 'CptHost', pid: 777 },
+      { bundleId: 'com.google.Chrome', name: 'Chrome', pid: 900 },
+      { bundleId: 'us.zoom.xos', name: 'zoom.us' },
+    ]
+    expect(micPids(mic, ['us.zoom.xos'], 'Zoom')).toEqual([501, 777])
+    expect(micPids(mic, [], 'Teams')).toEqual([])
   })
 })

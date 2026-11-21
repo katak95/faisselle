@@ -17,13 +17,19 @@ describe('companyOf', () => {
     expect(companyOf('ana@mail.acme.co.uk')).toBe('Acme')
     expect(companyOf('bo@north-wind.io')).toBe('North-Wind')
   })
+  it('keeps a short company name in front of a country domain, and skips only second-level labels', () => {
+    expect(companyOf('a@corp.sap.de')).toBe('Sap')
+    expect(companyOf('a@sap.de')).toBe('Sap')
+    expect(companyOf('a@acme.co.uk')).toBe('Acme')
+    expect(companyOf('a@mail.acme.com.au')).toBe('Acme')
+  })
   it('says nothing for mail providers or names too short to be sure of', () => {
     for (const e of ['sam@gmail.com', 'sam@icloud.com', 'sam@outlook.com', 'tarun@gmail.com', 'no-at-sign', 'x@localhost']) expect(companyOf(e)).toBeNull()
   })
 })
 
 describe('meetingWords', () => {
-  it('has the names, the companies of everyone on the invite (the person using Figolu too) and a title that came from them', () => {
+  it('has the names, the companies of everyone on the invite (the person using Faisselle too) and a title that came from them', () => {
     setOwnerName(() => 'Alex Morgan')
     noteOwnEmail('alex@zentrik.example')
     expect(meetingWords(robin)).toEqual({ title: robin.title, names: ['Robin Smith', 'Tarun Mehra', 'Alex Morgan'], companies: ['Northwind', 'Zentrik'] })
@@ -137,7 +143,7 @@ describe('personal jargon', () => {
 })
 
 describe('the word list for lowercase respelling', () => {
-  it("a Mac reads its own; Windows and Linux read the same list shipped with Figolu (Webster's 2nd, public domain)", () => {
+  it("a Mac reads its own; Windows and Linux read the same list shipped with Faisselle (Webster's 2nd, public domain)", () => {
     expect(dictionaryFiles('darwin', '/R')).toEqual(['/usr/share/dict/words'])
     expect(dictionaryFiles('win32', 'C:\\Y\\resources')[0]).toMatch(/resources[\\/]dict[\\/]words$/)
     expect(dictionaryFiles('linux', '/opt/y/resources')).toEqual([expect.stringMatching(/[\\/]opt[\\/]y[\\/]resources[\\/]dict[\\/]words$/), expect.stringMatching(/resources[\\/]dict[\\/]words$/), '/usr/share/dict/words'])

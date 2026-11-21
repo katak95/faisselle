@@ -91,7 +91,7 @@ function useFocus(ref: RefObject<HTMLButtonElement | null>, deps: unknown[]) {
   useEffect(() => { ref.current?.focus() }, deps)
 }
 
-/** What Figolu is, in the website's words */
+/** What Faisselle is, in the website's words */
 function Welcome({ state, progress, onDone }: { state: SetupState; progress: Progress; onDone(): void }) {
   const c = screenCopy('welcome')
   const primary = useRef<HTMLButtonElement>(null)
@@ -156,7 +156,7 @@ function Ask({ screen, step, leaving, state, progress, onOn, onLater }: {
   const label = back ? t('Continue') : away || denied ? t('Open System Settings') : t('Allow')
   const note = away ? <GuideNote kind={kind} />
     : flow.phase === 'failed' ? <p data-testid="step-access-status" role="status" className="ob-note">{t("Couldn't check access. Try again.")}</p>
-      : flow.phase === 'idle' && denied ? <p data-testid="step-access-status" role="status" className="ob-note">{t('This was turned off before, so only System Settings can turn it on. Figolu shows you where.')}</p>
+      : flow.phase === 'idle' && denied ? <p data-testid="step-access-status" role="status" className="ob-note">{t('This was turned off before, so only System Settings can turn it on. Faisselle shows you where.')}</p>
         : null
   // the picture changes only when there is a new thing to show: System Settings, or the screen's own drawing
   const art = away ? <SettingsArt kind={kind} /> : <ScreenArt kind={kind} />
@@ -164,7 +164,7 @@ function Ask({ screen, step, leaving, state, progress, onOn, onLater }: {
     <Layout
       testId="onboarding-step" step={screen.id} kind={kind} motionKey={away ? `${screen.id}-away` : screen.id}
       art={art} progress={progress} state={state} note={note}
-      title={away ? t('Turn on Figolu in System Settings') : back ? t('All set') : sc.title}
+      title={away ? t('Turn on Faisselle in System Settings') : back ? t('All set') : sc.title}
       text={away ? c.where : back ? t('{name} is on. You can change this any time in Settings.', { name: c.name }) : sc.text}
       actions={<>
         <button ref={primary} data-testid="step-allow" aria-describedby="step-reason" disabled={busy}
@@ -177,7 +177,7 @@ function Ask({ screen, step, leaving, state, progress, onOn, onLater }: {
   )
 }
 
-/** Under the buttons while System Settings is open: that Figolu notices by itself, what to do if it isn't listed, and a reopen for the ones that need it */
+/** Under the buttons while System Settings is open: that Faisselle notices by itself, what to do if it isn't listed, and a reopen for the ones that need it */
 function GuideNote({ kind }: { kind: PermissionKind }) {
   const [failed, setFailed] = useState(false)
   return (
@@ -186,14 +186,14 @@ function GuideNote({ kind }: { kind: PermissionKind }) {
       <details key={kind} className="ob-guide-help">
         <summary>{t('Still not working?')}</summary>
         <div className="ob-guide-help-content">
-        {(kind === 'accessibility' || kind === 'systemAudio') && <p>{t('Not in the list? Click +, then choose Figolu in Applications.')}</p>}
-        <p>{t('If you turned access on and this stays open, restart Figolu.')}</p>
+        {(kind === 'accessibility' || kind === 'systemAudio') && <p>{t('Not in the list? Click +, then choose Faisselle in Applications.')}</p>}
+        <p>{t('If you turned access on and this stays open, restart Faisselle.')}</p>
         <button data-testid="settings-guide-relaunch" className="workspace-button no-drag" onClick={() => {
           void window.yogurt.permissions.relaunch().then((ok) => setFailed(!ok), () => setFailed(true))
-        }}>{t('Restart Figolu')}</button>
+        }}>{t('Restart Faisselle')}</button>
       </div>
       </details>
-      {failed && <p role="alert" className="ob-note-line ob-note-error">{t("Figolu couldn't reopen. Quit it from the menu bar and open it again.")}</p>}
+      {failed && <p role="alert" className="ob-note-line ob-note-error">{t("Faisselle couldn't reopen. Quit it from the menu bar and open it again.")}</p>}
     </div>
   )
 }

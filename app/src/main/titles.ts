@@ -1,10 +1,10 @@
 /**
- * Where a meeting's title came from. Only a generic one (what Figolu names a meeting with no event) or one Figolu wrote
+ * Where a meeting's title came from. Only a generic one (what Faisselle names a meeting with no event) or one Faisselle wrote
  * from the notes may be replaced by a title from the notes; one they typed or one from the calendar never is.
  */
 export type TitleSource = 'generic' | 'calendar' | 'user' | 'auto' | 'imported'
 
-/** what Figolu (or an older copy of it) names a meeting that has no event title */
+/** what Faisselle (or an older copy of it) names a meeting that has no event title */
 const ENGLISH = /^(?:.{1,40} call|meeting|untitled|new note|google meet|(?:zoom|teams|microsoft teams|webex|slack) meeting)$/i
 
 /**

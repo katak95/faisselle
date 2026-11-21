@@ -9,12 +9,12 @@ import { changeTools, changeHandlers } from './changes'
 import { importTools, importHandlers } from './importMeeting'
 
 /**
- * Figolu as an MCP server, so an AI app on this Mac (Claude, Cursor, …) can use the person's meetings: JSON-RPC
+ * Faisselle as an MCP server, so an AI app on this Mac (Claude, Cursor, …) can use the person's meetings: JSON-RPC
  * messages in, answers out (socket.ts carries them; the yogurt-mcp helper connects the app to it).
  * Off until the person turns it on in Settings: until then every tool says where to turn it on and gives nothing.
  * Reading is all it does unless the person also lets AI apps make changes; then each change goes through the same
  * functions the app's own buttons use. Nothing is ever deleted for good: meetings go to the Trash.
- * Text here goes to the other app's model, never to Figolu's interface, so it is not translated.
+ * Text here goes to the other app's model, never to Faisselle's interface, so it is not translated.
  */
 
 type Track = 'me' | 'them'
@@ -53,7 +53,7 @@ export type McpDeps = {
   enabled: () => boolean
   /** Settings' "Let AI apps make changes": off unless the person turned it on */
   changesEnabled: () => boolean
-  /** the person using Figolu, by name: "You" means nothing to another app */
+  /** the person using Faisselle, by name: "You" means nothing to another app */
   me: () => string
   version: string
   /** a finished meeting's audio files (none while it records) */
@@ -79,27 +79,27 @@ const readOnly = { readOnlyHint: true, destructiveHint: false, openWorldHint: fa
 const readTools = (platform: string): Tool[] => [
   { name: 'list_folders', description: 'The folders the person files meetings in: id, name and how many meetings each holds. Pass a folder to list_meetings or search to read only its meetings.',
     inputSchema: { type: 'object', properties: {} } },
-  { name: 'list_meetings', description: 'Meetings recorded in Figolu, newest first: id, title, start and end (ISO times), people invited (attendees: name and email from the calendar), call app, and the folders it is in. Optional query finds meetings by words in their title, transcript or notes; optional folder keeps only that folder\'s meetings; optional person keeps only meetings with them.',
+  { name: 'list_meetings', description: 'Meetings recorded in Faisselle, newest first: id, title, start and end (ISO times), people invited (attendees: name and email from the calendar), call app, and the folders it is in. Optional query finds meetings by words in their title, transcript or notes; optional folder keeps only that folder\'s meetings; optional person keeps only meetings with them.',
     inputSchema: { type: 'object', properties: { query: { type: 'string' }, folder: inFolder, person, limit: { type: 'number', description: 'Most to return (default 20, at most 100)' }, before: { type: 'string', description: 'Only meetings that started before this ISO time, to page back' } } } },
-  { name: 'get_meeting', description: "One meeting: its details, its attendees with their emails, the calendar event it is linked to (calendar_event: title, start, end, calendar; null when none), the folder Figolu suggests for it (suggested_folder, null when none), the notes the person typed (myNotes) and Figolu's written summary (Markdown).",
+  { name: 'get_meeting', description: "One meeting: its details, its attendees with their emails, the calendar event it is linked to (calendar_event: title, start, end, calendar; null when none), the folder Faisselle suggests for it (suggested_folder, null when none), the notes the person typed (myNotes) and Faisselle's written summary (Markdown).",
     inputSchema: { type: 'object', properties: { id: idArg }, required: ['id'] } },
   { name: 'get_transcript', description: 'What was said in a meeting, line by line with who said it. format "text" (default): "[mm:ss] Name: words" lines. format "lines": JSON with start_ms, end_ms, speaker, is_me and text. "Them" is the other side of the call when the call app gave no name.',
     inputSchema: { type: 'object', properties: { id: idArg, format: { type: 'string', enum: ['text', 'lines'] } }, required: ['id'] } },
   { name: 'search', description: 'Finds words across every meeting (titles, transcripts, notes): meeting id, title, start and a snippet with the matched words in **bold**. Optional person keeps only meetings with them.',
     inputSchema: { type: 'object', properties: { query: { type: 'string' }, folder: inFolder, person, limit: { type: 'number', description: 'Most meetings to return (default 20, at most 100)' } }, required: ['query'] } },
-  { name: 'ask', description: "Figolu answers a question from the person's meetings itself, on this computer, with numbered sources ([1], [2]) naming the meeting and the moment. Optional folder or meeting_ids limit what it reads. Slower than search (it writes an answer); use it for questions that need meetings read and put together.",
+  { name: 'ask', description: "Faisselle answers a question from the person's meetings itself, on this computer, with numbered sources ([1], [2]) naming the meeting and the moment. Optional folder or meeting_ids limit what it reads. Slower than search (it writes an answer); use it for questions that need meetings read and put together.",
     inputSchema: { type: 'object', properties: { question: { type: 'string' }, folder: { type: 'string', description: 'Only meetings in this folder' }, meeting_ids: { type: 'array', items: { type: 'string' }, description: 'Only these meetings (at most 40)' } }, required: ['question'] } },
   { name: 'list_people', description: "The people in the person's meetings: name and email (null when the calendar gave none). Pass one as person to list_meetings or search.",
     inputSchema: { type: 'object', properties: { limit: { type: 'number', description: 'Most to return (default 200, at most 1000)' } } } },
-  { name: 'upcoming_meetings', description: "What is on the person's calendar for the rest of today and tomorrow, soonest first: event_id, title, start, end, calendar, meeting_link (the call's address, null when none), attendees, and meeting_id when Figolu already has notes for it.",
+  { name: 'upcoming_meetings', description: "What is on the person's calendar for the rest of today and tomorrow, soonest first: event_id, title, start, end, calendar, meeting_link (the call's address, null when none), attendees, and meeting_id when Faisselle already has notes for it.",
     inputSchema: { type: 'object', properties: {} } },
   { name: 'calendar_day', description: "The events on one day of the person's calendar, earliest first, the same way upcoming_meetings gives them.",
     inputSchema: { type: 'object', properties: { date: { type: 'string', description: 'The day, like 2026-11-03' } }, required: ['date'] } },
   { name: 'list_trash', description: 'Meetings in the Trash: id, title, start and when they were moved there. They are deleted for good 30 days after. restore_meeting brings one back.',
     inputSchema: { type: 'object', properties: {} } },
-  { name: 'get_settings', description: "Figolu's settings that shape notes: the person's name, the interface language, the language spoken in meetings, the language summaries are written in, custom words spelled right in transcripts, whether recording stops when a call ends, and whether audio is kept.",
+  { name: 'get_settings', description: "Faisselle's settings that shape notes: the person's name, the interface language, the language spoken in meetings, the language summaries are written in, custom words spelled right in transcripts, whether recording stops when a call ends, and whether audio is kept.",
     inputSchema: { type: 'object', properties: {} } },
-  { name: 'export_meeting', description: "A meeting as one Markdown document, exactly as Figolu's Export Markdown saves it: title, date, people, the notes, and the transcript. side \"summary\" (default) uses Figolu's summary, \"my_notes\" the person's own notes.",
+  { name: 'export_meeting', description: "A meeting as one Markdown document, exactly as Faisselle's Export Markdown saves it: title, date, people, the notes, and the transcript. side \"summary\" (default) uses Faisselle's summary, \"my_notes\" the person's own notes.",
     inputSchema: { type: 'object', properties: { id: idArg, side: { type: 'string', enum: ['summary', 'my_notes'] } }, required: ['id'] } },
   { name: 'get_audio', description: platform === 'darwin'
     ? "A meeting's recording as files on this Mac: one per side (track me: the person's microphone; them: the other side of the call), AAC in .m4a. Gives paths, which apps on this Mac can open."
@@ -165,7 +165,7 @@ export function createMcp(d: McpDeps): Mcp {
     if (!m || m.trashedAt != null) throw new Refusal(`No meeting with id ${JSON.stringify(v ?? null)}. list_meetings or search gives the ids.`)
     return m
   }
-  /** the folder Figolu suggests for a meeting not filed yet, as the note's header offers it */
+  /** the folder Faisselle suggests for a meeting not filed yet, as the note's header offers it */
   const suggestedFolder = (m: Meeting) => {
     if (d.store.foldersOf(m.id).length) return null
     const s = d.store.folderSuggestion(m.id)
@@ -175,8 +175,8 @@ export function createMcp(d: McpDeps): Mcp {
   const who = (speaker: string | null, track: Track) => (speaker === AUDIO_SPEAKER ? 'Audio' : track === 'me' || speaker === 'me' ? d.me() || 'You' : speaker || 'Them')
   const events = (r: { status: CalendarStatus; events: CalEvent[] }) => {
     if (!r.events.length && r.status !== 'granted') {
-      return r.status === 'unsupported' ? 'Figolu has no calendar on this computer. The person can add a calendar link in Figolu: Settings, Calendars.'
-        : `Figolu can't read the calendar (${r.status === 'error' ? 'reading it failed' : 'it has no access'}). The person can connect it in Figolu: Settings, Calendars.`
+      return r.status === 'unsupported' ? 'Faisselle has no calendar on this computer. The person can add a calendar link in Faisselle: Settings, Calendars.'
+        : `Faisselle can't read the calendar (${r.status === 'error' ? 'reading it failed' : 'it has no access'}). The person can connect it in Faisselle: Settings, Calendars.`
     }
     return JSON.stringify(r.events.map((e) => {
       const note = [e.id, ...(e.aliases ?? [])].map((id) => d.store.meetingForEvent(id)).find((m) => m && m.trashedAt == null)
@@ -233,8 +233,8 @@ export function createMcp(d: McpDeps): Mcp {
       const got = await d.app.ask(question, chips)
       if ('unavailable' in got) {
         throw new Refusal(got.unavailable === 'model'
-          ? "Figolu's notes model is still downloading, so it can't answer questions yet. Use search and get_transcript instead, or ask again later."
-          : `Figolu is recording a meeting, and on this ${mac ? 'Mac' : 'computer'} it answers questions once the recording ends. Use search and get_transcript meanwhile.`)
+          ? "Faisselle's notes model is still downloading, so it can't answer questions yet. Use search and get_transcript instead, or ask again later."
+          : `Faisselle is recording a meeting, and on this ${mac ? 'Mac' : 'computer'} it answers questions once the recording ends. Use search and get_transcript meanwhile.`)
       }
       return JSON.stringify({
         answer: got.answer, ...(got.stopped ? { note: 'The answer took too long and was stopped; this is what was written.' } : {}),
@@ -292,9 +292,9 @@ export function createMcp(d: McpDeps): Mcp {
         return ok(msgId, {
           protocolVersion: VERSIONS.includes(String(asked)) ? asked : VERSIONS[0],
           capabilities: { tools: {} },
-          serverInfo: { name: 'yogurt', title: 'Figolu', version: d.version },
-          instructions: `Figolu holds the person's meeting notes, transcripts and recordings on this ${mac ? 'Mac' : 'computer'}. Use list_meetings or search to find a meeting, then get_meeting, get_transcript or get_audio.`
-            + " With changes allowed in Figolu's Settings, it can also file and edit meetings, take notes of a call, and bring in meetings from other notes apps (create_meeting).",
+          serverInfo: { name: 'yogurt', title: 'Faisselle', version: d.version },
+          instructions: `Faisselle holds the person's meeting notes, transcripts and recordings on this ${mac ? 'Mac' : 'computer'}. Use list_meetings or search to find a meeting, then get_meeting, get_transcript or get_audio.`
+            + " With changes allowed in Faisselle's Settings, it can also file and edit meetings, take notes of a call, and bring in meetings from other notes apps (create_meeting).",
         })
       }
       if (method === 'ping') return ok(msgId, {})
@@ -303,12 +303,12 @@ export function createMcp(d: McpDeps): Mcp {
         const name = String(params?.name ?? '')
         const tool = tools[name]
         const a = params?.arguments && typeof params.arguments === 'object' && !Array.isArray(params.arguments) ? params.arguments as Args : {}
-        if (!tool) return said(msgId, `Figolu has no tool called ${name}.`, true)
-        if (!d.enabled()) return said(msgId, 'Figolu has connecting AI apps turned off. The person can turn it on in Figolu: Settings, AI apps.', true)
+        if (!tool) return said(msgId, `Faisselle has no tool called ${name}.`, true)
+        if (!d.enabled()) return said(msgId, 'Faisselle has connecting AI apps turned off. The person can turn it on in Faisselle: Settings, AI apps.', true)
         const change = CHANGES.has(name)
         if (change && !d.changesEnabled()) {
           logged(name, a, 'refused: changes off')
-          return said(msgId, 'Figolu lets AI apps read meetings but not change them. The person can allow changes in Figolu: Settings, AI apps, "Let AI apps make changes".', true)
+          return said(msgId, 'Faisselle lets AI apps read meetings but not change them. The person can allow changes in Faisselle: Settings, AI apps, "Let AI apps make changes".', true)
         }
         try {
           const body = await tool(a)
@@ -318,10 +318,10 @@ export function createMcp(d: McpDeps): Mcp {
           if (e instanceof Refusal) { if (change) logged(name, a, 'refused'); return said(msgId, e.message, true) }
           console.error(`mcp: ${name} failed`, e)
           if (change) logged(name, a, 'failed')
-          return said(msgId, `Figolu couldn't do that (${name}). Try again.`, true)
+          return said(msgId, `Faisselle couldn't do that (${name}). Try again.`, true)
         }
       }
-      return fail(msgId, -32601, `Figolu doesn't do ${method}`)
+      return fail(msgId, -32601, `Faisselle doesn't do ${method}`)
     },
   }
 }

@@ -66,7 +66,7 @@ pub fn run(dir: &Path, o: Options) -> i32 {
                     }
                 }
             }
-            // Figolu closed the pipe (quit or crashed): keep what we have
+            // Faisselle closed the pipe (quit or crashed): keep what we have
             let _ = tx.send(Ev::Eof);
         });
     }

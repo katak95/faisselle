@@ -1,4 +1,4 @@
-// Figolu's recorder on Linux: the microphone and the computer's sound (the default output's monitor) through
+// Faisselle's recorder on Linux: the microphone and the computer's sound (the default output's monitor) through
 // PulseAudio, which PipeWire answers too (pipewire-pulse). No echo cancelling and no voice processing: the call
 // app keeps the mic as it is. It speaks exactly what app/native/yogurt-audio (the Mac's) speaks:
 //   yogurt-audio record --dir DIR [--part N --start-ms X] [--mic UID] [--speech LOCALE]
@@ -69,7 +69,7 @@ enum Msg {
     Audio { track: Tr, gen: u64, samples: Vec<f32>, arrived: f64 },
     Lost { track: Tr, gen: u64 },
     Cmd(String),
-    /// stdin closed (Figolu quit or crashed) or stdout broke (Figolu gone): keep what we have
+    /// stdin closed (Faisselle quit or crashed) or stdout broke (Faisselle gone): keep what we have
     End,
     Server(Change),
 }

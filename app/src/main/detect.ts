@@ -1,6 +1,6 @@
 import type { CalEvent } from './calendar'
 
-export type MicApp = { bundleId: string; name: string; /** the window's title, when known */ title?: string }
+export type MicApp = { bundleId: string; name: string; /** the process on the mic */ pid?: number; /** the window's title, when known */ title?: string }
 export type Signals = { micApps: MicApp[]; events: CalEvent[]; recording: boolean; /** owners confirmed by NSRunningApplication */ runningApps?: string[] }
 export type Prompt = { key: string; /** the event's title; empty with no event (the window words it) */ title: string; app: string | null; event: CalEvent | null }
 /** keys of prompts the person closed */
@@ -67,8 +67,8 @@ const HELPERS_BY_OS: Record<string, Record<string, string>> = {
   win32: { 'cpthost.exe': 'zoom.exe', 'zoomwebviewhost.exe': 'zoom.exe' },
   linux: {},
 }
-/** Figolu's own recorder holds the mic while it records; yogurt-system lists it like any app off a Mac */
-const OWN_BY_OS: Record<string, string[]> = { darwin: [], win32: ['yogurt-audio.exe', 'figolu.exe'], linux: ['yogurt-audio', 'figolu', 'figolu-bin', 'Figolu'] }
+/** Faisselle's own recorder holds the mic while it records; yogurt-system lists it like any app off a Mac */
+const OWN_BY_OS: Record<string, string[]> = { darwin: [], win32: ['yogurt-audio.exe', 'faisselle.exe'], linux: ['yogurt-audio', 'faisselle', 'faisselle-bin', 'Faisselle'] }
 let APPS = MAC_APPS
 let HELPERS = MAC_HELPERS
 let OWN: string[] = []
@@ -78,7 +78,7 @@ export function useCallApps(platform: string) {
   HELPERS = HELPERS_BY_OS[platform] ?? MAC_HELPERS
   OWN = OWN_BY_OS[platform] ?? []
 }
-/** Figolu's own recorder (or Figolu) on the mic: never a call */
+/** Faisselle's own recorder (or Faisselle) on the mic: never a call */
 export const isOwnMicApp = (bundleId: string): boolean => OWN.includes(bundleId)
 const appOf = (bundleId: string) => {
   if (OWN.includes(bundleId)) return undefined
@@ -93,6 +93,10 @@ const micApp = (bundleId: string, runningApps: readonly string[] = []) => {
 }
 /** Helpers count only while their owning app is running. Direct app mic holders prove their own presence. */
 export const callAppName = (bundleId: string, runningApps?: readonly string[]): string | null => micApp(bundleId, runningApps)?.name ?? null
+
+/** The processes of a call app on the mic now, its helpers too: with two Zoom meetings open, the one being recorded (#98) */
+export const micPids = (micApps: readonly MicApp[], runningApps: readonly string[] | undefined, app: string): number[] =>
+  micApps.flatMap((m) => (m.pid !== undefined && callAppName(m.bundleId, runningApps) === app ? [m.pid] : []))
 
 /** The browser to ask for the front tab's name when this process is on the mic; null for apps that are not browsers */
 export const tabTitleApp = (bundleId: string): string | null => {
@@ -109,7 +113,7 @@ export function matchEvent(events: CalEvent[], now: number): CalEvent | null {
   return near[0] ?? null
 }
 
-/** Should Figolu offer to take notes now? A call app using the mic is the trigger; a meeting on the calendar alone waits for the call. */
+/** Should Faisselle offer to take notes now? A call app using the mic is the trigger; a meeting on the calendar alone waits for the call. */
 export function decide(s: Signals, now: number, recent: Dismissals): Prompt | null {
   if (s.recording) return null
   const event = matchEvent(s.events, now)

@@ -27,13 +27,13 @@ const meetingProps = {
   my_notes: { type: 'string', description: "The person's own notes (Markdown)" },
   folder: { type: 'string', description: 'A folder to file it in: its id or name, from list_folders' },
   create_folder: { type: 'boolean', description: 'Make the folder when there is none by that name' },
-  write_summary: { type: 'boolean', description: 'Have Figolu write the summary from the transcript, instead of giving one' },
+  write_summary: { type: 'boolean', description: 'Have Faisselle write the summary from the transcript, instead of giving one' },
   source_id: { type: 'string', description: "The meeting's id in the other app: the same one is never brought in twice" },
 }
 const required = ['title', 'started_at']
 const adding = { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false }
 export const importTools: Tool[] = [
-  { name: 'create_meeting', description: "Brings one meeting into Figolu from another notes app (Granola, Otter, Fireflies, …): title, start, people, the transcript (text or lines), and the other app's summary or Figolu's own (write_summary). It has no recording. It shows in Figolu, in search and in ask like a meeting recorded there. Gives its id.",
+  { name: 'create_meeting', description: "Brings one meeting into Faisselle from another notes app (Granola, Otter, Fireflies, …): title, start, people, the transcript (text or lines), and the other app's summary or Faisselle's own (write_summary). It has no recording. It shows in Faisselle, in search and in ask like a meeting recorded there. Gives its id.",
     inputSchema: { type: 'object', properties: meetingProps, required }, annotations: adding },
   { name: 'import_meetings', description: `Brings several meetings in at once, each as create_meeting takes it: at most ${IMPORT_BATCH_MAX} a call. Gives each one's id or why it was not brought in.`,
     inputSchema: { type: 'object', properties: { meetings: { type: 'array', items: { type: 'object', properties: meetingProps, required } } }, required: ['meetings'] }, annotations: adding },
@@ -99,7 +99,7 @@ export function importHandlers({ d, folderOf, log }: Ctx): Record<string, (a: Ar
       if (f) d.app.changed('folders')
       if (m.writeSummary) d.app.rewriteSummary(meeting.id, '')
       return { id: meeting.id, title: meeting.title, start: new Date(meeting.startedAt).toISOString(), lines: timed.length, folder: f ? { id: f.id, name: f.name } : null,
-        summary: m.summary ? 'given' : m.writeSummary ? (d.app.notesReady() ? 'Figolu is writing it' : 'Figolu writes it once its notes model has downloaded') : 'none' }
+        summary: m.summary ? 'given' : m.writeSummary ? (d.app.notesReady() ? 'Faisselle is writing it' : 'Faisselle writes it once its notes model has downloaded') : 'none' }
     } catch (e) { s.deleteMeeting(meeting.id); throw e }
   }
   return {

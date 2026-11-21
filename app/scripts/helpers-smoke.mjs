@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Runs the helpers of an installed Windows or Linux Figolu from its own folder, the way the app does (no shell):
+// Runs the helpers of an installed Windows or Linux Faisselle from its own folder, the way the app does (no shell):
 //   node scripts/helpers-smoke.mjs --resources <install>/resources [--model ggml-tiny.en.bin --wav clip.wav --expect a,b] [--no-whisper]
 // The recorder answers each subcommand and records a few seconds (from whatever devices the runner has), the system and
 // AI apps helpers start, and with --model whisper-server starts from there and transcribes the clip (scripts/whisper-smoke.mjs).
@@ -57,11 +57,11 @@ check(sys.status === 0 && Array.isArray(json(sys.stdout)), 'yogurt-system runnin
 const apps = run(bin('yogurt-system'), ['mic-apps'])
 check(Array.isArray(json(apps.stdout)) || apps.status !== 0, 'yogurt-system mic-apps answers', apps.stdout.trim() || `exit ${apps.status}`)
 // nothing to talk to: the relay must say so and end, not hang. A copy away from the install folder, so it can't find
-// and start the installed Figolu (it looks next to itself on Windows)
+// and start the installed Faisselle (it looks next to itself on Windows)
 const relay = join(mkdtempSync(join(tmpdir(), 'yogurt-mcp-')), win ? 'yogurt-mcp.exe' : 'yogurt-mcp')
 copyFileSync(bin('yogurt-mcp'), relay)
 const mcp = spawnSync(relay, [], { input: '', encoding: 'utf8', timeout: 90_000, windowsHide: true, env: { ...process.env, YOGURT_USER_DATA: mkdtempSync(join(tmpdir(), 'yogurt-p-')) } })
-check(mcp.status === 1 && mcp.stderr.trim().length > 0, 'yogurt-mcp ends with words when Figolu is not open', mcp.stderr.trim().split('\n')[0])
+check(mcp.status === 1 && mcp.stderr.trim().length > 0, 'yogurt-mcp ends with words when Faisselle is not open', mcp.stderr.trim().split('\n')[0])
 
 if (a.model && a.wav) {
   const here = dirname(fileURLToPath(import.meta.url))
