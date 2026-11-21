@@ -1,5 +1,5 @@
 //! Linux: who records from a microphone (PulseAudio, or PipeWire through pipewire-pulse), running programs (/proc)
-//! and window titles (X11 / XWayland). Yogurt runs under XWayland, so it sees other XWayland and X11 windows; a
+//! and window titles (X11 / XWayland). Figolu runs under XWayland, so it sees other XWayland and X11 windows; a
 //! browser running as a native Wayland client has no title here (null), and so no browser-call offer.
 
 use crate::parse::{self, MicApp, Stream};

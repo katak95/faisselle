@@ -54,10 +54,10 @@ export function trayTitle(active: { elapsedMs: number; paused: boolean } | null,
 /** Keep native and hidden-test menus identical; only the native icon is optional. */
 export function trayItems(active: { id?: string; title: string; paused?: boolean; fallingBehind?: boolean } | null, next?: CalEvent, recent: Recent[] = [], now = Date.now(), os = 'darwin', clock = formatTrayTime): TrayItem[] {
   const sep: TrayItem = { id: 'sep', label: '', enabled: true }
-  const open: TrayItem = { id: 'open', label: t('Open Yogurt'), enabled: true }
-  const ask: TrayItem = { id: 'ask', label: t('Ask Yogurt'), enabled: true }
+  const open: TrayItem = { id: 'open', label: t('Open Figolu'), enabled: true }
+  const ask: TrayItem = { id: 'ask', label: t('Ask Figolu'), enabled: true }
   const settings: TrayItem = { id: 'settings', label: t('Settings…'), accelerator: os === 'darwin' ? 'Command+,' : 'Ctrl+,', enabled: true }
-  const quit: TrayItem = { id: 'quit', label: t('Quit Yogurt'), enabled: true }
+  const quit: TrayItem = { id: 'quit', label: t('Quit Figolu'), enabled: true }
   const history: TrayItem = { id: 'recent', label: t('Recent'), enabled: recent.length > 0, submenu: [...recent].sort((a, b) => b.startedAt - a.startedAt).slice(0, 5)
     .map(m => ({ id: `note:${m.id}`, label: `${m.title || t('Untitled meeting')} · ${dayLabel(m.startedAt)}`, enabled: true })) }
   if (!active) {
@@ -75,7 +75,7 @@ export function trayItems(active: { id?: string; title: string; paused?: boolean
   }
   return [
     { id: 'status', label: active.paused ? t('Paused · {title}', { title: active.title }) : t('Recording · {title}', { title: active.title }), enabled: false },
-    ...(active.fallingBehind ? [{ id: 'warning' as const, label: t('Yogurt is falling behind. Some lines may be missing.'), enabled: false }] : []),
+    ...(active.fallingBehind ? [{ id: 'warning' as const, label: t('Figolu is falling behind. Some lines may be missing.'), enabled: false }] : []),
     { id: 'pause', label: active.paused ? t('Resume recording') : t('Pause recording'), enabled: true },
     { id: 'stop', label: t('Stop recording'), enabled: true }, sep,
     ask, open, history, settings, sep, quit,
@@ -84,7 +84,7 @@ export function trayItems(active: { id?: string; title: string; paused?: boolean
 
 /** macOS shows the timer beside its template icon. Other platforms mark the running timer in the tooltip. */
 export function trayLook(os: string, active: { paused: boolean } | null, elapsedMs: number, next?: CalEvent, now = Date.now(), clock = formatTrayTime): { icon: 'tray' | 'tray-titled' | 'tray-color' | 'tray-recording'; template: boolean; title: string | null; tooltip: string } {
-  const tooltip = active?.paused ? t('Recording paused') : active ? t('Yogurt is recording') : 'Yogurt'
+  const tooltip = active?.paused ? t('Recording paused') : active ? t('Figolu is recording') : 'Figolu'
   const title = trayTitle(active ? { elapsedMs, paused: active.paused } : null, next, now, clock)
   // The titled template adds 1 pt between the mark and the native title.
   if (os === 'darwin') return { icon: title ? 'tray-titled' : 'tray', template: true, title, tooltip }

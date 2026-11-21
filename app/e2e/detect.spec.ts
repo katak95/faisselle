@@ -160,7 +160,7 @@ test('the window is away: clicking the "Take notes?" notification starts the not
   const notice = () => app.evaluate(() => (globalThis as unknown as { __fake__: { notice(): unknown } }).__fake__.notice()) as Promise<{ title: string; body: string } | null>
   const clickNotice = () => app.evaluate(() => (globalThis as unknown as { __fake__: { noticeClick(): void } }).__fake__.noticeClick())
   try {
-    // test runs keep the window hidden: away, as far as Yogurt can tell
+    // test runs keep the window hidden: away, as far as Figolu can tell
     await signals(app, { micApps: [zoom], events: [event()] })
     await card(app)
     await expect.poll(notice).toEqual({ title: 'Take notes?', body: 'Design review' })

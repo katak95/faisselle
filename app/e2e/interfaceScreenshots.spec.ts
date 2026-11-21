@@ -615,7 +615,7 @@ scene('10-panel', 'opening Ask inside a note when its lookup fails', async s => 
     await secondaryButton(s.page.getByTestId('chat-open-error'))
     await expect(s.page.getByTestId('chat-thread-loading')).toHaveCount(0)
   }
-  else await expect(s.page.getByTestId('chat-panel').getByText("Yogurt couldn't answer that.")).toBeVisible()
+  else await expect(s.page.getByTestId('chat-panel').getByText("Figolu couldn't answer that.")).toBeVisible()
 })
 
 scene('10-history', 'opening Recent when conversation history fails', async s => {

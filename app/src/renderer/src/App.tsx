@@ -92,7 +92,7 @@ export function App() {
   useEffect(() => { void window.yogurt.onboarding.plan().then(setPlan, () => setPlan({ intro: false, steps: [] })) }, [])
   const firstRunDone = !!plan && !plan.intro && plan.steps.length === 0
   const ready = setup?.phase === 'ready' && firstRunDone
-  // the launch screen: up while Yogurt starts, and once it has shown, long enough to be seen
+  // the launch screen: up while Figolu starts, and once it has shown, long enough to be seen
   // a later launch also waits for the models on disk to be checked
   const booted = !!setup && !!plan && !(setup.phase === 'checking' && firstRunDone)
   const [holding, setHolding] = useState(true)

@@ -4,7 +4,7 @@
 <dict>
   <!-- V8 compiles JavaScript at run time -->
   <key>com.apple.security.cs.allow-jit</key><true/>
-  <!-- The helpers below are Yogurt's children, so the Mac checks these on Yogurt itself and names Yogurt in its prompts -->
+  <!-- The helpers below are Figolu's children, so the Mac checks these on Figolu itself and names Figolu in its prompts -->
   <!-- the microphone, while a meeting records -->
   <key>com.apple.security.device.audio-input</key><true/>
   <!-- the calendar: meeting names and who is in them -->

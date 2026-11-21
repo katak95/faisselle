@@ -8,11 +8,11 @@ const { join, resolve } = require('node:path')
 const archive = process.argv[2]
 if (!archive || !existsSync(archive)) throw new Error('Pass the packaged app.asar path')
 const profile = mkdtempSync(join(tmpdir(), 'yogurt-engine-smoke-'))
-app.setName('Yogurt Engine Smoke')
+app.setName('Figolu Engine Smoke')
 app.setPath('userData', profile)
 
 app.whenReady().then(() => {
-  const child = utilityProcess.fork(join(resolve(archive), 'out/main/engine.js'), [], { serviceName: 'Yogurt Engine Smoke', stdio: 'pipe' })
+  const child = utilityProcess.fork(join(resolve(archive), 'out/main/engine.js'), [], { serviceName: 'Figolu Engine Smoke', stdio: 'pipe' })
   let stderr = '', settled = false
   child.stderr.on('data', (chunk) => { stderr = (stderr + chunk.toString()).slice(-16_384) })
   child.stdout.resume()

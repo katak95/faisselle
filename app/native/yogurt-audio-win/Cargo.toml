@@ -35,7 +35,7 @@ windows = { version = "=0.62.2", features = [
 ] }
 
 [profile.release]
-# a panic ends the helper, so Yogurt restarts it as the next part instead of recording silence
+# a panic ends the helper, so Figolu restarts it as the next part instead of recording silence
 panic = "abort"
 lto = true
 codegen-units = 1

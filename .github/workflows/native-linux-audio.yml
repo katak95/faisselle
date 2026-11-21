@@ -1,4 +1,4 @@
-# The Linux recorder (app/native/yogurt-audio-linux): build on Ubuntu 22.04 (the oldest glibc Yogurt supports),
+# The Linux recorder (app/native/yogurt-audio-linux): build on Ubuntu 22.04 (the oldest glibc Figolu supports),
 # unit tests, then a smoke test against a real PulseAudio with virtual speakers and a virtual mic.
 name: Linux audio helper
 

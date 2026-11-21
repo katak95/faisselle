@@ -25,7 +25,7 @@ export function AudioUploadDialog({ file, durationMs, status, closing, onStart, 
           <label htmlFor="upload-start-time">{t('Start time')}</label>
           <AudioUploadWhen key={file.token} disabled={busy} at={at} durationMs={durationMs} onChange={setAt}/>
         </div>}
-        {status?.phase==='error'&&<p className="text-xs text-danger" role="alert">{status.error==='busy'?t('Stop the recording first'):status.error==='format'?t('This audio format is not supported.'):t("Yogurt couldn't read this audio file.")}</p>}
+        {status?.phase==='error'&&<p className="text-xs text-danger" role="alert">{status.error==='busy'?t('Stop the recording first'):status.error==='format'?t('This audio format is not supported.'):t("Figolu couldn't read this audio file.")}</p>}
       </div>
       <div className="modal-actions audio-upload-actions"><button type="button" className="ghost-btn" data-dialog-cancel disabled={!!closing||status?.phase==='done'||status?.phase==='cancelling'} onClick={onCancel}>{t('Cancel')}</button>{!reading&&<button type="submit" disabled={busy} aria-busy={busy} className="workspace-button primary audio-upload-submit"><span className="audio-upload-submit-label">{status?.phase==='error'?t('Try again'):t('Transcribe')}</span>{busy&&<span className="audio-upload-submit-icon" aria-hidden="true"><Loader size={14}/></span>}</button>}</div>
     </form>
@@ -65,7 +65,7 @@ export async function openAudioUpload(onCreated?: (id: string) => void) {
   try {
     const file = await window.yogurt.audioUpload.pick()
     if (file) document.dispatchEvent(new CustomEvent('audio-upload-open', { detail: { file, onCreated } }))
-  } catch { toasts.add({ title: t("Yogurt couldn't read this audio file.") }) }
+  } catch { toasts.add({ title: t("Figolu couldn't read this audio file.") }) }
 }
 export function AudioUploadHost() {
   const [request, setRequest] = useState<{ file: AudioUploadFile; onCreated?: (id: string) => void }>()

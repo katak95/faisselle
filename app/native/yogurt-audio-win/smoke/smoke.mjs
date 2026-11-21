@@ -1,7 +1,7 @@
 // Protocol smoke test for yogurt-audio.exe on a CI runner (node smoke.mjs EXE MODE [ARGS]).
 //   basic      no audio devices needed: every subcommand, the files, join/inspect, and record's frames with no devices
 //   live       a tone plays from outside this process tree: both tracks must hear it
-//   excluded   the tone plays from a child of this process (Yogurt's tree): process loopback must leave it out
+//   excluded   the tone plays from a child of this process (Figolu's tree): process loopback must leave it out
 //   tone FILE  writes the tone as a wav
 import { execFileSync, spawn, spawnSync } from 'node:child_process'
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -161,7 +161,7 @@ async function live(excluded) {
   const cable = mics?.devices?.find((d) => /CABLE/i.test(d.name))
   let player
   if (excluded) {
-    // a child of this process: in the tree process loopback leaves out, like Yogurt's own players
+    // a child of this process: in the tree process loopback leaves out, like Figolu's own players
     const wav = join(tmp('tone'), 'tone.wav')
     tone(wav)
     player = spawn('powershell', ['-NoProfile', '-Command', `(New-Object Media.SoundPlayer '${wav}').PlaySync()`], { stdio: 'ignore' })
@@ -174,11 +174,11 @@ async function live(excluded) {
   protocolChecks(res.frames, excluded ? 'excluded' : 'live')
   check(res.code === 0, 'record stops cleanly', `${res.code}`)
   const loud = (track) => res.frames.filter((f) => f.t === 'pcm' && f.track === track && f.rms > 0.02).length
-  const processLoopback = /every app except Yogurt/.test(res.stderr)
+  const processLoopback = /every app except Figolu/.test(res.stderr)
   console.log(`system audio mode: ${processLoopback ? 'process loopback' : 'whole output'}; loud frames me ${loud('me')}, them ${loud('them')}`)
   if (process.env.YOGURT_AUDIO_LOOPBACK === 'process') check(processLoopback, 'process loopback starts when asked for')
   else check(/the whole output/.test(res.stderr), 'the whole output is recorded by default (#35)')
-  if (excluded && processLoopback) check(loud('them') <= 2, "Yogurt's own sound is left out of them", `${loud('them')} loud frames`)
+  if (excluded && processLoopback) check(loud('them') <= 2, "Figolu's own sound is left out of them", `${loud('them')} loud frames`)
   else check(loud('them') >= 30, 'them hears the computer\'s sound', `${loud('them')} loud frames`)
   check(res.frames.some((f) => f.t === 'level' && f.them > 0.3) === !(excluded && processLoopback), 'them levels follow the sound')
   if (cable) {

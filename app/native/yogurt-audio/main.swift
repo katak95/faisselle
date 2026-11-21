@@ -1,6 +1,6 @@
-// Yogurt's recorder: the microphone (AVAudioEngine, shared with the call app: no voice processing, which silenced
-// Zoom's mic) and the computer's sound (a Core Audio process tap on every process except Yogurt,
-// macOS 14.2+; the audio-capture permission needs 14.4). Yogurt never joins the call.
+// Figolu's recorder: the microphone (AVAudioEngine, shared with the call app: no voice processing, which silenced
+// Zoom's mic) and the computer's sound (a Core Audio process tap on every process except Figolu,
+// macOS 14.2+; the audio-capture permission needs 14.4). Figolu never joins the call.
 //   yogurt-audio record --dir DIR [--part N --start-ms X] [--mic UID]
 //   yogurt-audio join --dir DIR
 // A restart after a crash is part N (N >= 1) and carries on at meeting time X: it writes DIR/me.N.m4a and DIR/them.N.m4a,
@@ -60,7 +60,7 @@ func send(_ obj: [String: Any], payload: Data? = nil) {
   var d = try! JSONSerialization.data(withJSONObject: obj, options: [.sortedKeys])
   d.append(10)
   if let payload { d.append(payload) }
-  // Yogurt gone: finish the files and leave
+  // Figolu gone: finish the files and leave
   outQ.async { if !writeAll(d) { work.async { recorder.finish() } } }
 }
 
@@ -281,7 +281,7 @@ func parentPid(_ pid: pid_t) -> pid_t {
   return info.kp_eproc.e_ppid
 }
 
-/// Yogurt's own sound is left out: this helper, the app that started it, and the app's other helpers (Chromium plays sound from one)
+/// Figolu's own sound is left out: this helper, the app that started it, and the app's other helpers (Chromium plays sound from one)
 func yogurtProcesses() -> [AudioObjectID] {
   let me = getpid(), app = getppid()
   var out = Set<AudioObjectID>()
@@ -366,7 +366,7 @@ final class SystemAudio {
   func start() -> Bool {
     let desc = CATapDescription(stereoGlobalTapButExcludeProcesses: yogurtProcesses())
     desc.uuid = UUID()
-    desc.name = "Yogurt"
+    desc.name = "Figolu"
     desc.isPrivate = true
     desc.muteBehavior = .unmuted
     var err = AudioHardwareCreateProcessTap(desc, &tap)
@@ -380,7 +380,7 @@ final class SystemAudio {
     // A device with only the tap in it never runs, and with tap auto-start it only runs while something plays.
     guard let outUID = defaultOutputUID() else { log("no output device"); stop(); return false }
     let dict: [String: Any] = [
-      kAudioAggregateDeviceNameKey: "Yogurt", kAudioAggregateDeviceUIDKey: UUID().uuidString,
+      kAudioAggregateDeviceNameKey: "Figolu", kAudioAggregateDeviceUIDKey: UUID().uuidString,
       kAudioAggregateDeviceMainSubDeviceKey: outUID, kAudioAggregateDeviceSubDeviceListKey: [[kAudioSubDeviceUIDKey: outUID]],
       kAudioAggregateDeviceIsPrivateKey: true, kAudioAggregateDeviceIsStackedKey: false, kAudioAggregateDeviceTapAutoStartKey: false,
       kAudioAggregateDeviceTapListKey: [[kAudioSubTapUIDKey: desc.uuid.uuidString, kAudioSubTapDriftCompensationKey: true]],
@@ -451,7 +451,7 @@ final class Mic {
   func start() -> Bool {
     let e = AVAudioEngine()
     let input = e.inputNode
-    // No voice processing: with it on, the call app on the same mic (Zoom) got near silence until Yogurt stopped.
+    // No voice processing: with it on, the call app on the same mic (Zoom) got near silence until Figolu stopped.
     // The call coming out of the speakers is caught after the fact instead (echoDetect.ts, echo.ts).
     if let d = device, !choose(d, on: input) { device = nil }
     guard tap(e) else { return false }
@@ -1135,7 +1135,7 @@ if args.count >= 3, args[1] == "decode" {
   let out = FileHandle.standardOutput
   while let b = AVAudioPCMBuffer(pcmFormat: f.processingFormat, frameCapacity: 48000), (try? f.read(into: b)) != nil, b.frameLength > 0 {
     autoreleasepool {
-      // the reader gone (Yogurt quit or gave up): stop quietly
+      // the reader gone (Figolu quit or gave up): stop quietly
       if let m = convert(conv, b), m.frameLength > 0, (try? out.write(contentsOf: Data(bytes: m.floatChannelData![0], count: Int(m.frameLength) * MemoryLayout<Float>.size))) == nil { exit(0) }
     }
   }
@@ -1254,7 +1254,7 @@ case .notDetermined:
   s.wait()
   if !ok { send(["t": "warn", "code": "no-mic"]) }
 case .denied, .restricted:
-  log("no microphone access: allow Yogurt in System Settings, Privacy & Security, Microphone")
+  log("no microphone access: allow Figolu in System Settings, Privacy & Security, Microphone")
   send(["t": "warn", "code": "no-mic"])
 default: break
 }
@@ -1267,7 +1267,7 @@ Thread.detachNewThread {
     let c = line.trimmingCharacters(in: .whitespaces)
     if !c.isEmpty { work.async { recorder.command(c) } }
   }
-  // Yogurt closed the pipe (quit or crashed): keep what we have
+  // Figolu closed the pipe (quit or crashed): keep what we have
   work.async { recorder.finish() }
 }
 

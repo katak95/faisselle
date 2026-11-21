@@ -60,7 +60,7 @@ for (const theme of ['light', 'dark'] as const) test(`split metadata popovers st
     // Access lost between listing and selection must be a retryable error.
     await app.evaluate(() => (globalThis as any).__fake__.calendarStatus('denied'))
     await page.getByTestId('note-date-event').filter({ hasText: 'Launch planning' }).press('Enter')
-    await expect(date.getByRole('alert')).toContainText("Yogurt couldn't update the calendar link")
+    await expect(date.getByRole('alert')).toContainText("Figolu couldn't update the calendar link")
     expect((await page.evaluate(id => window.yogurt.meetings.get(id), meeting.id))?.eventId).toBeNull()
     await app.evaluate(() => (globalThis as any).__fake__.calendarStatus('granted'))
     await page.getByTestId('note-date-event').filter({ hasText: 'Launch planning' }).press('Enter')
