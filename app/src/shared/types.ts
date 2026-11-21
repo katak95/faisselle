@@ -192,6 +192,17 @@ export type YogurtApi = {
     save(t: { id?: string; name: string; instructions: string }): Promise<TemplatesView>
     remove(id: string): Promise<TemplatesView>
   }
+  /** Settings → Atlassian: Confluence, signed in through Atlassian's MCP server */
+  atlassian: {
+    get(): Promise<AtlassianView>
+    signIn(): Promise<AtlassianView>
+    cancel(): Promise<AtlassianView>
+    signOut(): Promise<AtlassianView>
+    setSite(id: string): Promise<AtlassianView>
+    onChange(fn: (v: AtlassianView) => void): () => void
+    /** the meeting's report to its Confluence page: made the first time, updated after */
+    send(meetingId: string): Promise<{ status: 'sent' | 'updated'; url: string } | { status: 'failed'; message: string; kind: string }>
+  }
   /** Settings → Microsoft 365 (read only) */
   m365: {
     get(): Promise<M365View>
@@ -550,6 +561,8 @@ export type MeetingExtras = {
   brief: string | null; briefAt: number | null
   /** read the invite and related emails when writing for it; null: on whenever Microsoft 365 is connected */
   useContext: boolean | null
+  /** the Confluence page this meeting was sent to (sending again updates it) */
+  confluence: ConfluencePage | null
 }
 export type ExtrasKind = 'actions' | 'followup' | 'brief'
 /** a meeting's extras as the note shows them, with what is being written now */
@@ -578,3 +591,17 @@ export type M365View = { status: M365Status; calendar: boolean; clientId: string
   documents: boolean; documentsRefused: boolean }
 
 export type TemplatesView = { custom: import('./templates').CustomTemplate[]; defaultId: string }
+
+/** Atlassian (Confluence), as Settings shows it */
+export type AtlassianStatus =
+  | { state: 'off' }
+  | { state: 'starting' }
+  | { state: 'signed-out' }
+  /** the browser is open on Atlassian's sign-in */
+  | { state: 'pending' }
+  | { state: 'connected'; site: string; siteUrl: string; account: string | null; sites: Array<{ id: string; name: string; url: string }> }
+  /** admin: the site or organisation doesn't let Yogurt (or Atlassian's MCP server) in */
+  | { state: 'error'; message: string; admin?: boolean }
+export type AtlassianView = { status: AtlassianStatus; siteId: string; space: { key: string; url?: string } | null }
+/** a meeting sent to Confluence: where it went, and when */
+export type ConfluencePage = { pageId: string; url: string; at: number }

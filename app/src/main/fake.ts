@@ -160,9 +160,10 @@ export const fakeNow = () => Date.now() + skew
  *   micDevices(list | null)       the Mac's mics are now these ({uid, name, default}; null: the usual three)
  *   chatMeetings()                two finished meetings with transcripts and notes, indexed for chat across meetings (their ids)
  *   upcomingMeeting()             a note prepared for tomorrow's meeting with Maya Chen, for its brief (its id)
+ *   confluencePages()             the pages sent to the fake Confluence
  *   prompts()                     what whisper and the notes model were given so far
  */
-export function installFakeHooks(h: { silence(ms: number | null): Promise<void>; signals(r: Reading): Promise<void>; advance(ms: number): Promise<void>; widget(): unknown; main(): unknown; go(route: string): void; crashCapture(): void; warn(code: string): void; bigMeeting(n: number): string; manyMeetings(o: number | { n: number; clean?: boolean }): void; calendarChanged(): void; tray(): string[]; trayClick(id: string): void; trayAccelerators(): Record<string, string | undefined>; permissions(): Promise<unknown>; notice(): unknown; noticeClick(): void; chatMeetings(): Promise<string[]>; upcomingMeeting(): string }) {
+export function installFakeHooks(h: { silence(ms: number | null): Promise<void>; signals(r: Reading): Promise<void>; advance(ms: number): Promise<void>; widget(): unknown; main(): unknown; go(route: string): void; crashCapture(): void; warn(code: string): void; bigMeeting(n: number): string; manyMeetings(o: number | { n: number; clean?: boolean }): void; calendarChanged(): void; tray(): string[]; trayClick(id: string): void; trayAccelerators(): Record<string, string | undefined>; permissions(): Promise<unknown>; notice(): unknown; noticeClick(): void; chatMeetings(): Promise<string[]>; upcomingMeeting(): string; confluencePages(): unknown[] }) {
   // kept: hooks other modules added before these
   ;(globalThis as Record<string, unknown>).__fake__ = {
     ...((globalThis as Record<string, unknown>).__fake__ as object | undefined),
@@ -190,6 +191,7 @@ export function installFakeHooks(h: { silence(ms: number | null): Promise<void>;
     noticeClick: h.noticeClick,
     chatMeetings: h.chatMeetings,
     upcomingMeeting: h.upcomingMeeting,
+    confluencePages: h.confluencePages,
     calendarEvents: (events: unknown[] | null) => { setFakeCalendar({ events }); h.calendarChanged() },
     calendarStatus: (status: string) => setFakeCalendar({ status }),
     micDevices: (list: FakeMic[] | null) => setFakeMics(list),

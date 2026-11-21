@@ -273,6 +273,8 @@ export class Store {
     this.db.exec(`CREATE TABLE IF NOT EXISTS meeting_extras (
       meeting_id TEXT PRIMARY KEY REFERENCES meetings(id) ON DELETE CASCADE,
       template_id TEXT, actions TEXT, followup TEXT, followup_at INTEGER, brief TEXT, brief_at INTEGER, use_context INTEGER)`)
+    // the Confluence page a meeting was sent to (atlassian/publish.ts), added after the table was
+    if (!(this.db.prepare('PRAGMA table_info(meeting_extras)').all() as Row[]).some((r) => r.name === 'confluence')) this.db.exec('ALTER TABLE meeting_extras ADD COLUMN confluence TEXT')
     // voices told apart by letter (Speaker A, B) are gone: a database from then loses the letters, so those lines say Them
     if (this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'speakers'").get()) {
       this.db.exec("UPDATE segments SET speaker = NULL WHERE track = 'them'; DROP TABLE speakers")
@@ -565,16 +567,17 @@ export class Store {
       brief: r?.brief == null ? null : String(r.brief),
       briefAt: r?.brief_at == null ? null : Number(r.brief_at),
       useContext: r?.use_context == null ? null : Number(r.use_context) === 1,
+      confluence: json<MeetingExtras['confluence']>(r?.confluence, null),
     }
   }
   setExtras(meetingId: string, patch: Partial<MeetingExtras>) {
     if (!this.meeting(meetingId)) return
     const cur = this.extras(meetingId), next = { ...cur, ...patch }
-    this.db.prepare(`INSERT INTO meeting_extras (meeting_id, template_id, actions, followup, followup_at, brief, brief_at, use_context) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    this.db.prepare(`INSERT INTO meeting_extras (meeting_id, template_id, actions, followup, followup_at, brief, brief_at, use_context, confluence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(meeting_id) DO UPDATE SET template_id = excluded.template_id, actions = excluded.actions, followup = excluded.followup, followup_at = excluded.followup_at,
-      brief = excluded.brief, brief_at = excluded.brief_at, use_context = excluded.use_context`)
+      brief = excluded.brief, brief_at = excluded.brief_at, use_context = excluded.use_context, confluence = excluded.confluence`)
       .run(meetingId, next.templateId, next.actions == null ? null : JSON.stringify(next.actions), next.followup == null ? null : JSON.stringify(next.followup),
-        next.followupAt, next.brief, next.briefAt, next.useContext == null ? null : next.useContext ? 1 : 0)
+        next.followupAt, next.brief, next.briefAt, next.useContext == null ? null : next.useContext ? 1 : 0, next.confluence == null ? null : JSON.stringify(next.confluence))
   }
   /** the meetings before this time that someone in this list was at, latest first: what a brief recalls */
   meetingsWith(emails: string[], before: number, limit = 5): Meeting[] {

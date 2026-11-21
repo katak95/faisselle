@@ -2,7 +2,7 @@ import { audioUpload } from './audioUpload'
 import type { WidgetLayout } from '../shared/widgetMorph'
 import { contextBridge, ipcRenderer } from 'electron'
 import { capabilities, platformOf } from '../shared/platform'
-import type { ChatView, CloudNotesView, ExtrasView, M365View, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
+import type { AtlassianView, ChatView, CloudNotesView, ExtrasView, M365View, ConversationSummary, ConversationView, NoteView, PromptAction, SetupState, UpdateStatus, WidgetView, YogurtApi } from '../shared/types'
 
 const api: YogurtApi = {
   reportRendererError: report => ipcRenderer.send('renderer:error', report),
@@ -237,6 +237,15 @@ const api: YogurtApi = {
     setDefault: (id) => ipcRenderer.invoke('templates:default', id),
     save: (t) => ipcRenderer.invoke('templates:save', t),
     remove: (id) => ipcRenderer.invoke('templates:remove', id),
+  },
+  atlassian: {
+    get: () => ipcRenderer.invoke('atlassian:get'),
+    signIn: () => ipcRenderer.invoke('atlassian:sign-in'),
+    cancel: () => ipcRenderer.invoke('atlassian:cancel'),
+    signOut: () => ipcRenderer.invoke('atlassian:sign-out'),
+    setSite: (id) => ipcRenderer.invoke('atlassian:site', id),
+    onChange: (fn) => { const f = (_e: unknown, v: AtlassianView) => fn(v); ipcRenderer.on('atlassian:changed', f); return () => { ipcRenderer.off('atlassian:changed', f) } },
+    send: (id) => ipcRenderer.invoke('share:confluence', id),
   },
   m365: {
     get: () => ipcRenderer.invoke('m365:get'),

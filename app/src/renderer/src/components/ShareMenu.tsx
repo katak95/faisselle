@@ -2,7 +2,7 @@ import { usePopoverPresence } from '../motion'
 import { retryToast, toasts } from './TrashToast'
 import { Copy } from './Icons'
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { Check, CircleAlert, FileDown, ChevronDown } from 'lucide-react'
+import { Check, CircleAlert, FileDown, ChevronDown, Send } from 'lucide-react'
 import { t } from '../../../shared/i18n'
 import { command, onMac } from '../keys'
 import { flushOpenNotes } from '../noteAutosave'
@@ -65,6 +65,41 @@ export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: s
     finally { exporting.current = false }
   }
   const run = (fn: () => void) => { setOpen(false); button.current?.focus(); fn() }
+
+  // Confluence: offered once Atlassian is connected; a note sent before is updated, not sent twice
+  const [confluence, setConfluence] = useState<{ connected: boolean; sentAt?: number }>({ connected: false })
+  useEffect(() => {
+    if (!open) return
+    let live = true
+    void Promise.all([window.yogurt.atlassian.get(), window.yogurt.extras.get(id)]).then(([a, x]) => {
+      if (live) setConfluence({ connected: a.status.state === 'connected', ...(x?.confluence ? { sentAt: x.confluence.at } : {}) })
+    })
+    return () => { live = false }
+  }, [open, id])
+  const sending = useRef(false)
+  const sendToConfluence = async () => {
+    if (sending.current) return
+    const toastId = 'share-confluence-' + id
+    toasts.close(toastId)
+    if (writing || !hasEnhanced) { say(t('Still generating your summary')); return }
+    sending.current = true
+    say(t('Sending to Confluence…'))
+    try {
+      if (!await beforeUse()) { say(t("Couldn't save your latest changes. Try again before sending."), 'error'); return }
+      const r = await window.yogurt.atlassian.send(id)
+      setSaid(undefined)
+      if (r.status === 'failed') {
+        retryToast(toastId, r.kind === 'no-space' ? t('No personal space in Confluence yet. Create yours once in Confluence, then try again.')
+          : r.kind === 'denied' ? t("Confluence refused: you can't write in your personal space.")
+          : r.kind === 'not-connected' ? t('Connect Atlassian in Settings first.')
+          : t("Couldn't send to Confluence."), 'share-confluence-retry', sendToConfluence, 'share-confluence-error')
+        return
+      }
+      toasts.add({ id: toastId, title: r.status === 'sent' ? t('Sent to Confluence') : t('Updated on Confluence'), data: { testId: 'share-confluence-done', actionTestId: 'share-confluence-open' },
+        actionProps: { children: t('Open'), onClick: () => { window.open(r.url, '_blank', 'noopener') } } })
+    } catch { retryToast(toastId, t("Couldn't send to Confluence."), 'share-confluence-retry', sendToConfluence, 'share-confluence-error') }
+    finally { sending.current = false }
+  }
 
   useEffect(() => {
     const key = (e: globalThis.KeyboardEvent) => {
@@ -129,6 +164,14 @@ export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: s
           <button ref={(el) => { items.current[3] = el }} role="menuitem" data-testid="share-export" onClick={() => run(() => void save())} className={row}>
             <FileDown size={15} strokeWidth={1.75} aria-hidden="true" className="text-muted" />{t('Export Markdown…')}
           </button>
+          {confluence.connected && <button ref={(el) => { items.current[4] = el }} role="menuitem" data-testid="share-confluence" disabled={!hasEnhanced}
+            onClick={() => run(() => void sendToConfluence())} className={`${row} disabled:opacity-40`}>
+            <Send size={15} strokeWidth={1.75} aria-hidden="true" className="text-muted" />
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span>{confluence.sentAt ? t('Update on Confluence') : t('Send to Confluence')}</span>
+              {confluence.sentAt && <span className="text-xs text-muted">{t('Sent {date}', { date: new Date(confluence.sentAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) })}</span>}
+            </span>
+          </button>}
         </div>
       )}
     </div>

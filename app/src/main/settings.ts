@@ -63,6 +63,8 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** the template new notes follow; the general notes when left out */
   defaultTemplate?: string
   /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
+  /** Atlassian (Confluence): connected unless off, the site picked, and where reports go on each site (atlassian/) */
+  atlassian?: { enabled?: boolean; siteId?: string; places?: Record<string, { spaceId: string; spaceKey?: string; spaceUrl?: string; parentId?: string }> }
   m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
 
 /** "English only" unless Multi-language was picked */

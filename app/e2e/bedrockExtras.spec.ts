@@ -7,7 +7,7 @@ const main = join(import.meta.dirname, '../out/main/index.js')
 const shots = process.env.YOGURT_SHOTS
 
 test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up email and the brief', async () => {
-  test.setTimeout(150_000)
+  test.setTimeout(200_000)
   const userData = mkdtempSync(join(tmpdir(), 'yogurt-bedrock-'))
   const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_FAKE: '1', YOGURT_USER_DATA: userData } })
   try {
@@ -41,6 +41,11 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
     await expect(page.getByTestId('settings-m365-documents')).toHaveAttribute('aria-checked', 'true')
     await expect(page.getByTestId('settings-m365-status')).toContainText('Connected · you@example.com', { timeout: 15_000 })
 
+    // Atlassian: connected (fake mode signs in at once), reports go to the personal space
+    await page.getByTestId('settings-atlassian-connect').click()
+    await expect(page.getByTestId('settings-atlassian-status')).toContainText('Connected to Example · You', { timeout: 10_000 })
+    if (shots) await page.getByTestId('settings-atlassian').screenshot({ path: join(shots, 'settings-atlassian.png') })
+
     // a template of one's own, then the default
     await page.getByTestId('settings-template-new').click()
     await page.getByTestId('settings-template-name').fill('Comité de pilotage')
@@ -69,6 +74,28 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
     await page.reload()
     await page.getByTestId('note-summary-tab').click()
     await expect(page.getByTestId('note-actions').locator('li input[type="checkbox"]').first()).toBeChecked()
+
+    // the report to Confluence: made under "Meeting notes", then updated, never copied
+    await page.getByTestId('share-button').click()
+    await page.getByTestId('share-confluence').click()
+    await expect(page.getByTestId('share-confluence-done')).toContainText('Sent to Confluence', { timeout: 15_000 })
+    if (shots) await page.screenshot({ path: join(shots, 'confluence-toast.png') })
+    const pages = () => app.evaluate(() => (globalThis as any).__fake__.confluencePages() as Array<{ id: string; title: string; body: string; parentId?: string; version: number }>)
+    let sent = await pages()
+    const parent = sent.find((x) => x.title === 'Meeting notes')!
+    const report = sent.find((x) => x.parentId === parent.id)!
+    // the meeting's title (written again from its summary in fake mode) and its date
+    expect(report.title).toMatch(/ · \d{4}-\d{2}-\d{2}$/)
+    expect(report.body).toContain('<ac:task-status>complete</ac:task-status>')
+    expect(report.body).toContain('<h2>Launch plan</h2>')
+    expect(report.body).toContain('<th>People</th><td>Tarun Shah</td>')
+    await page.getByTestId('share-button').click()
+    await expect(page.getByTestId('share-confluence')).toContainText('Update on Confluence')
+    await page.getByTestId('share-confluence').click()
+    await expect(page.getByTestId('share-confluence-done')).toContainText('Updated on Confluence', { timeout: 15_000 })
+    sent = await pages()
+    expect(sent).toHaveLength(2)
+    expect(sent.find((x) => x.id === report.id)!.version).toBe(2)
 
     // the brief, before an upcoming meeting
     const upcoming = await app.evaluate(() => (globalThis as any).__fake__.upcomingMeeting()) as string

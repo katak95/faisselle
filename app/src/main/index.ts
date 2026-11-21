@@ -82,6 +82,10 @@ import { fakeM365Server } from './m365/fake'
 import { hookM365 } from './m365/ipc'
 import { hookExtras } from './extras'
 import { hookTemplates, templateFor } from './templateSettings'
+import { createAtlassian } from './atlassian/client'
+import { createOAuthStore } from './atlassian/oauth'
+import { fakeAtlassianServer, fakeConfluence } from './atlassian/fake'
+import { hookAtlassian } from './atlassian/ipc'
 import { notesProviderSetting } from './settings'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -499,6 +503,7 @@ function startDetection() {
       notice: () => prompts.notice(),
       noticeClick: () => prompts.clickNotice(),
       chatMeetings: async () => { const ids = chatMeetings(storeRef!); await indexerRef?.schedule(); return ids },
+      confluencePages: () => fakeConfluence.pages,
       upcomingMeeting: () => storeRef!.createMeeting({ title: 'Acme renewal', startedAt: Date.now() + 86_400_000, endedAt: null, eventId: 'm365:evt1', app: null, state: 'prepared', attendees: [{ name: 'Maya Chen', email: 'maya@acme.example' }] }).id,
       crashCapture: () => { (activeCapture() as unknown as { proc: { kill(s: NodeJS.Signals): boolean } } | null)?.proc.kill('SIGKILL') },
     })
@@ -774,6 +779,19 @@ app.whenReady().then(() => {
     rewrite: (id) => { void notes.writeAgain(id) },
   })
   hookTemplates({ file: settingsFile })
+  // Atlassian (Settings → Atlassian): a note's report sent to Confluence, in the person's personal space
+  const sealAtlassian = (plain: string) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`)
+  const openAtlassian = (sealed: string) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString())
+  let atlassianIpc: ReturnType<typeof hookAtlassian> | undefined
+  const atlassian = createAtlassian({
+    store: createOAuthStore({ file: join(userDataDir(), 'atlassian.json'), seal: sealAtlassian, open: openAtlassian }),
+    openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
+    onChange: () => atlassianIpc?.push(),
+    siteId: () => loadSettings(settingsFile).atlassian?.siteId,
+    ...(isFake() ? { connect: fakeAtlassianServer() } : {}),
+  })
+  atlassianIpc = hookAtlassian({ file: settingsFile, atlassian, store, send: (v) => win?.webContents.send('atlassian:changed', v), changed: (id) => extras.push(id) })
+  if (loadSettings(settingsFile).atlassian?.enabled) void atlassian.resume()
   let finishing = false, discardUnsaved = false
   const savedTranscriptions = createSavedTranscriptions({
     store, ready: () => !!setup.installed()?.asr, recording: () => !!activeMeeting() || !!resumingId || finishing,

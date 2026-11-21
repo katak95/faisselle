@@ -25,7 +25,8 @@ describe('nothing leaves the Mac', () => {
     const src = join(__dirname, '../src')
     // files allowed to make requests: model downloads from the catalog's pinned URLs, whisper-server on 127.0.0.1
     // and the person's own calendar link (Windows and Linux), straight from this computer to their calendar provider
-    const allowed = new Set(['main/downloader.ts', 'main/asr/server.ts', 'main/asr/transcribe.ts', 'main/calendarLink/get.ts'])
+    // and the Atlassian sign-in's loopback server on 127.0.0.1, which only receives the browser coming back (it sends nothing)
+    const allowed = new Set(['main/downloader.ts', 'main/asr/server.ts', 'main/asr/transcribe.ts', 'main/calendarLink/get.ts', 'main/atlassian/oauth.ts'])
     const calls = files(src).filter((f) => /\.(ts|tsx)$/.test(f))
       .filter((f) => /(?<![.\w]|async )fetch\(|(\?\?|=) fetch\b|net\.request|from 'node:https?'|require\('https?'\)|new WebSocket|XMLHttpRequest|raw\.githubusercontent/.test(readFileSync(f, 'utf8')))
       .map((f) => f.slice(src.length + 1).replaceAll('\\', '/'))

@@ -18,6 +18,7 @@ import { CalendarSettings } from '../components/CalendarSettings'
 import { CloudNotesSettings } from '../components/CloudNotesSettings'
 import { TemplateSettings } from '../components/TemplateSettings'
 import { M365Settings } from '../components/M365Settings'
+import { AtlassianSettings } from '../components/AtlassianSettings'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -258,6 +259,8 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
           <TemplateSettings />
 
           <M365Settings />
+
+          <AtlassianSettings />
 
           <Backup onImported={() => { void window.yogurt.settings.get().then(setPrefs) }} />
 

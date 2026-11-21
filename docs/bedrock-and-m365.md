@@ -79,3 +79,25 @@ Settings → Microsoft 365 → **Search SharePoint and OneDrive**. Off by defaul
 - **Follow-up email**: written on request from the summary and action items; copy it or open it in your email app.
 - **Brief**: on a note prepared for an upcoming meeting. It uses earlier meetings with the same people, their open
   action items, the invite and related emails.
+
+## Confluence (Atlassian)
+
+Settings → Atlassian → **Connect**. Yogurt talks to Atlassian's own remote MCP server
+(`https://mcp.atlassian.com/v2/mcp`) and signs in with OAuth: your browser opens Atlassian's sign-in page, then comes
+back to Yogurt on `http://localhost:33418/oauth/callback` (another free port if that one is taken). The sign-in is
+sealed with your system keychain in `atlassian.json` in Yogurt's data folder.
+
+- **Send to Confluence** (a note's Copy menu, once its summary is written) creates a page in your **personal space**,
+  under a page called **Meeting notes** that Yogurt makes the first time. The page has the meeting's date, length and
+  people, the summary, and the action items as Confluence tasks (ticked ones ticked).
+- Sending the same note again **updates** its page (a new version), it never makes a copy. A page deleted in
+  Confluence is made again.
+- Yogurt reads the tools Atlassian's server offers when you connect and adapts to their names and parameters, so a
+  change on Atlassian's side (v1 to v2) doesn't break sending.
+
+What may be needed on Atlassian's side:
+
+- An organisation admin may have to allow Atlassian's MCP server (Rovo) for your site, and the Confluence write
+  permission for it. Settings says so when Atlassian refuses.
+- Some organisations restrict OAuth redirects: the `localhost` callback above must then be allowed.
+- You need a personal space in Confluence (Profile → Personal space). Yogurt says so if there is none.
