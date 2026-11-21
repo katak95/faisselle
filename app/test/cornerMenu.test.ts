@@ -60,7 +60,7 @@ it('uses the approved eight rows and appends the downloaded version nearest the 
   }
   expect(nodes(tree).filter(n => n.type === 'kbd').map(n => n.props.children)).toEqual(['⌘/', '⌘,', '⌘3'])
   expect(links.map(n => n.props.href)).toEqual([
-    'https://github.com/katak95/figolu/updates', 'https://github.com/katak95/figolu', 'https://github.com/katak95/figolu/discord',
+    'https://github.com/katak95/figolu/updates', 'https://github.com/katak95/figolu', 'https://yogurt.so/discord',
     'https://github.com/katak95/figolu/issues/new', 'https://github.com/katak95/figolu/#questions',
   ])
   expect(props('settings-open')!['aria-current']).toBe('page')

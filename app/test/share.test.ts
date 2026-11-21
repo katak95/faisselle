@@ -93,7 +93,7 @@ describe('share:copy', () => {
     expect(await call('share:copy', 'm', 'notes', 'enhanced')).toBe('copied')
     expect(written.at(-1)!['text/plain']).toBe(on ? 'Plan\n\nRecorded with Figolu · github.com' : 'Plan')
     if (on) {
-      expect(written.at(-1)!['text/html']).toMatch(/^<h2>Plan<\/h2><p[^>]*><small>Recorded with <a href="https:\/\/yogurt\.so"[^>]*>Figolu<\/a> · yogurt\.so<\/small><\/p>$/)
+      expect(written.at(-1)!['text/html']).toMatch(/^<h2>Plan<\/h2><p[^>]*><small>Recorded with <a href="https:\/\/github\.com\/katak95\/figolu"[^>]*>Figolu<\/a> · github\.com<\/small><\/p>$/)
     } else {
       expect(written.at(-1)!['text/html']).toBe('<h2>Plan</h2>')
     }

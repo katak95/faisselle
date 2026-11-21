@@ -221,7 +221,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 ## Support
 
 - [Help](docs/README.md)
-- [Discord](https://github.com/katak95/figolu/discord)
+- [Discord](https://yogurt.so/discord)
 - [Report a bug](https://github.com/katak95/figolu/issues)
 
 ## Development
