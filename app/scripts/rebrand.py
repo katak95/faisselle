@@ -10,8 +10,10 @@ rename; everything else Figolu changed is in Figolu's own commits.
 Rules:
 - "Yogurt" as a whole word becomes "Figolu". Names inside identifiers (YogurtApi, AboutYogurt), YOGURT_ variables and
   the yogurt-* helpers are internal and stay.
-- A line that already names Figolu or Frigade is left alone: it is Figolu's own (credits, the folder migration).
-  Yogurt's own lines never name Figolu, so this never keeps an old name by mistake.
+- A line that already names Figolu, or says "rebrand: keep", is left alone: it is Figolu's own (credits, the folder
+  migration). Yogurt's own lines never name Figolu, so this never keeps an old name by mistake. A line naming Frigade
+  keeps the word Yogurt (it credits Yogurt).
+- Yogurt's links (github.com/FrigadeHQ/yogurt, yogurt.so) become Figolu's repository.
 - A file with "rebrand: keep-file" in it is left alone.
 - so.yogurt.* (the app and its helpers) becomes com.katak95.figolu.*, and the few fixed points below follow.
 - Running it twice changes nothing (test/rebrand.test.ts checks it on Figolu itself).
@@ -25,7 +27,8 @@ GLOBS = ['app/src/**/*', 'app/e2e/**/*', 'app/test/**/*', 'app/native/**/*', 'ap
          'app/electron-builder.yml', 'app/playwright.config.ts']
 SKIP_EXT = {'.png', '.icns', '.ttf', '.wav', '.zip', '.jpg', '.jpeg', '.webp', '.ico', '.lock', '.pdf', '.gif', '.mp4'}
 SKIP_DIRS = {'node_modules', 'target', 'out', 'dist', '.git'}
-WORD = re.compile(r'(?<![A-Za-z0-9_])Yogurt(?![A-Za-z0-9_])')
+# a whole word; an escape just before it (the n of \\n in a string) doesn't make it part of another word
+WORD = re.compile(r'(?:(?<![A-Za-z0-9_])|(?<=\\[nrt]))Yogurt(?![A-Za-z0-9_])')
 OURS = re.compile(r'Figolu|Frigade')
 
 # exact replacements, file by file: the places where the name is not just the word
@@ -57,10 +60,21 @@ FIXED = {
 FIXED_WORDS = {'app/test/linuxLauncher.test.ts': [("'yogurt'", "'figolu'")]}
 
 
-def rename_text(text: str) -> str:
+REPO = 'https://github.com/katak95/figolu'
+
+
+def rename_text(text: str, test: bool = False) -> str:
     out = []
     for line in text.split('\n'):
-        out.append(line if OURS.search(line) else WORD.sub('Figolu', line))
+        # Figolu's own lines: they name Figolu, or say to keep them (the credits to Yogurt)
+        if 'Figolu' in line or 'rebrand: keep' in line:
+            out.append(line); continue
+        # Yogurt's links are Figolu's: its repository and its website (Figolu has no website: the repository)
+        line = line.replace('https://github.com/FrigadeHQ/yogurt', REPO).replace('https://yogurt.so', REPO)
+        # a test expecting the website's name, as the app shows it, sees the repository's host
+        if test:
+            line = line.replace('yogurt.so', 'github.com')
+        out.append(line if 'Frigade' in line else WORD.sub('Figolu', line))
     return '\n'.join(out).replace('so.yogurt.', 'com.katak95.figolu.')
 
 
@@ -79,7 +93,7 @@ def rebrand(root: Path, check: bool = False) -> list:
                 continue
             if 'rebrand: keep-file' in s:
                 continue
-            t = rename_text(s)
+            t = rename_text(s, test=rel.startswith(('app/test/', 'app/e2e/')))
             for a, b in FIXED.get(rel, []):
                 t = t.replace(a, b)
             for a, b in FIXED_WORDS.get(rel, []):

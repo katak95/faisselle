@@ -1,0 +1,2 @@
+# translation tables merge key by key (app/scripts/merge-json.mjs), so Yogurt's and Figolu's new texts both stay
+app/src/shared/locales/*.json merge=locale-json
