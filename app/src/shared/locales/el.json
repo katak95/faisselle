@@ -893,5 +893,6 @@
   "Redirect URI": "URI ανακατεύθυνσης",
   "Client secret, only if that redirect URI is on the Web platform": "Μυστικό προγράμματος-πελάτη, μόνο αν το URI ανακατεύθυνσης είναι στην πλατφόρμα Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Έχει αποθηκευτεί μυστικό προγράμματος-πελάτη. Πληκτρολογήστε άλλο για αντικατάσταση ή αφήστε κενό για να το κρατήσετε.",
-  "Remove the secret": "Αφαίρεση μυστικού"
+  "Remove the secret": "Αφαίρεση μυστικού",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Το Claude στο Amazon Bedrock δέχεται αναγνωριστικά όπως anthropic.claude-haiku-5-5 (δικαίωμα bedrock-mantle:CreateInference). Ένα αναγνωριστικό InvokeModel ή προφίλ συμπερασμού, όπως eu.anthropic.claude-haiku-4-5-20251001-v1:0, περνά από το bedrock-runtime (δικαίωμα bedrock:InvokeModelWithResponseStream)."
 }

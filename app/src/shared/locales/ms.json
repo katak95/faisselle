@@ -848,5 +848,6 @@
   "Redirect URI": "URI ubah hala",
   "Client secret, only if that redirect URI is on the Web platform": "Rahsia klien, hanya jika URI ubah hala itu pada platform Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Rahsia klien telah disimpan. Taip yang lain untuk menggantikannya, atau biarkan kosong untuk mengekalkannya.",
-  "Remove the secret": "Buang rahsia"
+  "Remove the secret": "Buang rahsia",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude dalam Amazon Bedrock menggunakan ID seperti anthropic.claude-haiku-5-5 (kebenaran bedrock-mantle:CreateInference). ID InvokeModel atau profil inferens, seperti eu.anthropic.claude-haiku-4-5-20251001-v1:0, melalui bedrock-runtime (kebenaran bedrock:InvokeModelWithResponseStream)."
 }

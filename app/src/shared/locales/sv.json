@@ -890,5 +890,6 @@
   "Redirect URI": "Omdirigerings-URI",
   "Client secret, only if that redirect URI is on the Web platform": "Klienthemlighet, bara om omdirigerings-URI:n finns på webbplattformen",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "En klienthemlighet är sparad. Skriv en ny för att ersätta den, eller lämna tomt för att behålla den.",
-  "Remove the secret": "Ta bort hemligheten"
+  "Remove the secret": "Ta bort hemligheten",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock använder id:n som anthropic.claude-haiku-5-5 (behörighet bedrock-mantle:CreateInference). Ett InvokeModel-id eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (behörighet bedrock:InvokeModelWithResponseStream)."
 }

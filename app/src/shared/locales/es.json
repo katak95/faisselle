@@ -903,5 +903,6 @@
   "Redirect URI": "URI de redirección",
   "Client secret, only if that redirect URI is on the Web platform": "Secreto de cliente, solo si ese URI de redirección está en la plataforma Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Hay un secreto de cliente guardado. Escribe otro para reemplazarlo o deja el campo vacío para conservarlo.",
-  "Remove the secret": "Quitar el secreto"
+  "Remove the secret": "Quitar el secreto",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude en Amazon Bedrock usa ID como anthropic.claude-haiku-5-5 (permiso bedrock-mantle:CreateInference). Un ID de InvokeModel o un perfil de inferencia, como eu.anthropic.claude-haiku-4-5-20251001-v1:0, pasa por bedrock-runtime (permiso bedrock:InvokeModelWithResponseStream)."
 }

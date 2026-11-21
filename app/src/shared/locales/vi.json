@@ -848,5 +848,6 @@
   "Redirect URI": "URI chuyển hướng",
   "Client secret, only if that redirect URI is on the Web platform": "Bí mật máy khách, chỉ khi URI chuyển hướng đó nằm trên nền tảng Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Đã lưu một bí mật máy khách. Nhập cái khác để thay thế, hoặc để trống để giữ nguyên.",
-  "Remove the secret": "Xóa bí mật"
+  "Remove the secret": "Xóa bí mật",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude trong Amazon Bedrock nhận ID dạng anthropic.claude-haiku-5-5 (quyền bedrock-mantle:CreateInference). ID InvokeModel hoặc hồ sơ suy luận, như eu.anthropic.claude-haiku-4-5-20251001-v1:0, đi qua bedrock-runtime (quyền bedrock:InvokeModelWithResponseStream)."
 }

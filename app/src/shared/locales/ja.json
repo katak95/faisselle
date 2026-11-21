@@ -848,5 +848,6 @@
   "Redirect URI": "リダイレクト URI",
   "Client secret, only if that redirect URI is on the Web platform": "クライアントシークレット（リダイレクト URI が Web プラットフォームにある場合のみ）",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "クライアントシークレットが保存されています。置き換えるには別の値を入力し、そのままにするには空欄のままにしてください。",
-  "Remove the secret": "シークレットを削除"
+  "Remove the secret": "シークレットを削除",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。"
 }

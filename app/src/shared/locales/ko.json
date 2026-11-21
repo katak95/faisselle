@@ -848,5 +848,6 @@
   "Redirect URI": "리디렉션 URI",
   "Client secret, only if that redirect URI is on the Web platform": "클라이언트 암호(리디렉션 URI가 웹 플랫폼에 있는 경우에만)",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "클라이언트 암호가 저장되어 있습니다. 바꾸려면 다른 값을 입력하고, 유지하려면 비워 두세요.",
-  "Remove the secret": "암호 삭제"
+  "Remove the secret": "암호 삭제",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock의 Claude는 anthropic.claude-haiku-5-5 같은 ID를 사용합니다(bedrock-mantle:CreateInference 권한). eu.anthropic.claude-haiku-4-5-20251001-v1:0 같은 InvokeModel ID나 추론 프로필은 bedrock-runtime을 거칩니다(bedrock:InvokeModelWithResponseStream 권한)."
 }

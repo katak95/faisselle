@@ -8,14 +8,15 @@ import { LoadingContent } from './LoadingContent'
 type Config = CloudNotesView['config']
 
 /** a text field saved when it loses focus (or on Enter); what main refused goes back to what is saved */
-function Field({ id, label, value, placeholder, onSave }: { id: string; label: string; value: string; placeholder?: string; onSave(v: string): void }) {
+function Field({ id, label, value, placeholder, hint, onSave }: { id: string; label: string; value: string; placeholder?: string; hint?: string; onSave(v: string): void }) {
   const [text, setText] = useState(value)
   useEffect(() => setText(value), [value])
   const save = () => { if (text.trim() !== value) onSave(text.trim()) }
   return <div className="settings-row">
     <div className="settings-row-copy">
       <label htmlFor={id} className="settings-label">{label}</label>
-      <input id={id} data-testid={id} dir="ltr" value={text} placeholder={placeholder} autoComplete="off" spellCheck={false}
+      {hint && <p id={`${id}-hint`} className="settings-description">{hint}</p>}
+      <input id={id} data-testid={id} dir="ltr" value={text} placeholder={placeholder} autoComplete="off" spellCheck={false} aria-describedby={hint ? `${id}-hint` : undefined}
         onChange={(e) => setText(e.target.value)} onBlur={save} onKeyDown={(e) => { if (e.key === 'Enter') save() }}
         className="mt-2 w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
     </div>
@@ -115,7 +116,9 @@ export function CloudNotesSettings() {
         </div>}
 
         <Field id="cloud-region" label={t('Bedrock region')} value={v.config.region} placeholder="eu-west-1" onSave={(region) => set({ region })} />
-        <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="anthropic.claude-haiku-5-5" onSave={(modelId) => set({ modelId })} />
+        <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="anthropic.claude-haiku-5-5"
+          hint={t('Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).')}
+          onSave={(modelId) => set({ modelId })} />
 
         {v.localBytes > 0 && <div className="settings-row" data-testid="cloud-local-model">
           <div className="settings-row-copy">

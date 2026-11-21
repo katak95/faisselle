@@ -848,5 +848,6 @@
   "Redirect URI": "重新導向 URI",
   "Client secret, only if that redirect URI is on the Web platform": "用戶端密碼，僅在該重新導向 URI 位於 Web 平台時填寫",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "已儲存用戶端密碼。輸入新的即可取代，留空則保留。",
-  "Remove the secret": "移除密碼"
+  "Remove the secret": "移除密碼",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 這類 ID（權限 bedrock-mantle:CreateInference）。InvokeModel ID 或推論設定檔（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（權限 bedrock:InvokeModelWithResponseStream）。"
 }

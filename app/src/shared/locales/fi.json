@@ -896,5 +896,6 @@
   "Redirect URI": "Uudelleenohjaus-URI",
   "Client secret, only if that redirect URI is on the Web platform": "Asiakassalaisuus, vain jos uudelleenohjaus-URI on Web-alustalla",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Asiakassalaisuus on tallennettu. Kirjoita uusi korvataksesi sen tai jätä tyhjäksi säilyttääksesi sen.",
-  "Remove the secret": "Poista salaisuus"
+  "Remove the secret": "Poista salaisuus",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude Amazon Bedrockissa käyttää tunnuksia kuten anthropic.claude-haiku-5-5 (oikeus bedrock-mantle:CreateInference). InvokeModel-tunnus tai päättelyprofiili, kuten eu.anthropic.claude-haiku-4-5-20251001-v1:0, kulkee bedrock-runtimen kautta (oikeus bedrock:InvokeModelWithResponseStream)."
 }

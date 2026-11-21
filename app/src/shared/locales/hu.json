@@ -878,5 +878,6 @@
   "Redirect URI": "Átirányítási URI",
   "Client secret, only if that redirect URI is on the Web platform": "Ügyfélkulcs, csak ha ez az átirányítási URI a Web platformon van",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Egy ügyfélkulcs mentve van. Írj be egy másikat a cseréjéhez, vagy hagyd üresen a megtartásához.",
-  "Remove the secret": "Kulcs eltávolítása"
+  "Remove the secret": "Kulcs eltávolítása",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Az Amazon Bedrockban futó Claude ilyen azonosítókat vár: anthropic.claude-haiku-5-5 (bedrock-mantle:CreateInference engedély). Az InvokeModel-azonosító vagy következtetési profil, például eu.anthropic.claude-haiku-4-5-20251001-v1:0, a bedrock-runtime-on keresztül megy (bedrock:InvokeModelWithResponseStream engedély)."
 }

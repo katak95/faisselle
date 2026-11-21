@@ -35,8 +35,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(@base-ui/react@1.9.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(motion@14.4.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@anthropic-ai/bedrock-sdk':
-        specifier: 1.1.1
-        version: 1.1.1(zod@4.6.7)
+        specifier: 0.36.0
+        version: 0.36.0(zod@4.6.7)
       '@aws-sdk/client-sso':
         specifier: 3.1163.0
         version: 3.1163.0
@@ -196,11 +196,11 @@ packages:
       shiki:
         optional: true
 
-  '@anthropic-ai/bedrock-sdk@1.1.1':
-    resolution: {integrity: sha512-o6NdU+NWaGlFxDI7Kzu7rCXbwu9QalXU0vIZ8AGzk1ESoX8qeIZtDS+aJRm7P3LC7p0WPX0IMcg6aUUNIhdhOw==}
+  '@anthropic-ai/bedrock-sdk@0.36.0':
+    resolution: {integrity: sha512-NgodHkNxLiqmP5aDiHg7YrtXp0q0cLUTSD/GmdfBv7LH/y8wD0hdax+eyy67CBZ/inw9ak0r+7I9+lbMZVb1/g==}
 
-  '@anthropic-ai/sdk@1.12.0':
-    resolution: {integrity: sha512-0j9zwiQdkvr90LoiiBDUh7kae1lsNW2EqeE0vGceYne4BrmMDdDVoQ4KGOieUee0zWZbVJKsf/06JY8U5i63Xg==}
+  '@anthropic-ai/sdk@0.137.0':
+    resolution: {integrity: sha512-YpEnbPz8kWF1BWthwUCnRhci7OvDLSUO8NFKoevoPkjNkK9CJeibZITgxr9vhqOP8Le61e5tNDHFTxw1dc6Png==}
     hasBin: true
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
@@ -3754,9 +3754,9 @@ snapshots:
     optionalDependencies:
       '@base-ui/react': 1.9.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
-  '@anthropic-ai/bedrock-sdk@1.1.1(zod@4.6.7)':
+  '@anthropic-ai/bedrock-sdk@0.36.0(zod@4.6.7)':
     dependencies:
-      '@anthropic-ai/sdk': 1.12.0(zod@4.6.7)
+      '@anthropic-ai/sdk': 0.137.0(zod@4.6.7)
       '@aws-crypto/sha256-js': 4.0.0
       '@aws-sdk/client-bedrock-runtime': 3.1173.0
       '@aws-sdk/credential-providers': 3.1173.0
@@ -3771,7 +3771,7 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  '@anthropic-ai/sdk@1.12.0(zod@4.6.7)':
+  '@anthropic-ai/sdk@0.137.0(zod@4.6.7)':
     dependencies:
       '@opentelemetry/api': 1.10.0
       json-schema-to-ts: 3.1.1
