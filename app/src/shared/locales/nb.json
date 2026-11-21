@@ -876,5 +876,19 @@
   "Help": "Hjelp",
   "Help and settings": "Hjelp og innstillinger",
   "Figolu menu": "Figolu-meny",
-  "Restart to update · {version}": "Start på nytt for å oppdatere · {version}"
+  "Restart to update · {version}": "Start på nytt for å oppdatere · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Appen din krever klienthemmeligheten sin. Legg den til under «Bruk organisasjonens egen app».",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft avviste klienthemmeligheten. Sjekk den under «Bruk organisasjonens egen app».",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Appen din bruker ingen klienthemmelighet. Fjern den under «Bruk organisasjonens egen app».",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft kjenner ikke denne omdirigerings-URI-en for appen din. Kopier den nøyaktig fra Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Porten i omdirigerings-URI-en er opptatt, kanskje av en annen pålogging. Fullfør den og prøv igjen.",
+  "Finish signing in on the Microsoft page in your browser.": "Fullfør påloggingen på Microsoft-siden i nettleseren.",
+  "Sign in with": "Logg på med",
+  "A code on Microsoft's page": "En kode på Microsofts side",
+  "The browser (apps without public client flows)": "Nettleseren (apper uten offentlige klientflyter)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Appens omdirigerings-URI, som i Azure. For appen Claude Code bruker: http://localhost:PORT/callback, med tilbakekallingsporten.",
+  "Redirect URI": "Omdirigerings-URI",
+  "Client secret, only if that redirect URI is on the Web platform": "Klienthemmelighet, bare hvis omdirigerings-URI-en er på nettplattformen",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "En klienthemmelighet er lagret. Skriv inn en ny for å erstatte den, eller la feltet stå tomt for å beholde den.",
+  "Remove the secret": "Fjern hemmeligheten"
 }

@@ -79,7 +79,8 @@ import { fakeSsoApi } from './aws/fakeSso'
 import { bedrockConfig, hookCloud } from './cloudNotes'
 import { createM365 } from './m365/client'
 import { bothSources, createM365Context } from './m365/context'
-import { fakeM365Server } from './m365/fake'
+import { fakeM365Server, fakeMicrosoftSignIn } from './m365/fake'
+import { createTokenStore, DEFAULT_REDIRECT } from './m365/oauth'
 import { hookM365 } from './m365/ipc'
 import { hookExtras } from './extras'
 import { hookTemplates, templateFor } from './templateSettings'
@@ -574,15 +575,23 @@ app.whenReady().then(() => {
   const m365File = join(userDataDir(), 'settings.json')
   // Microsoft 365, read only (Settings → Microsoft 365): the Outlook calendar beside the others, and related emails
   let m365Ipc: ReturnType<typeof hookM365> | undefined
+  // the browser sign-in (an app without public client flows): its tokens and the app's secret, sealed
+  const m365Tokens = createTokenStore({ file: join(userDataDir(), 'm365-oauth.json'),
+    seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
+    open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()) })
+  const fakeMicrosoft = isFake() ? fakeMicrosoftSignIn() : undefined
   const m365 = createM365({ dataDir: userDataDir(), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
     documents: () => loadSettings(m365File).m365?.documents === true,
-    openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
+    browser: () => { const s = loadSettings(m365File).m365; return s?.method === 'browser' ? { redirectUri: s.redirectUri ?? DEFAULT_REDIRECT } : null },
+    store: m365Tokens,
+    ...(fakeMicrosoft ? { fetch: fakeMicrosoft.fetch } : {}),
+    openExternal: (url) => { if (fakeMicrosoft) fakeMicrosoft.open(url); else void shell.openExternal(url) },
     onChange: (st) => { m365Ipc?.push(); if (st.state === 'connected' || st.state === 'off') { m365Context.forget(); refreshCalendarConsumers() } },
     ...(isFake() ? { connect: fakeM365Server() } : {}) })
   const m365Context = createM365Context({ m365, calendarOn: () => loadSettings(m365File).m365?.calendar !== false,
     documentsOn: () => loadSettings(m365File).m365?.documents === true,
     account: () => { const st = m365.status(); return st.state === 'connected' ? st.account : null } })
-  m365Ipc = hookM365({ file: m365File, m365, send: (v) => win?.webContents.send('m365:changed', v),
+  m365Ipc = hookM365({ file: m365File, m365, store: m365Tokens, send: (v) => win?.webContents.send('m365:changed', v),
     calendarChanged: () => { m365Context.forget(); refreshCalendarConsumers() },
     restart: () => { void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() }) },
     // the server starts again in the other mode; turned on, Microsoft is asked again for the wider permissions

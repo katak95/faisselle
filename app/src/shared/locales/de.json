@@ -876,5 +876,19 @@
   "Help": "Hilfe",
   "Help and settings": "Hilfe und Einstellungen",
   "Figolu menu": "Figolu-Menü",
-  "Restart to update · {version}": "Zum Aktualisieren neu starten · {version}"
+  "Restart to update · {version}": "Zum Aktualisieren neu starten · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Deine App verlangt ihr Client-Geheimnis. Füge es unter „Eigene App deiner Organisation verwenden“ hinzu.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft hat das Client-Geheimnis abgelehnt. Prüfe es unter „Eigene App deiner Organisation verwenden“.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Deine App nimmt kein Client-Geheimnis. Entferne es unter „Eigene App deiner Organisation verwenden“.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft kennt diesen Umleitungs-URI für deine App nicht. Kopiere ihn genau aus Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Der Port des Umleitungs-URI ist belegt, vielleicht durch eine andere Anmeldung. Schließe sie ab und versuche es erneut.",
+  "Finish signing in on the Microsoft page in your browser.": "Schließe die Anmeldung auf der Microsoft-Seite in deinem Browser ab.",
+  "Sign in with": "Anmelden mit",
+  "A code on Microsoft's page": "Einem Code auf der Microsoft-Seite",
+  "The browser (apps without public client flows)": "Dem Browser (Apps ohne öffentliche Clientflows)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Der Umleitungs-URI deiner App, wie in Azure. Für die App, die Claude Code nutzt: http://localhost:PORT/callback, mit ihrem Callback-Port.",
+  "Redirect URI": "Umleitungs-URI",
+  "Client secret, only if that redirect URI is on the Web platform": "Client-Geheimnis, nur wenn dieser Umleitungs-URI auf der Web-Plattform ist",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Ein Client-Geheimnis ist gespeichert. Gib ein anderes ein, um es zu ersetzen, oder lass das Feld leer, um es zu behalten.",
+  "Remove the secret": "Geheimnis entfernen"
 }

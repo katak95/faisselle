@@ -876,5 +876,19 @@
   "Help": "Hulp",
   "Help and settings": "Help en instellingen",
   "Figolu menu": "Figolu-menu",
-  "Restart to update · {version}": "Herstarten om bij te werken · {version}"
+  "Restart to update · {version}": "Herstarten om bij te werken · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Je app vraagt om het clientgeheim. Voeg het toe onder ‘De eigen app van je organisatie gebruiken’.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft heeft het clientgeheim geweigerd. Controleer het onder ‘De eigen app van je organisatie gebruiken’.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Je app gebruikt geen clientgeheim. Verwijder het onder ‘De eigen app van je organisatie gebruiken’.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft kent deze omleidings-URI niet voor je app. Kopieer hem exact uit Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "De poort van de omleidings-URI is bezet, misschien door een andere aanmelding. Rond die af en probeer het opnieuw.",
+  "Finish signing in on the Microsoft page in your browser.": "Rond het aanmelden af op de Microsoft-pagina in je browser.",
+  "Sign in with": "Aanmelden met",
+  "A code on Microsoft's page": "Een code op de pagina van Microsoft",
+  "The browser (apps without public client flows)": "De browser (apps zonder openbare clientstromen)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "De omleidings-URI van je app, zoals in Azure. Voor de app die Claude Code gebruikt: http://localhost:PORT/callback, met de callbackpoort.",
+  "Redirect URI": "Omleidings-URI",
+  "Client secret, only if that redirect URI is on the Web platform": "Clientgeheim, alleen als die omleidings-URI op het webplatform staat",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Er is een clientgeheim opgeslagen. Typ een ander om het te vervangen, of laat leeg om het te houden.",
+  "Remove the secret": "Geheim verwijderen"
 }

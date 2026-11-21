@@ -912,5 +912,19 @@
   "Help": "Pomoc",
   "Help and settings": "Pomoc i ustawienia",
   "Figolu menu": "Menu Figolu",
-  "Restart to update · {version}": "Uruchom ponownie, aby zaktualizować · {version}"
+  "Restart to update · {version}": "Uruchom ponownie, aby zaktualizować · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Twoja aplikacja wymaga klucza tajnego klienta. Dodaj go w sekcji „Użyj aplikacji swojej organizacji”.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft odrzucił klucz tajny klienta. Sprawdź go w sekcji „Użyj aplikacji swojej organizacji”.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Twoja aplikacja nie używa klucza tajnego klienta. Usuń go w sekcji „Użyj aplikacji swojej organizacji”.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft nie zna tego identyfikatora URI przekierowania dla Twojej aplikacji. Skopiuj go dokładnie z Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Port identyfikatora URI przekierowania jest zajęty, może przez inne logowanie. Dokończ je i spróbuj ponownie.",
+  "Finish signing in on the Microsoft page in your browser.": "Dokończ logowanie na stronie Microsoft w przeglądarce.",
+  "Sign in with": "Zaloguj przez",
+  "A code on Microsoft's page": "Kod na stronie Microsoft",
+  "The browser (apps without public client flows)": "Przeglądarkę (aplikacje bez publicznych przepływów klienta)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Identyfikator URI przekierowania aplikacji, tak jak w Azure. Dla aplikacji używanej przez Claude Code: http://localhost:PORT/callback, z jej portem wywołania zwrotnego.",
+  "Redirect URI": "Identyfikator URI przekierowania",
+  "Client secret, only if that redirect URI is on the Web platform": "Klucz tajny klienta, tylko jeśli ten URI przekierowania jest na platformie Web",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Klucz tajny klienta jest zapisany. Wpisz inny, aby go zastąpić, lub zostaw puste, aby go zachować.",
+  "Remove the secret": "Usuń klucz tajny"
 }

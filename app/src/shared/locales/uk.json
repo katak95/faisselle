@@ -904,5 +904,19 @@
   "Help": "Довідка",
   "Help and settings": "Довідка й налаштування",
   "Figolu menu": "Меню Figolu",
-  "Restart to update · {version}": "Перезапустити для оновлення · {version}"
+  "Restart to update · {version}": "Перезапустити для оновлення · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Вашому застосунку потрібен секрет клієнта. Додайте його в розділі «Використати застосунок вашої організації».",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft відхилив секрет клієнта. Перевірте його в розділі «Використати застосунок вашої організації».",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Ваш застосунок не використовує секрет клієнта. Видаліть його в розділі «Використати застосунок вашої організації».",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft не знає цей URI переспрямування для вашого застосунку. Скопіюйте його точно з Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Порт URI переспрямування зайнятий, можливо, іншим входом. Завершіть його й спробуйте знову.",
+  "Finish signing in on the Microsoft page in your browser.": "Завершіть вхід на сторінці Microsoft у браузері.",
+  "Sign in with": "Вхід через",
+  "A code on Microsoft's page": "Код на сторінці Microsoft",
+  "The browser (apps without public client flows)": "Браузер (застосунки без потоків загальнодоступного клієнта)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "URI переспрямування вашого застосунку, як в Azure. Для застосунку, який використовує Claude Code: http://localhost:PORT/callback з його портом зворотного виклику.",
+  "Redirect URI": "URI переспрямування",
+  "Client secret, only if that redirect URI is on the Web platform": "Секрет клієнта, лише якщо цей URI переспрямування на платформі «Веб»",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Секрет клієнта збережено. Введіть інший, щоб замінити його, або залиште порожнім, щоб зберегти.",
+  "Remove the secret": "Видалити секрет"
 }

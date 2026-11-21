@@ -864,5 +864,19 @@
   "Help": "সহায়তা",
   "Help and settings": "সহায়তা ও সেটিংস",
   "Figolu menu": "Figolu মেনু",
-  "Restart to update · {version}": "আপডেট করতে পুনরায় চালু করুন · {version}"
+  "Restart to update · {version}": "আপডেট করতে পুনরায় চালু করুন · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "আপনার অ্যাপ তার ক্লায়েন্ট সিক্রেট চাইছে। “আপনার প্রতিষ্ঠানের নিজস্ব অ্যাপ ব্যবহার করুন”-এ এটি যোগ করুন।",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft ক্লায়েন্ট সিক্রেট প্রত্যাখ্যান করেছে। “আপনার প্রতিষ্ঠানের নিজস্ব অ্যাপ ব্যবহার করুন”-এ এটি যাচাই করুন।",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "আপনার অ্যাপ ক্লায়েন্ট সিক্রেট নেয় না। “আপনার প্রতিষ্ঠানের নিজস্ব অ্যাপ ব্যবহার করুন”-এ এটি সরান।",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft আপনার অ্যাপের জন্য এই রিডাইরেক্ট URI চেনে না। এটি Azure থেকে হুবহু কপি করুন।",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "রিডাইরেক্ট URI-এর পোর্ট ব্যস্ত, হয়তো অন্য সাইন-ইনের কারণে। সেটি শেষ করে আবার চেষ্টা করুন।",
+  "Finish signing in on the Microsoft page in your browser.": "আপনার ব্রাউজারে Microsoft পেজে সাইন-ইন শেষ করুন।",
+  "Sign in with": "এর মাধ্যমে সাইন ইন করুন",
+  "A code on Microsoft's page": "Microsoft-এর পেজে একটি কোড",
+  "The browser (apps without public client flows)": "ব্রাউজার (পাবলিক ক্লায়েন্ট ফ্লো ছাড়া অ্যাপ)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "আপনার অ্যাপের রিডাইরেক্ট URI, Azure-এ যেমন আছে। Claude Code যে অ্যাপ ব্যবহার করে তার জন্য: তার কলব্যাক পোর্টসহ http://localhost:PORT/callback।",
+  "Redirect URI": "রিডাইরেক্ট URI",
+  "Client secret, only if that redirect URI is on the Web platform": "ক্লায়েন্ট সিক্রেট, শুধু যদি সেই রিডাইরেক্ট URI ওয়েব প্ল্যাটফর্মে থাকে",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "একটি ক্লায়েন্ট সিক্রেট সেভ করা আছে। বদলাতে অন্যটি লিখুন, বা রাখতে ফাঁকা রাখুন।",
+  "Remove the secret": "সিক্রেট সরান"
 }

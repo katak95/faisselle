@@ -864,5 +864,19 @@
   "Help": "सहायता",
   "Help and settings": "सहायता और सेटिंग",
   "Figolu menu": "Figolu मेन्यू",
-  "Restart to update · {version}": "अपडेट के लिए रीस्टार्ट करें · {version}"
+  "Restart to update · {version}": "अपडेट के लिए रीस्टार्ट करें · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "आपका ऐप अपना क्लाइंट सीक्रेट मांग रहा है। इसे “अपने संगठन का ऐप इस्तेमाल करें” में जोड़ें।",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft ने क्लाइंट सीक्रेट अस्वीकार कर दिया। इसे “अपने संगठन का ऐप इस्तेमाल करें” में जांचें।",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "आपका ऐप क्लाइंट सीक्रेट नहीं लेता। इसे “अपने संगठन का ऐप इस्तेमाल करें” में हटाएं।",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft आपके ऐप के लिए यह रीडायरेक्ट URI नहीं पहचानता। इसे Azure से हूबहू कॉपी करें।",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "रीडायरेक्ट URI का पोर्ट व्यस्त है, शायद किसी दूसरे साइन-इन से। उसे पूरा करें और फिर कोशिश करें।",
+  "Finish signing in on the Microsoft page in your browser.": "अपने ब्राउज़र में Microsoft पेज पर साइन-इन पूरा करें।",
+  "Sign in with": "इससे साइन इन करें",
+  "A code on Microsoft's page": "Microsoft के पेज पर कोड",
+  "The browser (apps without public client flows)": "ब्राउज़र (पब्लिक क्लाइंट फ़्लो के बिना ऐप)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "आपके ऐप का रीडायरेक्ट URI, जैसा Azure में है। Claude Code जिस ऐप का इस्तेमाल करता है उसके लिए: उसके कॉलबैक पोर्ट के साथ http://localhost:PORT/callback।",
+  "Redirect URI": "रीडायरेक्ट URI",
+  "Client secret, only if that redirect URI is on the Web platform": "क्लाइंट सीक्रेट, सिर्फ़ तब जब वह रीडायरेक्ट URI वेब प्लेटफ़ॉर्म पर हो",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "एक क्लाइंट सीक्रेट सेव है। बदलने के लिए दूसरा लिखें, या रखने के लिए खाली छोड़ दें।",
+  "Remove the secret": "सीक्रेट हटाएं"
 }

@@ -834,5 +834,19 @@
   "Help": "Trợ giúp",
   "Help and settings": "Trợ giúp và cài đặt",
   "Figolu menu": "Menu Figolu",
-  "Restart to update · {version}": "Khởi động lại để cập nhật · {version}"
+  "Restart to update · {version}": "Khởi động lại để cập nhật · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Ứng dụng của bạn yêu cầu bí mật máy khách. Thêm nó trong “Dùng ứng dụng riêng của tổ chức bạn”.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft đã từ chối bí mật máy khách. Kiểm tra lại trong “Dùng ứng dụng riêng của tổ chức bạn”.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Ứng dụng của bạn không dùng bí mật máy khách. Xóa nó trong “Dùng ứng dụng riêng của tổ chức bạn”.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft không biết URI chuyển hướng này cho ứng dụng của bạn. Hãy sao chép chính xác từ Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Cổng của URI chuyển hướng đang bận, có thể do một lần đăng nhập khác. Hoàn tất lần đó rồi thử lại.",
+  "Finish signing in on the Microsoft page in your browser.": "Hoàn tất đăng nhập trên trang Microsoft trong trình duyệt.",
+  "Sign in with": "Đăng nhập bằng",
+  "A code on Microsoft's page": "Mã trên trang của Microsoft",
+  "The browser (apps without public client flows)": "Trình duyệt (ứng dụng không có luồng máy khách công khai)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "URI chuyển hướng của ứng dụng, như trong Azure. Với ứng dụng mà Claude Code dùng: http://localhost:PORT/callback, với cổng gọi lại của nó.",
+  "Redirect URI": "URI chuyển hướng",
+  "Client secret, only if that redirect URI is on the Web platform": "Bí mật máy khách, chỉ khi URI chuyển hướng đó nằm trên nền tảng Web",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Đã lưu một bí mật máy khách. Nhập cái khác để thay thế, hoặc để trống để giữ nguyên.",
+  "Remove the secret": "Xóa bí mật"
 }

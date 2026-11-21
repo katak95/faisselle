@@ -4,22 +4,37 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import type { M365Status } from '../../shared/types'
 import { deviceCode, enabledTools, needsAdminConsent, toolJson, TOOLS, type CallTool } from './tools'
+import { authorizeUrl, M365AuthError, parseRedirect, pkce, tokenRequest, type AppConfig, type Fetch, type TokenStore } from './oauth'
+import { waitForCode } from '../atlassian/oauth'
 
 /**
  * Microsoft 365 as an MCP client: Figolu starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
  * only) with Electron's own Node, and talks to it over stdio. Signing in is Microsoft's device code: the browser opens
  * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Figolu's
  * folder.
+ *
+ * An organisation's app that doesn't allow the device code signs in with the browser instead (oauth.ts): Figolu gets
+ * the token on the app's own redirect URI, gives it to the server (MS365_MCP_OAUTH_TOKEN) and starts the server again
+ * with a new one before it runs out.
  */
 export type M365Options = { dataDir: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
   /** SharePoint and OneDrive search: work-account mode, with Microsoft Search's wider read permissions (read when the server starts) */
   documents?: () => boolean
-  /** tests and fake mode: a stand-in for the server */
-  connect?: () => Promise<{ call: CallTool; close(): Promise<void> }> }
+  /** the browser sign-in (an app without public client flows): its redirect URI, when that's the method */
+  browser?: () => { redirectUri: string } | null
+  /** the browser sign-in's tokens and the app's secret (sealed) */
+  store?: TokenStore
+  /** tests and fake mode: the token endpoint */
+  fetch?: Fetch
+  /** tests and fake mode: a stand-in for the server (token: the browser sign-in's) */
+  connect?: (token?: string) => Promise<{ call: CallTool; close(): Promise<void> }> }
+
+/** a token this close to its end is refreshed before the next call */
+const REFRESH_MARGIN_MS = 5 * 60_000
 
 const serverScript = () => createRequire(import.meta.url).resolve('@softeria/ms-365-mcp-server/dist/index.js')
 
-async function startServer(o: M365Options): Promise<{ call: CallTool; close(): Promise<void> }> {
+async function startServer(o: M365Options, token?: string): Promise<{ call: CallTool; close(): Promise<void> }> {
   const env: Record<string, string> = {}
   for (const [k, v] of Object.entries(process.env)) if (v !== undefined && !/^(ELECTRON_|NODE_OPTIONS$)/.test(k)) env[k] = v
   Object.assign(env, {
@@ -30,6 +45,7 @@ async function startServer(o: M365Options): Promise<{ call: CallTool; close(): P
     MS365_MCP_OUTPUT_FORMAT: 'json',
     ...(o.app?.().clientId ? { MS365_MCP_CLIENT_ID: o.app!().clientId! } : {}),
     ...(o.app?.().tenantId ? { MS365_MCP_TENANT_ID: o.app!().tenantId! } : {}),
+    ...(token ? { MS365_MCP_OAUTH_TOKEN: token } : {}),
   })
   const documents = o.documents?.() ?? false
   const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)], env, stderr: 'pipe' })
@@ -48,8 +64,61 @@ export function createM365(o: M365Options) {
   let polling = 0
   let documentsRefused = false
   const set = (s: M365Status) => { status = s; o.onChange(s) }
-  const connect = () => (server ??= (o.connect ?? (() => startServer(o)))().catch((e) => { server = undefined; throw e }))
-  const call: CallTool = async (name, args) => toolJson(await (await connect()).call(name, args))
+  /** the browser sign-in's app, when that's the method in use */
+  const browserApp = (): AppConfig | null => {
+    const b = o.browser?.(), a = o.app?.()
+    return b && a?.clientId && o.store ? { clientId: a.clientId, tenantId: a.tenantId, redirectUri: b.redirectUri, secret: o.store.secret() } : null
+  }
+  let serverToken: string | undefined
+  const connect = (token?: string) => (server ??= (serverToken = token, (o.connect ?? ((t?: string) => startServer(o, t)))(token)).catch((e) => { server = undefined; throw e }))
+  const stopServer = async () => { const s = server; server = undefined; await s?.then((x) => x.close()).catch(() => {}) }
+  /** the browser sign-in's access token, refreshed when it's about to run out (the server then starts again with it) */
+  let refreshing: Promise<string> | undefined
+  const accessToken = (app: AppConfig): Promise<string> => {
+    const t = o.store!.tokens()
+    if (!t) return Promise.reject(new M365AuthError('Not signed in to Microsoft 365', 'expired'))
+    if (t.expiresAt - Date.now() > REFRESH_MARGIN_MS) return Promise.resolve(t.access)
+    if (!t.refresh) return Promise.reject(new M365AuthError('The Microsoft 365 sign-in ran out', 'expired'))
+    return (refreshing ??= tokenRequest(app, { refresh: t.refresh }, o.fetch).then((next) => { o.store!.setTokens(next); return next.access })
+      .catch((e) => { if (e instanceof M365AuthError && e.problem === 'expired') o.store!.setTokens(undefined); throw e })
+      .finally(() => { refreshing = undefined }))
+  }
+  const ready = async () => {
+    const app = browserApp()
+    if (!app) return connect()
+    const token = await accessToken(app)
+    if (server && serverToken !== token) await stopServer()
+    return connect(token)
+  }
+  const call: CallTool = async (name, args) => toolJson(await (await ready()).call(name, args))
+  const failed = (e: unknown) => {
+    const message = e instanceof Error ? e.message : String(e)
+    const problem = e instanceof M365AuthError ? e.problem : undefined
+    // signed out on Microsoft's side (revoked, or unused for months): Settings offers to connect again
+    if (problem === 'expired') { set({ state: 'signed-out' }); return }
+    set({ state: 'error', message, ...(needsAdminConsent(message) ? { consent: true } : {}), ...(problem ? { problem } : {}) })
+  }
+  let cancelBrowser: AbortController | undefined
+  /** the browser sign-in: Microsoft's page in the browser, back to the app's redirect URI on this computer */
+  const signInBrowser = async (app: AppConfig, mine: number) => {
+    const at = parseRedirect(app.redirectUri)
+    if (!at) throw new M365AuthError('The redirect URI must be http://localhost:PORT/path', 'redirect-mismatch')
+    const p = pkce()
+    cancelBrowser?.abort(); cancelBrowser = new AbortController()
+    const wait = await waitForCode({ port: at.port, path: at.path, fixedPort: true, service: 'Microsoft 365', state: () => p.state, signal: cancelBrowser.signal })
+      .catch((e: NodeJS.ErrnoException) => { throw e?.code === 'EADDRINUSE' ? new M365AuthError(`Port ${at.port} is in use`, 'port-busy') : e })
+    const url = authorizeUrl(app, p)
+    set({ state: 'pending', url })
+    o.openExternal(url)
+    const code = await wait.code
+    if (mine !== polling) return
+    o.store!.setTokens(await tokenRequest(app, { code, verifier: p.verifier }, o.fetch))
+    await stopServer()
+    const who = await verify()
+    if (mine !== polling) return
+    if (who === false) throw new Error('Microsoft 365 did not accept the sign-in')
+    set({ state: 'connected', account: who })
+  }
 
   /** signed in: the account's name, if the server says it */
   const verify = async (): Promise<string | null | false> => {
@@ -62,16 +131,22 @@ export function createM365(o: M365Options) {
     /** at launch, when it was connected before: start the server and see whether the sign-in still holds */
     async resume() {
       set({ state: 'starting' })
+      if (browserApp() && !o.store!.tokens()) { set({ state: 'signed-out' }); return }
       try {
         const who = await verify()
         set(who === false ? { state: 'signed-out' } : { state: 'connected', account: who })
-      } catch (e) { console.warn('Microsoft 365 did not start', e); set({ state: 'error', message: e instanceof Error ? e.message : String(e) }) }
+      } catch (e) { console.warn('Microsoft 365 did not start', e); failed(e) }
     },
     /** asks for a device code, opens the page, then checks every few seconds until the sign-in is done (10 minutes at most) */
     /** force: a new sign-in even when one holds, so Microsoft asks for newly needed permissions (documents turned on) */
     async signIn(force = false) {
       const mine = ++polling
       set({ state: 'starting' })
+      const app = browserApp()
+      if (app) {
+        try { await signInBrowser(app, mine) } catch (e) { if (mine === polling) { console.warn('Microsoft 365 sign-in failed', e); failed(e) } }
+        return
+      }
       try {
         const v = await call(TOOLS.login, { force }) as { status?: string; message?: string }
         if (v?.status && /logged in|successful/i.test(v.status)) { const who = await verify(); set({ state: 'connected', account: who || null }); return }
@@ -89,27 +164,29 @@ export function createM365(o: M365Options) {
         if (mine === polling) set({ state: 'signed-out' })
       } catch (e) {
         console.warn('Microsoft 365 sign-in failed', e)
-        const message = e instanceof Error ? e.message : String(e)
-        set({ state: 'error', message, ...(needsAdminConsent(message) ? { consent: true } : {}) })
+        failed(e)
       }
     },
-    cancel() { polling++; if (status.state === 'pending') set({ state: 'signed-out' }) },
+    cancel() { polling++; cancelBrowser?.abort(); if (status.state === 'pending') set({ state: 'signed-out' }) },
     async signOut() {
       polling++
-      try { await call(TOOLS.logout, {}) } catch (e) { console.warn('Microsoft 365 sign-out failed', e) }
+      cancelBrowser?.abort()
+      // the browser sign-in's tokens are Figolu's own: forgetting them signs out
+      if (browserApp()) o.store!.setTokens(undefined)
+      else try { await call(TOOLS.logout, {}) } catch (e) { console.warn('Microsoft 365 sign-out failed', e) }
       await this.stop()
       set({ state: 'off' })
     },
-    async stop() {
-      const s = server
-      server = undefined
-      await s?.then((x) => x.close()).catch(() => {})
-    },
+    async stop() { await stopServer() },
     connected: () => status.state === 'connected',
     /** a read-only tool call, once connected */
     async call(name: string, args: Record<string, unknown>) {
       if (status.state !== 'connected') throw new Error('Microsoft 365 is not connected')
-      return call(name, args)
+      try { return await call(name, args) } catch (e) {
+        // the browser sign-in ran out and couldn't be refreshed: Settings asks to connect again
+        if (e instanceof M365AuthError) failed(e)
+        throw e
+      }
     },
     /** the documents search failed because an admin has to approve its permissions (Settings says so) */
     documentsRefused: () => documentsRefused,

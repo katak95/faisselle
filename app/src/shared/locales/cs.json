@@ -907,5 +907,19 @@
   "Help": "Nápověda",
   "Help and settings": "Nápověda a nastavení",
   "Figolu menu": "Nabídka Figolu",
-  "Restart to update · {version}": "Restartovat a aktualizovat · {version}"
+  "Restart to update · {version}": "Restartovat a aktualizovat · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Vaše aplikace vyžaduje tajný klíč klienta. Přidejte ho v části „Použít vlastní aplikaci organizace“.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft tajný klíč klienta odmítl. Zkontrolujte ho v části „Použít vlastní aplikaci organizace“.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Vaše aplikace tajný klíč klienta nepoužívá. Odeberte ho v části „Použít vlastní aplikaci organizace“.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft tento identifikátor URI pro přesměrování u vaší aplikace nezná. Zkopírujte ho přesně z Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Port identifikátoru URI pro přesměrování je obsazený, možná jiným přihlášením. Dokončete ho a zkuste to znovu.",
+  "Finish signing in on the Microsoft page in your browser.": "Dokončete přihlášení na stránce Microsoftu v prohlížeči.",
+  "Sign in with": "Přihlásit pomocí",
+  "A code on Microsoft's page": "Kódu na stránce Microsoftu",
+  "The browser (apps without public client flows)": "Prohlížeče (aplikace bez toků veřejného klienta)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Identifikátor URI pro přesměrování vaší aplikace, jako v Azure. Pro aplikaci, kterou používá Claude Code: http://localhost:PORT/callback s jejím portem zpětného volání.",
+  "Redirect URI": "Identifikátor URI pro přesměrování",
+  "Client secret, only if that redirect URI is on the Web platform": "Tajný klíč klienta, jen pokud je tento URI pro přesměrování na platformě Web",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Tajný klíč klienta je uložený. Zadejte jiný, chcete-li ho nahradit, nebo nechte prázdné a zůstane.",
+  "Remove the secret": "Odebrat tajný klíč"
 }

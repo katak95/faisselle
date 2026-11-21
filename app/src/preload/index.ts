@@ -254,7 +254,7 @@ const api: YogurtApi = {
     cancel: () => ipcRenderer.invoke('m365:cancel'),
     signOut: () => ipcRenderer.invoke('m365:sign-out'),
     setCalendar: (on) => ipcRenderer.invoke('m365:calendar', on),
-    setApp: (c, t) => ipcRenderer.invoke('m365:app', c, t),
+    setApp: (a) => ipcRenderer.invoke('m365:app', a),
     setDocuments: (on) => ipcRenderer.invoke('m365:documents', on),
     onChange: (fn) => { const f = (_e: unknown, v: M365View) => fn(v); ipcRenderer.on('m365:changed', f); return () => { ipcRenderer.off('m365:changed', f) } },
   },

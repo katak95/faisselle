@@ -864,5 +864,19 @@
   "Help": "Yardım",
   "Help and settings": "Yardım ve ayarlar",
   "Figolu menu": "Figolu menüsü",
-  "Restart to update · {version}": "Güncellemek için yeniden başlat · {version}"
+  "Restart to update · {version}": "Güncellemek için yeniden başlat · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Uygulamanız istemci gizli anahtarını istiyor. “Kuruluşunuzun kendi uygulamasını kullanın” altında ekleyin.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft istemci gizli anahtarını reddetti. “Kuruluşunuzun kendi uygulamasını kullanın” altında kontrol edin.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Uygulamanız istemci gizli anahtarı kullanmıyor. “Kuruluşunuzun kendi uygulamasını kullanın” altında kaldırın.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft bu yeniden yönlendirme URI’sini uygulamanız için tanımıyor. Azure’dan aynen kopyalayın.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Yeniden yönlendirme URI’sinin bağlantı noktası meşgul, belki başka bir oturum açma yüzünden. Onu bitirip yeniden deneyin.",
+  "Finish signing in on the Microsoft page in your browser.": "Oturum açmayı tarayıcınızdaki Microsoft sayfasında tamamlayın.",
+  "Sign in with": "Şununla oturum aç",
+  "A code on Microsoft's page": "Microsoft sayfasındaki bir kod",
+  "The browser (apps without public client flows)": "Tarayıcı (genel istemci akışları olmayan uygulamalar)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Uygulamanızın Azure’daki yeniden yönlendirme URI’si. Claude Code’un kullandığı uygulama için: geri çağırma bağlantı noktasıyla http://localhost:PORT/callback.",
+  "Redirect URI": "Yeniden yönlendirme URI’si",
+  "Client secret, only if that redirect URI is on the Web platform": "İstemci gizli anahtarı, yalnızca bu yeniden yönlendirme URI’si Web platformundaysa",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Bir istemci gizli anahtarı kayıtlı. Değiştirmek için başka birini yazın ya da korumak için boş bırakın.",
+  "Remove the secret": "Gizli anahtarı kaldır"
 }

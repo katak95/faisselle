@@ -834,5 +834,19 @@
   "Help": "วิธีใช้",
   "Help and settings": "ความช่วยเหลือและการตั้งค่า",
   "Figolu menu": "เมนู Figolu",
-  "Restart to update · {version}": "เริ่มใหม่เพื่ออัปเดต · {version}"
+  "Restart to update · {version}": "เริ่มใหม่เพื่ออัปเดต · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "แอปของคุณต้องใช้ข้อมูลลับไคลเอ็นต์ เพิ่มได้ใน “ใช้แอปขององค์กรคุณเอง”",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft ปฏิเสธข้อมูลลับไคลเอ็นต์ ตรวจสอบได้ใน “ใช้แอปขององค์กรคุณเอง”",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "แอปของคุณไม่ใช้ข้อมูลลับไคลเอ็นต์ นำออกได้ใน “ใช้แอปขององค์กรคุณเอง”",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft ไม่รู้จัก URI การเปลี่ยนเส้นทางนี้สำหรับแอปของคุณ คัดลอกให้ตรงจาก Azure",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "พอร์ตของ URI การเปลี่ยนเส้นทางไม่ว่าง อาจมีการลงชื่อเข้าใช้อื่นอยู่ ทำให้เสร็จแล้วลองอีกครั้ง",
+  "Finish signing in on the Microsoft page in your browser.": "ลงชื่อเข้าใช้ให้เสร็จในหน้า Microsoft บนเบราว์เซอร์",
+  "Sign in with": "ลงชื่อเข้าใช้ด้วย",
+  "A code on Microsoft's page": "รหัสในหน้าของ Microsoft",
+  "The browser (apps without public client flows)": "เบราว์เซอร์ (แอปที่ไม่มีโฟลว์ไคลเอ็นต์สาธารณะ)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "URI การเปลี่ยนเส้นทางของแอปตามที่อยู่ใน Azure สำหรับแอปที่ Claude Code ใช้: http://localhost:PORT/callback พร้อมพอร์ตคอลแบ็กของแอป",
+  "Redirect URI": "URI การเปลี่ยนเส้นทาง",
+  "Client secret, only if that redirect URI is on the Web platform": "ข้อมูลลับไคลเอ็นต์ เฉพาะเมื่อ URI การเปลี่ยนเส้นทางนั้นอยู่บนแพลตฟอร์มเว็บ",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "บันทึกข้อมูลลับไคลเอ็นต์ไว้แล้ว พิมพ์ใหม่เพื่อแทนที่ หรือเว้นว่างไว้เพื่อเก็บไว้",
+  "Remove the secret": "นำข้อมูลลับออก"
 }

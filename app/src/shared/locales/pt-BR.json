@@ -892,5 +892,19 @@
   "Help": "Ajuda",
   "Help and settings": "Ajuda e configurações",
   "Figolu menu": "Menu do Figolu",
-  "Restart to update · {version}": "Reiniciar para atualizar · {version}"
+  "Restart to update · {version}": "Reiniciar para atualizar · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Seu aplicativo pede o segredo do cliente. Adicione-o em “Usar o aplicativo da sua organização”.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "A Microsoft recusou o segredo do cliente. Confira em “Usar o aplicativo da sua organização”.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Seu aplicativo não usa segredo do cliente. Remova-o em “Usar o aplicativo da sua organização”.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "A Microsoft não conhece esse URI de redirecionamento para o seu aplicativo. Copie-o exatamente do Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "A porta do URI de redirecionamento está ocupada, talvez por outro login. Conclua-o e tente de novo.",
+  "Finish signing in on the Microsoft page in your browser.": "Termine o login na página da Microsoft no seu navegador.",
+  "Sign in with": "Entrar com",
+  "A code on Microsoft's page": "Um código na página da Microsoft",
+  "The browser (apps without public client flows)": "O navegador (aplicativos sem fluxos de cliente público)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "O URI de redirecionamento do seu aplicativo, como no Azure. Para o aplicativo que o Claude Code usa: http://localhost:PORT/callback, com a porta de retorno dele.",
+  "Redirect URI": "URI de redirecionamento",
+  "Client secret, only if that redirect URI is on the Web platform": "Segredo do cliente, só se esse URI de redirecionamento estiver na plataforma Web",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Há um segredo do cliente salvo. Digite outro para substituí-lo ou deixe vazio para mantê-lo.",
+  "Remove the secret": "Remover o segredo"
 }

@@ -14,14 +14,36 @@ export function fakeDocx(paragraphs: string[]): Promise<Buffer> {
   })
 }
 
-/** fake mode: a Microsoft 365 with one Outlook meeting tomorrow and two emails, signed in once the code is "entered" */
-export function fakeM365Server(): () => Promise<{ call: CallTool; close(): Promise<void> }> {
+/**
+ * fake mode: Microsoft's side of the browser sign-in. Opening the authorize page comes straight back to the redirect
+ * URI with a code (as if the person signed in), and the token endpoint hands out tokens for it. Tokens last 1 hour.
+ */
+export function fakeMicrosoftSignIn() {
+  let n = 0
+  return {
+    open(url: string) {
+      const u = new URL(url)
+      if (!u.pathname.endsWith('/authorize')) return
+      const back = new URL(u.searchParams.get('redirect_uri') ?? '')
+      back.searchParams.set('code', 'fake-code'); back.searchParams.set('state', u.searchParams.get('state') ?? '')
+      setTimeout(() => { void fetch(back.toString()).catch(() => {}) }, 100)
+    },
+    fetch: async (_url: string, init: { body: string }) => {
+      const body = new URLSearchParams(init.body)
+      const ok = body.get('grant_type') === 'authorization_code' ? body.get('code') === 'fake-code' && !!body.get('code_verifier') : body.get('refresh_token') === 'fake-refresh'
+      return { ok, status: ok ? 200 : 400, json: async () => ok ? { access_token: `fake-access-${++n}`, refresh_token: 'fake-refresh', expires_in: 3600 } : { error: 'invalid_grant', error_description: 'AADSTS70000: fake' } }
+    },
+  }
+}
+
+/** fake mode: a Microsoft 365 with one Outlook meeting tomorrow and two emails, signed in once the code is "entered" (or with a browser sign-in's token) */
+export function fakeM365Server(): (token?: string) => Promise<{ call: CallTool; close(): Promise<void> }> {
   let signedIn = false
   const text = (v: unknown) => ({ content: [{ type: 'text', text: JSON.stringify(v) }] })
-  return async () => ({
+  return async (token) => ({
     async call(name) {
       if (name === TOOLS.login) { setTimeout(() => { signedIn = true }, 200); return text({ error: 'device_code_required', message: 'To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code FAKE1234 to authenticate.' }) }
-      if (name === TOOLS.verify) return text(signedIn ? { success: true, userData: { displayName: 'You', userPrincipalName: 'you@example.com' } } : { success: false })
+      if (name === TOOLS.verify) return text(signedIn || token ? { success: true, userData: { displayName: 'You', userPrincipalName: 'you@example.com' } } : { success: false })
       if (name === TOOLS.logout) { signedIn = false; return text({ message: 'Logged out successfully' }) }
       if (name === TOOLS.calendarView) {
         const start = new Date(Date.now() + 86_400_000); start.setUTCHours(9, 0, 0, 0)

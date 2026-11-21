@@ -834,5 +834,19 @@
   "Help": "ヘルプ",
   "Help and settings": "ヘルプと設定",
   "Figolu menu": "Figolu メニュー",
-  "Restart to update · {version}": "再起動してアップデート · {version}"
+  "Restart to update · {version}": "再起動してアップデート · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "アプリにクライアントシークレットが必要です。「組織独自のアプリを使う」で追加してください。",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft がクライアントシークレットを拒否しました。「組織独自のアプリを使う」で確認してください。",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "このアプリはクライアントシークレットを使いません。「組織独自のアプリを使う」で削除してください。",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft はこのアプリのこのリダイレクト URI を認識していません。Azure から正確にコピーしてください。",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "リダイレクト URI のポートが使用中です。別のサインインが進行中かもしれません。それを完了してからもう一度お試しください。",
+  "Finish signing in on the Microsoft page in your browser.": "ブラウザーの Microsoft のページでサインインを完了してください。",
+  "Sign in with": "サインイン方法",
+  "A code on Microsoft's page": "Microsoft のページでコードを入力",
+  "The browser (apps without public client flows)": "ブラウザー（パブリック クライアント フローのないアプリ）",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Azure に登録されているアプリのリダイレクト URI。Claude Code が使うアプリの場合：コールバックポート付きの http://localhost:PORT/callback。",
+  "Redirect URI": "リダイレクト URI",
+  "Client secret, only if that redirect URI is on the Web platform": "クライアントシークレット（リダイレクト URI が Web プラットフォームにある場合のみ）",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "クライアントシークレットが保存されています。置き換えるには別の値を入力し、そのままにするには空欄のままにしてください。",
+  "Remove the secret": "シークレットを削除"
 }

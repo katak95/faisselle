@@ -892,5 +892,19 @@
   "Help": "Aide",
   "Help and settings": "Aide et paramètres",
   "Figolu menu": "Menu de Figolu",
-  "Restart to update · {version}": "Redémarrer pour mettre à jour · {version}"
+  "Restart to update · {version}": "Redémarrer pour mettre à jour · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Votre application demande son secret client. Ajoutez-le sous « Utiliser l’application de votre organisation ».",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "Microsoft a refusé le secret client. Vérifiez-le sous « Utiliser l’application de votre organisation ».",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Votre application ne prend pas de secret client. Retirez-le sous « Utiliser l’application de votre organisation ».",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "Microsoft ne connaît pas cette URI de redirection pour votre application. Copiez-la telle quelle depuis Azure.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Le port de l’URI de redirection est occupé, peut-être par une autre connexion. Terminez-la et réessayez.",
+  "Finish signing in on the Microsoft page in your browser.": "Terminez la connexion sur la page Microsoft dans votre navigateur.",
+  "Sign in with": "Se connecter avec",
+  "A code on Microsoft's page": "Un code sur la page de Microsoft",
+  "The browser (apps without public client flows)": "Le navigateur (applications sans flux de client public)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "L’URI de redirection de votre application, comme dans Azure. Pour l’application utilisée par Claude Code : http://localhost:PORT/callback, avec son port de rappel.",
+  "Redirect URI": "URI de redirection",
+  "Client secret, only if that redirect URI is on the Web platform": "Secret client, seulement si cette URI de redirection est sur la plateforme Web",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Un secret client est enregistré. Saisissez-en un autre pour le remplacer, ou laissez vide pour le garder.",
+  "Remove the secret": "Retirer le secret"
 }

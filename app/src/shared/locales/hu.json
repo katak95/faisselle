@@ -864,5 +864,19 @@
   "Help": "Súgó",
   "Help and settings": "Súgó és beállítások",
   "Figolu menu": "Figolu menü",
-  "Restart to update · {version}": "Újraindítás a frissítéshez · {version}"
+  "Restart to update · {version}": "Újraindítás a frissítéshez · {version}",
+  "Your app wants its client secret. Add it under Use your organization's own app.": "Az alkalmazásod kéri az ügyfélkulcsát. Add meg itt: „A szervezet saját alkalmazásának használata”.",
+  "Microsoft refused the client secret. Check it under Use your organization's own app.": "A Microsoft elutasította az ügyfélkulcsot. Ellenőrizd itt: „A szervezet saját alkalmazásának használata”.",
+  "Your app takes no client secret. Remove it under Use your organization's own app.": "Az alkalmazásod nem használ ügyfélkulcsot. Távolítsd el itt: „A szervezet saját alkalmazásának használata”.",
+  "Microsoft doesn't know this redirect URI for your app. Copy it exactly from Azure.": "A Microsoft nem ismeri ezt az átirányítási URI-t az alkalmazásodhoz. Másold ki pontosan az Azure-ból.",
+  "The redirect URI's port is busy, maybe with another sign-in. Finish that one and try again.": "Az átirányítási URI portja foglalt, talán egy másik bejelentkezés miatt. Fejezd be azt, és próbáld újra.",
+  "Finish signing in on the Microsoft page in your browser.": "Fejezd be a bejelentkezést a Microsoft oldalán a böngészőben.",
+  "Sign in with": "Bejelentkezés ezzel:",
+  "A code on Microsoft's page": "Kóddal a Microsoft oldalán",
+  "The browser (apps without public client flows)": "Böngészővel (nyilvános ügyfélfolyamatok nélküli alkalmazások)",
+  "Your app's redirect URI, as in Azure. For the app Claude Code uses: http://localhost:PORT/callback, with its callback port.": "Az alkalmazásod átirányítási URI-ja, ahogy az Azure-ban szerepel. A Claude Code által használt alkalmazáshoz: http://localhost:PORT/callback, a visszahívási portjával.",
+  "Redirect URI": "Átirányítási URI",
+  "Client secret, only if that redirect URI is on the Web platform": "Ügyfélkulcs, csak ha ez az átirányítási URI a Web platformon van",
+  "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Egy ügyfélkulcs mentve van. Írj be egy másikat a cseréjéhez, vagy hagyd üresen a megtartásához.",
+  "Remove the secret": "Kulcs eltávolítása"
 }
