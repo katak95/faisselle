@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Yogurt's tree, renamed to Figolu: what .github/workflows/sync-yogurt.yml runs on every new Yogurt before merging it,
-so a Yogurt change merges into Figolu without conflicting on the name. It does only the mechanical part of the
-rename; everything else Figolu changed is in Figolu's own commits.
+Yogurt's tree, renamed to Faisselle: what .github/workflows/sync-yogurt.yml runs on every new Yogurt before merging it,
+so a Yogurt change merges into Faisselle without conflicting on the name. It does only the mechanical part of the
+rename; everything else Faisselle changed is in Faisselle's own commits.
 
   python3 app/scripts/rebrand.py [repository root]   (prints how many files it changed)
   python3 app/scripts/rebrand.py --check            (changes nothing; lists what it would change, fails if any)
 
 Rules:
-- "Yogurt" as a whole word becomes "Figolu". Names inside identifiers (YogurtApi, AboutYogurt), YOGURT_ variables and
+- "Yogurt" as a whole word becomes "Faisselle". Names inside identifiers (YogurtApi, AboutYogurt), YOGURT_ variables and
   the yogurt-* helpers are internal and stay.
-- A line that already names Figolu, or says "rebrand: keep", is left alone: it is Figolu's own (credits, the folder
-  migration). Yogurt's own lines never name Figolu, so this never keeps an old name by mistake. A line naming Frigade
+- A line that already names Faisselle, or says "rebrand: keep", is left alone: it is Faisselle's own (credits, the folder
+  migration). Yogurt's own lines never name Faisselle, so this never keeps an old name by mistake. A line naming Frigade
   keeps the word Yogurt (it credits Yogurt).
-- Yogurt's links (github.com/FrigadeHQ/yogurt, yogurt.so) become Figolu's repository; its Discord stays its own.
+- Yogurt's links (github.com/FrigadeHQ/yogurt, yogurt.so) become Faisselle's repository; its Discord stays its own.
 - A file with "rebrand: keep-file" in it is left alone.
-- so.yogurt.* (the app and its helpers) becomes com.katak95.figolu.*, and the few fixed points below follow.
-- Running it twice changes nothing (test/rebrand.test.ts checks it on Figolu itself).
+- so.yogurt.* (the app and its helpers) becomes com.katak95.faisselle.*, and the few fixed points below follow.
+- Running it twice changes nothing (test/rebrand.test.ts checks it on Faisselle itself).
 """
 import re
 import sys
@@ -29,59 +29,59 @@ SKIP_EXT = {'.png', '.icns', '.ttf', '.wav', '.zip', '.jpg', '.jpeg', '.webp', '
 SKIP_DIRS = {'node_modules', 'target', 'out', 'dist', '.git'}
 # a whole word; an escape just before it (the n of \\n in a string) doesn't make it part of another word
 WORD = re.compile(r'(?:(?<![A-Za-z0-9_])|(?<=\\[nrt]))Yogurt(?![A-Za-z0-9_])')
-OURS = re.compile(r'Figolu|Frigade')
+OURS = re.compile(r'Faisselle|Frigade')
 
 # exact replacements, file by file: the places where the name is not just the word
 FIXED = {
     'app/electron-builder.yml': [
-        ('  owner: FrigadeHQ\n  repo: yogurt', '  owner: katak95\n  repo: figolu'),
-        ('extraMetadata:\n  name: yogurt', 'extraMetadata:\n  name: figolu'),
-        ('# Linux: `yogurt` becomes a launcher', '# Linux: `figolu` becomes a launcher'),
-        ('  executableName: yogurt\n', '  executableName: figolu\n'),
-        ('but the window is "yogurt".', 'but the window is "figolu".'),
+        ('  owner: FrigadeHQ\n  repo: yogurt', '  owner: katak95\n  repo: faisselle'),
+        ('extraMetadata:\n  name: yogurt', 'extraMetadata:\n  name: faisselle'),
+        ('# Linux: `yogurt` becomes a launcher', '# Linux: `faisselle` becomes a launcher'),
+        ('  executableName: yogurt\n', '  executableName: faisselle\n'),
+        ('but the window is "yogurt".', 'but the window is "faisselle".'),
     ],
-    'app/build/linux-launcher.sh': [('(yogurt-bin)', '(figolu-bin)'), ('exec "$here/yogurt-bin" "$@"', 'exec "$here/figolu-bin" "$@"')],
+    'app/build/linux-launcher.sh': [('(yogurt-bin)', '(faisselle-bin)'), ('exec "$here/yogurt-bin" "$@"', 'exec "$here/faisselle-bin" "$@"')],
     'app/scripts/linux-launcher.cjs': [
-        ('on Linux, `yogurt` becomes build/linux-launcher.sh and Electron moves to yogurt-bin', 'on Linux, `figolu` becomes build/linux-launcher.sh and Electron moves to figolu-bin'),
-        ('on `yogurt`: they belong', 'on `figolu`: they belong'),
+        ('on Linux, `yogurt` becomes build/linux-launcher.sh and Electron moves to yogurt-bin', 'on Linux, `faisselle` becomes build/linux-launcher.sh and Electron moves to faisselle-bin'),
+        ('on `yogurt`: they belong', 'on `faisselle`: they belong'),
     ],
-    'app/src/main/detect.ts': [("win32: ['yogurt-audio.exe', 'yogurt.exe'], linux: ['yogurt-audio', 'yogurt', 'Figolu'] }",
-                                "win32: ['yogurt-audio.exe', 'figolu.exe'], linux: ['yogurt-audio', 'figolu', 'figolu-bin', 'Figolu'] }")],
-    'app/test/detect.test.ts': [("[['win32', ['yogurt-audio.exe', 'yogurt.exe']], ['linux', ['yogurt-audio', 'yogurt', 'Figolu']]]",
-                                 "[['win32', ['yogurt-audio.exe', 'figolu.exe']], ['linux', ['yogurt-audio', 'figolu', 'figolu-bin', 'Figolu']]]")],
-    'app/src/shared/project.ts': [("export const projectWebsite = 'https://yogurt.so'", "export const projectWebsite = 'https://github.com/katak95/figolu'"),
-                                  ("export const projectRepository = 'https://github.com/FrigadeHQ/yogurt'", "export const projectRepository = 'https://github.com/katak95/figolu'")],
-    'app/src/shared/exportNotes.ts': [("'[Figolu](https://yogurt.so)'", "'[Figolu](https://github.com/katak95/figolu)'")],
-    'app/test/exportNotes.test.ts': [(r'\(https:\/\/yogurt\.so\)', r'\(https:\/\/github\.com\/katak95\/figolu\)')],
-    'app/test/aboutYogurt.test.ts': [('href="https://github.com/FrigadeHQ/yogurt"', 'href="https://github.com/katak95/figolu"')],
-    'app/test/share.test.ts': [("urls: ['https://yogurt.so']", "urls: ['https://github.com/katak95/figolu']")],
+    'app/src/main/detect.ts': [("win32: ['yogurt-audio.exe', 'yogurt.exe'], linux: ['yogurt-audio', 'yogurt', 'Faisselle'] }",
+                                "win32: ['yogurt-audio.exe', 'faisselle.exe'], linux: ['yogurt-audio', 'faisselle', 'faisselle-bin', 'Faisselle'] }")],
+    'app/test/detect.test.ts': [("[['win32', ['yogurt-audio.exe', 'yogurt.exe']], ['linux', ['yogurt-audio', 'yogurt', 'Faisselle']]]",
+                                 "[['win32', ['yogurt-audio.exe', 'faisselle.exe']], ['linux', ['yogurt-audio', 'faisselle', 'faisselle-bin', 'Faisselle']]]")],
+    'app/src/shared/project.ts': [("export const projectWebsite = 'https://yogurt.so'", "export const projectWebsite = 'https://github.com/katak95/faisselle'"),
+                                  ("export const projectRepository = 'https://github.com/FrigadeHQ/yogurt'", "export const projectRepository = 'https://github.com/katak95/faisselle'")],
+    'app/src/shared/exportNotes.ts': [("'[Faisselle](https://yogurt.so)'", "'[Faisselle](https://github.com/katak95/faisselle)'")],
+    'app/test/exportNotes.test.ts': [(r'\(https:\/\/yogurt\.so\)', r'\(https:\/\/github\.com\/katak95\/faisselle\)')],
+    'app/test/aboutYogurt.test.ts': [('href="https://github.com/FrigadeHQ/yogurt"', 'href="https://github.com/katak95/faisselle"')],
+    'app/test/share.test.ts': [("urls: ['https://yogurt.so']", "urls: ['https://github.com/katak95/faisselle']")],
 }
 # whole-file word swaps for files that name the Linux binary
-FIXED_WORDS = {'app/test/linuxLauncher.test.ts': [("'yogurt'", "'figolu'")]}
+FIXED_WORDS = {'app/test/linuxLauncher.test.ts': [("'yogurt'", "'faisselle'")]}
 
 
-REPO = 'https://github.com/katak95/figolu'
+REPO = 'https://github.com/katak95/faisselle'
 DISCORD = '\0discord\0'
 
 
 def rename_text(text: str, test: bool = False) -> str:
     out = []
     for line in text.split('\n'):
-        # Figolu's own lines: they name Figolu, or say to keep them (the credits to Yogurt)
-        if 'Figolu' in line or 'rebrand: keep' in line:
+        # Faisselle's own lines: they name Faisselle, or say to keep them (the credits to Yogurt)
+        if 'Faisselle' in line or 'rebrand: keep' in line:
             out.append(line); continue
-        # Yogurt's links are Figolu's: its repository and its website (Figolu has no website: the repository)
-        # (but Yogurt's Discord stays Yogurt's: Figolu has none)
+        # Yogurt's links are Faisselle's: its repository and its website (Faisselle has no website: the repository)
+        # (but Yogurt's Discord stays Yogurt's: Faisselle has none)
         line = line.replace('https://yogurt.so/discord', DISCORD)
         line = line.replace('https://github.com/FrigadeHQ/yogurt', REPO).replace('https://yogurt.so', REPO)
         # a test expecting the website's name, as the app shows it, sees the repository's host
         if test:
             # the same in an escaped regex (https:\/\/yogurt\.so), then the bare host name
-            line = line.replace(r'https:\/\/yogurt\.so', r'https:\/\/github\.com\/katak95\/figolu').replace(r'yogurt\.so', r'github\.com')
+            line = line.replace(r'https:\/\/yogurt\.so', r'https:\/\/github\.com\/katak95\/faisselle').replace(r'yogurt\.so', r'github\.com')
             line = line.replace('yogurt.so', 'github.com')
         line = line.replace(DISCORD, 'https://yogurt.so/discord')
-        out.append(line if 'Frigade' in line else WORD.sub('Figolu', line))
-    return '\n'.join(out).replace('so.yogurt.', 'com.katak95.figolu.')
+        out.append(line if 'Frigade' in line else WORD.sub('Faisselle', line))
+    return '\n'.join(out).replace('so.yogurt.', 'com.katak95.faisselle.')
 
 
 def rebrand(root: Path, check: bool = False) -> list:

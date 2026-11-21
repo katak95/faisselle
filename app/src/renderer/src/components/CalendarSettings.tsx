@@ -56,7 +56,7 @@ export function CalendarSettings({ connect = false }: { connect?: boolean } = {}
     try { if (!await window.yogurt.calendar.removeLink(id)) throw new Error('Calendar unavailable') } catch { setError(true) } finally { setBusy(false); reload() }
   }
   const summary = !view ? t('Loading calendars…')
-    : view.status === 'error' ? t("Figolu couldn't read your calendars.")
+    : view.status === 'error' ? t("Faisselle couldn't read your calendars.")
     : view.status !== 'granted' ? (link ? t('Connect a calendar to see your meetings.') : t('Allow calendar access to choose your calendars.'))
     : !view.calendars.length ? (link ? t('Connect a calendar to see your meetings.') : t('No calendars found on this Mac.'))
     : !selected.length ? t('No calendars selected.')
@@ -69,13 +69,13 @@ export function CalendarSettings({ connect = false }: { connect?: boolean } = {}
       <button type="button" data-testid="calendar-settings-toggle" aria-expanded={open} aria-controls="settings-calendar-list" onClick={() => { expanded = !open; setOpen(expanded) }} className="settings-row settings-disclosure">
         <span className="settings-row-copy">
           <LoadingContent pending={!view} skeleton={<span className="settings-label settings-calendar-summary"><span className="loading-bar" style={{ width: 150 }} /></span>}><span data-testid="calendar-settings-summary" className="settings-label settings-calendar-summary" title={summary}>{summary}</span></LoadingContent>
-          <span className="settings-description block">{t('Figolu reads these calendars and never changes them.')}</span>
+          <span className="settings-description block">{t('Faisselle reads these calendars and never changes them.')}</span>
         </span>
         <ChevronDown size={16} aria-hidden="true" />
       </button>
       <div id="settings-calendar-list" className="accordion" data-open={open} inert={!open || undefined}><div className="settings-calendar-list">
         <LoadingContent pending={!view} skeleton={<Loading layout="calendars" />}>{view && <>{(view.status === 'error' || !link && sys !== 'granted') && <div className="settings-row">
-            <p className="settings-description settings-row-copy">{readFailed ? t("Figolu couldn't read your calendars.") : t('Allow calendar access to choose your calendars.')}</p>
+            <p className="settings-description settings-row-copy">{readFailed ? t("Faisselle couldn't read your calendars.") : t('Allow calendar access to choose your calendars.')}</p>
             <button className="workspace-button" onClick={() => { if (readFailed) reload(); else void window.yogurt.calendar.connect().then(reload) }}>{readFailed ? t('Try again') : t('Connect calendar')}</button>
           </div>}
           {!link && sys === 'granted' && !view.calendars.some((c) => !c.link) && <p className="settings-row settings-description">{t('No calendars found on this Mac.')}</p>}
@@ -111,7 +111,7 @@ export function CalendarSettings({ connect = false }: { connect?: boolean } = {}
               onClick={() => void hideWithoutLink()} className="settings-toggle"><span className="settings-toggle-knob" /></button>
           </div>
           {!link && <div className="settings-row">
-            <span className="settings-row-copy"><span className="settings-label">{t('Calendar access')}</span><span className="settings-description block">{t('Remove Figolu’s access in System Settings.')}</span></span>
+            <span className="settings-row-copy"><span className="settings-label">{t('Calendar access')}</span><span className="settings-description block">{t('Remove Faisselle’s access in System Settings.')}</span></span>
             <button type="button" className="workspace-button shrink-0" onClick={() => void window.yogurt.permissions.open('calendar')}>{t('Open System Settings')}</button>
           </div>}
         </div>}

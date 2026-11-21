@@ -1,7 +1,7 @@
-// A stand-in for Figolu's MCP server (src/main/mcp/socket.ts): the same place to listen per OS and the same
-// framing, one JSON message a line. node server.mjs PROFILE [args Figolu was started with...]
+// A stand-in for Faisselle's MCP server (src/main/mcp/socket.ts): the same place to listen per OS and the same
+// framing, one JSON message a line. node server.mjs PROFILE [args Faisselle was started with...]
 // It writes server.pid and server.args to the profile, then ready once it listens. Methods: initialize, ping,
-// echo (answers with params.text) and bye (closes every connection, as Figolu quitting would).
+// echo (answers with params.text) and bye (closes every connection, as Faisselle quitting would).
 import { randomBytes } from 'node:crypto'
 import { appendFileSync, existsSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:net'

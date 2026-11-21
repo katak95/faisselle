@@ -48,7 +48,7 @@ export function bedrockEndpoint(modelId: string): BedrockEndpoint {
 
 /**
  * What a model takes: the effort level came with Claude Opus 4.5, the Sonnet 4.6 and Haiku 5 generations, and is
- * refused before (Claude Haiku 4.5, Sonnet 4.5). An ID Figolu can't read is taken as a current model.
+ * refused before (Claude Haiku 4.5, Sonnet 4.5). An ID Faisselle can't read is taken as a current model.
  */
 export function modelTakesEffort(modelId: string): boolean {
   const m = /claude-(opus|sonnet|haiku|fable|mythos)-(\d+)(?:-(\d+))?/i.exec(modelId)

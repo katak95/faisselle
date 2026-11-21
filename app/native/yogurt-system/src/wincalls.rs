@@ -123,7 +123,7 @@ fn node(el: &IUIAutomationElement, depth: usize, budget: &mut i32) -> Value {
     Value::Object(n)
 }
 
-/// The watch: read the apps asked about every `every_ms`, until Figolu closes stdin (or dies, which closes it too)
+/// The watch: read the apps asked about every `every_ms`, until Faisselle closes stdin (or dies, which closes it too)
 pub fn watch(every_ms: u64, ids: &[String]) -> ! {
     std::thread::spawn(|| {
         let mut sink = Vec::new();

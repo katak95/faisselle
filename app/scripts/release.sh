@@ -1,5 +1,5 @@
 #!/bin/sh
-# A new Figolu for Mac, Windows and Linux: sh app/scripts/release.sh 0.3.0
+# A new Faisselle for Mac, Windows and Linux: sh app/scripts/release.sh 0.3.0
 # Sets the version, commits, tags v0.3.0 and pushes. GitHub Actions (.github/workflows/release.yml) builds all three,
 # signs and notarizes the Mac, and publishes one release once all three built; the download links and installed
 # copies pick it up from there.
@@ -8,7 +8,7 @@
 # signed, notarized Mac here (release-mac.sh), commits and pushes main (no tag), puts the Mac in a draft release at that
 # commit and starts release.yml to add Windows and Linux to the draft. Nothing is published: check the draft, then
 #   gh release edit v0.3.0 --draft=false --latest
-# Run it in a checkout no Figolu from app/dist/ is running from (release-mac.sh rebuilds dist/ and the helpers).
+# Run it in a checkout no Faisselle from app/dist/ is running from (release-mac.sh rebuilds dist/ and the helpers).
 set -e
 cd "$(dirname "$0")/../.."
 VERSION="$1"
@@ -37,10 +37,10 @@ j.version = process.argv[1]; fs.writeFileSync(p, JSON.stringify(j, null, 2) + "\
 ' "$VERSION"
 
 if [ "$MODE" != --mac-local ]; then
-  git commit -qm "Figolu $VERSION" app/package.json
+  git commit -qm "Faisselle $VERSION" app/package.json
   git tag "v$VERSION"
   git push -q origin main "v$VERSION"
-  echo "Building Figolu $VERSION: $REPO_URL/actions/workflows/release.yml"
+  echo "Building Faisselle $VERSION: $REPO_URL/actions/workflows/release.yml"
   if command -v gh >/dev/null; then
     sleep 15
     gh run watch --exit-status "$(gh run list --workflow release.yml --branch "v$VERSION" --limit 1 --json databaseId --jq '.[0].databaseId')" >/dev/null
@@ -54,14 +54,14 @@ trap 'git checkout -q app/package.json' EXIT
 sh app/scripts/release-mac.sh
 D=app/dist
 # only a notarized Developer ID build goes in a release
-xcrun stapler validate "$D/Figolu-mac-arm64.dmg"
-codesign -dv "$D/mac-arm64/Figolu.app" 2>&1 | grep -q 'TeamIdentifier=2JNSQVN3N8' || { echo "the app isn't signed with the Developer ID" >&2; exit 1; }
+xcrun stapler validate "$D/Faisselle-mac-arm64.dmg"
+codesign -dv "$D/mac-arm64/Faisselle.app" 2>&1 | grep -q 'TeamIdentifier=2JNSQVN3N8' || { echo "the app isn't signed with the Developer ID" >&2; exit 1; }
 trap - EXIT
-git commit -qm "Figolu $VERSION" app/package.json
+git commit -qm "Faisselle $VERSION" app/package.json
 git push -q origin main
 SHA=$(git rev-parse HEAD)
-gh release create "v$VERSION" --draft --target "$SHA" --title "Figolu $VERSION" --generate-notes \
-  "$D/Figolu-mac-arm64.dmg" "$D/Figolu-mac-arm64.dmg.blockmap" "$D/Figolu-mac-arm64.zip" "$D/Figolu-mac-arm64.zip.blockmap" "$D/latest-mac.yml"
+gh release create "v$VERSION" --draft --target "$SHA" --title "Faisselle $VERSION" --generate-notes \
+  "$D/Faisselle-mac-arm64.dmg" "$D/Faisselle-mac-arm64.dmg.blockmap" "$D/Faisselle-mac-arm64.zip" "$D/Faisselle-mac-arm64.zip.blockmap" "$D/latest-mac.yml"
 gh workflow run release.yml --ref main -f draft="v$VERSION"
 echo "Building Windows and Linux for the draft: $REPO_URL/actions/workflows/release.yml"
 sleep 15

@@ -14,7 +14,7 @@ Settings → Notes model → Where summaries are written → Amazon Bedrock (Cla
 3. **Sign in to AWS**: the browser opens AWS's approval page with a code. Approve it there.
 4. Pick the **Account** and the **Role**.
 5. **Bedrock region** and **Model**: `eu-west-1` and `anthropic.claude-haiku-5-5` by default. The model ID chooses
-   how Figolu reaches Bedrock, and so the permission the role needs:
+   how Faisselle reaches Bedrock, and so the permission the role needs:
 
    | Model ID | Endpoint | The role needs |
    |---|---|---|
@@ -22,7 +22,7 @@ Settings → Notes model → Where summaries are written → Amazon Bedrock (Cla
    | `eu.anthropic.claude-haiku-4-5-20251001-v1:0`, `anthropic.claude-…-v1:0`, an inference profile (`eu.`, `us.`, `global.`…) or an ARN | InvokeModel, `bedrock-runtime.<region>.amazonaws.com` | `bedrock:InvokeModelWithResponseStream` |
 
    A role that already works for other projects with InvokeModel works here with the same model ID or inference
-   profile. With Claude Haiku 4.5 and older models, Figolu leaves out the effort level, which they don't take.
+   profile. With Claude Haiku 4.5 and older models, Faisselle leaves out the effort level, which they don't take.
 6. **Check**: sends one very short request. When AWS refuses it, the message names the permission the role lacks.
 
 What to check in AWS:
@@ -36,20 +36,20 @@ download as usual). Switching to Bedrock later stops a notes model download stil
 switching back picks up where it stopped), and Settings offers to **Remove** a notes model already on the computer.
 Switching back to this computer downloads it again.
 
-Figolu keeps the Identity Center token sealed with your system keychain, in `aws-sso.json` in its data folder. The
+Faisselle keeps the Identity Center token sealed with your system keychain, in `aws-sso.json` in its data folder. The
 role's keys stay in memory and are fetched again before they expire. A meeting's summary stays under 100K input
 tokens, so long meetings are summarised in parts at the lower price.
 
 ## Microsoft 365 (read only)
 
-Settings → Microsoft 365 → Connect. Figolu starts the open-source
+Settings → Microsoft 365 → Connect. Faisselle starts the open-source
 [Softeria ms-365-mcp-server](https://github.com/Softeria/ms-365-mcp-server) itself, in read-only mode with only these
 tools: `login`, `verify-login`, `logout`, `get-calendar-view`, `get-calendar-event`, `list-mail-messages`,
 `read-mail-text`. Nothing can be sent, changed or deleted.
 
 - Microsoft's page opens; enter the code Settings shows.
 - **Show the Outlook calendar** adds your Outlook meetings to the agenda.
-- For a meeting, Figolu reads the invite (Outlook meetings) and up to 8 recent emails with the people invited. They
+- For a meeting, Faisselle reads the invite (Outlook meetings) and up to 8 recent emails with the people invited. They
   go into the summary, the follow-up email and the brief as context. Each note can turn this off
   (**Read the invite and related emails**).
 - If your organisation blocks the default app, ask your administrator to register one (delegated `Calendars.Read`,
@@ -58,7 +58,7 @@ tools: `login`, `verify-login`, `logout`, `get-calendar-view`, `get-calendar-eve
 ### An app that doesn't allow the device code
 
 The code above needs **Allow public client flows** turned on in the app's Azure settings. When it's off (Microsoft
-then refuses with `AADSTS7000218`), Figolu signs in with the browser instead, on a redirect URI the app already has,
+then refuses with `AADSTS7000218`), Faisselle signs in with the browser instead, on a redirect URI the app already has,
 for example the one Claude Code uses with it. Nothing changes in Azure.
 
 1. Settings → Microsoft 365 → **Use your organization's own app**: the **Application (client) ID** and **Directory
@@ -69,15 +69,15 @@ for example the one Claude Code uses with it. Nothing changes in Azure.
    for that server in `~/.claude.json`. Only `http://localhost:PORT/…` or `http://127.0.0.1:PORT/…` addresses work.
 4. **Client secret**: only if that redirect URI is on the app's **Web** platform (Microsoft then asks for it; on
    **Mobile and desktop applications** it refuses one). It is sealed with the system keychain and never shown again.
-5. **Save**, then **Connect**: Microsoft's page opens in the browser and comes back to Figolu.
+5. **Save**, then **Connect**: Microsoft's page opens in the browser and comes back to Faisselle.
 
-Figolu asks for what the app is already allowed (`https://graph.microsoft.com/.default`): the delegated permissions
+Faisselle asks for what the app is already allowed (`https://graph.microsoft.com/.default`): the delegated permissions
 listed above and, for documents, those listed below, approved by an administrator. It keeps the sign-in sealed in
-`m365-oauth.json` in its data folder and renews it by itself; **Disconnect** forgets it. While Figolu signs in, the
+`m365-oauth.json` in its data folder and renews it by itself; **Disconnect** forgets it. While Faisselle signs in, the
 redirect URI's port must be free: finish a Claude Code sign-in that uses it first. Settings says what Microsoft
 refused (the secret, the redirect URI, the port).
 
-The server's token cache lives in Figolu's data folder (`m365-token-cache.json`).
+The server's token cache lives in Faisselle's data folder (`m365-token-cache.json`).
 
 ### SharePoint and OneDrive (optional)
 
@@ -87,14 +87,14 @@ Settings → Microsoft 365 → **Search SharePoint and OneDrive**. Off by defaul
   Search) and `download-bytes`. Still read only, and nothing else is turned on. You sign in again so Microsoft asks for
   the new permissions.
 - Microsoft Search's tool asks for these delegated permissions: `Files.Read.All`, `Sites.Read.All`, `People.Read`,
-  `Chat.Read`, `ChannelMessage.Read.All` (plus `Mail.Read` and `Calendars.Read`). Figolu only searches documents
+  `Chat.Read`, `ChannelMessage.Read.All` (plus `Mail.Read` and `Calendars.Read`). Faisselle only searches documents
   (`driveItem`, `listItem`); it never reads chats or channels, but the tool can't be turned on without asking for them.
   Most tenants need an **administrator to approve** them once: Settings says so when Microsoft refuses.
-- For each meeting, Figolu searches with the meeting title's meaningful words and the companies of the people invited
+- For each meeting, Faisselle searches with the meeting title's meaningful words and the companies of the people invited
   (from their email addresses), in documents changed in the last 12 months. It takes up to 8 hits with Microsoft's
   snippets, and reads in full the 3 most relevant ones under 8 MB (Word, PowerPoint, Excel, PDF, text), each cut to
   3,000 characters.
-- The documents are used by the **brief** (with a "Related documents" list of links, built by Figolu from the
+- The documents are used by the **brief** (with a "Related documents" list of links, built by Faisselle from the
   search, never by the model), the **summary** (as background only) and **Ask** about a meeting. The follow-up email
   doesn't use them.
 - Each note's **Read the invite, related emails and documents** turns all of this off for that meeting.
@@ -111,17 +111,17 @@ Settings → Microsoft 365 → **Search SharePoint and OneDrive**. Off by defaul
 
 ## Confluence (Atlassian)
 
-Settings → Atlassian → **Connect**. Figolu talks to Atlassian's own remote MCP server
+Settings → Atlassian → **Connect**. Faisselle talks to Atlassian's own remote MCP server
 (`https://mcp.atlassian.com/v2/mcp`) and signs in with OAuth: your browser opens Atlassian's sign-in page, then comes
-back to Figolu on `http://localhost:33418/oauth/callback` (another free port if that one is taken). The sign-in is
-sealed with your system keychain in `atlassian.json` in Figolu's data folder.
+back to Faisselle on `http://localhost:33418/oauth/callback` (another free port if that one is taken). The sign-in is
+sealed with your system keychain in `atlassian.json` in Faisselle's data folder.
 
 - **Send to Confluence** (a note's Copy menu, once its summary is written) creates a page in your **personal space**,
-  under a page called **Meeting notes** that Figolu makes the first time. The page has the meeting's date, length and
+  under a page called **Meeting notes** that Faisselle makes the first time. The page has the meeting's date, length and
   people, the summary, and the action items as Confluence tasks (ticked ones ticked).
 - Sending the same note again **updates** its page (a new version), it never makes a copy. A page deleted in
   Confluence is made again.
-- Figolu reads the tools Atlassian's server offers when you connect and adapts to their names and parameters, so a
+- Faisselle reads the tools Atlassian's server offers when you connect and adapts to their names and parameters, so a
   change on Atlassian's side (v1 to v2) doesn't break sending.
 
 What may be needed on Atlassian's side:
@@ -129,4 +129,4 @@ What may be needed on Atlassian's side:
 - An organisation admin may have to allow Atlassian's MCP server (Rovo) for your site, and the Confluence write
   permission for it. Settings says so when Atlassian refuses.
 - Some organisations restrict OAuth redirects: the `localhost` callback above must then be allowed.
-- You need a personal space in Confluence (Profile → Personal space). Figolu says so if there is none.
+- You need a personal space in Confluence (Profile → Personal space). Faisselle says so if there is none.

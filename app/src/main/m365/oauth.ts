@@ -4,7 +4,7 @@ import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from 'nod
 /**
  * Microsoft 365 signed in with the browser: OAuth 2.0 authorization code with PKCE, on the redirect URI an existing
  * Azure app already has (for example the one Claude Code uses: http://localhost:PORT/callback). For organisations whose
- * app doesn't allow the device code ("Allow public client flows" off). Figolu then hands the access token to the
+ * app doesn't allow the device code ("Allow public client flows" off). Faisselle then hands the access token to the
  * Softeria server (MS365_MCP_OAUTH_TOKEN) and refreshes it itself.
  */
 

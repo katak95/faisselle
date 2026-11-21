@@ -357,7 +357,7 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
   }
   const hasSummary = !!notes.enhanced?.trim()
   const transcribing=transcriptionBusy(m.transcriptionState)
-  const runTranscript=async(again=false)=>{if(!await saveAll())return;try{const started=await window.yogurt.transcript.run(id,again);if(started)setPrimary('transcript')}catch{toasts.add({title:t("Figolu couldn't transcribe this file.")})}}
+  const runTranscript=async(again=false)=>{if(!await saveAll())return;try{const started=await window.yogurt.transcript.run(id,again);if(started)setPrimary('transcript')}catch{toasts.add({title:t("Faisselle couldn't transcribe this file.")})}}
   const transcriptReason=recording||m.stopSavePending?t('Available after recording'):transcribing?t('Transcribing…'):summarizing?t('Summarizing…'):!hasAudio?t('Audio is unavailable.'):undefined
   const generation = summaryAction({ hasSummary, hasContent: hasTranscript || !!notes.mine.trim(), recording, busy: summarizing, downloading: !!(setup?.notesDownloading || setup?.notesError), trashed })
   if(generation&&transcribing)generation.reason=t('Transcribing…')
@@ -418,7 +418,7 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
                   </button>}
                 </div>
               </div>
-              {transcribing&&<TranscriptionControl state={m.transcriptionState!} onStop={()=>void window.yogurt.transcript.stop(id).catch(()=>toasts.add({title:t("Figolu couldn't transcribe this file.")}))}/>}
+              {transcribing&&<TranscriptionControl state={m.transcriptionState!} onStop={()=>void window.yogurt.transcript.stop(id).catch(()=>toasts.add({title:t("Faisselle couldn't transcribe this file.")}))}/>}
               <ShareMenu id={id} shown={shown} status={notes.status} hasEnhanced={notes.enhanced != null} beforeUse={saveAll} />
             </div>
           </div>
@@ -479,7 +479,7 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
         <footer ref={setFooter} className="note-footer">
             {m.stopSavePending && (
               <InlineError testId="note-stop-unsaved" className="mt-5">
-                <span>{t("Recording stopped. Figolu couldn't save when it ended. Keep Figolu open and try again.")}</span>
+                <span>{t("Recording stopped. Faisselle couldn't save when it ended. Keep Faisselle open and try again.")}</span>
                 <button data-testid="note-stop-retry" disabled={retryingStop} className="workspace-button" onClick={() => {
                   setRetryingStop(true)
                   void window.yogurt.meetings.retryStopSave(id).then((saved) => {
@@ -500,7 +500,7 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
               <button data-testid="note-save-retry" className="workspace-button" onClick={() => { void saveAll() }}>{t('Try again')}</button>
             </InlineError>
           )}
-          {startFailed && <p role="alert" className="pointer-events-auto mx-auto mt-3 w-fit text-[13px] text-danger">{t("Figolu couldn't start the notes. Try again in a moment.")}</p>}
+          {startFailed && <p role="alert" className="pointer-events-auto mx-auto mt-3 w-fit text-[13px] text-danger">{t("Faisselle couldn't start the notes. Try again in a moment.")}</p>}
           {resumeFailed && <p data-testid="note-resume-failed" role="alert" className="pointer-events-auto mx-auto mt-3 w-fit max-w-[calc(100%-32px)] text-[13px] text-danger">{t("Couldn't resume recording. Your existing note and audio are kept. Try again.")}</p>}
           {pauseFailed && recording && <p role="alert" className="pointer-events-auto mx-auto mt-3 w-fit text-[13px] text-danger">{pauseFailed === 'pause' ? t("Couldn't pause the recording. Try again.") : t("Couldn't resume the recording. Try again.")}</p>}
           {recording && hint && <RecordingHint hint={hint} />}
@@ -515,7 +515,7 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
               <span aria-hidden="true">·</span>
             </>}
             {minutes != null && <><span data-testid="note-duration">{t('{count} min', { count: minutes })}</span><span aria-hidden="true">·</span></>}
-            {t('Figolu can make mistakes.')}
+            {t('Faisselle can make mistakes.')}
           </div>
           <Ask id={id} recording={recording} anchor={chatAnchor} onSource={onSource} />
           </div>
@@ -571,7 +571,7 @@ function Enhanced({ notes, presentation, disabled, onChange, onBlur, onRetry, fo
   if (presentation === 'failed') {
     return (
       <InlineError testId="note-enhanced-failed">
-        <span>{t("Figolu couldn't generate this summary.")}</span>
+        <span>{t("Faisselle couldn't generate this summary.")}</span>
         <button onClick={onRetry} className="workspace-button">{t('Try again')}</button>
       </InlineError>
     )
@@ -584,7 +584,7 @@ function Enhanced({ notes, presentation, disabled, onChange, onBlur, onRetry, fo
   if (presentation === 'waiting') {
     return (
       <NotesModelWait downloading={(percent) => (
-        <p data-testid="note-enhanced-model-download" role="status" className="text-[15px] text-muted">{t("Your summary is waiting for Figolu's AI to download.")} {percent && <span className="whitespace-nowrap">{percent}</span>}</p>
+        <p data-testid="note-enhanced-model-download" role="status" className="text-[15px] text-muted">{t("Your summary is waiting for Faisselle's AI to download.")} {percent && <span className="whitespace-nowrap">{percent}</span>}</p>
       )}>
         <SummaryWaiting part={status === 'writing' ? notes.part : undefined} />
       </NotesModelWait>
@@ -593,7 +593,7 @@ function Enhanced({ notes, presentation, disabled, onChange, onBlur, onRetry, fo
   return (
     <div data-testid="note-enhanced" data-status={status} className={presentation === 'streaming' ? 'streaming' : ''}>
       {status === 'failed' && <InlineError testId="note-enhanced-rewrite-failed" className="mb-6">
-        <span>{t("Figolu couldn't regenerate the summary, so your previous version is still shown.")}</span>
+        <span>{t("Faisselle couldn't regenerate the summary, so your previous version is still shown.")}</span>
         <button onClick={onRetry} className="workspace-button">{t('Try again')}</button>
       </InlineError>}
       {rewriting && <SummaryWaiting outline={false} part={status === 'writing' ? notes.part : undefined} />}

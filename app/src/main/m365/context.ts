@@ -17,7 +17,7 @@ const CONTEXT_MS = 10 * 60_000
 const OUTLOOK: CalendarSource = { id: 'm365', name: 'Outlook', source: 'Microsoft 365' }
 
 /**
- * Microsoft 365 as Figolu uses it: the Outlook calendar beside the others (calendar.ts reads it like a calendar
+ * Microsoft 365 as Faisselle uses it: the Outlook calendar beside the others (calendar.ts reads it like a calendar
  * link), and for one meeting its invite, the recent emails with the people in it and (when turned on) related
  * SharePoint and OneDrive documents, as text for the model.
  */

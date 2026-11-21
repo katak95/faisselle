@@ -8,12 +8,12 @@ import { authorizeUrl, M365AuthError, parseRedirect, pkce, tokenRequest, type Ap
 import { waitForCode } from '../atlassian/oauth'
 
 /**
- * Microsoft 365 as an MCP client: Figolu starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
+ * Microsoft 365 as an MCP client: Faisselle starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
  * only) with Electron's own Node, and talks to it over stdio. Signing in is Microsoft's device code: the browser opens
- * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Figolu's
+ * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Faisselle's
  * folder.
  *
- * An organisation's app that doesn't allow the device code signs in with the browser instead (oauth.ts): Figolu gets
+ * An organisation's app that doesn't allow the device code signs in with the browser instead (oauth.ts): Faisselle gets
  * the token on the app's own redirect URI, gives it to the server (MS365_MCP_OAUTH_TOKEN) and starts the server again
  * with a new one before it runs out.
  */
@@ -50,7 +50,7 @@ async function startServer(o: M365Options, token?: string): Promise<{ call: Call
   const documents = o.documents?.() ?? false
   const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)], env, stderr: 'pipe' })
   transport.stderr?.on('data', (b: Buffer) => { const line = b.toString().trim(); if (line) console.info('M365', line.slice(0, 500)) })
-  const client = new Client({ name: 'Figolu', version: '1' })
+  const client = new Client({ name: 'Faisselle', version: '1' })
   await client.connect(transport)
   return {
     call: (name, args) => client.callTool({ name, arguments: args }, undefined, { timeout: 60_000 }),
@@ -171,7 +171,7 @@ export function createM365(o: M365Options) {
     async signOut() {
       polling++
       cancelBrowser?.abort()
-      // the browser sign-in's tokens are Figolu's own: forgetting them signs out
+      // the browser sign-in's tokens are Faisselle's own: forgetting them signs out
       if (browserApp()) o.store!.setTokens(undefined)
       else try { await call(TOOLS.logout, {}) } catch (e) { console.warn('Microsoft 365 sign-out failed', e) }
       await this.stop()

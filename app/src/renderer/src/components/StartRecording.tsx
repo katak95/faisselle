@@ -63,12 +63,12 @@ export function StartRecording({ onStarted, onGone, emptyActions, compact, testI
       const result = await window.yogurt.meetings.start(eventId)
       if ('error' in result) {
         if (result.error === 'gone') { setEvents([]); void load(); onGone?.() }
-        toasts.add({ id: 'start-recording-message', data: { testId: 'start-recording-message' }, title: result.error === 'gone' ? t('That meeting is no longer on your calendar.') : t("Figolu couldn't start the notes. Try again in a moment.") })
+        toasts.add({ id: 'start-recording-message', data: { testId: 'start-recording-message' }, title: result.error === 'gone' ? t('That meeting is no longer on your calendar.') : t("Faisselle couldn't start the notes. Try again in a moment.") })
         return
       }
       if (!result.alreadyRecording && !result.resumeRequested) onStarted?.(result.id)
     } catch {
-      toasts.add({ id: 'start-recording-message', data: { testId: 'start-recording-message' }, title: t("Figolu couldn't start the notes. Try again in a moment.") })
+      toasts.add({ id: 'start-recording-message', data: { testId: 'start-recording-message' }, title: t("Faisselle couldn't start the notes. Try again in a moment.") })
     } finally { setStarting(false) }
   }
   const choices = recordingChoices(events, now)

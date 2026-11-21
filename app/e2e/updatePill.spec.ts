@@ -19,7 +19,7 @@ test('The corner button opens the approved menu by keyboard and offers a ready u
   const { app, page } = await launch()
   try {
     const button = page.getByRole('button', { name: 'Help and settings' })
-    const menu = page.getByRole('menu', { name: 'Figolu menu' })
+    const menu = page.getByRole('menu', { name: 'Faisselle menu' })
     const badge = page.getByTestId('corner-notice-dot')
     await expect(button).toHaveAccessibleDescription('Update ready')
     await expect(badge).toBeVisible()
@@ -99,7 +99,7 @@ for (const failure of ['false', 'reject'] as const) test(`keeps the update ready
       ipcMain.handle('updates:restart', () => { if (failure === 'reject') throw new Error('unavailable'); return false })
     }, failure)
     await page.getByTestId('corner-menu-button').click(); await page.getByTestId('update-restart').click()
-    await expect(page.getByTestId('corner-menu').getByRole('alert')).toHaveText("Figolu couldn't restart. Try again.")
+    await expect(page.getByTestId('corner-menu').getByRole('alert')).toHaveText("Faisselle couldn't restart. Try again.")
     await expect(page.getByTestId('corner-notice-dot')).toHaveCount(0)
     await expect(page.getByTestId('update-restart')).toBeEnabled()
     expect(await restarts(app)).toBe(0)

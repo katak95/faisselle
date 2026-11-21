@@ -60,8 +60,8 @@ it('uses the approved eight rows and appends the downloaded version nearest the 
   }
   expect(nodes(tree).filter(n => n.type === 'kbd').map(n => n.props.children)).toEqual(['⌘/', '⌘,', '⌘3'])
   expect(links.map(n => n.props.href)).toEqual([
-    'https://github.com/katak95/figolu/releases', 'https://github.com/katak95/figolu', 'https://yogurt.so/discord', // rebrand: keep
-    'https://github.com/katak95/figolu/issues/new', 'https://github.com/katak95/figolu/blob/main/docs/README.md',
+    'https://github.com/katak95/faisselle/releases', 'https://github.com/katak95/faisselle', 'https://yogurt.so/discord', // rebrand: keep
+    'https://github.com/katak95/faisselle/issues/new', 'https://github.com/katak95/faisselle/blob/main/docs/README.md',
   ])
   expect(props('settings-open')!['aria-current']).toBe('page')
   const focus = vi.fn()
@@ -115,7 +115,7 @@ it.each(['false','reject'])('keeps a failed restart visible and retryable (%s)',
   else restart.mockRejectedValueOnce(new Error('unavailable'))
   props('update-restart')!.onClick(); props('update-restart')!.onClick(); render()
   expect(props('update-restart')!.disabled).toBe(true); expect(restart).toHaveBeenCalledOnce()
-  await vi.waitFor(() => { render(); expect(JSON.stringify(tree)).toContain("Figolu couldn't restart. Try again.") })
+  await vi.waitFor(() => { render(); expect(JSON.stringify(tree)).toContain("Faisselle couldn't restart. Try again.") })
   expect(root().open).toBe(true)
   props('update-restart')!.onClick()
   await vi.waitFor(() => { render(); expect(root().open).toBe(false) })

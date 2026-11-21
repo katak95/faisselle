@@ -2,9 +2,9 @@ import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from 'nod
 import type { SsoStatus } from '../../shared/types'
 
 /**
- * Signing in to AWS IAM Identity Center (SSO) from inside Figolu, for the notes model on Amazon Bedrock.
- * The device flow: Figolu registers itself as a public client, the browser opens the sign-in page with the code
- * filled in, and Figolu waits for the token. The token (and the refresh token, when the organisation gives one) is
+ * Signing in to AWS IAM Identity Center (SSO) from inside Faisselle, for the notes model on Amazon Bedrock.
+ * The device flow: Faisselle registers itself as a public client, the browser opens the sign-in page with the code
+ * filled in, and Faisselle waits for the token. The token (and the refresh token, when the organisation gives one) is
  * sealed with the system keychain; the role's short-lived keys live in memory only and are fetched again before they run out.
  */
 

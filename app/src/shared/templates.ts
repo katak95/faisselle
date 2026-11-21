@@ -2,7 +2,7 @@ import { t } from './i18n'
 
 /**
  * Summary templates: the shape of the notes for a kind of meeting (a one-on-one, a client call, a retro…).
- * The general one is Figolu's own notes, unchanged. A built-in template says, in English for the model, which
+ * The general one is Faisselle's own notes, unchanged. A built-in template says, in English for the model, which
  * "## " sections to use; one the person writes says it in their own words.
  */
 export type TemplateId = string

@@ -6,7 +6,7 @@ import { openStore, type Store } from '../src/main/store'
 import { createMcp, type Mcp, type McpApp } from '../src/main/mcp/server'
 import type { CalEvent } from '../src/main/calendar'
 
-/** A made-up Figolu for the MCP tests: a real store with two meetings, and the app's actions recorded as calls. */
+/** A made-up Faisselle for the MCP tests: a real store with two meetings, and the app's actions recorded as calls. */
 const dirs: string[] = []
 const stores: Store[] = []
 afterEach(() => {

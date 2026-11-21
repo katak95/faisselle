@@ -46,7 +46,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   recordingsOffAt?: number
   /** the mic to record with (its Core Audio UID); Auto, the Mac's own input, when left out or not plugged in */
   mic?: string
-  /** Calendars excluded from Figolu's agenda and meeting detection. Others stay visible. */
+  /** Calendars excluded from Faisselle's agenda and meeting detection. Others stay visible. */
   hiddenCalendarIds?: string[]
   /** Hide events without a call link; off unless enabled. */
   hideEventsWithoutCallLink?: boolean
@@ -111,7 +111,7 @@ export function updateSettings(path: string, patch: Partial<Settings>): Settings
   return next
 }
 
-/** The language picked in Settings; the computer's when none (or one Figolu no longer has) */
+/** The language picked in Settings; the computer's when none (or one Faisselle no longer has) */
 export const localeOf = (s: Settings, system: string): string => (isLocale(s.language) ? s.language : system)
 
 export const notesProviderSetting = (s: Settings): 'local' | 'bedrock' => (s.notesProvider === 'bedrock' ? 'bedrock' : 'local')

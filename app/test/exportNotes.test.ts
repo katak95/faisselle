@@ -35,8 +35,8 @@ describe('toClipboard', () => {
     try {
       setLanguage('ja')
       const { text, html } = toClipboard('計画', true)
-      expect(text).toBe('計画\n\nFigolu で録音 · github.com')
-      expect(html).toContain('>Figolu</a> で録音 · github.com')
+      expect(text).toBe('計画\n\nFaisselle で録音 · github.com')
+      expect(html).toContain('>Faisselle</a> で録音 · github.com')
     } finally {
       setLanguage(previous)
     }
@@ -66,8 +66,8 @@ describe('toMarkdownFile', () => {
     expect(file).toContain('**Maya** (0:06)\n\nHello \\*there\\*')
     expect(file).toContain('**Them** (1:10)\n\nHm.')
   })
-  it('says on the date line that Figolu recorded it, with a link', () => {
-    expect(file.split('\n')[2]).toMatch(/^.*2026.* · Recorded with \[Figolu\]\(https:\/\/github\.com\/katak95\/figolu\)$/)
+  it('says on the date line that Faisselle recorded it, with a link', () => {
+    expect(file.split('\n')[2]).toMatch(/^.*2026.* · Recorded with \[Faisselle\]\(https:\/\/github\.com\/katak95\/faisselle\)$/)
   })
   it('leaves out the transcript section when nothing was heard', () => expect(toMarkdownFile(meeting, 'x', [])).not.toContain('Transcript'))
 })

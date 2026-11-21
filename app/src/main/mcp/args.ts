@@ -1,5 +1,5 @@
 /**
- * What another app's model sends is checked strictly before Figolu acts on it: a wrong type, a value too long or a
+ * What another app's model sends is checked strictly before Faisselle acts on it: a wrong type, a value too long or a
  * list too big is refused in plain words the model can act on, never half-done. Text here goes to that model, in English.
  */
 

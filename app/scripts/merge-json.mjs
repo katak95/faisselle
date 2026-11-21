@@ -2,7 +2,7 @@
 // A git merge driver for the translation tables (app/src/shared/locales/*.json): both sides add their new texts at the
 // end of the same object, which a line merge can't put together. This merges them key by key instead:
 //   - a key only one side added, changed or removed takes that side's change;
-//   - a key both sides changed the same way is fine; one both changed differently keeps Figolu's (ours) and says so.
+//   - a key both sides changed the same way is fine; one both changed differently keeps Faisselle's (ours) and says so.
 // Keys keep ours' order, with theirs' new ones after. Registered by .gitattributes and, where it runs,
 //   git config merge.locale-json.driver "node app/scripts/merge-json.mjs %O %A %B"
 // Exit 0: merged into %A. Exit 1 (a file that isn't a JSON object): git reports the conflict as usual.
@@ -35,6 +35,6 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
   const base = read(basePath) ?? {}, ours = read(oursPath), theirs = read(theirsPath)
   if (!ours || !theirs || Array.isArray(ours) || Array.isArray(theirs)) process.exit(1)
   const { merged, kept } = mergeObjects(base, ours, theirs)
-  if (kept.length) console.error(`merge-json: kept Figolu's text for ${kept.length} key(s) both sides changed: ${kept.slice(0, 5).join(' | ')}`)
+  if (kept.length) console.error(`merge-json: kept Faisselle's text for ${kept.length} key(s) both sides changed: ${kept.slice(0, 5).join(' | ')}`)
   writeFileSync(oursPath, JSON.stringify(merged, null, 2) + '\n')
 }

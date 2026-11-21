@@ -6,7 +6,7 @@ import { t } from '../../../shared/i18n'
 import { LoadingContent } from './LoadingContent'
 
 /**
- * Settings → Microsoft 365, read only: the Outlook calendar in Figolu, and the invite and recent emails with the
+ * Settings → Microsoft 365, read only: the Outlook calendar in Faisselle, and the invite and recent emails with the
  * people in a meeting to prepare briefs and write summaries. Signing in is Microsoft's code page, or for an
  * organisation's app that doesn't allow it, the browser on that app's redirect URI.
  */
@@ -40,12 +40,12 @@ export function M365Settings() {
         <div className="settings-row-copy">
           <p className="settings-label">{t('Outlook calendar and email')}</p>
           <p className="settings-description" aria-live="polite" data-testid="settings-m365-status">{
-            st?.state === 'connected' ? t('Connected{account}. Figolu only reads: it never sends, changes or deletes anything.', { account: st.account ? ` · ${st.account}` : '' })
+            st?.state === 'connected' ? t('Connected{account}. Faisselle only reads: it never sends, changes or deletes anything.', { account: st.account ? ` · ${st.account}` : '' })
             : st?.state === 'pending' && st.code ? t('On the Microsoft page, enter the code {code}', { code: st.code })
             : st?.state === 'pending' ? t('Finish signing in on the Microsoft page in your browser.')
             : st?.state === 'starting' ? t('Connecting…')
             : st?.state === 'error' && st.problem ? problemText(st.problem)
-            : st?.state === 'error' && st.consent ? t('Your administrator has to approve the permissions Figolu asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
+            : st?.state === 'error' && st.consent ? t('Your administrator has to approve the permissions Faisselle asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
             : st?.state === 'error' ? t("Microsoft 365 didn't connect. Try again, or ask your administrator to allow the app.")
             : t('Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.')}</p>
           {st?.state === 'pending' && <a className="settings-description underline" href={st.url} target="_blank" rel="noreferrer">{t('Open the Microsoft page again')}</a>}
@@ -67,7 +67,7 @@ export function M365Settings() {
         <div className="settings-row-copy">
           <p className="settings-label">{t('Search SharePoint and OneDrive')}</p>
           <p className="settings-description" data-testid="settings-m365-documents-description">{v?.documentsRefused
-            ? t('Your administrator has to approve the permissions Figolu asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
+            ? t('Your administrator has to approve the permissions Faisselle asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
             : t('Finds documents related to a meeting to prepare briefs, write summaries and answer questions. Needs a work account and wider read permissions, which an administrator usually approves. You sign in again when you turn it on.')}</p>
         </div>
         <button data-testid="settings-m365-documents" role="switch" aria-checked={!!v?.documents} aria-label={t('Search SharePoint and OneDrive')} onClick={() => void window.yogurt.m365.setDocuments(!v?.documents).then(setV)} className="settings-toggle"><span className="settings-toggle-knob" /></button>
@@ -76,7 +76,7 @@ export function M365Settings() {
         <div className="settings-row-copy">
           <button className="settings-description underline" onClick={() => setAdvanced(!advanced)}>{t('Use your organization\'s own app')}</button>
           {advanced && app && <div className="mt-2 flex flex-col gap-2">
-            <p className="settings-description">{t('Only if your administrator registered an app for Figolu. Leave empty otherwise.')}</p>
+            <p className="settings-description">{t('Only if your administrator registered an app for Faisselle. Leave empty otherwise.')}</p>
             <input aria-label={t('Application (client) ID')} placeholder={t('Application (client) ID')} dir="ltr" value={app.clientId} onChange={(e) => setApp({ ...app, clientId: e.target.value })} className="w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
             <input aria-label={t('Directory (tenant) ID')} placeholder={t('Directory (tenant) ID')} dir="ltr" value={app.tenantId} onChange={(e) => setApp({ ...app, tenantId: e.target.value })} className="w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
             <fieldset className="flex flex-col gap-1" data-testid="settings-m365-method">

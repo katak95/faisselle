@@ -321,7 +321,7 @@ describe('pid file', () => {
 
   it('kills a left-over whisper-server and removes the file', () => {
     const f = pidFile(); writeFileSync(f, '4242')
-    const r = rig({ 4242: '/Applications/Figolu.app/Contents/Resources/bin/whisper-server' })
+    const r = rig({ 4242: '/Applications/Faisselle.app/Contents/Resources/bin/whisper-server' })
     killStale(f, r.deps)
     expect(r.killed).toEqual([4242])
     expect(existsSync(f)).toBe(false)

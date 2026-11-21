@@ -102,7 +102,7 @@ function Actions({ id, v }: { id: string; v: ExtrasView }) {
         </button>
       </div>
     </div>
-    {failed && <InlineError testId="note-actions-failed"><span>{t("Figolu couldn't list the action items.")}</span></InlineError>}
+    {failed && <InlineError testId="note-actions-failed"><span>{t("Faisselle couldn't list the action items.")}</span></InlineError>}
     {v.actions === null && !writing && <p className="text-[13px] text-muted">{t('The action items appear here once the summary is written.')}</p>}
     {v.actions !== null && !items.length && <p className="text-[13px] text-muted">{t('Nobody said they would do anything.')}</p>}
     <ul className="note-actions-list">
@@ -144,7 +144,7 @@ function FollowUpEmail({ id, v, people }: { id: string; v: ExtrasView; people: P
         </button>
       </div>
     </div>
-    {failed && <InlineError testId="note-followup-failed"><span>{t("Figolu couldn't write the email.")}</span></InlineError>}
+    {failed && <InlineError testId="note-followup-failed"><span>{t("Faisselle couldn't write the email.")}</span></InlineError>}
     {writing && <p data-testid="note-followup-draft" className="note-followup-body whitespace-pre-wrap" aria-live="polite">{writing.draft}</p>}
     {!writing && draft && <div className="flex flex-col gap-2">
       <input data-testid="note-followup-subject" aria-label={t('Subject')} value={draft.subject} onChange={(e) => edit({ ...draft, subject: e.target.value })} className="note-followup-subject" />
@@ -179,7 +179,7 @@ export function MeetingBrief({ id }: { id: string }) {
     {!v.brief && !writing && <p className="text-[13px] text-muted">{v.contextAvailable
       ? t('What was said before with these people, open points, related emails and documents, and questions to ask.')
       : t('What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.')}</p>}
-    {failed && <InlineError testId="note-brief-failed"><span>{t("Figolu couldn't prepare the brief.")}</span></InlineError>}
+    {failed && <InlineError testId="note-brief-failed"><span>{t("Faisselle couldn't prepare the brief.")}</span></InlineError>}
     {(writing || v.brief) && <Editor testId="note-brief-text" label={t('Brief')} className="enhanced" markdown={writing ? writing.draft : v.brief ?? ''} streaming={!!writing} editable={!writing}
       onChange={(md) => void window.yogurt.extras.setBrief(id, md)} />}
   </section>

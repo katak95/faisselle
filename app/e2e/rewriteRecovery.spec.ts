@@ -50,7 +50,7 @@ test('a failed rewrite keeps the previous edited Enhanced note visible, copyable
     await page.getByTestId('share-button').click()
     await page.getByTestId('share-copy-summary').click()
     await expect(page.getByTestId('share-said')).toHaveText('Copied')
-    expect(await app.evaluate(() => (globalThis as unknown as { __copied: string }).__copied)).toBe(`${prior}\n\nRecorded with Figolu · github.com`)
+    expect(await app.evaluate(() => (globalThis as unknown as { __copied: string }).__copied)).toBe(`${prior}\n\nRecorded with Faisselle · github.com`)
     await page.getByTestId('share-button').click()
     await page.getByTestId('share-export').click()
     await expect(page.getByTestId('share-said')).toHaveText('Saved')

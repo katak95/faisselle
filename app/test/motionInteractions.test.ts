@@ -123,8 +123,8 @@ function watchRetryToast() {
 }
 
 it.each([
-  ['darwin', true, 'Appears while you record with Figolu in the background.'],
-  ['darwin', false, 'Show Figolu in the menu bar to hide the pill.'],
+  ['darwin', true, 'Appears while you record with Faisselle in the background.'],
+  ['darwin', false, 'Show Faisselle in the menu bar to hide the pill.'],
   ['win32', true, null], ['linux', true, null],
 ])('describes the pill switch on %s with menu bar visibility %s', async (os, showInMenuBar, description) => {
   const { Settings } = await import('../src/renderer/src/screens/Settings')
@@ -853,7 +853,7 @@ it.each([true, false])('focuses the first available Share action when a summary 
   const render = renderer(() => ShareMenu({ id: 'note', shown: 'mine', status: 'idle', hasEnhanced, beforeUse: async () => true }))
   find(render(), 'share-button').props.onClick({ detail: 0 })
   const menu = find(render(), 'share-menu')
-  // Figolu: Send to Confluence is only there once Atlassian is connected (a false child otherwise)
+  // Faisselle: Send to Confluence is only there once Atlassian is connected (a false child otherwise)
   const items = menu.props.children.filter((item: ReactElement<any>) => item && item.props.role === 'menuitem')
   expect(items.map((item: ReactElement<any>) => item.props['data-testid'])).toEqual(['share-copy-summary', 'share-copy-notes', 'share-copy-transcript', 'share-export'])
   const focused = vi.fn()

@@ -26,7 +26,7 @@ export function TranscriptionNotice({ notice, centered, hasLines }: { notice: Tr
   if (notice.kind === 'waiting') return <p role="status" className={centered ? undefined : 'transcription-notice text-xs text-muted'}>{transcriptionLabel(notice.state)}</p>
 
   const upload = notice.kind === 'upload'
-  const message = upload ? t("Figolu couldn't read this audio file.") : transcriptionLabel(notice.state)
+  const message = upload ? t("Faisselle couldn't read this audio file.") : transcriptionLabel(notice.state)
   const label = upload ? t('Upload a file') : hasLines ? t('Continue transcription') : t('Transcribe')
   const button = <button type="button" data-testid={upload ? undefined : 'transcription-continue'} disabled={!upload && notice.disabled} onClick={notice.run}
     className={centered || upload ? 'workspace-button' : 'summary-generate flex items-center gap-2.5 rounded-xl px-3 py-2 text-start text-sm whitespace-nowrap text-ink hover:bg-[var(--line)] focus-visible:bg-[var(--line)] disabled:opacity-50'}>

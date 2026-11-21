@@ -8,47 +8,47 @@ const dirs: string[] = []
 afterEach(() => { dirs.splice(0).forEach((d) => rmSync(d, { recursive: true, force: true })) })
 const tmp = () => { const d = mkdtempSync(join(tmpdir(), 'yogurt-mcp-paths-')); dirs.push(d); return d }
 
-describe('where AI apps reach Figolu', () => {
+describe('where AI apps reach Faisselle', () => {
   it('is the socket in the profile folder on a Mac, as it always was', () => {
-    expect(mcpAddress('darwin', '/Users/sam/Library/Application Support/Figolu', 'ab12')).toBe('/Users/sam/Library/Application Support/Figolu/mcp.sock')
+    expect(mcpAddress('darwin', '/Users/sam/Library/Application Support/Faisselle', 'ab12')).toBe('/Users/sam/Library/Application Support/Faisselle/mcp.sock')
   })
   it('is the socket in the profile folder on Linux', () => {
-    expect(mcpAddress('linux', '/home/sam/.config/Figolu', 'ab12')).toBe('/home/sam/.config/Figolu/mcp.sock')
+    expect(mcpAddress('linux', '/home/sam/.config/Faisselle', 'ab12')).toBe('/home/sam/.config/Faisselle/mcp.sock')
   })
   it('is a named pipe on Windows, named afresh each launch so no one else can take the name first', () => {
-    expect(mcpAddress('win32', 'C:\\Users\\sam\\AppData\\Roaming\\Figolu', 'ab12')).toBe('\\\\.\\pipe\\yogurt-mcp-ab12')
+    expect(mcpAddress('win32', 'C:\\Users\\sam\\AppData\\Roaming\\Faisselle', 'ab12')).toBe('\\\\.\\pipe\\yogurt-mcp-ab12')
   })
 })
 
-describe('what the helper opens when Figolu is closed', () => {
-  it('is nothing to record on a Mac (it opens Figolu by its bundle id)', () => {
-    expect(launchCommand('darwin', true, '/Applications/Figolu.app/Contents/MacOS/Figolu', {})).toBeUndefined()
+describe('what the helper opens when Faisselle is closed', () => {
+  it('is nothing to record on a Mac (it opens Faisselle by its bundle id)', () => {
+    expect(launchCommand('darwin', true, '/Applications/Faisselle.app/Contents/MacOS/Faisselle', {})).toBeUndefined()
   })
-  it('is the installed Figolu.exe on Windows', () => {
-    const exe = 'C:\\Users\\sam\\AppData\\Local\\Programs\\Figolu\\Figolu.exe'
+  it('is the installed Faisselle.exe on Windows', () => {
+    const exe = 'C:\\Users\\sam\\AppData\\Local\\Programs\\Faisselle\\Faisselle.exe'
     expect(launchCommand('win32', true, exe, {})).toBe(exe)
   })
   it('is the AppImage on Linux, wherever it was started from this time', () => {
-    expect(launchCommand('linux', true, '/tmp/.mount_Yogurt1/yogurt', { APPIMAGE: '/home/sam/Apps/Figolu.AppImage' })).toBe('/home/sam/Apps/Figolu.AppImage')
+    expect(launchCommand('linux', true, '/tmp/.mount_Yogurt1/yogurt', { APPIMAGE: '/home/sam/Apps/Faisselle.AppImage' })).toBe('/home/sam/Apps/Faisselle.AppImage')
     // not from an AppImage: the mount path would be gone next time
-    expect(launchCommand('linux', true, '/opt/Figolu/yogurt', {})).toBeUndefined()
+    expect(launchCommand('linux', true, '/opt/Faisselle/yogurt', {})).toBeUndefined()
   })
   it('is nothing for a dev or test run (that would start a bare Electron)', () => {
     expect(launchCommand('win32', false, 'C:\\dev\\electron.exe', {})).toBeUndefined()
     expect(launchCommand('linux', false, '/dev/electron', { APPIMAGE: '/x.AppImage' })).toBeUndefined()
   })
-  it('starts without a window when the helper asks, a Mac too (an AI app session no longer pops Figolu up, #54)', () => {
-    expect(startedHidden('win32', ['Figolu.exe', '--hidden'])).toBe(true)
+  it('starts without a window when the helper asks, a Mac too (an AI app session no longer pops Faisselle up, #54)', () => {
+    expect(startedHidden('win32', ['Faisselle.exe', '--hidden'])).toBe(true)
     expect(startedHidden('linux', ['yogurt', '--hidden'])).toBe(true)
     expect(startedHidden('linux', ['yogurt'])).toBe(false)
-    expect(startedHidden('darwin', ['Figolu', '--hidden'])).toBe(true)
-    expect(startedHidden('darwin', ['Figolu'])).toBe(false)
+    expect(startedHidden('darwin', ['Faisselle', '--hidden'])).toBe(true)
+    expect(startedHidden('darwin', ['Faisselle'])).toBe(false)
   })
 })
 
 describe('the helper AI apps are told to start', () => {
   it('is copied into the profile folder on Linux only (the AppImage moves each launch)', () => {
-    expect(helperCopyPath('linux', '/home/sam/.config/Figolu')).toBe('/home/sam/.config/Figolu/bin/yogurt-mcp')
+    expect(helperCopyPath('linux', '/home/sam/.config/Faisselle')).toBe('/home/sam/.config/Faisselle/bin/yogurt-mcp')
     expect(helperCopyPath('darwin', '/x')).toBeUndefined()
     expect(helperCopyPath('win32', 'C:\\x')).toBeUndefined()
   })

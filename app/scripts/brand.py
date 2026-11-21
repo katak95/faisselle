@@ -1,5 +1,5 @@
 """
-Figolu's mark and wordmark, drawn from the app's own font (Bricolage Grotesque SemiBold, bundled), and every file
+Faisselle's mark and wordmark, drawn from the app's own font (Bricolage Grotesque SemiBold, bundled), and every file
 made from them: src/shared/logo.ts (the paths the app draws), build/icon.svg, logo.svg, wordmark.svg, the app icon
 (icon.png, icon.icns, icons/*.png) and the menu bar / tray icons (resources/tray*.png).
 
@@ -50,15 +50,15 @@ dx = (100 - (x1 - x0) * scale) / 2 - x0 * scale
 dy = (100 + (y1 - y0) * scale) / 2 + y0 * scale
 MARK = path(lambda p: GLYPHS[F].draw(p), (scale, 0, 0, -scale, dx, dy))
 
-# ---------- the word: "figolu" in font units (y up), as Logo.tsx flips it ----------
+# ---------- the word: "faisselle" in font units (y up), as Logo.tsx flips it ----------
 def word_draw(p):
     x = 0
-    for ch in 'figolu':
+    for ch in 'faisselle':
         g = glyph(ch)
         g.draw(TransformPen(p, (1, 0, 0, 1, x, 0)))
         x += g.width
 WORD = path(word_draw, (1, 0, 0, 1, 0, 0))
-WORD_WIDTH = sum(glyph(ch).width for ch in 'figolu')
+WORD_WIDTH = sum(glyph(ch).width for ch in 'faisselle')
 # Logo.tsx: the mark at 0..65, the word from x=82 at a 0.068 scale; the viewBox is as wide as both
 WORDMARK_WIDTH = round(82 + WORD_WIDTH * 0.068 + 4)
 

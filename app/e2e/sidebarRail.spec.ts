@@ -18,7 +18,7 @@ test('the compact sidebar keeps navigation and folder actions available, includi
     const corner = page.getByTestId('corner-menu-button')
     const footer = page.locator('.workspace-corner')
     await expect(footer).toHaveCSS('border-top-width', '1px')
-    // the mark's box, not its outline: Figolu's narrow f sits centred in it, where Yogurt's mark filled it
+    // the mark's box, not its outline: Faisselle's narrow f sits centred in it, where Yogurt's mark filled it
     const markInset = () => corner.locator('svg').evaluate(mark =>
       Math.round(mark.getBoundingClientRect().left - mark.closest('.workspace-corner')!.getBoundingClientRect().left))
     await expect.poll(markInset).toBe(20)

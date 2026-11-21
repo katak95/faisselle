@@ -1,4 +1,4 @@
-// Figolu's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
+// Faisselle's Mac helper: the calendars this Mac already has (iCloud, Google, Exchange… added in System Settings →
 // Internet Accounts) through EventKit, and which apps are using the microphone (Core Audio, macOS 14+).
 // Prints JSON; errors go to stderr with exit 1.
 //   yogurt-mac calendar-status       → {"status":"granted"|"denied"|"notDetermined"}
@@ -51,7 +51,7 @@ func status() -> String {
   }
 }
 
-func needAccess() { if status() != "granted" { fail("Figolu doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
+func needAccess() { if status() != "granted" { fail("Faisselle doesn't have access to Calendar yet. Allow it in System Settings → Privacy & Security → Calendars.") } }
 
 // MARK: Core Audio
 
@@ -157,7 +157,7 @@ let players = ["com.apple.Music", "com.spotify.client"]
 func running(_ id: String) -> Bool { !NSRunningApplication.runningApplications(withBundleIdentifier: id).isEmpty }
 /**
  * One command to a player, only if it's still running right now (it may have quit since the last look, and
- * `tell` would start it again). The first time, the Mac asks the person to let Figolu control it; a no reads as nothing.
+ * `tell` would start it again). The first time, the Mac asks the person to let Faisselle control it; a no reads as nothing.
  */
 func tell(_ id: String, _ what: String) -> String? {
   guard running(id) else { return nil }
@@ -174,7 +174,7 @@ func pausePlayers() -> [String] {
 func resumePlayers(_ ids: [String]) -> [String] {
   ids.filter { players.contains($0) && running($0) && !playing($0) }.filter { id in _ = tell(id, "play"); return true }
 }
-/** May Figolu control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
+/** May Faisselle control this player? ask: show the Mac's question if it hasn't been answered. Never launches it. */
 func automation(_ id: String, ask: Bool) -> String {
   var target = AEAddressDesc()
   let created = id.withCString { AECreateDesc(typeApplicationBundleID, $0, strlen($0), &target) }
@@ -211,8 +211,8 @@ func browserTitle(_ id: String) -> String? {
 
 /**
  * Who is in a call and who is talking, as the call app shows it: its meeting windows copied out of the accessibility
- * tree, read-only (nothing is clicked or changed in the app). Only the call app Figolu was told about, the frontmost
- * one first. Figolu reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
+ * tree, read-only (nothing is clicked or changed in the app). Only the call app Faisselle was told about, the frontmost
+ * one first. Faisselle reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
  * an assistive app asks, so they are asked the way screen readers do (AXManualAccessibility): see askTree.
  */
 let axKeys = [kAXRoleAttribute, kAXSubroleAttribute, kAXDescriptionAttribute, kAXTitleAttribute, kAXValueAttribute, kAXIdentifierAttribute, "AXDOMClassList", kAXChildrenAttribute, kAXSizeAttribute] as [String]
@@ -369,7 +369,7 @@ func callWindows(_ app: AXUIElement, _ id: String) -> (wins: [AXUIElement], tab:
 }
 
 func watchCalls(every: Int, ids: [String]) {
-  // Figolu closes stdin to stop the watch (and a crashed Figolu closes it too)
+  // Faisselle closes stdin to stop the watch (and a crashed Faisselle closes it too)
   DispatchQueue.global().async { _ = FileHandle.standardInput.readDataToEndOfFile(); DispatchQueue.main.sync { resetTrees() }; exit(0) }
   let line = { (v: [String: Any]) in
     guard let d = try? JSONSerialization.data(withJSONObject: v) else { return }
@@ -469,7 +469,7 @@ case "events":
     if let l = e.location, !l.isEmpty { o["location"] = l }
     if let n = e.notes, !n.isEmpty { o["notes"] = String(n.prefix(2000)) }
     if let u = e.url { o["url"] = u.absoluteString }
-    // the person using this Mac, apart: their address says which company they are with (Figolu spells it right)
+    // the person using this Mac, apart: their address says which company they are with (Faisselle spells it right)
     if let me = e.attendees?.first(where: { $0.isCurrentUser }) {
       if me.url.absoluteString.hasPrefix("mailto:") { o["me"] = String(me.url.absoluteString.dropFirst(7)) }
       if me.participantStatus == .declined { o["declined"] = true }

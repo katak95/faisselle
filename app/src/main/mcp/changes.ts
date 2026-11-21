@@ -25,8 +25,8 @@ export const changeTools: Tool[] = [
   tool('delete_folder', 'Deletes a folder. Its meetings stay, just no longer filed in it.', { folder }, ['folder'], true),
   tool('add_to_folder', 'Files a meeting in a folder (a meeting can be in several).', { folder, id }, ['folder', 'id']),
   tool('remove_from_folder', 'Takes a meeting out of a folder. The meeting stays.', { folder, id }, ['folder', 'id']),
-  tool('accept_folder_suggestion', "Files a meeting in the folder Figolu suggests for it (get_meeting's suggested_folder).", { id }, ['id']),
-  tool('dismiss_folder_suggestion', 'Turns down the folder Figolu suggests for a meeting, so it stops offering it.', { id }, ['id']),
+  tool('accept_folder_suggestion', "Files a meeting in the folder Faisselle suggests for it (get_meeting's suggested_folder).", { id }, ['id']),
+  tool('dismiss_folder_suggestion', 'Turns down the folder Faisselle suggests for a meeting, so it stops offering it.', { id }, ['id']),
   tool('rename_meeting', "Gives a meeting the person's own title.", { id, title: { type: 'string', description: 'At most 200 characters' } }, ['id', 'title']),
   tool('set_attendees', 'Sets who was in a meeting, replacing the list. Unedited summaries are written again with the new people.',
     { id, attendees: { type: 'array', description: `At most ${PEOPLE_MAX}`, items: { type: 'object', properties: { name: { type: 'string' }, email: { type: 'string' } }, required: ['name'] } } }, ['id', 'attendees'], true),
@@ -37,27 +37,27 @@ export const changeTools: Tool[] = [
   tool('restore_meeting', 'Brings a meeting back from the Trash (ids from list_trash).', { id: { type: 'string', description: 'The meeting id, from list_trash' } }, ['id']),
   tool('set_my_notes', "Writes the person's own notes for a meeting (Markdown). mode \"replace\" (default) replaces them, \"append\" adds after them.",
     { id, markdown: { type: 'string' }, mode: { type: 'string', enum: ['replace', 'append'] } }, ['id', 'markdown'], true),
-  tool('set_summary', "Replaces Figolu's written summary of a meeting with this Markdown. It counts as the person's edit, so Figolu won't rewrite it by itself.",
+  tool('set_summary', "Replaces Faisselle's written summary of a meeting with this Markdown. It counts as the person's edit, so Faisselle won't rewrite it by itself.",
     { id, markdown: { type: 'string' } }, ['id', 'markdown'], true),
-  tool('rewrite_summary', "Has Figolu write a meeting's summary again from its transcript and notes, like its Write again button, optionally with an instruction (\"shorter\", \"focus on decisions\"). It replaces the summary there is, and takes a while: get_meeting shows it once done.",
+  tool('rewrite_summary', "Has Faisselle write a meeting's summary again from its transcript and notes, like its Write again button, optionally with an instruction (\"shorter\", \"focus on decisions\"). It replaces the summary there is, and takes a while: get_meeting shows it once done.",
     { id, instruction: { type: 'string', description: `At most ${REWRITE_NOTE_MAX} characters` } }, ['id'], true),
-  tool('start_recording', "Starts taking notes of a call now: Figolu records the microphone and the call's sound on this computer and transcribes it. Optional title, or event_id (from upcoming_meetings) to take notes for that calendar event. Only one recording at a time. The person should have asked for it: everyone in the call should know they are recorded.",
+  tool('start_recording', "Starts taking notes of a call now: Faisselle records the microphone and the call's sound on this computer and transcribes it. Optional title, or event_id (from upcoming_meetings) to take notes for that calendar event. Only one recording at a time. The person should have asked for it: everyone in the call should know they are recorded.",
     { title: { type: 'string', description: 'At most 200 characters' }, event_id: { type: 'string' } }),
   tool('pause_recording', 'Pauses the recording (id: the meeting recording now, the one recording when left out).', { id }),
   tool('resume_recording', 'Carries on a paused recording.', { id }),
-  tool('stop_recording', 'Stops the recording. Figolu then finishes the transcript and writes the summary.', { id }, [], true),
-  tool('set_custom_words', `Sets the custom words Figolu spells right in transcripts and notes (names, products, acronyms), replacing the list: at most ${MAX_TERMS}, each at most ${MAX_TERM} characters. Gives the list kept.`,
+  tool('stop_recording', 'Stops the recording. Faisselle then finishes the transcript and writes the summary.', { id }, [], true),
+  tool('set_custom_words', `Sets the custom words Faisselle spells right in transcripts and notes (names, products, acronyms), replacing the list: at most ${MAX_TERMS}, each at most ${MAX_TERM} characters. Gives the list kept.`,
     { words: { type: 'array', items: { type: 'string' } } }, ['words'], true),
   tool('set_spoken_language', 'Sets the language spoken in meetings: "en" (English only, the most accurate for English) or "multi" (any language, heard per meeting).',
     { language: { type: 'string', enum: ['en', 'multi'] } }, ['language']),
-  tool('set_summary_language', `Sets the language Figolu writes new summaries in: a language id (${LOCALES.map((l) => l.id).join(', ')}), or "" for each meeting's own language.`,
+  tool('set_summary_language', `Sets the language Faisselle writes new summaries in: a language id (${LOCALES.map((l) => l.id).join(', ')}), or "" for each meeting's own language.`,
     { language: { type: 'string' } }, ['language']),
 ]
 
 const saved = (what: string, r: SaveOutcome) => {
   if (r === 'saved') return
-  throw new Refusal(r === 'busy' ? `Figolu is writing this meeting's summary right now. Try again once it's done.`
-    : r === 'too-long' ? `That ${what} is too long: at most ${NOTES_MAX} characters.` : `Figolu couldn't save the ${what}. Try again.`)
+  throw new Refusal(r === 'busy' ? `Faisselle is writing this meeting's summary right now. Try again once it's done.`
+    : r === 'too-long' ? `That ${what} is too long: at most ${NOTES_MAX} characters.` : `Faisselle couldn't save the ${what}. Try again.`)
 }
 
 export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): Record<string, (a: Args) => Promise<string>> {
@@ -69,8 +69,8 @@ export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): R
   const recordingOf = (a: Args) => {
     const want = str(a, 'id', { max: 64 })
     const cur = d.app.recording()
-    if (!cur) throw new Refusal('Figolu is not recording.')
-    if (want && want !== cur.id) throw new Refusal(`That meeting is not the one recording. Figolu is recording ${JSON.stringify(cur.title)} (${cur.id}).`)
+    if (!cur) throw new Refusal('Faisselle is not recording.')
+    if (want && want !== cur.id) throw new Refusal(`That meeting is not the one recording. Faisselle is recording ${JSON.stringify(cur.title)} (${cur.id}).`)
     return cur
   }
   const ok = (v: object) => JSON.stringify(v, null, 2)
@@ -108,25 +108,25 @@ export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): R
       const m = meetingOf(a.id)
       const sug = s.folderSuggestion(m.id)
       const f = !s.foldersOf(m.id).length && sug.state === 'pending' && sug.folderId ? s.folder(sug.folderId) : undefined
-      if (!f) throw new Refusal('Figolu has no folder suggestion for this meeting. add_to_folder files it anywhere.')
+      if (!f) throw new Refusal('Faisselle has no folder suggestion for this meeting. add_to_folder files it anywhere.')
       s.addToFolder(f.id, m.id); folders()
       return ok(summary(s.meeting(m.id)!))
     },
     async dismiss_folder_suggestion(a) {
       const m = meetingOf(a.id)
       s.dismissFolderSuggestion(m.id); folders()
-      return 'Figolu no longer suggests a folder for this meeting.'
+      return 'Faisselle no longer suggests a folder for this meeting.'
     },
     async rename_meeting(a) {
       const m = meetingOf(a.id)
       const title = str(a, 'title', { max: TITLE_MAX, required: true })!
-      if (!d.app.rename(m.id, title)) throw new Refusal("Figolu couldn't rename that meeting.")
+      if (!d.app.rename(m.id, title)) throw new Refusal("Faisselle couldn't rename that meeting.")
       return ok(summary(s.meeting(m.id)!))
     },
     async set_attendees(a) {
       const m = meetingOf(a.id)
       const who = people(list(a, 'attendees', { max: PEOPLE_MAX, required: true })!, 'attendees')
-      if (!d.app.setAttendees(m.id, who)) throw new Refusal("Figolu couldn't change who was in that meeting.")
+      if (!d.app.setAttendees(m.id, who)) throw new Refusal("Faisselle couldn't change who was in that meeting.")
       return ok(summary(s.meeting(m.id)!))
     },
     async link_calendar_event(a) {
@@ -145,7 +145,7 @@ export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): R
       const m = meetingOf(a.id)
       const r = d.app.trash(m.id)
       if (r === 'recording') throw new Refusal('That meeting is recording. Stop it first (stop_recording).')
-      if (r !== 'trashed') throw new Refusal("Figolu couldn't move that meeting to the Trash right now. Try again in a moment.")
+      if (r !== 'trashed') throw new Refusal("Faisselle couldn't move that meeting to the Trash right now. Try again in a moment.")
       return `Moved ${JSON.stringify(m.title)} to the Trash. restore_meeting brings it back for 30 days.`
     },
     async restore_meeting(a) {
@@ -173,17 +173,17 @@ export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): R
       const m = meetingOf(a.id)
       if (m.state === 'recording') throw new Refusal('That meeting is recording. Its summary is written once it stops.')
       const instruction = str(a, 'instruction', { max: REWRITE_NOTE_MAX }) ?? ''
-      if (d.app.rewriteSummary(m.id, instruction) === 'busy') throw new Refusal('Figolu is still working on this meeting (its transcript or summary). Try again once it is done.')
-      return d.app.notesReady() ? 'Figolu is writing the summary again. get_meeting shows it once done, usually within a minute or two.'
-        : "Figolu will write the summary once its notes model has downloaded."
+      if (d.app.rewriteSummary(m.id, instruction) === 'busy') throw new Refusal('Faisselle is still working on this meeting (its transcript or summary). Try again once it is done.')
+      return d.app.notesReady() ? 'Faisselle is writing the summary again. get_meeting shows it once done, usually within a minute or two.'
+        : "Faisselle will write the summary once its notes model has downloaded."
     },
     async start_recording(a) {
       const title = str(a, 'title', { max: TITLE_MAX })
       const eventId = str(a, 'event_id', { max: 1024 })
       const cur = d.app.recording()
-      if (cur) throw new Refusal(`Figolu is already recording ${JSON.stringify(cur.title)} (${cur.id}). Stop it first (stop_recording).`)
+      if (cur) throw new Refusal(`Faisselle is already recording ${JSON.stringify(cur.title)} (${cur.id}). Stop it first (stop_recording).`)
       const r = await d.app.startRecording({ ...(title ? { title } : {}), ...(eventId ? { eventId } : {}) })
-      if ('error' in r) throw new Refusal(r.error === 'gone' ? 'That event is not coming up on the calendar any more. upcoming_meetings gives the events.' : "Figolu couldn't start recording. Try again.")
+      if ('error' in r) throw new Refusal(r.error === 'gone' ? 'That event is not coming up on the calendar any more. upcoming_meetings gives the events.' : "Faisselle couldn't start recording. Try again.")
       log(`start_recording made ${r.id}`)
       return ok({ ...summary(s.meeting(r.id)!), recording: true })
     },
@@ -199,8 +199,8 @@ export function changeHandlers({ d, meetingOf, folderOf, summary, log }: Ctx): R
     },
     async stop_recording(a) {
       const m = recordingOf(a)
-      if (!d.app.stopRecording(m.id)) throw new Refusal("Figolu couldn't stop the recording. Try again.")
-      return `Stopped recording ${JSON.stringify(m.title)} (${m.id}). Figolu is finishing the transcript and writing the summary: get_meeting shows them once done.`
+      if (!d.app.stopRecording(m.id)) throw new Refusal("Faisselle couldn't stop the recording. Try again.")
+      return `Stopped recording ${JSON.stringify(m.title)} (${m.id}). Faisselle is finishing the transcript and writing the summary: get_meeting shows them once done.`
     },
     async set_custom_words(a) {
       const words = list(a, 'words', { max: MAX_TERMS, required: true })!

@@ -1,2 +1,2 @@
-export function figoluVersion(yogurt: string): string
-export function nextFigoluVersion(yogurt: string, tags: string[]): string
+export function faisselleVersion(yogurt: string): string
+export function nextFaisselleVersion(yogurt: string, tags: string[]): string

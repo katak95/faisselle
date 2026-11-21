@@ -19,7 +19,7 @@ on:
         type: boolean
         default: false
       version:
-        description: "Figolu: the release's version (v0.3.6200), as app/package.json keeps Yogurt's"
+        description: "Faisselle: the release's version (v0.3.6200), as app/package.json keeps Yogurt's"
         type: string
         default: ''
 
@@ -40,11 +40,11 @@ jobs:
           - os: windows-latest
             platform: --win
             unpacked: win-unpacked
-            files: app/dist/Figolu-windows-*.exe
+            files: app/dist/Faisselle-windows-*.exe
           - os: ubuntu-22.04
             platform: --linux
             unpacked: linux-unpacked
-            files: app/dist/Figolu-linux-*.AppImage
+            files: app/dist/Faisselle-linux-*.AppImage
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
     # Azure trusts sign-in tokens from this repository's signing environment only (managed identity yogurt-github-signing)
@@ -132,7 +132,7 @@ jobs:
           PROFILE: ${{ vars.WINDOWS_CERT_PROFILE || 'yogurt' }}
         run: |
           cd app
-          # Figolu: the release's version (its tag), not Yogurt's in package.json
+          # Faisselle: the release's version (its tag), not Yogurt's in package.json
           if [ -n "${{ inputs.version }}" ]; then v="${{ inputs.version }}"; npm pkg set version="${v#v}"; fi
           set -- ${{ matrix.platform }} --publish never
           [ "$PREVIEW" = true ] && set -- "$@" -c.extraMetadata.yogurtPreview=true
@@ -148,19 +148,19 @@ jobs:
         if: runner.os == 'Windows' && env.SIGNED == 'true'
         shell: pwsh
         run: |
-          foreach ($f in @('app/dist/Figolu-windows-x64.exe', 'app/dist/win-unpacked/Figolu.exe')) {
+          foreach ($f in @('app/dist/Faisselle-windows-x64.exe', 'app/dist/win-unpacked/Faisselle.exe')) {
             $s = Get-AuthenticodeSignature $f
             Write-Host "$f : $($s.Status) $($s.SignerCertificate.Subject)"
             if ($s.Status -ne 'Valid') { throw "$f is not signed: $($s.Status)" }
           }
-          # every program and library Figolu ships is signed: Code Integrity blocks an unsigned one from loading (#99).
-          # Figolu's own helpers must be; anything else unsigned is listed, so it can be added
+          # every program and library Faisselle ships is signed: Code Integrity blocks an unsigned one from loading (#99).
+          # Faisselle's own helpers must be; anything else unsigned is listed, so it can be added
           $all = Get-ChildItem app/dist/win-unpacked -Recurse -File -Include *.exe,*.dll,*.node
           $unsigned = $all | Where-Object { (Get-AuthenticodeSignature $_.FullName).Status -ne 'Valid' }
           Write-Host "signed $($all.Count - $unsigned.Count) of $($all.Count) programs and libraries"
           $unsigned | ForEach-Object { Write-Host "::warning::not signed: $($_.FullName)" }
           $ours = $unsigned | Where-Object { $_.FullName -match '\\resources\\bin\\' }
-          if ($ours) { throw "Figolu's own helpers are not all signed: $($ours.Name -join ', ')" }
+          if ($ours) { throw "Faisselle's own helpers are not all signed: $($ours.Name -join ', ')" }
       # kept before the checks below, so testers get the installer even when one of them fails
       - uses: actions/upload-artifact@v4
         with:
@@ -188,13 +188,13 @@ jobs:
       - name: Install it
         run: |
           if [ "$RUNNER_OS" = Windows ]; then
-            # one-click, per user: %LOCALAPPDATA%\Programs\Figolu, as on a person's PC
-            ./app/dist/Figolu-windows-x64.exe //S
-            dir="$LOCALAPPDATA/Programs/Figolu/resources"
+            # one-click, per user: %LOCALAPPDATA%\Programs\Faisselle, as on a person's PC
+            ./app/dist/Faisselle-windows-x64.exe //S
+            dir="$LOCALAPPDATA/Programs/Faisselle/resources"
             for i in $(seq 1 60); do [ -f "$dir/bin/yogurt-audio.exe" ] && break; sleep 2; done
           else
             mkdir -p "$RUNNER_TEMP/appimage" && cd "$RUNNER_TEMP/appimage"
-            "$GITHUB_WORKSPACE"/app/dist/Figolu-linux-x86_64.AppImage --appimage-extract >/dev/null
+            "$GITHUB_WORKSPACE"/app/dist/Faisselle-linux-x86_64.AppImage --appimage-extract >/dev/null
             dir="$RUNNER_TEMP/appimage/squashfs-root/resources"
           fi
           ls -la "$dir/bin"

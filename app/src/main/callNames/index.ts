@@ -98,7 +98,7 @@ export function hookCallNames(p: {
     }
     const kind = kindFor(l.app, l.windows, s.app)
     if (!kind) {
-      const why = `${l.app} is not a call app Figolu reads`
+      const why = `${l.app} is not a call app Faisselle reads`
       if (!s.errors.has(why)) { s.errors.add(why); log(`call names: ${why}`) }
       return
     }

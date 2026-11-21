@@ -67,8 +67,8 @@ const HELPERS_BY_OS: Record<string, Record<string, string>> = {
   win32: { 'cpthost.exe': 'zoom.exe', 'zoomwebviewhost.exe': 'zoom.exe' },
   linux: {},
 }
-/** Figolu's own recorder holds the mic while it records; yogurt-system lists it like any app off a Mac */
-const OWN_BY_OS: Record<string, string[]> = { darwin: [], win32: ['yogurt-audio.exe', 'figolu.exe'], linux: ['yogurt-audio', 'figolu', 'figolu-bin', 'Figolu'] }
+/** Faisselle's own recorder holds the mic while it records; yogurt-system lists it like any app off a Mac */
+const OWN_BY_OS: Record<string, string[]> = { darwin: [], win32: ['yogurt-audio.exe', 'faisselle.exe'], linux: ['yogurt-audio', 'faisselle', 'faisselle-bin', 'Faisselle'] }
 let APPS = MAC_APPS
 let HELPERS = MAC_HELPERS
 let OWN: string[] = []
@@ -78,7 +78,7 @@ export function useCallApps(platform: string) {
   HELPERS = HELPERS_BY_OS[platform] ?? MAC_HELPERS
   OWN = OWN_BY_OS[platform] ?? []
 }
-/** Figolu's own recorder (or Figolu) on the mic: never a call */
+/** Faisselle's own recorder (or Faisselle) on the mic: never a call */
 export const isOwnMicApp = (bundleId: string): boolean => OWN.includes(bundleId)
 const appOf = (bundleId: string) => {
   if (OWN.includes(bundleId)) return undefined
@@ -109,7 +109,7 @@ export function matchEvent(events: CalEvent[], now: number): CalEvent | null {
   return near[0] ?? null
 }
 
-/** Should Figolu offer to take notes now? A call app using the mic is the trigger; a meeting on the calendar alone waits for the call. */
+/** Should Faisselle offer to take notes now? A call app using the mic is the trigger; a meeting on the calendar alone waits for the call. */
 export function decide(s: Signals, now: number, recent: Dismissals): Prompt | null {
   if (s.recording) return null
   const event = matchEvent(s.events, now)

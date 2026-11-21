@@ -27,7 +27,7 @@ export function hookM365(d: { file: string; m365: M365; /** the browser sign-in'
     return view()
   })
   // an organisation that needs its own app registration: the server starts again with it. The browser sign-in needs
-  // that app (Figolu's default app only does the device code), on a loopback redirect URI the app has.
+  // that app (Faisselle's default app only does the device code), on a loopback redirect URI the app has.
   ipcMain.handle('m365:app', (_e, a: unknown) => {
     if (!a || typeof a !== 'object') return view()
     const { clientId, tenantId, method, redirectUri, secret } = a as Record<string, unknown>
