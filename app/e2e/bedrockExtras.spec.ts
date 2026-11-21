@@ -1,4 +1,5 @@
 import { _electron as electron, expect, test } from '@playwright/test'
+import { openFromCorner } from './cornerNavigation'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -17,7 +18,7 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
     // Settings: the notes on Bedrock, signed in with Identity Center (fake mode approves at once)
     // the local notes model is in (fake mode downloads it at once)
     await expect.poll(() => page.evaluate(() => window.yogurt.cloud.get().then((v) => v.localBytes)), { timeout: 20_000 }).toBeGreaterThan(0)
-    await page.getByTestId('settings-open').click()
+    await openFromCorner(page, 'settings-open')
     await page.getByTestId('cloud-notes-provider').selectOption('bedrock')
     // on Bedrock it can go: its files are removed
     await page.getByTestId('cloud-remove-local').click()

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, Send } from 'lucide-react'
+// the app's own icons (Hugeicons, Icons.tsx), under the names these components use
+import { ChevronDown, ArrowUpRight as Send } from './Icons'
 import type { AtlassianView } from '../../../shared/types'
 import { t } from '../../../shared/i18n'
 import { LoadingContent } from './LoadingContent'

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, ChevronDown, Copy, ListChecks, Mail, Plus, RotateCcw, Sparkles, Trash2 } from 'lucide-react'
+// the app's own icons (Hugeicons, Icons.tsx), under the names these components use
+import { Check, ChevronDown, Copy, ListChecks, MessageCircle as Mail, Plus, RotateCcw, Lightbulb as Sparkles, Trash2 } from './Icons'
 import type { ExtrasKind, ExtrasView, FollowUp, TemplatesView } from '../../../shared/types'
 import type { ActionItem } from '../../../shared/actions'
 import { actionsMarkdown } from '../../../shared/actions'

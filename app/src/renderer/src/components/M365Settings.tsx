@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Mail } from 'lucide-react'
+// the app's own icons (Hugeicons, Icons.tsx), under the names these components use
+import { MessageCircle as Mail } from './Icons'
 import type { M365View } from '../../../shared/types'
 import { t } from '../../../shared/i18n'
 import { LoadingContent } from './LoadingContent'

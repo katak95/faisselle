@@ -6,9 +6,7 @@
   Private AI meeting notes, with summaries on your computer or on Amazon Bedrock, Microsoft 365 context and Confluence reports.
 </p>
 
-<p align="center">
-  Download for <a href="https://github.com/katak95/figolu/releases/latest/download/Figolu-mac-arm64.dmg">Mac</a> · <a href="https://github.com/katak95/figolu/releases/latest/download/Figolu-windows-x64.exe">Windows</a> · <a href="https://github.com/katak95/figolu/releases/latest/download/Figolu-linux-x86_64.AppImage">Linux</a>
-</p>
+## Introduction
 
 <p align="center">
   Figolu records your calls without adding a bot to the meeting.
@@ -42,7 +40,7 @@
 - **Folders and search.** You can find meetings by folder, title, notes or transcript.
 - **Copy and export.** You can copy notes or transcripts, or save both as Markdown.
 - **Local MCP server.** When you turn this on, apps on your computer can read your notes, transcripts, saved audio and each meeting's calendar details (attendees' names and emails).
-- **Automatic stop.** By default, Figolu stops recording when it detects that your call has ended.
+- **Automatic stop.** By default, Figolu stops recording when it detects that your call has ended. A recording you start yourself with New note asks first instead, since it may not be a call.
 
 ## Watch the demo
 
@@ -103,6 +101,54 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 <br>
 
 > Yes. After a one-time download of the AI models, transcription and summaries run locally on your computer.
+
+</details>
+
+<details><summary><strong>Does Figolu train AI on my meetings? Can anyone at Figolu read them?</strong></summary>
+
+<br>
+
+> No. Your recordings, transcripts and notes stay on your computer, and Figolu has no server that receives them, so nobody at Figolu can read them. The AI models run on your computer and don't learn from your meetings. Figolu only goes online to download its models, check for updates and, if you add one, read your calendar link.
+
+</details>
+
+<details><summary><strong>Is Figolu safe for confidential meetings?</strong></summary>
+
+<br>
+
+> Figolu keeps everything on your computer: audio, transcripts and notes are never uploaded, and transcription and summaries run offline. That makes it a good fit for client calls, therapy sessions, legal work and board meetings where audio can't go to a cloud service. You can also turn off saving audio in **Settings**, and Figolu is open source, so anyone can check what it does. Follow your own rules on getting consent to record.
+
+</details>
+
+<details><summary><strong>How much memory do I need?</strong></summary>
+
+<br>
+
+> At least 8 GB. Figolu checks your computer during setup and picks the best transcription and notes models it can run well. With 16 GB or more, Figolu can usually run a larger notes model that writes better notes.
+
+</details>
+
+<details><summary><strong>Can I turn an existing recording into notes?</strong></summary>
+
+<br>
+
+> Yes. Use **Upload a file** to add an MP3, M4A or WAV recording. Figolu transcribes it on your computer and writes notes, the same as for a live meeting.
+
+</details>
+
+<details><summary><strong>Can I ask questions across all my meetings?</strong></summary>
+
+<br>
+
+> Yes. Use **Ask** to ask about one meeting, a folder, or all your meetings at once, for example "what did we decide about pricing?". Answers point to the meetings they came from, and everything runs on your computer.
+
+</details>
+
+<details><summary><strong>How accurate is it compared to cloud transcription?</strong></summary>
+
+<br>
+
+> Figolu uses Whisper large-v3-turbo on computers that can run it, the same family of models many cloud services use, so English accuracy is close to cloud transcription. Smaller computers get a smaller Whisper model, which is faster but makes more mistakes, especially outside English. You can add names and words to a custom vocabulary so they're spelled right.
 
 </details>
 
@@ -172,10 +218,12 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 </details>
 
-## Build from source
+## Support
 
-See [Build and run locally](docs/building.md) for setup, tests and installer builds.
+- [Help](docs/README.md)
+- [Discord](https://github.com/katak95/figolu/discord)
+- [Report a bug](https://github.com/katak95/figolu/issues)
 
-## License
+## Development
 
 [MIT](LICENSE) · Copyright 2026 Frigade (Yogurt). Figolu's changes are under the same license.

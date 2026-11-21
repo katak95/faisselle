@@ -73,6 +73,8 @@ def rename_text(text: str, test: bool = False) -> str:
         line = line.replace('https://github.com/FrigadeHQ/yogurt', REPO).replace('https://yogurt.so', REPO)
         # a test expecting the website's name, as the app shows it, sees the repository's host
         if test:
+            # the same in an escaped regex (https:\/\/yogurt\.so), then the bare host name
+            line = line.replace(r'https:\/\/yogurt\.so', r'https:\/\/github\.com\/katak95\/figolu').replace(r'yogurt\.so', r'github\.com')
             line = line.replace('yogurt.so', 'github.com')
         out.append(line if 'Frigade' in line else WORD.sub('Figolu', line))
     return '\n'.join(out).replace('so.yogurt.', 'com.katak95.figolu.')

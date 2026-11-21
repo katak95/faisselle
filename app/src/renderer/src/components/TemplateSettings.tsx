@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, LayoutTemplate, Trash2 } from 'lucide-react'
+// the app's own icons (Hugeicons, Icons.tsx), under the names these components use
+import { ChevronDown, FileText as LayoutTemplate, Trash2 } from './Icons'
 import type { TemplatesView } from '../../../shared/types'
 import { CUSTOM_INSTRUCTIONS_MAX, CUSTOM_MAX, CUSTOM_NAME_MAX, templateChoices, type CustomTemplate } from '../../../shared/templates'
 import { t } from '../../../shared/i18n'
