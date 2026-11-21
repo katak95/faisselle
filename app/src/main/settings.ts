@@ -69,7 +69,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
   /** Atlassian (Confluence): connected unless off, the site picked, and where reports go on each site (atlassian/) */
   atlassian?: { enabled?: boolean; siteId?: string; places?: Record<string, { spaceId: string; spaceKey?: string; spaceUrl?: string; parentId?: string }> }
-  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
+  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; /** browser: code + PKCE on redirectUri (an app without public client flows) */ method?: 'browser'; redirectUri?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)

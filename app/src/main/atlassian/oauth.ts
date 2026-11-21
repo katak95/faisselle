@@ -78,20 +78,23 @@ const PAGE = (title: string, text: string) => `<!doctype html><meta charset="utf
 
 /**
  * The loopback server for one sign-in: answers the browser's return with a short page, and gives the code once the
- * state matches. Only /oauth/callback on localhost; anything else is a 404. Closes itself after 5 minutes.
+ * state matches. Only its path (/oauth/callback by default) on localhost; anything else is a 404. Closes itself after
+ * 5 minutes. fixedPort: that port or nothing (an address registered beforehand, like an Azure app's redirect URI);
+ * a port in use then fails with code EADDRINUSE.
  */
-export async function waitForCode(o: { port: number; state: () => string | undefined; timeoutMs?: number; signal?: AbortSignal }): Promise<{ code: Promise<string>; port: number; close(): void }> {
+export async function waitForCode(o: { port: number; state: () => string | undefined; timeoutMs?: number; signal?: AbortSignal
+  path?: string; fixedPort?: boolean; service?: string }): Promise<{ code: Promise<string>; port: number; close(): void }> {
   let resolve!: (code: string) => void, reject!: (e: Error) => void
   const code = new Promise<string>((res, rej) => { resolve = res; reject = rej })
   const server: Server = createServer((req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost')
-    if (url.pathname !== '/oauth/callback') { res.writeHead(404).end(); return }
+    if (url.pathname !== (o.path ?? '/oauth/callback')) { res.writeHead(404).end(); return }
     const error = url.searchParams.get('error')
     const got = url.searchParams.get('code')
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
     if (error || !got) { res.end(PAGE('Sign-in not finished', 'You can close this tab and try again in Figolu.')); reject(new Error(url.searchParams.get('error_description') ?? error ?? 'No code')); return }
     if (url.searchParams.get('state') !== o.state()) { res.end(PAGE('Sign-in not finished', 'This page did not come from Figolu’s sign-in.')); reject(new Error('The sign-in state did not match')); return }
-    res.end(PAGE('Signed in to Atlassian', 'You can close this tab and go back to Figolu.'))
+    res.end(PAGE(`Signed in to ${o.service ?? 'Atlassian'}`, 'You can close this tab and go back to Figolu.'))
     resolve(got)
   })
   const listen = (port: number) => new Promise<number>((res, rej) => {
@@ -99,7 +102,7 @@ export async function waitForCode(o: { port: number; state: () => string | undef
     server.listen(port, '127.0.0.1', () => { server.off('error', rej); res((server.address() as { port: number }).port) })
   })
   // the preferred port when it's free, else any free one (the registration then changes)
-  const port = await listen(o.port).catch(() => listen(0))
+  const port = await (o.fixedPort ? listen(o.port) : listen(o.port).catch(() => listen(0)))
   const timer = setTimeout(() => reject(new Error('The sign-in took too long')), o.timeoutMs ?? 5 * 60_000)
   const close = () => { clearTimeout(timer); server.close() }
   o.signal?.addEventListener('abort', () => { reject(new Error('Sign-in cancelled')); close() }, { once: true })

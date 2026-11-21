@@ -55,6 +55,28 @@ tools: `login`, `verify-login`, `logout`, `get-calendar-view`, `get-calendar-eve
 - If your organisation blocks the default app, ask your administrator to register one (delegated `Calendars.Read`,
   `Mail.Read`, `User.Read`, public client) and fill in **Use your organization's own app**.
 
+### An app that doesn't allow the device code
+
+The code above needs **Allow public client flows** turned on in the app's Azure settings. When it's off (Microsoft
+then refuses with `AADSTS7000218`), Figolu signs in with the browser instead, on a redirect URI the app already has,
+for example the one Claude Code uses with it. Nothing changes in Azure.
+
+1. Settings → Microsoft 365 → **Use your organization's own app**: the **Application (client) ID** and **Directory
+   (tenant) ID**.
+2. **Sign in with** → **The browser (apps without public client flows)**.
+3. **Redirect URI**: one of the app's, exactly as in Azure (Authentication). For the app Claude Code uses, it is
+   `http://localhost:PORT/callback`, `PORT` being its callback port: `claude mcp get <server>`, or `oauth.callbackPort`
+   for that server in `~/.claude.json`. Only `http://localhost:PORT/…` or `http://127.0.0.1:PORT/…` addresses work.
+4. **Client secret**: only if that redirect URI is on the app's **Web** platform (Microsoft then asks for it; on
+   **Mobile and desktop applications** it refuses one). It is sealed with the system keychain and never shown again.
+5. **Save**, then **Connect**: Microsoft's page opens in the browser and comes back to Figolu.
+
+Figolu asks for what the app is already allowed (`https://graph.microsoft.com/.default`): the delegated permissions
+listed above and, for documents, those listed below, approved by an administrator. It keeps the sign-in sealed in
+`m365-oauth.json` in its data folder and renews it by itself; **Disconnect** forgets it. While Figolu signs in, the
+redirect URI's port must be free: finish a Claude Code sign-in that uses it first. Settings says what Microsoft
+refused (the secret, the redirect URI, the port).
+
 The server's token cache lives in Figolu's data folder (`m365-token-cache.json`).
 
 ### SharePoint and OneDrive (optional)

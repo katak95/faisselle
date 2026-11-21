@@ -211,7 +211,8 @@ export type YogurtApi = {
     cancel(): Promise<M365View>
     signOut(): Promise<M365View>
     setCalendar(on: boolean): Promise<M365View>
-    setApp(clientId: string, tenantId: string): Promise<M365View>
+    /** secret: undefined keeps the saved one, '' removes it */
+    setApp(app: { clientId: string; tenantId: string; method: M365Method; redirectUri: string; secret?: string }): Promise<M365View>
     /** SharePoint and OneDrive search: the server starts again in work-account mode and asks to sign in again */
     setDocuments(on: boolean): Promise<M365View>
     onChange(fn: (v: M365View) => void): () => void
@@ -585,12 +586,18 @@ export type M365Status =
   | { state: 'off' }
   | { state: 'starting' }
   | { state: 'signed-out' }
-  /** waiting for the person to enter the code on Microsoft's page */
-  | { state: 'pending'; code: string; url: string }
+  /** waiting for the person to enter the code on Microsoft's page; no code: to finish signing in in the browser */
+  | { state: 'pending'; code?: string; url: string }
   | { state: 'connected'; account: string | null }
-  /** consent: Microsoft wants an administrator to approve the permissions */
-  | { state: 'error'; message: string; consent?: boolean }
+  /**
+   * consent: Microsoft wants an administrator to approve the permissions. problem: what a browser sign-in needs
+   * (its secret, a right redirect URI, a free port, a new sign-in)
+   */
+  | { state: 'error'; message: string; consent?: boolean; problem?: 'secret-needed' | 'secret-wrong' | 'secret-not-allowed' | 'redirect-mismatch' | 'expired' | 'port-busy' }
+/** browser: signed in with the browser on the app's own redirect URI (authorization code + PKCE), not the device code */
+export type M365Method = 'code' | 'browser'
 export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string
+  method: M365Method; redirectUri: string; /** a client secret is saved (never sent back) */ hasSecret: boolean
   /** SharePoint and OneDrive search is on; documentsRefused: Microsoft refused it until an administrator approves */
   documents: boolean; documentsRefused: boolean }
 
