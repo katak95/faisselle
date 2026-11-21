@@ -12,7 +12,7 @@ test('first run: progress while the models arrive, then the home screen', async 
   try {
     const page = await app.firstWindow()
     await expect(page.getByTestId('onboarding')).toBeVisible()
-    await expect(page.getByTestId('wordmark')).toBeVisible()
+    await expect(page.getByTestId('onboarding').getByTestId('wordmark')).toBeVisible()
     await expect(page.getByTestId('step-title')).toHaveText('Almost ready')
     const bar = page.getByTestId('setup-progress')
     await expect(bar).toBeVisible()
@@ -179,9 +179,21 @@ test('every permission step leads with what it gives, Allow asks the Mac, and Ac
     // the picture: you through the mic, the others through the Mac's sound
     await expect(page.getByTestId('record-art')).toContainText('You')
     await expect(page.getByTestId('record-art')).toContainText('Everyone else')
+    const lanes = page.getByTestId('record-art').locator('.ob-lane')
+    const myMeter = lanes.nth(0).locator('.ob-wave i').first()
+    const otherMeter = lanes.nth(1).locator('.ob-wave i').first()
+    const quietTile = await lanes.nth(0).locator('.ob-lane-icon').evaluate(el => getComputedStyle(el).backgroundColor)
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await expect(myMeter).toHaveCSS('animation-name', 'ob-speech')
+    await expect(otherMeter).toHaveCSS('animation-name', 'none')
     await page.getByTestId('step-allow').click()
     await expect(step).toHaveAttribute('data-kind', 'systemAudio')
     await expect(page.getByTestId('step-title')).toHaveText('Call audio')
+    await expect(lanes.nth(0).locator('.ob-lane-icon')).toHaveCSS('background-color', quietTile)
+    await expect(myMeter).toHaveCSS('animation-name', 'none')
+    await expect(otherMeter).toHaveCSS('animation-name', 'ob-speech')
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await expect(otherMeter).toHaveCSS('animation-name', 'none')
     await expect(page.getByTestId('step-reason')).toHaveText('The permission may mention your screen. Only sound is recorded to transcribe the other speakers.')
     expect(await fake(app, 'permissions')).toMatchObject({ mic: 'granted', systemAudio: 'unknown' })
     for (const kind of ['systemAudio', 'calendar', 'notifications']) {
@@ -196,7 +208,9 @@ test('every permission step leads with what it gives, Allow asks the Mac, and Ac
     await expect(page.getByTestId('step-title')).toHaveText('See who said what')
     // the picture of why: You and Them becoming names
     await expect(page.getByTestId('speaker-names-art')).toContainText('Them')
-    await expect(page.getByTestId('speaker-names-art')).toContainText('Chris')
+    const art = page.getByTestId('speaker-names-art')
+    await expect(art.locator('.ob-tile-name')).toHaveText(['Ray', 'You', 'Maya'])
+    await expect(art.locator('.ob-swap-to')).toHaveText(['Ray', 'Maya'])
     await page.getByTestId('step-allow').click()
     // only System Settings turns it on: the pane opens, with where to click
     await expect(page.getByTestId('settings-guide')).toBeVisible()
