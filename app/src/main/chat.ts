@@ -211,6 +211,9 @@ export function warm(d: Deps, meetingId: string): Promise<void> {
  * quietly. When the queue stops the job (a recording needs the room) it runs again from the start: onRestart.
  * onStep: what it is doing before the first words (loading the model, then reading the meeting).
  */
+/** how long a question waits, at its turn, for Microsoft 365 still answering: then it goes without */
+const CONTEXT_WAIT_MS = 15_000
+
 export async function* ask(d: Deps, meetingId: string, question: string, history: History,
   o: { signal?: AbortSignal; onStart?: () => void; onRestart?: () => void; onComplete?: (answer: string) => void; onStep?: (step: AskStep) => void } = {}): AsyncIterable<string> {
   const buf: string[] = []
@@ -220,8 +223,9 @@ export async function* ask(d: Deps, meetingId: string, question: string, history
   const finish = (e?: unknown) => { if (done) return; failed = e; done = true; wake?.() }
   // a stop ends it at once, even while it still waits in the queue (the job then does nothing when its turn comes)
   o.signal?.addEventListener('abort', () => finish(), { once: true })
-  // Microsoft 365 is asked before the question joins the queue, so a slow answer from it never holds the model
-  const extra = (await d.context?.(meetingId).catch((e) => { console.warn('the meeting context could not be read', e); return undefined })) ?? ''
+  // Microsoft 365 is asked at once, while the question waits its turn and the model loads; the question still joins
+  // the queue right away, as without it
+  const extra = d.context?.(meetingId).catch((e) => { console.warn('the meeting context could not be read', e); return undefined })
 
   d.queue.enqueue(async (stop) => {
     if (o.signal?.aborted) return
@@ -233,7 +237,7 @@ export async function* ask(d: Deps, meetingId: string, question: string, history
       if (d.model.needsLoad?.()) o.onStep?.({ kind: 'loading' })
       const llm = await d.model.llm(signal)
       const recording = m.state === 'recording'
-      const { context, recent } = await prepare(d, llm, m, question, history, recording, extra)
+      const { context, recent } = await prepare(d, llm, m, question, history, recording, (await Promise.race([extra, new Promise<undefined>((r) => setTimeout(r, CONTEXT_WAIT_MS))])) ?? '')
       if (signal.aborted) return
       o.onStep?.({ kind: 'reading', title: m.title })
       // the engine ends an answer it is told to stop and returns what it had (no error)
