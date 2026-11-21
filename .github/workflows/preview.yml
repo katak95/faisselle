@@ -18,6 +18,10 @@ on:
         description: Built for a release (release.yml), so it looks for updates; by hand it is a preview that never does
         type: boolean
         default: false
+      version:
+        description: "Figolu: the release's version (v0.3.6200), as app/package.json keeps Yogurt's"
+        type: string
+        default: ''
 
 env:
   # the same SDK and checksums as native-whisper.yml
@@ -128,6 +132,8 @@ jobs:
           PROFILE: ${{ vars.WINDOWS_CERT_PROFILE || 'yogurt' }}
         run: |
           cd app
+          # Figolu: the release's version (its tag), not Yogurt's in package.json
+          if [ -n "${{ inputs.version }}" ]; then v="${{ inputs.version }}"; npm pkg set version="${v#v}"; fi
           set -- ${{ matrix.platform }} --publish never
           [ "$PREVIEW" = true ] && set -- "$@" -c.extraMetadata.yogurtPreview=true
           if [ "$RUNNER_OS" = Windows ] && [ "$SIGN" = true ]; then
