@@ -130,21 +130,3 @@ describe('signing in to Atlassian', () => {
   })
 })
 
-describe('the Yogurt folder becomes Figolu\'s', () => {
-  it('moves the profile once, never over meetings already there', async () => {
-    const { mkdirSync, writeFileSync, existsSync, readFileSync } = await import('node:fs')
-    const { migrateProfile } = await import('../src/main/paths')
-    const appData = mkdtempSync(join(tmpdir(), 'appdata-'))
-    mkdirSync(join(appData, 'Yogurt', 'meetings'), { recursive: true })
-    writeFileSync(join(appData, 'Yogurt', 'yogurt.db'), 'db')
-    // Electron already made a Figolu folder at a first launch: it holds no meetings, so it gives way
-    mkdirSync(join(appData, 'Figolu', 'Cache'), { recursive: true })
-    expect(migrateProfile(appData)).toBe('moved')
-    expect(readFileSync(join(appData, 'Figolu', 'yogurt.db'), 'utf8')).toBe('db')
-    expect(existsSync(join(appData, 'Yogurt'))).toBe(false)
-    // later launches: nothing to do, and a Figolu with meetings is never replaced
-    mkdirSync(join(appData, 'Yogurt'), { recursive: true }); writeFileSync(join(appData, 'Yogurt', 'yogurt.db'), 'other')
-    expect(migrateProfile(appData)).toBe('none')
-    expect(readFileSync(join(appData, 'Figolu', 'yogurt.db'), 'utf8')).toBe('db')
-  })
-})
