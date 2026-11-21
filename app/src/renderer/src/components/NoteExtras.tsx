@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 // the app's own icons (Hugeicons, Icons.tsx), under the names these components use
 import { Check, ChevronDown, Copy, ListChecks, MessageCircle as Mail, Plus, RotateCcw, Lightbulb as Sparkles, Trash2 } from './Icons'
 import type { ExtrasKind, ExtrasView, FollowUp, TemplatesView } from '../../../shared/types'
@@ -32,21 +32,57 @@ function CopyButton({ text, testId }: { text: string; testId: string }) {
 const failedFor = (v: ExtrasView, kind: ExtrasKind) => (v.failed?.kind === kind ? v.failed.message : undefined)
 const writingFor = (v: ExtrasView, kind: ExtrasKind) => (v.writing?.kind === kind ? v.writing : undefined)
 
-/** the summary's template, picked for this meeting: picking another writes the notes again with it */
+/**
+ * The summary's template, picked for this meeting: picking another writes the notes again with it. A menu (like the
+ * mic's), not a native list: its choices only exist while it is open, so they never mix with the note's other lists.
+ */
 function TemplatePicker({ id, current }: { id: string; current: string | null }) {
   const [tv, setTv] = useState<TemplatesView>()
+  const [open, setOpen] = useState(false)
+  const root = useRef<HTMLDivElement>(null), button = useRef<HTMLButtonElement>(null)
   useEffect(() => { void window.yogurt.templates.get().then(setTv) }, [])
+  useEffect(() => {
+    if (!open) return
+    root.current?.querySelector<HTMLButtonElement>('[role="menuitemradio"][aria-checked="true"], [role="menuitemradio"]')?.focus()
+    const away = (e: MouseEvent) => { if (!root.current?.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', away)
+    return () => document.removeEventListener('mousedown', away)
+  }, [open])
   if (!tv) return null
   const value = current ?? tv.defaultId ?? GENERAL
-  return <label className="note-extras-template flex items-center gap-2 text-[12px] text-muted">
-    <span>{t('Template')}</span>
-    <span className="settings-select-wrap">
-      <select data-testid="note-template" value={value} onChange={(e) => void window.yogurt.extras.setTemplate(id, e.target.value)} className="settings-select">
-        {templateChoices(tv.custom).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-      </select>
-      <ChevronDown size={14} aria-hidden="true" />
-    </span>
-  </label>
+  const choices = templateChoices(tv.custom)
+  const choose = (next: string) => {
+    setOpen(false); button.current?.focus()
+    if (next !== value) void window.yogurt.extras.setTemplate(id, next)
+  }
+  const onKey = (e: KeyboardEvent) => {
+    const list = Array.from(root.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') ?? [])
+    const at = list.indexOf(document.activeElement as HTMLButtonElement)
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setOpen(false); button.current?.focus() }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); list[(at + 1) % list.length]?.focus() }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); list[(at - 1 + list.length) % list.length]?.focus() }
+    else if (e.key === 'Home') { e.preventDefault(); list[0]?.focus() }
+    else if (e.key === 'End') { e.preventDefault(); list.at(-1)?.focus() }
+    else if (e.key === 'Tab') setOpen(false)
+  }
+  const row = 'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-start text-sm hover:bg-[var(--line)] focus-visible:bg-[var(--line)] focus-visible:outline-none'
+  return <div ref={root} className="note-extras-template relative flex items-center gap-2 text-[12px] text-muted">
+    <span id={`note-template-label-${id}`}>{t('Template')}</span>
+    <button ref={button} data-testid="note-template" data-value={value} aria-haspopup="menu" aria-expanded={open}
+      aria-labelledby={`note-template-label-${id} note-template-value-${id}`} onClick={() => setOpen((o) => !o)}
+      className="workspace-button flex items-center gap-1.5">
+      <span id={`note-template-value-${id}`}>{choices.find((c) => c.id === value)?.name ?? value}</span>
+      <ChevronDown size={13} aria-hidden="true" />
+    </button>
+    {open && <div data-testid="note-template-menu" role="menu" aria-label={t('Template')} onKeyDown={onKey}
+      className="absolute start-0 top-full z-30 mt-1 w-64 rounded-xl border border-line bg-float p-1.5 text-ink shadow-[var(--shadow)]">
+      {choices.map((c) => <button key={c.id} role="menuitemradio" aria-checked={c.id === value} data-testid="note-template-option" data-id={c.id}
+        onClick={() => choose(c.id)} className={row}>
+        <span className="truncate">{c.name}</span>
+        <Check size={15} aria-hidden="true" className={`ms-auto shrink-0 ${c.id === value ? '' : 'invisible'}`} />
+      </button>)}
+    </div>}
+  </div>
 }
 
 function Actions({ id, v }: { id: string; v: ExtrasView }) {

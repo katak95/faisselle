@@ -18,14 +18,15 @@ test('the compact sidebar keeps navigation and folder actions available, includi
     const corner = page.getByTestId('corner-menu-button')
     const footer = page.locator('.workspace-corner')
     await expect(footer).toHaveCSS('border-top-width', '1px')
-    const markInset = () => corner.locator('svg path').evaluate(mark =>
+    // the mark's box, not its outline: Figolu's narrow f sits centred in it, where Yogurt's mark filled it
+    const markInset = () => corner.locator('svg').evaluate(mark =>
       Math.round(mark.getBoundingClientRect().left - mark.closest('.workspace-corner')!.getBoundingClientRect().left))
-    await expect.poll(markInset).toBe(21)
+    await expect.poll(markInset).toBe(20)
     const cornerY = (await corner.boundingBox())!.y
     await page.getByTestId('sidebar-collapse').click()
     await expect(page.getByTestId('nav-chat')).toBeVisible()
     await expect.poll(async () => (await page.locator('#workspace-sidebar').boundingBox())!.width).toBe(56)
-    await expect.poll(markInset).toBe(17)
+    await expect.poll(markInset).toBe(16)
     await expect(corner).toHaveAccessibleName('Help and settings')
     expect((await corner.boundingBox())!.y).toBeCloseTo(cornerY, 0)
     await expect(page.getByTestId('nav-trash')).toHaveCount(0)
