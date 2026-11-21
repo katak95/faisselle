@@ -4,10 +4,10 @@ import type { UpdateStatus } from '../../../shared/types'
 /** Top to bottom. The corner button sits below the last item. */
 export const cornerRows = ['news', 'github', 'discord', 'shortcuts', 'feedback', 'help', 'settings', 'trash'] as const
 export const cornerLinks = {
-  // Figolu has no website: its releases, its docs, and Yogurt's community
+  // Faisselle has no website: its releases, its docs, and Yogurt's community
   news: projectRepository + '/releases',
   github: projectRepository,
-  discord: 'https://yogurt.so/discord', // rebrand: keep (Yogurt's Discord, the app Figolu is built on)
+  discord: 'https://yogurt.so/discord', // rebrand: keep (Yogurt's Discord, the app Faisselle is built on)
   feedback: projectRepository + '/issues/new',
   help: projectRepository + '/blob/main/docs/README.md',
 }

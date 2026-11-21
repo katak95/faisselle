@@ -4,7 +4,7 @@ import { t } from '../shared/i18n'
 import type { UpdateStatus } from '../shared/types'
 import { autoUpdateOn, loadSettings, updateSettings } from './settings'
 
-/** checking again while Figolu stays open for days */
+/** checking again while Faisselle stays open for days */
 const EVERY_MS = 4 * 60 * 60 * 1000
 
 /**
@@ -31,7 +31,7 @@ export function finishQuit(): void {
 }
 
 /**
- * Settings → Updates: the version, what the updater is doing, the on/off switch, and Restart Figolu once a version is ready.
+ * Settings → Updates: the version, what the updater is doing, the on/off switch, and Restart Faisselle once a version is ready.
  * available: false in a build that never updates (see updatesOn); Settings then shows only the version.
  * DOES NOT WORK WHILE RECORDING.
  */
@@ -52,7 +52,7 @@ export async function hookUpdates(d: { file: string; available: boolean; recordi
   ipcMain.handle('updates:set', (_e, on: unknown) => {
     if (typeof on !== 'boolean') return status()
     updateSettings(d.file, { autoUpdate: on ? undefined : false })
-    // off means off: a version that already downloaded doesn't install on quit either (Restart Figolu still can)
+    // off means off: a version that already downloaded doesn't install on quit either (Restart Faisselle still can)
     if (updater) updater.autoInstallOnAppQuit = on
     if (on) check()
     return status()
@@ -65,7 +65,7 @@ export async function hookUpdates(d: { file: string; available: boolean; recordi
   })
   ipcMain.handle('updates:restart', () => {
     if (state !== 'ready' || d.recording()) return false
-    // fake mode: as if Figolu came back on the new version
+    // fake mode: as if Faisselle came back on the new version
     if (d.fake) { d.fake.restarted(); set('latest'); return true }
     installOnQuit = true
     app.quit()
@@ -86,7 +86,7 @@ export async function hookUpdates(d: { file: string; available: boolean; recordi
   updater.on('update-downloaded', (info) => {
     set('ready', info.version)
     if (!Notification.isSupported()) return
-    new Notification({ title: t('Figolu {version} is ready', { version: info.version }), body: t('It installs the next time you quit Figolu.') }).show()
+    new Notification({ title: t('Faisselle {version} is ready', { version: info.version }), body: t('It installs the next time you quit Faisselle.') }).show()
   })
   updater.on('error', (err) => {
     console.warn('checking for a new version failed', err.message)

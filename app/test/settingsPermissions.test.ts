@@ -52,9 +52,9 @@ describe('permission action hierarchy', () => {
 afterEach(() => { vi.unstubAllGlobals() })
 
 it.each([
-  ['darwin', 'Beside the Figolu icon in the menu bar.'],
-  ['win32', 'In the tooltip of the Figolu icon in the notification area.'],
-  ['linux', 'In the tooltip of the Figolu icon in the tray.'],
+  ['darwin', 'Beside the Faisselle icon in the menu bar.'],
+  ['win32', 'In the tooltip of the Faisselle icon in the notification area.'],
+  ['linux', 'In the tooltip of the Faisselle icon in the tray.'],
 ])('shows the next meeting switch and its location only when the icon is visible on %s', (os, description) => {
   vi.stubGlobal('window', { yogurt: { os } })
   for (const visible of [false, true]) for (const on of [false, true]) {

@@ -11,8 +11,8 @@ describe('userDataDir', () => {
     process.env.YOGURT_USER_DATA = '/tmp/profile'
     expect(userDataDir()).toBe('/tmp/profile')
   })
-  it('is a Figolu folder in app data otherwise', () => {
-    expect(userDataDir()).toBe(join('/fake/appData', 'Figolu'))
+  it('is a Faisselle folder in app data otherwise', () => {
+    expect(userDataDir()).toBe(join('/fake/appData', 'Faisselle'))
   })
 })
 

@@ -8,7 +8,7 @@ import { createMcp, type McpApp } from './server'
 import { helperCopyPath, installHelper, LAUNCH_FILE, launchCommand, mcpAddress, PIPE_FILE } from './paths'
 import { serveMcp } from './socket'
 
-/** yogurt-mcp, the program an AI app starts: it passes messages between that app and Figolu */
+/** yogurt-mcp, the program an AI app starts: it passes messages between that app and Faisselle */
 export function mcpHelperPath(): string {
   const file = helperFile('mcp', process.platform)
   const candidates = [
@@ -54,9 +54,9 @@ export async function hookMcp(d: {
     server = await serveMcp(address, mcp, d.send)
     if (process.platform === 'win32') writeWhole(join(d.profile, PIPE_FILE), address)
   } catch (e) { console.error('mcp: could not open its socket', e) }
-  // what the helper starts when Figolu is closed (Windows, Linux): recorded each launch, as an AppImage can move
+  // what the helper starts when Faisselle is closed (Windows, Linux): recorded each launch, as an AppImage can move
   const launch = launchCommand(process.platform, app.isPackaged, process.execPath, process.env)
-  if (launch) { try { writeWhole(join(d.profile, LAUNCH_FILE), launch) } catch (e) { console.error('mcp: could not record how to open Figolu', e) } }
+  if (launch) { try { writeWhole(join(d.profile, LAUNCH_FILE), launch) } catch (e) { console.error('mcp: could not record how to open Faisselle', e) } }
   const copy = copyHelper(d.profile)
   const status = () => ({ enabled: d.enabled(), changes: d.changesEnabled(), clients: server?.clients() ?? [], command: copy ?? mcpHelperPath() })
   ipcMain.handle('mcp:status', status)

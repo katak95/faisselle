@@ -129,7 +129,7 @@ export function SpeakerNamesArt() {
   )
 }
 
-/** Where to click in System Settings: its pane with Figolu in the list, the switch turning on, and + for when it isn't listed */
+/** Where to click in System Settings: its pane with Faisselle in the list, the switch turning on, and + for when it isn't listed */
 export function SettingsWindowArt({ pane, section }: { pane: string; section?: string }) {
   return (
     <div data-testid="settings-window-art" className="ob-settings">
@@ -144,7 +144,7 @@ export function SettingsWindowArt({ pane, section }: { pane: string; section?: s
           <div className="ob-settings-row ob-settings-other"><span className="ob-app-icon" /><span className="ob-app-name" /><span className="ob-switch" /></div>
           <div className="ob-settings-row ob-settings-yogurt">
             <span className="ob-app-icon ob-app-yogurt"><Logo size={12} className="text-[#fff]" /></span>
-            <span className="ob-settings-app">Figolu</span>
+            <span className="ob-settings-app">Faisselle</span>
             <span className="ob-switch ob-switch-on" />
           </div>
           <div className="ob-settings-tools"><Plus size={11} /><span className="ob-settings-minus" /></div>

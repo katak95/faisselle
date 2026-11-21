@@ -389,7 +389,7 @@ describe('hookNotes', () => {
     expect(s.prompts).toHaveLength(1)
     expect(s.notes.view(s.m.id).peopleChanged).toBe(true)
   })
-  it('notes written before Figolu kept who was there are not marked out of date for their attendees', async () => {
+  it('notes written before Faisselle kept who was there are not marked out of date for their attendees', async () => {
     const s = setup()
     s.store.updateMeeting(s.m.id, { attendees: [{ name: 'Ann Lee', email: null }] })
     s.store.setNotes(s.m.id, { enhanced: '## Old' })

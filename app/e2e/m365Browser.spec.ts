@@ -10,7 +10,7 @@ const main = join(import.meta.dirname, '../out/main/index.js')
 // browser on that app's redirect URI. Fake mode's Microsoft comes straight back to it with a code.
 test('Microsoft 365 signs in with the browser on the app’s own redirect URI', async () => {
   test.setTimeout(90_000)
-  const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_FAKE: '1', YOGURT_USER_DATA: mkdtempSync(join(tmpdir(), 'figolu-m365-browser-')) } })
+  const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_FAKE: '1', YOGURT_USER_DATA: mkdtempSync(join(tmpdir(), 'faisselle-m365-browser-')) } })
   try {
     const page = await app.firstWindow()
     await expect(page.getByTestId('home')).toBeVisible()

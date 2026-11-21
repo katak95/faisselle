@@ -1,8 +1,8 @@
-//! yogurt-mcp for Windows and Linux: what an AI app (Claude, Cursor, …) starts to read Figolu's meetings over MCP.
-//! The same as native/yogurt-mcp (Swift, Mac): it only passes messages, the AI app's stdin to Figolu and Figolu's
-//! answers to stdout. Linux: the Unix socket in the profile folder. Windows: the named pipe whose name Figolu
+//! yogurt-mcp for Windows and Linux: what an AI app (Claude, Cursor, …) starts to read Faisselle's meetings over MCP.
+//! The same as native/yogurt-mcp (Swift, Mac): it only passes messages, the AI app's stdin to Faisselle and Faisselle's
+//! answers to stdout. Linux: the Unix socket in the profile folder. Windows: the named pipe whose name Faisselle
 //! writes to mcp.pipe in the profile folder. The MCP server itself is in the app (src/main/mcp).
-//! Figolu not open: it is started in the background first.
+//! Faisselle not open: it is started in the background first.
 
 use std::env;
 use std::ffi::OsString;
@@ -13,9 +13,9 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
-const NOT_RUNNING: &str = "Figolu isn't running, and it couldn't be opened. Open Figolu, then try again.";
+const NOT_RUNNING: &str = "Faisselle isn't running, and it couldn't be opened. Open Faisselle, then try again.";
 #[cfg_attr(windows, allow(dead_code))]
-const TOO_LONG: &str = "Figolu's folder path is too long for its connection.";
+const TOO_LONG: &str = "Faisselle's folder path is too long for its connection.";
 #[cfg_attr(unix, allow(dead_code))]
 const PIPE_PREFIX: &str = r"\\.\pipe\yogurt-mcp-";
 #[cfg_attr(windows, allow(dead_code))]
@@ -27,33 +27,33 @@ fn fail(s: &str) -> ! {
     exit(1)
 }
 
-/// The profile folder, where Electron puts it (appData + "Figolu"): %APPDATA%\Figolu on Windows,
-/// $XDG_CONFIG_HOME/Figolu or ~/.config/Figolu on Linux. YOGURT_USER_DATA uses a separate one (tests).
+/// The profile folder, where Electron puts it (appData + "Faisselle"): %APPDATA%\Faisselle on Windows,
+/// $XDG_CONFIG_HOME/Faisselle or ~/.config/Faisselle on Linux. YOGURT_USER_DATA uses a separate one (tests).
 fn profile(windows: bool, var: impl Fn(&str) -> Option<OsString>) -> Option<PathBuf> {
     let set = |k: &str| var(k).filter(|v| !v.is_empty());
     if let Some(p) = set("YOGURT_USER_DATA") {
         return Some(p.into());
     }
     if windows {
-        return set("APPDATA").map(|a| PathBuf::from(a).join("Figolu"));
+        return set("APPDATA").map(|a| PathBuf::from(a).join("Faisselle"));
     }
     set("XDG_CONFIG_HOME")
         .map(PathBuf::from)
         .or_else(|| set("HOME").map(|h| PathBuf::from(h).join(".config")))
-        .map(|c| c.join("Figolu"))
+        .map(|c| c.join("Faisselle"))
 }
 
 #[cfg_attr(unix, allow(dead_code))]
-/// The pipe's name as Figolu wrote it to mcp.pipe; anything else in that file is not followed.
+/// The pipe's name as Faisselle wrote it to mcp.pipe; anything else in that file is not followed.
 fn pipe_name(file: &str) -> Option<&str> {
     let name = file.trim();
     let id = name.strip_prefix(PIPE_PREFIX)?;
     (!id.is_empty() && id.len() <= 64 && id.bytes().all(|b| b.is_ascii_hexdigit())).then_some(name)
 }
 
-/// What starts Figolu: the program Figolu recorded in mcp-launch when it last opened (the installed Figolu.exe,
-/// or the AppImage, which may have moved since). Windows without one: Figolu.exe next to the resources folder
-/// this helper is in (Figolu\resources\bin\yogurt-mcp.exe).
+/// What starts Faisselle: the program Faisselle recorded in mcp-launch when it last opened (the installed Faisselle.exe,
+/// or the AppImage, which may have moved since). Windows without one: Faisselle.exe next to the resources folder
+/// this helper is in (Faisselle\resources\bin\yogurt-mcp.exe).
 fn launch_target(windows: bool, recorded: Option<String>, exe: Option<PathBuf>) -> Option<PathBuf> {
     if let Some(r) = recorded.as_deref().map(str::trim).filter(|r| !r.is_empty()) {
         return Some(PathBuf::from(r));
@@ -65,7 +65,7 @@ fn launch_target(windows: bool, recorded: Option<String>, exe: Option<PathBuf>) 
     let bin = exe.parent()?;
     let resources = bin.parent()?;
     let named = |p: &Path, n: &str| p.file_name().is_some_and(|f| f.eq_ignore_ascii_case(n));
-    (named(bin, "bin") && named(resources, "resources")).then(|| resources.parent().map(|app| app.join("Figolu.exe")))?
+    (named(bin, "bin") && named(resources, "resources")).then(|| resources.parent().map(|app| app.join("Faisselle.exe")))?
 }
 
 #[cfg_attr(windows, allow(dead_code))]
@@ -73,12 +73,12 @@ fn socket_too_long(path: &Path) -> bool {
     path.as_os_str().len() >= SUN_PATH
 }
 
-/// One connection to Figolu, read on one thread while written on another.
+/// One connection to Faisselle, read on one thread while written on another.
 trait Conn: Send + Sync {
-    /// None: Figolu went away. Some(0) only means try again.
+    /// None: Faisselle went away. Some(0) only means try again.
     fn read(&self, buf: &mut [u8]) -> Option<usize>;
     fn write(&self, buf: &[u8]) -> Option<usize>;
-    /// tells Figolu nothing more is coming, where the connection can say so
+    /// tells Faisselle nothing more is coming, where the connection can say so
     fn close_write(&self);
 }
 
@@ -118,7 +118,7 @@ mod sock {
         UnixStream::connect(&path).ok().map(|s| Box::new(Sock(s)) as Box<dyn Conn>)
     }
 
-    /// in its own process group, so the AI app ending its group doesn't take Figolu with it
+    /// in its own process group, so the AI app ending its group doesn't take Faisselle with it
     pub fn start(target: &Path) -> bool {
         use std::os::unix::process::CommandExt;
         super::command(target).process_group(0).spawn().is_ok()
@@ -129,7 +129,7 @@ mod sock {
 mod pipe {
     //! The few Windows calls needed, declared here instead of pulling in a crate.
     //! The pipe is opened for overlapped I/O: on a plain handle Windows runs one call at a time, so a read waiting
-    //! for Figolu's answer would hold up the next message to it.
+    //! for Faisselle's answer would hold up the next message to it.
     use super::Conn;
     use std::ffi::c_void;
     use std::os::windows::ffi::OsStrExt;
@@ -225,13 +225,13 @@ mod pipe {
         None
     }
 
-    /// Detached, and out of the AI app's job when it allows that, so closing the AI app doesn't close Figolu.
+    /// Detached, and out of the AI app's job when it allows that, so closing the AI app doesn't close Faisselle.
     pub fn start(target: &Path) -> bool {
         use std::os::windows::process::CommandExt;
         const DETACHED_PROCESS: u32 = 0x0000_0008;
         const CREATE_NEW_PROCESS_GROUP: u32 = 0x0000_0200;
         const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x0100_0000;
-        // Figolu would otherwise inherit the AI app's stdin and stdout, and the AI app would wait on them after we end
+        // Faisselle would otherwise inherit the AI app's stdin and stdout, and the AI app would wait on them after we end
         for which in STD_HANDLES {
             unsafe { SetHandleInformation(GetStdHandle(which), HANDLE_FLAG_INHERIT, 0) };
         }
@@ -246,7 +246,7 @@ use sock::{connect, start};
 #[cfg(windows)]
 use pipe::{connect, start};
 
-/// Figolu with --hidden: it opens without a window, so starting a chat never pulls Figolu in front
+/// Faisselle with --hidden: it opens without a window, so starting a chat never pulls Faisselle in front
 fn command(target: &Path) -> Command {
     let mut c = Command::new(target);
     c.arg("--hidden").stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null());
@@ -273,7 +273,7 @@ fn main() {
     }
     let conn: Arc<dyn Conn> = Arc::from(conn.unwrap_or_else(|| fail(NOT_RUNNING)));
 
-    // Figolu's answers → stdout; when Figolu goes away, so does this
+    // Faisselle's answers → stdout; when Faisselle goes away, so does this
     let from = conn.clone();
     thread::spawn(move || {
         let mut out = io::stdout().lock();
@@ -290,7 +290,7 @@ fn main() {
             }
         }
     });
-    // the AI app's messages → Figolu; the app closing stdin ends the session
+    // the AI app's messages → Faisselle; the app closing stdin ends the session
     let mut input = io::stdin().lock();
     let mut buf = vec![0u8; 65536];
     loop {
@@ -327,11 +327,11 @@ mod tests {
     #[test]
     fn profile_is_where_electron_puts_it() {
         let win = env_of(&[("APPDATA", r"C:\Users\sam\AppData\Roaming"), ("HOME", "/h")]);
-        assert_eq!(profile(true, &win), Some(PathBuf::from(r"C:\Users\sam\AppData\Roaming").join("Figolu")));
-        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam")])), Some(PathBuf::from("/home/sam/.config/Figolu")));
-        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam"), ("XDG_CONFIG_HOME", "/cfg")])), Some(PathBuf::from("/cfg/Figolu")));
+        assert_eq!(profile(true, &win), Some(PathBuf::from(r"C:\Users\sam\AppData\Roaming").join("Faisselle")));
+        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam")])), Some(PathBuf::from("/home/sam/.config/Faisselle")));
+        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam"), ("XDG_CONFIG_HOME", "/cfg")])), Some(PathBuf::from("/cfg/Faisselle")));
         // empty means not set, as for Electron
-        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam"), ("XDG_CONFIG_HOME", "")])), Some(PathBuf::from("/home/sam/.config/Figolu")));
+        assert_eq!(profile(false, env_of(&[("HOME", "/home/sam"), ("XDG_CONFIG_HOME", "")])), Some(PathBuf::from("/home/sam/.config/Faisselle")));
         assert_eq!(profile(true, env_of(&[])), None);
     }
 
@@ -354,24 +354,24 @@ mod tests {
 
     #[test]
     fn yogurt_is_started_from_where_it_said() {
-        assert_eq!(launch_target(false, Some("/home/sam/Apps/Figolu.AppImage\n".into()), None), Some(PathBuf::from("/home/sam/Apps/Figolu.AppImage")));
-        assert_eq!(launch_target(true, Some(r"D:\Figolu\Figolu.exe".into()), None), Some(PathBuf::from(r"D:\Figolu\Figolu.exe")));
+        assert_eq!(launch_target(false, Some("/home/sam/Apps/Faisselle.AppImage\n".into()), None), Some(PathBuf::from("/home/sam/Apps/Faisselle.AppImage")));
+        assert_eq!(launch_target(true, Some(r"D:\Faisselle\Faisselle.exe".into()), None), Some(PathBuf::from(r"D:\Faisselle\Faisselle.exe")));
         // Linux with nothing recorded: no idea where the AppImage is
-        assert_eq!(launch_target(false, None, Some("/home/sam/.config/Figolu/bin/yogurt-mcp".into())), None);
+        assert_eq!(launch_target(false, None, Some("/home/sam/.config/Faisselle/bin/yogurt-mcp".into())), None);
         assert_eq!(launch_target(false, Some("  ".into()), None), None);
     }
 
     #[cfg(windows)]
     #[test]
     fn windows_falls_back_to_the_install_folder() {
-        let exe = PathBuf::from(r"C:\Users\sam\AppData\Local\Programs\Figolu\resources\bin\yogurt-mcp.exe");
-        assert_eq!(launch_target(true, None, Some(exe)), Some(PathBuf::from(r"C:\Users\sam\AppData\Local\Programs\Figolu\Figolu.exe")));
+        let exe = PathBuf::from(r"C:\Users\sam\AppData\Local\Programs\Faisselle\resources\bin\yogurt-mcp.exe");
+        assert_eq!(launch_target(true, None, Some(exe)), Some(PathBuf::from(r"C:\Users\sam\AppData\Local\Programs\Faisselle\Faisselle.exe")));
         assert_eq!(launch_target(true, None, Some(PathBuf::from(r"C:\tools\yogurt-mcp.exe"))), None);
     }
 
     #[test]
     fn long_socket_paths_are_caught() {
-        assert!(!socket_too_long(Path::new("/home/sam/.config/Figolu/mcp.sock")));
+        assert!(!socket_too_long(Path::new("/home/sam/.config/Faisselle/mcp.sock")));
         assert!(socket_too_long(&PathBuf::from(format!("/{}/mcp.sock", "a".repeat(100)))));
     }
 }

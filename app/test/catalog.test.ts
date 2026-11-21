@@ -26,7 +26,7 @@ describe('nothing leaves the Mac', () => {
     // files allowed to make requests: model downloads from the catalog's pinned URLs, whisper-server on 127.0.0.1
     // and the person's own calendar link (Windows and Linux), straight from this computer to their calendar provider
     // and the Atlassian sign-in's loopback server on 127.0.0.1, which only receives the browser coming back (it sends nothing)
-    // Figolu: the Microsoft 365 browser sign-in's token endpoint (login.microsoftonline.com, only when that sign-in is
+    // Faisselle: the Microsoft 365 browser sign-in's token endpoint (login.microsoftonline.com, only when that sign-in is
     // chosen), and fake mode's stand-in for it, which only calls the loopback address on this computer
     const allowed = new Set(['main/downloader.ts', 'main/asr/server.ts', 'main/asr/transcribe.ts', 'main/calendarLink/get.ts', 'main/atlassian/oauth.ts', 'main/m365/oauth.ts', 'main/m365/fake.ts'])
     const calls = files(src).filter((f) => /\.(ts|tsx)$/.test(f))

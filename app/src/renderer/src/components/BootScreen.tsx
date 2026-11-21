@@ -3,14 +3,14 @@ import { MARK } from '../../../shared/logo'
 import { BOOT } from '../../../shared/onboarding'
 
 /**
- * While Figolu starts: the mark with a soft light passing over it. It fades in only after BOOT.showAfterMs from the
+ * While Faisselle starts: the mark with a soft light passing over it. It fades in only after BOOT.showAfterMs from the
  * page's start (not from this mount), so a quick start never flashes it; App keeps it up for BOOT.minShownMs once seen.
  */
 export function BootScreen() {
   const id = useId().replace(/:/g, '')
   const delay = Math.max(0, BOOT.showAfterMs - performance.now())
   return (
-    <div data-testid="boot-screen" className="boot-screen" style={{ animationDelay: `${delay}ms` }} role="status" aria-label="Figolu">
+    <div data-testid="boot-screen" className="boot-screen" style={{ animationDelay: `${delay}ms` }} role="status" aria-label="Faisselle">
       <svg width={52} height={52} viewBox="0 0 100 100" aria-hidden="true" className="boot-mark">
         <defs>
           <clipPath id={`${id}-mark`}><path d={MARK} /></clipPath>
@@ -38,7 +38,7 @@ export function MacLaunch({ active }: { active: boolean }) {
     return () => clearTimeout(timer)
   }, [active, showMark])
   return <div className="mac-launch" data-active={active || undefined} aria-hidden={!active || undefined}
-    data-testid={active ? 'boot-screen' : undefined} role="status" aria-label="Figolu">
+    data-testid={active ? 'boot-screen' : undefined} role="status" aria-label="Faisselle">
     {showMark && <svg width={52} height={52} viewBox="0 0 100 100" aria-hidden="true" className="mac-launch-mark text-neutral-400 dark:text-white">
       <path d={MARK} fill="currentColor" />
     </svg>}

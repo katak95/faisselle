@@ -15,7 +15,7 @@ function startup(platform: string, elapsed: number) {
   return renderToStaticMarkup(createElement(App))
 }
 
-it('exposes the Mac material with one still Figolu mark after the existing startup delay', () => {
+it('exposes the Mac material with one still Faisselle mark after the existing startup delay', () => {
   expect(startup('darwin', BOOT.showAfterMs - 1)).not.toContain('<svg')
   const html = startup('darwin', BOOT.showAfterMs)
   expect(html).toContain('class="mac-launch" data-active="true"')

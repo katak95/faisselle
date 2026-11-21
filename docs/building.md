@@ -1,4 +1,4 @@
-# Build and run Figolu locally
+# Build and run Faisselle locally
 
 ## You need
 
@@ -11,11 +11,11 @@
 ## Run it
 
 ```sh
-git clone https://github.com/katak95/figolu.git
-cd figolu
+git clone https://github.com/katak95/faisselle.git
+cd faisselle
 pnpm install --frozen-lockfile
 pnpm -C app native   # builds the audio, system and transcription helpers (first time, and after they change)
-pnpm dev             # opens Figolu from source
+pnpm dev             # opens Faisselle from source
 ```
 
 The first run downloads the AI models, like the installed app.
@@ -42,12 +42,12 @@ Installers land in `app/dist/`. They're unsigned unless signing is set up; see `
 
 ## Release
 
-A new Yogurt version is released by itself: [`sync-yogurt.yml`](../.github/workflows/sync-yogurt.yml) merges it into `main` and tags Yogurt X.Y.Z as Figolu X.Y.(Z×100) ([Following Yogurt](syncing-with-yogurt.md)).
+A new Yogurt version is released by itself: [`sync-yogurt.yml`](../.github/workflows/sync-yogurt.yml) merges it into `main` and tags Yogurt X.Y.Z as Faisselle X.Y.(Z×100) ([Following Yogurt](syncing-with-yogurt.md)).
 
-To release a Figolu change between two Yogurt versions, from an up-to-date, clean `main`:
+To release a Faisselle change between two Yogurt versions, from an up-to-date, clean `main`:
 
 ```sh
-sh app/scripts/figolu-release.sh
+sh app/scripts/faisselle-release.sh
 ```
 
-It tags `main` with the next Figolu number (0.3.6201, 0.3.6202…, [`app/scripts/version.mjs`](../app/scripts/version.mjs)) and pushes the tag. GitHub Actions builds Mac (signed and notarized), Windows and Linux, and publishes one release once all three pass. Installed copies update from it. `app/scripts/release.sh` is Yogurt's: don't use it in Figolu.
+It tags `main` with the next Faisselle number (0.3.6201, 0.3.6202…, [`app/scripts/version.mjs`](../app/scripts/version.mjs)) and pushes the tag. GitHub Actions builds Mac (signed and notarized), Windows and Linux, and publishes one release once all three pass. Installed copies update from it. `app/scripts/release.sh` is Yogurt's: don't use it in Faisselle.

@@ -1,7 +1,7 @@
 # rebrand: keep-file (this workflow is about Yogurt)
-# Figolu follows Yogurt (FrigadeHQ/yogurt) by itself: every day, Yogurt's new commits are renamed to Figolu
+# Faisselle follows Yogurt (FrigadeHQ/yogurt) by itself: every day, Yogurt's new commits are renamed to Faisselle
 # (app/scripts/rebrand.py) on the yogurt-figolu branch, merged into main once the tests pass, and a new Yogurt version
-# is released as Figolu X.Y.(Z×100) (app/scripts/version.mjs). A conflict or a failed test opens a pull request
+# is released as Faisselle X.Y.(Z×100) (app/scripts/version.mjs). A conflict or a failed test opens a pull request
 # instead, and main doesn't move. docs/syncing-with-yogurt.md says how it works and what to do then.
 #
 # Needs the SYNC_TOKEN secret: a fine-grained token on this repository with Contents, Pull requests and Workflows
@@ -41,15 +41,15 @@ jobs:
           token: ${{ secrets.SYNC_TOKEN }}
       - name: Who commits
         run: |
-          git config user.name "figolu-sync"
-          git config user.email "figolu-sync@users.noreply.github.com"
+          git config user.name "faisselle-sync"
+          git config user.email "faisselle-sync@users.noreply.github.com"
           # the translation tables merge key by key (app/scripts/merge-json.mjs, .gitattributes)
           git config merge.locale-json.driver "node app/scripts/merge-json.mjs %O %A %B"
 
       - name: Anything new in Yogurt?
         id: news
         run: |
-          # no tags: Yogurt's v* tags would mix with Figolu's
+          # no tags: Yogurt's v* tags would mix with Faisselle's
           git fetch --no-tags "$YOGURT" main:refs/remotes/yogurt/main
           git fetch origin yogurt-figolu:refs/remotes/origin/yogurt-figolu
           last=$(git log -1 --format=%B origin/yogurt-figolu | sed -n 's/^yogurt-sha: //p')
@@ -57,7 +57,7 @@ jobs:
           echo "now=$now" >> "$GITHUB_OUTPUT"
           if [ "$last" = "$now" ]; then echo "::notice::Nothing new in Yogurt since ${now:0:7}"; echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
 
-      - name: Yogurt's new state, renamed to Figolu (yogurt-figolu)
+      - name: Yogurt's new state, renamed to Faisselle (yogurt-figolu)
         if: steps.news.outputs.new == 'true'
         id: renamed
         run: |
@@ -69,7 +69,7 @@ jobs:
           git add -A
           version=$(node -p "require('./app/package.json').version")
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          git commit -q -m "Yogurt $version renamed to Figolu (scripts/rebrand.py)" -m "yogurt-sha: ${{ steps.news.outputs.now }}"
+          git commit -q -m "Yogurt $version renamed to Faisselle (scripts/rebrand.py)" -m "yogurt-sha: ${{ steps.news.outputs.now }}"
           git push origin yogurt-figolu
 
       - name: Merge into main
@@ -95,13 +95,13 @@ jobs:
           FILES: ${{ steps.merge.outputs.files }}
           VERSION: ${{ steps.renamed.outputs.version }}
         run: |
-          body=$(printf 'Yogurt %s changes lines Figolu changed too, so it was not merged into main.\n\nFiles in conflict:\n%s\n\nTo fix, locally:\n```sh\ngit fetch origin && git checkout main && git pull\ngit config merge.locale-json.driver "node app/scripts/merge-json.mjs %%O %%A %%B"\ngit merge origin/yogurt-figolu\n# fix the files, then\npnpm -C app typecheck && pnpm -C app test\ngit commit && git push\n```\nOnce merged, the next run releases it (docs/syncing-with-yogurt.md).' "$VERSION" "$(echo "$FILES" | sed 's/^/- /')")
+          body=$(printf 'Yogurt %s changes lines Faisselle changed too, so it was not merged into main.\n\nFiles in conflict:\n%s\n\nTo fix, locally:\n```sh\ngit fetch origin && git checkout main && git pull\ngit config merge.locale-json.driver "node app/scripts/merge-json.mjs %%O %%A %%B"\ngit merge origin/yogurt-figolu\n# fix the files, then\npnpm -C app typecheck && pnpm -C app test\ngit commit && git push\n```\nOnce merged, the next run releases it (docs/syncing-with-yogurt.md).' "$VERSION" "$(echo "$FILES" | sed 's/^/- /')")
           if gh pr list --head yogurt-figolu --base main --state open --json number --jq '.[0].number' | grep -q .; then
             gh pr comment yogurt-figolu --body "$body"
           else
             gh pr create --head yogurt-figolu --base main --title "Yogurt $VERSION: conflicts to resolve" --body "$body"
           fi
-          echo "::warning::Yogurt $VERSION conflicts with Figolu: a pull request says where"
+          echo "::warning::Yogurt $VERSION conflicts with Faisselle: a pull request says where"
 
       - uses: pnpm/action-setup@v4
         if: steps.merge.outputs.clean == 'true'
@@ -133,25 +133,25 @@ jobs:
         run: |
           git push -f origin sync/yogurt
           log=$(tail -c 60000 ../tests.log)
-          body=$(printf 'Yogurt %s merges into Figolu, but the checks failed, so main did not move.\n\nThe end of the log:\n\n```\n%s\n```\n\nFix it on this branch; once merged, the next run releases it.' "$VERSION" "$log")
+          body=$(printf 'Yogurt %s merges into Faisselle, but the checks failed, so main did not move.\n\nThe end of the log:\n\n```\n%s\n```\n\nFix it on this branch; once merged, the next run releases it.' "$VERSION" "$log")
           if gh pr list --head sync/yogurt --base main --state open --json number --jq '.[0].number' | grep -q .; then
             gh pr comment sync/yogurt --body "$body"
           else
             gh pr create --head sync/yogurt --base main --title "Yogurt $VERSION: checks to fix" --body "$body"
           fi
-          echo "::warning::Yogurt $VERSION fails Figolu's checks: a pull request has the log"
+          echo "::warning::Yogurt $VERSION fails Faisselle's checks: a pull request has the log"
 
-      # a new Yogurt version in main (now, or merged by hand since): released as Figolu X.Y.(Z×100)
+      # a new Yogurt version in main (now, or merged by hand since): released as Faisselle X.Y.(Z×100)
       - name: Release
         run: |
           git fetch -q origin main --tags
           git checkout -q origin/main
           v=$(node app/scripts/version.mjs --yogurt)
-          if git rev-parse -q --verify "refs/tags/v$v" >/dev/null; then echo "::notice::Figolu $v is already out"; exit 0; fi
+          if git rev-parse -q --verify "refs/tags/v$v" >/dev/null; then echo "::notice::Faisselle $v is already out"; exit 0; fi
           latest=$(git tag --list 'v*' --sort=-v:refname | head -1)
           if [ -n "$latest" ] && [ "$(printf '%s\n%s\n' "${latest#v}" "$v" | sort -V | tail -1)" != "$v" ]; then
-            echo "::notice::Figolu $latest is newer than $v already: nothing to release"; exit 0
+            echo "::notice::Faisselle $latest is newer than $v already: nothing to release"; exit 0
           fi
-          git tag -a "v$v" -m "Figolu $v (Yogurt $(node -p "require('./app/package.json').version"))"
+          git tag -a "v$v" -m "Faisselle $v (Yogurt $(node -p "require('./app/package.json').version"))"
           git push origin "v$v"
-          echo "::notice::Released Figolu $v: release.yml builds it"
+          echo "::notice::Released Faisselle $v: release.yml builds it"

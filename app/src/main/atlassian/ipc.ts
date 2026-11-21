@@ -12,7 +12,7 @@ export type SendResult = { status: 'sent' | 'updated'; url: string } | { status:
 /** the page's words, in the interface's language */
 const labels = (): ReportLabels => ({
   date: t('Date'), length: t('Length'), people: t('People'), actions: t('Action items'),
-  footer: t('Written with Figolu'), minutes: (n) => t('{n} min', { n }),
+  footer: t('Written with Faisselle'), minutes: (n) => t('{n} min', { n }),
 })
 
 /** Settings → Atlassian, and a note's Send to Confluence */

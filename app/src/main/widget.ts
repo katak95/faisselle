@@ -14,7 +14,7 @@ import { widgetLayout, widgetDragLayout, widgetRestLayout, widgetContains, type 
 const BACKGROUND = process.env.YOGURT_BACKGROUND === '1'
 const FIRST_W = 127, FIRST_H = 42
 
-/** Remembered while Figolu runs, including the next meeting and temporary warning cards. */
+/** Remembered while Faisselle runs, including the next meeting and temporary warning cards. */
 let lastWidth = FIRST_W
 let lastPosition: { x: number; y: number } | null = null
 

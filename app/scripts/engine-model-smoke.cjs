@@ -16,12 +16,12 @@ const CONTEXT = 32_768, MIN_CONTEXT = 8192
 const STEP_MS = { probe: 120_000, load: 600_000, chat: 600_000 }
 
 const profile = mkdtempSync(join(tmpdir(), 'yogurt-engine-model-'))
-app.setName('Figolu Engine Model Smoke')
+app.setName('Faisselle Engine Model Smoke')
 app.setPath('userData', profile)
 
 app.whenReady().then(async () => {
   const child = utilityProcess.fork(join(resolve(archive), 'out/main/engine.js'), [], {
-    serviceName: 'Figolu Engine Model Smoke', stdio: 'pipe', ...(gpuOff ? { env: { ...process.env, YOGURT_ENGINE_GPU: 'off' } } : {}),
+    serviceName: 'Faisselle Engine Model Smoke', stdio: 'pipe', ...(gpuOff ? { env: { ...process.env, YOGURT_ENGINE_GPU: 'off' } } : {}),
   })
   child.stdout.on('data', (c) => process.stdout.write(`[engine] ${c}`))
   child.stderr.on('data', (c) => process.stderr.write(`[engine] ${c}`))

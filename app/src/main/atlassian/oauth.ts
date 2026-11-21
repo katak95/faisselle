@@ -5,7 +5,7 @@ import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.
 import type { OAuthClientInformationMixed, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js'
 
 /**
- * Signing in to Atlassian for its MCP server: OAuth 2.1 with PKCE, Figolu registered as a public client by dynamic
+ * Signing in to Atlassian for its MCP server: OAuth 2.1 with PKCE, Faisselle registered as a public client by dynamic
  * registration, and the browser sent back to a loopback address on this computer. What it keeps (the registration,
  * the tokens) is sealed with the system keychain in one file.
  */
@@ -46,7 +46,7 @@ export const callbackUrl = (port: number) => `http://localhost:${port}/oauth/cal
 export function oauthProvider(store: OAuthStore, o: { port: number; interactive: boolean; openExternal(url: string): void; onRedirect?(): void }): OAuthClientProvider & { expectedState(): string | undefined } {
   let state: string | undefined
   const metadata: OAuthClientMetadata = {
-    client_name: 'Figolu', redirect_uris: [callbackUrl(o.port)], grant_types: ['authorization_code', 'refresh_token'],
+    client_name: 'Faisselle', redirect_uris: [callbackUrl(o.port)], grant_types: ['authorization_code', 'refresh_token'],
     response_types: ['code'], token_endpoint_auth_method: 'none',
   }
   return {
@@ -54,7 +54,7 @@ export function oauthProvider(store: OAuthStore, o: { port: number; interactive:
     get clientMetadata() { return metadata },
     state: () => (state = randomBytes(16).toString('hex')),
     expectedState: () => state,
-    // a registration made for another port can't come back here: Figolu registers again
+    // a registration made for another port can't come back here: Faisselle registers again
     clientInformation: () => (store.get().port === o.port ? store.get().client : undefined),
     saveClientInformation: (client) => store.set({ client, port: o.port }),
     tokens: () => store.get().tokens,
@@ -74,7 +74,7 @@ export function oauthProvider(store: OAuthStore, o: { port: number; interactive:
   }
 }
 
-const PAGE = (title: string, text: string) => `<!doctype html><meta charset="utf-8"><title>Figolu</title><body style="font:16px system-ui;margin:4rem auto;max-width:28rem;text-align:center"><h1 style="font-size:20px">${title}</h1><p>${text}</p></body>`
+const PAGE = (title: string, text: string) => `<!doctype html><meta charset="utf-8"><title>Faisselle</title><body style="font:16px system-ui;margin:4rem auto;max-width:28rem;text-align:center"><h1 style="font-size:20px">${title}</h1><p>${text}</p></body>`
 
 /**
  * The loopback server for one sign-in: answers the browser's return with a short page, and gives the code once the
@@ -92,9 +92,9 @@ export async function waitForCode(o: { port: number; state: () => string | undef
     const error = url.searchParams.get('error')
     const got = url.searchParams.get('code')
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-    if (error || !got) { res.end(PAGE('Sign-in not finished', 'You can close this tab and try again in Figolu.')); reject(new Error(url.searchParams.get('error_description') ?? error ?? 'No code')); return }
-    if (url.searchParams.get('state') !== o.state()) { res.end(PAGE('Sign-in not finished', 'This page did not come from Figolu’s sign-in.')); reject(new Error('The sign-in state did not match')); return }
-    res.end(PAGE(`Signed in to ${o.service ?? 'Atlassian'}`, 'You can close this tab and go back to Figolu.'))
+    if (error || !got) { res.end(PAGE('Sign-in not finished', 'You can close this tab and try again in Faisselle.')); reject(new Error(url.searchParams.get('error_description') ?? error ?? 'No code')); return }
+    if (url.searchParams.get('state') !== o.state()) { res.end(PAGE('Sign-in not finished', 'This page did not come from Faisselle’s sign-in.')); reject(new Error('The sign-in state did not match')); return }
+    res.end(PAGE(`Signed in to ${o.service ?? 'Atlassian'}`, 'You can close this tab and go back to Faisselle.'))
     resolve(got)
   })
   const listen = (port: number) => new Promise<number>((res, rej) => {

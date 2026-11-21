@@ -8,7 +8,7 @@ import { fakeAtlassianServer, fakeConfluence } from '../src/main/atlassian/fake'
 import { createAtlassian } from '../src/main/atlassian/client'
 import { createOAuthStore, oauthProvider, waitForCode } from '../src/main/atlassian/oauth'
 
-const labels = { date: 'Date', length: 'Length', people: 'People', actions: 'Action items', footer: 'Written with Figolu', minutes: (n: number) => `${n} min` }
+const labels = { date: 'Date', length: 'Length', people: 'People', actions: 'Action items', footer: 'Written with Faisselle', minutes: (n: number) => `${n} min` }
 const report = (over: Partial<Report> = {}): Report => ({
   meeting: { title: 'Acme renewal', startedAt: new Date(2026, 10, 21, 9, 5).getTime(), endedAt: new Date(2026, 10, 21, 9, 35).getTime(), attendees: [{ name: 'Maya & Co', email: 'maya@acme.example' }] },
   summary: '## Pricing\n- <mine>Two years</mine> at **the 2025 price**', actions: [{ owner: 'You', task: 'Send the <quote>', due: 'Friday', done: true }, { owner: 'Maya', task: 'Sign', due: null, done: false }], labels, ...over,

@@ -332,7 +332,7 @@ test('Ask is pinned and sends the question into a new conversation, including fo
       await page.getByTestId('search-input').fill(query)
       const ask = page.getByTestId('search-ask')
       await expect(page.getByRole('listbox').getByRole('option').first()).toHaveAttribute('id', 'search-ask')
-      await expect(ask).toContainText('Ask Figolu')
+      await expect(ask).toContainText('Ask Faisselle')
       await expect(ask.locator('.command-label')).toHaveText(query)
       await expect(ask).toHaveAttribute('aria-selected', 'true')
       if (scoped) await ask.click()

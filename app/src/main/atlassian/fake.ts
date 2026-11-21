@@ -3,7 +3,7 @@ import type { ToolInfo } from './tools'
 
 /**
  * Fake mode: an Atlassian MCP server (v2 tool names) with one site, a personal space and no pages yet. Pages created
- * or updated are kept in memory, so tests can read what Figolu sent.
+ * or updated are kept in memory, so tests can read what Faisselle sent.
  */
 export type FakePage = { id: string; title: string; body: string; format: string; parentId?: string; spaceId: string; version: number }
 export const fakeConfluence = { pages: [] as FakePage[], calls: [] as Array<{ name: string; args: Record<string, unknown> }> }

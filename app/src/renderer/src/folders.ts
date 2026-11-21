@@ -3,7 +3,7 @@ import type { Folder } from '../../shared/types'
 
 export const WorkspaceFolders = createContext<Folder[] | undefined>(undefined)
 
-/** what a dragged meeting row carries: its id, under a type only Figolu's own rows use */
+/** what a dragged meeting row carries: its id, under a type only Faisselle's own rows use */
 export const MEETING_DRAG = 'application/x-yogurt-meeting'
 
 /**

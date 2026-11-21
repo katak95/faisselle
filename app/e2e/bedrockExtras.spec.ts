@@ -109,7 +109,7 @@ test('notes on Bedrock, Microsoft 365, templates, action items, the follow-up em
       const brief = (await prompts()).find((p) => p.startsWith('You will prepare'))!
       expect(brief).toContain('Agenda: renewal terms, Q3 rollout.')
       expect(brief).toContain('Can we keep the 2025 price')
-      // and the related SharePoint document, read in full, with its link added by Figolu
+      // and the related SharePoint document, read in full, with its link added by Faisselle
       expect(brief).toContain('Two-year term with a 4% discount')
       await expect(page.getByTestId('note-brief').getByRole('link', { name: 'Acme renewal proposal.docx' })).toHaveAttribute('href', /contoso\.sharepoint\.com/)
       if (shots) await page.getByTestId('note-brief').screenshot({ path: join(shots, 'note-brief.png') })

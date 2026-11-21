@@ -1,5 +1,5 @@
 #!/bin/sh
-# Signed (+ notarized) Mac installer to share: app/dist/Figolu-mac-arm64.dmg
+# Signed (+ notarized) Mac installer to share: app/dist/Faisselle-mac-arm64.dmg
 # Needs the Developer ID certificate in the keychain and, to notarize, a notarytool profile:
 #   xcrun notarytool store-credentials yogurt-notary --apple-id <Apple ID> --team-id 2JNSQVN3N8
 # YOGURT_NOTARIZE=0 signs and checks without sending anything to Apple (a build to try on this Mac).
@@ -9,18 +9,18 @@
 set -e
 ID="${YOGURT_SIGN_ID:-Christian Mathiesen (2JNSQVN3N8)}"
 LOCAL=0
-if [ "$ID" = 'Figolu Local' ]; then
-  [ "${YOGURT_NOTARIZE:-1}" = 0 ] || { echo 'Figolu Local requires YOGURT_NOTARIZE=0' >&2; exit 1; }
+if [ "$ID" = 'Faisselle Local' ]; then
+  [ "${YOGURT_NOTARIZE:-1}" = 0 ] || { echo 'Faisselle Local requires YOGURT_NOTARIZE=0' >&2; exit 1; }
   LOCAL=1
 fi
 cd "$(dirname "$0")/.."
 PROFILE="${YOGURT_NOTARY_PROFILE:-yogurt-notary}"
-APP=dist/mac-arm64/Figolu.app
+APP=dist/mac-arm64/Faisselle.app
 set --
 if [ "$LOCAL" = 1 ]; then
   # Pin the exact certificate; never silently fall back to ad-hoc or a different signer.
-  CERT=$(security find-identity -v -p codesigning | awk '/"Figolu Local"$/ { print $2 }')
-  [ "${#CERT}" = 40 ] || { echo 'Create exactly one valid Figolu Local code-signing identity.' >&2; exit 1; }
+  CERT=$(security find-identity -v -p codesigning | awk '/"Faisselle Local"$/ { print $2 }')
+  [ "${#CERT}" = 40 ] || { echo 'Create exactly one valid Faisselle Local code-signing identity.' >&2; exit 1; }
   LOCAL_DIR=$(mktemp -d "${TMPDIR:-/tmp}/yogurt-local-sign.XXXXXX")
   trap 'rm -rf "$LOCAL_DIR"' EXIT
   for ent in mac mac.inherit; do
@@ -32,7 +32,7 @@ if [ "$LOCAL" = 1 ]; then
 const path = require('node:path')
 const dir = process.argv[2]
 console.log(JSON.stringify({ extends: path.resolve('electron-builder.yml'), publish: null, forceCodeSigning: true,
-  mac: { identity: 'Figolu Local', notarize: false, entitlements: path.join(dir, 'mac.plist'),
+  mac: { identity: 'Faisselle Local', notarize: false, entitlements: path.join(dir, 'mac.plist'),
     entitlementsInherit: path.join(dir, 'mac.inherit.plist') } }))
 JS
   set -- --config "$LOCAL_DIR/config.json"
@@ -70,12 +70,12 @@ codesign -d --entitlements - "$APP/Contents/Resources/bin/yogurt-audio" 2>/dev/n
 if [ "${YOGURT_FUSES:-1}" != 0 ]; then
   pnpm exec electron-fuses read --app "$APP" | grep -q "RunAsNode is Disabled" || { echo "Electron's fuses aren't set" >&2; exit 1; }
 fi
-DMG=dist/Figolu-mac-arm64.dmg
+DMG=dist/Faisselle-mac-arm64.dmg
 # electron-builder signed the disk image too (dmg.sign); signing it again here would change it after latest-mac.yml
 verify_identity "$DMG"
 if [ "$LOCAL" = 1 ]; then
   [ ! -e "$APP/Contents/Resources/app-update.yml" ] || { echo 'Local builds must not have a release feed' >&2; exit 1; }
-  [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")" = com.katak95.figolu.app ] || exit 1
+  [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")" = com.katak95.faisselle.app ] || exit 1
 
 fi
 if [ "${YOGURT_NOTARIZE:-1}" = 0 ]; then

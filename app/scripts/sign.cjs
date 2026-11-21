@@ -39,7 +39,7 @@ async function sign(opts) {
     ...opts,
     optionsForFile: (file) => {
       const base = { ...(forFile ? forFile(file) : {}),
-        ...(process.env.YOGURT_SIGN_ID === 'Figolu Local' && process.env.YOGURT_NOTARIZE === '0' ? { timestamp: 'none' } : {}),
+        ...(process.env.YOGURT_SIGN_ID === 'Faisselle Local' && process.env.YOGURT_NOTARIZE === '0' ? { timestamp: 'none' } : {}),
       }
       const own = helperEntitlements(file, buildDir)
       return own ? { ...base, entitlements: own } : base

@@ -1,4 +1,4 @@
-# Figolu's recorder on Linux: the same command line, stdin and stdout as app/native/yogurt-audio (Swift, Mac),
+# Faisselle's recorder on Linux: the same command line, stdin and stdout as app/native/yogurt-audio (Swift, Mac),
 # recording through PulseAudio (PipeWire answers it too, through pipewire-pulse) into Ogg Opus files.
 [package]
 name = "yogurt-audio"
