@@ -36,7 +36,7 @@ export function Home({ open, openFolder, agendaJump }: { open: (id: string) => v
     const r = await window.yogurt.meetings.start(eventId).catch(() => ({ error: 'failed' as const }))
     if (!('error' in r)) return
     if (r.error === 'gone') setCalendarRevision((revision) => revision + 1)
-    toasts.add({ id: 'home-message', data: { testId: 'home-message' }, title: r.error === 'gone' ? t('That meeting is no longer on your calendar.') : t("Yogurt couldn't start the notes. Try again in a moment.") })
+    toasts.add({ id: 'home-message', data: { testId: 'home-message' }, title: r.error === 'gone' ? t('That meeting is no longer on your calendar.') : t("Figolu couldn't start the notes. Try again in a moment.") })
   }
   const [emptyActions, setEmptyActions] = useState<HTMLDivElement | null>(null)
   const calendar = window.yogurt.capabilities.calendar

@@ -33,7 +33,7 @@ export const linuxTrayHost = (): Promise<boolean> => new Promise((done) => {
 })
 
 /**
- * Yogurt in the menu bar (the notification area on Windows, the tray on Linux): it keeps running there with its window closed, so it still notices calls.
+ * Figolu in the menu bar (the notification area on Windows, the tray on Linux): it keeps running there with its window closed, so it still notices calls.
  * The menu says what is recording. Tests run without it on screen (show: false) and read the menu through items().
  */
 export function createTray(d: { show: boolean; visible?: boolean; showNextMeeting?: boolean; showRecordingPill?(): boolean; open(): void; newNote(): void; stop(id: string): void
@@ -127,7 +127,7 @@ export function createTray(d: { show: boolean; visible?: boolean; showNextMeetin
       iconName = look(activeMeeting()).icon
       tray = new Tray(image(iconName))
       tray.on('mouse-down', refresh)
-      // Windows: a left click opens Yogurt and a right click shows the menu (Linux trays mostly show the menu)
+      // Windows: a left click opens Figolu and a right click shows the menu (Linux trays mostly show the menu)
       if (os !== 'darwin') tray.on('click', () => d.open())
     }
     refresh()

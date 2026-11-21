@@ -37,7 +37,7 @@ export function createAtlassian(o: { store: OAuthStore; openExternal(url: string
     if (o.connect) return o.connect(interactive)
     const port = o.store.get().port ?? PREFERRED_PORT
     const connectWith = async (p: number, wait?: Awaited<ReturnType<typeof waitForCode>>, provider = oauthProvider(o.store, { port: p, interactive, openExternal: o.openExternal, onRedirect: () => { if (mine === attempt) set({ state: 'pending' }) } })) => {
-      const client = new Client({ name: 'Yogurt', version: '1' })
+      const client = new Client({ name: 'Figolu', version: '1' })
       const transport = new StreamableHTTPClientTransport(new URL(ATLASSIAN_MCP), { authProvider: provider })
       try {
         await client.connect(transport)

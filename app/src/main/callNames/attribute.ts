@@ -9,9 +9,9 @@ export type CallSample = {
   ms: number
   /** who the app marks as talking right now */
   speaking: string[]
-  /** everyone the app shows in the call, the person using Yogurt too */
+  /** everyone the app shows in the call, the person using Figolu too */
   participants: string[]
-  /** the person using Yogurt, when the app says which one they are ("(me)", "You") */
+  /** the person using Figolu, when the app says which one they are ("(me)", "You") */
   me: string | null
   /** false: the app could not be read at this moment (no window, no permission) */
   ok?: boolean
@@ -70,7 +70,7 @@ export function nameFor(span: { startMs: number; endMs: number }, samples: CallS
   return best && best[1] > MOST * (span.endMs - span.startMs) ? best[0] : null
 }
 
-/** Everyone seen in the call but the person using Yogurt, each once, in the order first seen */
+/** Everyone seen in the call but the person using Figolu, each once, in the order first seen */
 export function othersIn(samples: CallSample[], o: Opts = {}): string[] {
   const out = new Map<string, string>()
   for (const s of samples) for (const p of s.participants) if (!isMe(p, s, o) && !out.has(norm(p))) out.set(norm(p), p)

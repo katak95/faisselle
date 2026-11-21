@@ -4,10 +4,10 @@ import { homedir } from 'node:os'
 import { join } from 'node:path'
 
 if (existsSync(join(homedir(), '.yogurt-no-local-e2e'))) {
-  throw new Error('Yogurt E2E is disabled on this Mac by ~/.yogurt-no-local-e2e. Run typecheck, Vitest and lint locally; push and read E2E results on CI. Do not launch Electron under Playwright here.')
+  throw new Error('Figolu E2E is disabled on this Mac by ~/.yogurt-no-local-e2e. Run typecheck, Vitest and lint locally; push and read E2E results on CI. Do not launch Electron under Playwright here.')
 }
 
-// Yogurt runs hidden during tests so it never pops up or takes focus; YOGURT_BACKGROUND=0 to watch
+// Figolu runs hidden during tests so it never pops up or takes focus; YOGURT_BACKGROUND=0 to watch
 process.env.YOGURT_BACKGROUND ??= '1'
 // tests read the English text, whatever this computer's language
 process.env.YOGURT_SYSTEM_LANGUAGES ??= 'en-US'

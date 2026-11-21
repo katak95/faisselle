@@ -132,13 +132,13 @@ export function Ask({ id, recording, anchor, onSource }: { id: string; recording
   </dialog>
   return <>
     <button id="meeting-ask" ref={trigger} data-testid="chat-open" className="workspace-button chat-trigger" type="button" aria-expanded={open} aria-controls="meeting-chat"
-      title={onMac() ? t('Ask Yogurt (⌘J)') : `${t('Ask Yogurt')} (${keys('⌘J')})`} onClick={() => {
+      title={onMac() ? t('Ask Figolu (⌘J)') : `${t('Ask Figolu')} (${keys('⌘J')})`} onClick={() => {
         if (open && !closing.current) { close(); return }
         // Programmatic and pointer opens share the same anchored motion.
         if (closing.current) { closing.current = false; morph(true) }
         animateOpen.current = true; setError(false); setOpen(true)
         panel.current?.querySelector('textarea')?.focus({ preventScroll: true })
-      }}><MessageCircle size={16} strokeWidth={1.75} aria-hidden="true" /><span>{t('Ask Yogurt')}</span><kbd aria-hidden="true">{keys('⌘J')}</kbd></button>
+      }}><MessageCircle size={16} strokeWidth={1.75} aria-hidden="true" /><span>{t('Ask Figolu')}</span><kbd aria-hidden="true">{keys('⌘J')}</kbd></button>
     {anchor && createPortal(conversation, anchor)}
   </>
 }

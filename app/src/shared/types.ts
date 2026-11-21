@@ -148,7 +148,7 @@ export type YogurtApi = {
     onChange(cb: (v: NoteView) => void): () => void
   }
   share: {
-    /** opens the Mac share menu for the public Yogurt website, anchored in renderer CSS pixels */
+    /** opens the Mac share menu for the public Figolu website, anchored in renderer CSS pixels */
     appLink(x: number, y: number): Promise<boolean>
     /** puts the notes or the transcript on the clipboard as text and HTML; nothing: there was nothing to copy */
     copy(meetingId: string, what: 'notes' | 'transcript', side: 'mine' | 'enhanced'): Promise<'copied' | 'nothing' | 'failed'>
@@ -313,12 +313,12 @@ export type YogurtApi = {
     addLink(url: string): Promise<{ ok: true; id: string; name: string } | { ok: false; error: 'bad-url' | 'unreachable' | 'not-calendar' | 'public-address' }>
     removeLink(id: string): Promise<boolean>
   }
-  /** what Yogurt may use: read it, ask for it (the Mac's own prompt), or open its pane of System Settings */
+  /** what Figolu may use: read it, ask for it (the Mac's own prompt), or open its pane of System Settings */
   permissions: {
     status(): Promise<PermissionStatus>
     request(kind: PermissionKind): Promise<Access>
     open(kind: PermissionKind): Promise<void>
-    /** quit and open Yogurt again, for a permission the Mac applies only then; false while recording */
+    /** quit and open Figolu again, for a permission the Mac applies only then; false while recording */
     relaunch(): Promise<boolean>
   }
   /** first run: the intro and the questions still to ask (none once answered or put off); home's Finish setup after */
@@ -335,7 +335,7 @@ export type YogurtApi = {
   }
   settings: {
     /** myName: what the person is called in meetings (their Mac's full name, macName, when they never changed it) */
-    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Yogurt's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
+    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Figolu's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
     /** blank goes back to the Mac's full name */
     setName(name: string): Promise<void>
     setTheme(v: Theme): Promise<void>
@@ -600,7 +600,7 @@ export type AtlassianStatus =
   /** the browser is open on Atlassian's sign-in */
   | { state: 'pending' }
   | { state: 'connected'; site: string; siteUrl: string; account: string | null; sites: Array<{ id: string; name: string; url: string }> }
-  /** admin: the site or organisation doesn't let Yogurt (or Atlassian's MCP server) in */
+  /** admin: the site or organisation doesn't let Figolu (or Atlassian's MCP server) in */
   | { state: 'error'; message: string; admin?: boolean }
 export type AtlassianView = { status: AtlassianStatus; siteId: string; space: { key: string; url?: string } | null }
 /** a meeting sent to Confluence: where it went, and when */

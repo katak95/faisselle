@@ -1,6 +1,6 @@
 import { transcriptSpeaker } from './transcript'
 /**
- * Notes out of Yogurt: plain text and simple HTML for the clipboard (Gmail, Docs and Slack paste them cleanly), and a
+ * Notes out of Figolu: plain text and simple HTML for the clipboard (Gmail, Docs and Slack paste them cleanly), and a
  * Markdown file with the notes and the transcript. Built from the same document the editor uses (markdown.ts), so
  * what is copied is what is shown. The person's own words keep their text, not their styling.
  */
@@ -123,12 +123,12 @@ export function transcriptDoc(lines: Segment[], o: { gap?: boolean } = {}): PMNo
 
 // ---------- file ----------
 
-/** The Markdown file: title, date and a link to Yogurt, people, the notes, then the transcript with names */
+/** The Markdown file: title, date and a link to Figolu, people, the notes, then the transcript with names */
 export function toMarkdownFile(meeting: Meeting, notes: string, segments: Segment[]): string {
   const when = new Date(meeting.startedAt).toLocaleString(language(), { dateStyle: 'long', timeStyle: 'short' })
   const title = meeting.title.replace(/\s+/g, ' ').trim()
   // a small credit on the date line: whoever the file is shared with can find the app
-  const credit = t('Recorded with {app}', { app: '[Yogurt](https://yogurt.so)' })
+  const credit = t('Recorded with {app}', { app: '[Figolu](https://github.com/katak95/figolu)' })
   const head = [`# ${escapeText(title)}`, '', `${when} · ${credit}`]
   const people = meeting.attendees.map((a) => a.name.trim()).filter(Boolean)
   if (people.length) head.push('', t('With: {names}', { names: people.join(', ') }))

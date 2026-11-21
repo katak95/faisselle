@@ -1,4 +1,4 @@
-//! WASAPI: microphones, the computer's sound (process loopback that leaves Yogurt out, else the whole output), device events.
+//! WASAPI: microphones, the computer's sound (process loopback that leaves Figolu out, else the whole output), device events.
 //! Shared mode only, never the communications role or exclusive mode, so a call app keeps its mic just as it was.
 #![allow(non_snake_case)]
 
@@ -341,8 +341,8 @@ pub fn start_mic(uid: Option<String>, tx: Sender<Ev>) -> Result<Stream, StartErr
     )
 }
 
-/// The computer's sound: the whole default output, Yogurt's own sound included (Yogurt plays nothing while recording
-/// unless asked). Process loopback, every app except Yogurt (Windows 10 2004 and newer), only on YOGURT_AUDIO_LOOPBACK=process:
+/// The computer's sound: the whole default output, Figolu's own sound included (Figolu plays nothing while recording
+/// unless asked). Process loopback, every app except Figolu (Windows 10 2004 and newer), only on YOGURT_AUDIO_LOOPBACK=process:
 /// it heard nothing of Teams on some computers (#35).
 pub fn start_system(tx: Sender<Ev>, clock: Clock) -> Result<Stream, StartError> {
     let lost_tx = tx.clone();
@@ -350,14 +350,14 @@ pub fn start_system(tx: Sender<Ev>, clock: Clock) -> Result<Stream, StartError> 
     spawn(
         move || {
             let parent = parent_pid();
-            // The whole output by default: process loopback ("every app except Yogurt") heard nothing of the new Teams
+            // The whole output by default: process loopback ("every app except Figolu") heard nothing of the new Teams
             // on the very device it played to (#35, a Jabra headset as the default output). YOGURT_AUDIO_LOOPBACK=process
             // still asks for it (CI tests both).
             if parent != 0 && std::env::var("YOGURT_AUDIO_LOOPBACK").as_deref() == Ok("process") {
                 match process_loopback(parent) {
                     Ok(client) => match initialize(&client, true) {
                         Ok(ch) => {
-                            log("system audio: every app except Yogurt");
+                            log("system audio: every app except Figolu");
                             return Ok((client, ch, true));
                         }
                         Err(e) => log(&format!("process loopback didn't start ({e}): recording the whole output")),
@@ -368,7 +368,7 @@ pub fn start_system(tx: Sender<Ev>, clock: Clock) -> Result<Stream, StartError> 
             let dev = unsafe { enumerator().map_err(start_error)?.GetDefaultAudioEndpoint(eRender, eConsole) }.map_err(|_| StartError::NoDevice)?;
             let client: IAudioClient = unsafe { dev.Activate(CLSCTX_ALL, None) }.map_err(start_error)?;
             let ch = initialize(&client, true).map_err(start_error)?;
-            log("system audio: the whole output, Yogurt's own sound included");
+            log("system audio: the whole output, Figolu's own sound included");
             Ok((client, ch, false))
         },
         move |p| match p {
@@ -392,7 +392,7 @@ pub fn start_system(tx: Sender<Ev>, clock: Clock) -> Result<Stream, StartError> 
     )
 }
 
-/// The process that started this helper (Yogurt's main process)
+/// The process that started this helper (Figolu's main process)
 pub fn parent_pid() -> u32 {
     unsafe {
         let Ok(snap) = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) else { return 0 };

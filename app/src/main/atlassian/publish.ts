@@ -32,7 +32,7 @@ export function storageBody(r: Report): string {
   const people = r.meeting.attendees.map((a) => a.name || a.email).filter(Boolean).join(', ')
   const row = (k: string, v: string) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`
   const details = `<table><tbody>${row(r.labels.date, `${day(r.meeting.startedAt)} ${time(r.meeting.startedAt)}`)}${mins ? row(r.labels.length, r.labels.minutes(mins)) : ''}${people ? row(r.labels.people, people) : ''}</tbody></table>`
-  // the summary's own marks for the person's lines (<mine>) are Yogurt's, not Confluence's
+  // the summary's own marks for the person's lines (<mine>) are Figolu's, not Confluence's
   const summary = toClipboard(r.summary.replace(/<\/?mine>/g, '')).html
   const tasks = r.actions.length ? `<h2>${esc(r.labels.actions)}</h2><ac:task-list>${r.actions.map((a, i) =>
     `<ac:task><ac:task-id>${i + 1}</ac:task-id><ac:task-status>${a.done ? 'complete' : 'incomplete'}</ac:task-status><ac:task-body><strong>${esc(a.owner)}:</strong> ${esc(a.task)}${a.due ? ` (${esc(a.due)})` : ''}</ac:task-body></ac:task>`).join('')}</ac:task-list>` : ''
@@ -90,7 +90,7 @@ export async function parentPage(box: Toolbox, w: { cloudId: string; spaceId: st
     const found = match(await box.call('search', { cloudId: w.cloudId, cql, limit: 10 }).catch(() => undefined))
     if (found) return found.id
   }
-  const intro = body.format === 'markdown' ? 'Meeting reports sent from Yogurt.' : '<p>Meeting reports sent from Yogurt.</p>'
+  const intro = body.format === 'markdown' ? 'Meeting reports sent from Figolu.' : '<p>Meeting reports sent from Figolu.</p>'
   const [made] = pagesOf(await box.call('create', { cloudId: w.cloudId, spaceId: w.spaceId, title: PARENT_TITLE, body: intro, type: 'page' }, body.format))
   if (!made) throw new PublishError('Confluence did not create the "Meeting notes" page', 'other')
   return made.id
@@ -102,7 +102,7 @@ function versionArg(box: Toolbox, next: number): unknown {
   const prop = tool && Object.entries(tool.inputSchema?.properties ?? {}).find(([k]) => /^(version|versionNumber|currentVersion)$/.test(k))
   if (!prop) return undefined
   const type = prop[1].type
-  return type === 'object' || (Array.isArray(type) && type.includes('object')) ? { number: next, message: 'Updated by Yogurt' } : next
+  return type === 'object' || (Array.isArray(type) && type.includes('object')) ? { number: next, message: 'Updated by Figolu' } : next
 }
 
 /**
@@ -124,7 +124,7 @@ export async function publishReport(box: Toolbox, r: Report, where: Where & { ac
     if (previous) {
       const current = await box.call('get', { cloudId: where.cloudId, pageId: previous.pageId }).then((v) => pagesOf(v)[0], (e) => { if (notFound(e)) return undefined; throw e })
       if (current) {
-        const v = await box.call('update', { cloudId: where.cloudId, pageId: previous.pageId, title, body, type: 'page', version: versionArg(box, (current.version ?? 1) + 1), message: 'Updated by Yogurt', spaceId: space.id, parentId }, format)
+        const v = await box.call('update', { cloudId: where.cloudId, pageId: previous.pageId, title, body, type: 'page', version: versionArg(box, (current.version ?? 1) + 1), message: 'Updated by Figolu', spaceId: space.id, parentId }, format)
         const page = pagesOf(v)[0]
         return { pageId: previous.pageId, url: link(previous.pageId, page?.url ?? current.url), spaceId: space.id, spaceKey: space.key || undefined, parentId, created: false }
       }

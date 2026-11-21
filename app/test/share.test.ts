@@ -57,7 +57,7 @@ describe('share:app-link', () => {
     vi.stubGlobal('process', Object.create(process, { platform: { value: 'darwin' } }))
     const open = handlers.get('share:app-link')!
     expect(open(event, 20.5, 42, 'unrelated renderer data')).toBe(true)
-    expect(shareMenus).toEqual([{ urls: ['https://yogurt.so'] }])
+    expect(shareMenus).toEqual([{ urls: ['https://github.com/katak95/figolu'] }])
     expect(popup).toHaveBeenCalledWith({ window, x: 31, y: 63 })
     expect(open(event, -3, 501)).toBe(true)
     expect(popup).toHaveBeenLastCalledWith({ window, x: 0, y: 399 })

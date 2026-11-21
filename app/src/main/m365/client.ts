@@ -6,9 +6,9 @@ import type { M365Status } from '../../shared/types'
 import { deviceCode, enabledTools, needsAdminConsent, toolJson, TOOLS, type CallTool } from './tools'
 
 /**
- * Microsoft 365 as an MCP client: Yogurt starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
+ * Microsoft 365 as an MCP client: Figolu starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
  * only) with Electron's own Node, and talks to it over stdio. Signing in is Microsoft's device code: the browser opens
- * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Yogurt's
+ * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Figolu's
  * folder.
  */
 export type M365Options = { dataDir: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
@@ -34,7 +34,7 @@ async function startServer(o: M365Options): Promise<{ call: CallTool; close(): P
   const documents = o.documents?.() ?? false
   const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)], env, stderr: 'pipe' })
   transport.stderr?.on('data', (b: Buffer) => { const line = b.toString().trim(); if (line) console.info('M365', line.slice(0, 500)) })
-  const client = new Client({ name: 'Yogurt', version: '1' })
+  const client = new Client({ name: 'Figolu', version: '1' })
   await client.connect(transport)
   return {
     call: (name, args) => client.callTool({ name, arguments: args }, undefined, { timeout: 60_000 }),

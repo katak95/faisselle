@@ -219,7 +219,7 @@ it('reports a removed event, refreshes choices, and never reports a failed or ra
   expect(started).not.toHaveBeenCalled()
   start.mockRejectedValueOnce(new Error('fixture start failure'))
   await click(find(render(), 'start-recording'))
-  expect(toasts.add).toHaveBeenLastCalledWith(expect.objectContaining({ title: "Yogurt couldn't start the notes. Try again in a moment." }))
+  expect(toasts.add).toHaveBeenLastCalledWith(expect.objectContaining({ title: "Figolu couldn't start the notes. Try again in a moment." }))
   expect(find(render(), 'start-recording').props.disabled).toBe(false)
   expect(gone).toHaveBeenCalledOnce()
 })

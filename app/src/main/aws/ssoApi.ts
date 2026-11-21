@@ -13,8 +13,8 @@ export function awsSsoApi(): SsoApi {
 
   return {
     async register(region) {
-      const r = await oidcIn(region).send(new RegisterClientCommand({ clientName: 'Yogurt', clientType: 'public', scopes: SCOPES, grantTypes: [DEVICE_GRANT, 'refresh_token'] }))
-      if (!r.clientId || !r.clientSecret) throw new Error('AWS did not register Yogurt')
+      const r = await oidcIn(region).send(new RegisterClientCommand({ clientName: 'Figolu', clientType: 'public', scopes: SCOPES, grantTypes: [DEVICE_GRANT, 'refresh_token'] }))
+      if (!r.clientId || !r.clientSecret) throw new Error('AWS did not register Figolu')
       return { clientId: r.clientId, clientSecret: r.clientSecret, expiresAt: (r.clientSecretExpiresAt ?? 0) * 1000, region }
     },
     async startDevice(client, startUrl) {

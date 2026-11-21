@@ -1,6 +1,6 @@
 # yogurt-mcp for Windows and Linux (app/native/yogurt-mcp-relay): unit tests, release build, then a smoke test
-# against a stand-in Yogurt on the pipe or socket: MCP messages both ways, the not-running message, and starting
-# Yogurt from what it recorded. The built helpers are kept as artifacts for packaging into resources/bin.
+# against a stand-in Figolu on the pipe or socket: MCP messages both ways, the not-running message, and starting
+# Figolu from what it recorded. The built helpers are kept as artifacts for packaging into resources/bin.
 name: MCP helper
 
 on:

@@ -9,7 +9,7 @@ import { TOOLS } from './tools'
  * model knows the projects, names and figures a meeting is about. Never more than a few thousand characters each.
  */
 
-/** a document as the brief lists it: Yogurt builds these links, the model never writes them */
+/** a document as the brief lists it: Figolu builds these links, the model never writes them */
 export type DocRef = { name: string; url: string; modified: string }
 export type DocHit = DocRef & { id: string; driveId: string | null; by: string; snippet: string; size: number }
 
@@ -91,7 +91,7 @@ async function zipEntries(bytes: Buffer, want: (name: string) => boolean): Promi
 
 const slideNumber = (n: string) => Number(n.match(/(\d+)\.xml$/)?.[1] ?? 0)
 
-/** a document's text, by its kind; '' for a kind Yogurt can't read */
+/** a document's text, by its kind; '' for a kind Figolu can't read */
 export async function extractText(bytes: Buffer, name: string): Promise<string> {
   const ext = name.toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? ''
   let text = ''

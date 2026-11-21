@@ -1,5 +1,5 @@
 /**
- * Atlassian's MCP server (v2), as Yogurt uses it. Its tool names and their parameters aren't published, and v1 and v2
+ * Atlassian's MCP server (v2), as Figolu uses it. Its tool names and their parameters aren't published, and v1 and v2
  * name them differently, so nothing here is fixed: the tools the server lists (with their JSON Schemas) are read at
  * sign-in, each need is matched to the first tool that has it, and each argument goes in under the name that tool's
  * schema uses. A tool the server only offers through its executeRead / executeWrite gateway is called through it.
@@ -8,7 +8,7 @@
 export type ToolInfo = { name: string; description?: string; inputSchema?: { properties?: Record<string, { type?: string | string[]; enum?: unknown[]; description?: string }>; required?: string[] } }
 export type RawCall = (name: string, args: Record<string, unknown>) => Promise<unknown>
 
-/** what Yogurt needs, and the tools that can do it, best first (v2 names, then v1's) */
+/** what Figolu needs, and the tools that can do it, best first (v2 names, then v1's) */
 export const NEEDS = {
   resources: ['getAccessibleAtlassianResources'],
   me: ['atlassianUserInfo', 'lookupJiraAccountId'],
@@ -22,7 +22,7 @@ export const NEEDS = {
 } as const
 export type Need = keyof typeof NEEDS
 
-/** each argument Yogurt gives, and the names a schema may call it */
+/** each argument Figolu gives, and the names a schema may call it */
 const ALIASES: Record<string, string[]> = {
   cloudId: ['cloudId', 'cloud_id', 'siteId'],
   spaceId: ['spaceId', 'space_id', 'spaceKey', 'space'],
@@ -44,7 +44,7 @@ const WRITES: Need[] = ['create', 'update']
 
 export class MissingToolError extends Error {
   name = 'MissingToolError'
-  constructor(readonly need: Need) { super(`Atlassian's MCP server has no tool to ${need} (it offers something else than Yogurt knows)`) }
+  constructor(readonly need: Need) { super(`Atlassian's MCP server has no tool to ${need} (it offers something else than Figolu knows)`) }
 }
 
 /** the property of a schema that takes this argument, if any */
@@ -62,7 +62,7 @@ export function formatFor(tool: ToolInfo): { prop: string; value: string } | und
   return { prop, value: pick ? values.find((x) => x.toLowerCase() === pick)! : 'storage' }
 }
 
-/** Yogurt's arguments under the tool's own names; ones the tool has no place for are left out */
+/** Figolu's arguments under the tool's own names; ones the tool has no place for are left out */
 export function argsFor(tool: ToolInfo, args: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(args)) {
@@ -78,12 +78,12 @@ export function createToolbox(tools: ToolInfo[], raw: RawCall) {
   const gateway = (write: boolean) => GATEWAY[write ? 'write' : 'read'].map((n) => byName.get(n)).find(Boolean)
   const toolFor = (need: Need) => NEEDS[need].map((n) => byName.get(n)).find(Boolean)
   return {
-    /** whether Yogurt can do this: a tool of its own, or through the gateway */
+    /** whether Figolu can do this: a tool of its own, or through the gateway */
     can: (need: Need) => !!toolFor(need) || !!gateway(WRITES.includes(need)),
     /** whether the server offers this need directly */
     offers: (need: Need) => !!toolFor(need),
     tool: toolFor,
-    /** calls the tool for a need, with Yogurt's arguments renamed to its schema; format: what the body is written in */
+    /** calls the tool for a need, with Figolu's arguments renamed to its schema; format: what the body is written in */
     async call(need: Need, args: Record<string, unknown>, format?: string): Promise<unknown> {
       const tool = toolFor(need)
       if (tool) {

@@ -1,4 +1,4 @@
-# Build and run Yogurt locally
+# Build and run Figolu locally
 
 ## You need
 
@@ -11,11 +11,11 @@
 ## Run it
 
 ```sh
-git clone https://github.com/FrigadeHQ/yogurt.git
-cd yogurt
+git clone https://github.com/katak95/figolu.git
+cd figolu
 pnpm install --frozen-lockfile
 pnpm -C app native   # builds the audio, system and transcription helpers (first time, and after they change)
-pnpm dev             # opens Yogurt from source
+pnpm dev             # opens Figolu from source
 ```
 
 The first run downloads the AI models, like the installed app.

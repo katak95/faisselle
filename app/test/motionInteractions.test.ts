@@ -120,8 +120,8 @@ function watchRetryToast() {
 }
 
 it.each([
-  ['darwin', true, 'Appears while you record with Yogurt in the background.'],
-  ['darwin', false, 'Show Yogurt in the menu bar to hide the pill.'],
+  ['darwin', true, 'Appears while you record with Figolu in the background.'],
+  ['darwin', false, 'Show Figolu in the menu bar to hide the pill.'],
   ['win32', true, null], ['linux', true, null],
 ])('describes the pill switch on %s with menu bar visibility %s', async (os, showInMenuBar, description) => {
   const { Settings } = await import('../src/renderer/src/screens/Settings')

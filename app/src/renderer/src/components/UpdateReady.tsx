@@ -43,13 +43,13 @@ export function UpdateReady({ recording }: { recording: boolean }) {
       <Popover.Portal>
         <Popover.Positioner side="bottom" align="end" sideOffset={8} collisionPadding={12} positionMethod="fixed" className="notes-download-positioner">
           <Popover.Popup data-testid="update-popover" data-anchor="end" data-pointer="true" className="menu-entry notes-download-menu update-ready-menu">
-            <Popover.Title>{t('Yogurt {version}', { version: status.next ?? '' })}</Popover.Title>
-            <Popover.Description className="update-ready-description">{recording ? t('You can restart after recording') : t('Installs when you restart Yogurt')}</Popover.Description>
+            <Popover.Title>{t('Figolu {version}', { version: status.next ?? '' })}</Popover.Title>
+            <Popover.Description className="update-ready-description">{recording ? t('You can restart after recording') : t('Installs when you restart Figolu')}</Popover.Description>
             <div className="update-ready-actions">
               <button data-testid="update-later" className="text-action" onClick={() => void later()}>{t('Later')}</button>
               <button data-testid="update-restart" className="workspace-button primary" disabled={recording || restarting} onClick={() => void restart()}>{t('Restart')}</button>
             </div>
-            {failed && (failed === 'later' || !recording) && <p role="alert">{failed === 'later' ? t("Yogurt couldn't make that change. Try again.") : t("Yogurt couldn't restart. Try again.")}</p>}
+            {failed && (failed === 'later' || !recording) && <p role="alert">{failed === 'later' ? t("Figolu couldn't make that change. Try again.") : t("Figolu couldn't restart. Try again.")}</p>}
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

@@ -263,7 +263,7 @@ function EventDetails({ motionProps, event, recording, onOpen, onStart, now, onC
     {url && <a className="workspace-button" title={t('Join meeting')} href={url} target="_blank" rel="noreferrer"><span>{t('Join meeting')}</span><ExternalLink size={12} aria-hidden="true" /></a>}
     </div>}
     </div>}
-    {failed && <p role="alert" className="text-danger">{t("Yogurt couldn't start the notes. Try again in a moment.")}</p>}
+    {failed && <p role="alert" className="text-danger">{t("Figolu couldn't start the notes. Try again in a moment.")}</p>}
     </div>
   </dialog>
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Check, Share } from 'lucide-react'
 import { t } from '../../../shared/i18n'
-import { projectRepository, projectWebsite } from '../../../shared/project'
+import { projectRepository, projectWebsite, upstreamRepository } from '../../../shared/project'
 import githubBlack from '../assets/github-black.svg?no-inline'
 import githubWhite from '../assets/github-white.svg?no-inline'
 import { onMac } from '../keys'
@@ -40,14 +40,15 @@ export function AboutYogurt() {
     if (current === attempt.current) setError(opened ? null : 'share')
   }
 
-  const message = error === 'copy' ? t("Yogurt couldn't copy.") : error === 'share' ? t("Yogurt couldn't open the share menu.") : ''
+  const message = error === 'copy' ? t("Figolu couldn't copy.") : error === 'share' ? t("Figolu couldn't open the share menu.") : ''
   return <section aria-labelledby="about-yogurt">
-    <h2 id="about-yogurt" className="settings-section-heading">{t('About Yogurt')}</h2>
+    <h2 id="about-yogurt" className="settings-section-heading">{t('About Figolu')}</h2>
     <div className="settings-group settings-backup">
       <p className="settings-label grid">
-        <span className={`col-start-1 row-start-1 ${error ? 'invisible' : ''}`}>{t('Like Yogurt? Sharing it or starring it on GitHub helps us keep building it.')}</span>
+        <span className={`col-start-1 row-start-1 ${error ? 'invisible' : ''}`}>{t('Like Figolu? Sharing it or starring it on GitHub helps us keep building it.')}</span>
         <span role="status" className={error ? 'col-start-1 row-start-1 text-danger' : 'sr-only'}>{message || (copied ? done : '')}</span>
       </p>
+      <p data-testid="about-upstream" className="settings-description">{t('Figolu is a fork of {app}, made by Frigade, under the MIT licence.', { app: 'Yogurt' })} <a className="underline" href={upstreamRepository} target="_blank" rel="noopener noreferrer">{upstreamRepository.replace('https://', '')}</a></p>
       <div className="settings-backup-actions settings-about-actions">
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" className="workspace-button" aria-label={copied ? done : idle} onClick={copy}>

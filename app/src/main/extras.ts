@@ -46,7 +46,7 @@ export function followUpPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'
 }
 
 export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; startsAt: number | null; earlier: Array<{ title: string; at: number; notes: string; open: ActionItem[] }>; context?: string; me: string; language: string
-  /** related documents were found: the brief ends with their heading, and Yogurt adds the links */
+  /** related documents were found: the brief ends with their heading, and Figolu adds the links */
   documents?: boolean }): string {
   return [
     `You will prepare "You"${i.me ? ` (${i.me})` : ''} for an upcoming meeting.`,
@@ -56,7 +56,7 @@ export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; 
     '',
     ...(i.earlier.length ? ['Earlier meetings with some of the same people, latest first:', ...i.earlier.flatMap((e) => [
       `<meeting title=${JSON.stringify(e.title)} date="${day(e.at)}">`, e.notes,
-      ...(e.open.length ? ['Action items still open:', actionsMarkdown(e.open)] : []), '</meeting>'])] : ['There are no earlier meetings with these people in Yogurt.']),
+      ...(e.open.length ? ['Action items still open:', actionsMarkdown(e.open)] : []), '</meeting>'])] : ['There are no earlier meetings with these people in Figolu.']),
     '',
     ...(i.context ? [contextIntro, '<context>', i.context, '</context>', ''] : []),
     `Write a short brief in ${i.language || 'English'}, in Markdown, starting right away with the first "## " heading:`,

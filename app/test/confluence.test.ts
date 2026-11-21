@@ -8,7 +8,7 @@ import { fakeAtlassianServer, fakeConfluence } from '../src/main/atlassian/fake'
 import { createAtlassian } from '../src/main/atlassian/client'
 import { createOAuthStore, oauthProvider, waitForCode } from '../src/main/atlassian/oauth'
 
-const labels = { date: 'Date', length: 'Length', people: 'People', actions: 'Action items', footer: 'Written with Yogurt', minutes: (n: number) => `${n} min` }
+const labels = { date: 'Date', length: 'Length', people: 'People', actions: 'Action items', footer: 'Written with Figolu', minutes: (n: number) => `${n} min` }
 const report = (over: Partial<Report> = {}): Report => ({
   meeting: { title: 'Acme renewal', startedAt: new Date(2026, 10, 21, 9, 5).getTime(), endedAt: new Date(2026, 10, 21, 9, 35).getTime(), attendees: [{ name: 'Maya & Co', email: 'maya@acme.example' }] },
   summary: '## Pricing\n- <mine>Two years</mine> at **the 2025 price**', actions: [{ owner: 'You', task: 'Send the <quote>', due: 'Friday', done: true }, { owner: 'Maya', task: 'Sign', due: null, done: false }], labels, ...over,
@@ -127,5 +127,24 @@ describe('signing in to Atlassian', () => {
     const other = await waitForCode({ port: 0, state: () => 'abc' })
     expect((await fetch(`http://127.0.0.1:${other.port}/elsewhere`)).status).toBe(404)
     other.close()
+  })
+})
+
+describe('the Yogurt folder becomes Figolu\'s', () => {
+  it('moves the profile once, never over meetings already there', async () => {
+    const { mkdirSync, writeFileSync, existsSync, readFileSync } = await import('node:fs')
+    const { migrateProfile } = await import('../src/main/paths')
+    const appData = mkdtempSync(join(tmpdir(), 'appdata-'))
+    mkdirSync(join(appData, 'Yogurt', 'meetings'), { recursive: true })
+    writeFileSync(join(appData, 'Yogurt', 'yogurt.db'), 'db')
+    // Electron already made a Figolu folder at a first launch: it holds no meetings, so it gives way
+    mkdirSync(join(appData, 'Figolu', 'Cache'), { recursive: true })
+    expect(migrateProfile(appData)).toBe('moved')
+    expect(readFileSync(join(appData, 'Figolu', 'yogurt.db'), 'utf8')).toBe('db')
+    expect(existsSync(join(appData, 'Yogurt'))).toBe(false)
+    // later launches: nothing to do, and a Figolu with meetings is never replaced
+    mkdirSync(join(appData, 'Yogurt'), { recursive: true }); writeFileSync(join(appData, 'Yogurt', 'yogurt.db'), 'other')
+    expect(migrateProfile(appData)).toBe('none')
+    expect(readFileSync(join(appData, 'Figolu', 'yogurt.db'), 'utf8')).toBe('db')
   })
 })

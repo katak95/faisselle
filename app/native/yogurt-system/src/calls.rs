@@ -10,7 +10,7 @@ use serde_json::{json, Value};
 use crate::atspi::{window_role, A11y, App};
 use crate::call::{call_window, is_call_tree, kind, now_ms, Kind};
 
-/// The watch: read the apps asked about every `every_ms`, until Yogurt closes stdin (or dies, which closes it too)
+/// The watch: read the apps asked about every `every_ms`, until Figolu closes stdin (or dies, which closes it too)
 pub fn watch(every_ms: u64, ids: &[String]) -> ! {
     std::thread::spawn(|| {
         let mut sink = Vec::new();

@@ -3,14 +3,14 @@ import { MARK } from '../../../shared/logo'
 import { BOOT } from '../../../shared/onboarding'
 
 /**
- * While Yogurt starts: the mark with a soft light passing over it. It fades in only after BOOT.showAfterMs from the
+ * While Figolu starts: the mark with a soft light passing over it. It fades in only after BOOT.showAfterMs from the
  * page's start (not from this mount), so a quick start never flashes it; App keeps it up for BOOT.minShownMs once seen.
  */
 export function BootScreen() {
   const id = useId().replace(/:/g, '')
   const delay = Math.max(0, BOOT.showAfterMs - performance.now())
   return (
-    <div data-testid="boot-screen" className="boot-screen" style={{ animationDelay: `${delay}ms` }} role="status" aria-label="Yogurt">
+    <div data-testid="boot-screen" className="boot-screen" style={{ animationDelay: `${delay}ms` }} role="status" aria-label="Figolu">
       <svg width={52} height={52} viewBox="0 0 100 100" aria-hidden="true" className="boot-mark">
         <defs>
           <clipPath id={`${id}-mark`}><path d={MARK} /></clipPath>
