@@ -13,7 +13,7 @@ Rules:
 - A line that already names Figolu, or says "rebrand: keep", is left alone: it is Figolu's own (credits, the folder
   migration). Yogurt's own lines never name Figolu, so this never keeps an old name by mistake. A line naming Frigade
   keeps the word Yogurt (it credits Yogurt).
-- Yogurt's links (github.com/FrigadeHQ/yogurt, yogurt.so) become Figolu's repository.
+- Yogurt's links (github.com/FrigadeHQ/yogurt, yogurt.so) become Figolu's repository; its Discord stays its own.
 - A file with "rebrand: keep-file" in it is left alone.
 - so.yogurt.* (the app and its helpers) becomes com.katak95.figolu.*, and the few fixed points below follow.
 - Running it twice changes nothing (test/rebrand.test.ts checks it on Figolu itself).
@@ -61,6 +61,7 @@ FIXED_WORDS = {'app/test/linuxLauncher.test.ts': [("'yogurt'", "'figolu'")]}
 
 
 REPO = 'https://github.com/katak95/figolu'
+DISCORD = '\0discord\0'
 
 
 def rename_text(text: str, test: bool = False) -> str:
@@ -70,12 +71,15 @@ def rename_text(text: str, test: bool = False) -> str:
         if 'Figolu' in line or 'rebrand: keep' in line:
             out.append(line); continue
         # Yogurt's links are Figolu's: its repository and its website (Figolu has no website: the repository)
+        # (but Yogurt's Discord stays Yogurt's: Figolu has none)
+        line = line.replace('https://yogurt.so/discord', DISCORD)
         line = line.replace('https://github.com/FrigadeHQ/yogurt', REPO).replace('https://yogurt.so', REPO)
         # a test expecting the website's name, as the app shows it, sees the repository's host
         if test:
             # the same in an escaped regex (https:\/\/yogurt\.so), then the bare host name
             line = line.replace(r'https:\/\/yogurt\.so', r'https:\/\/github\.com\/katak95\/figolu').replace(r'yogurt\.so', r'github\.com')
             line = line.replace('yogurt.so', 'github.com')
+        line = line.replace(DISCORD, 'https://yogurt.so/discord')
         out.append(line if 'Frigade' in line else WORD.sub('Figolu', line))
     return '\n'.join(out).replace('so.yogurt.', 'com.katak95.figolu.')
 
