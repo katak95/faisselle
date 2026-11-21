@@ -209,6 +209,8 @@ jobs:
 
   # ask Vercel to rebuild the site so the Updates page shows this release
   refresh-site:
+    # Yogurt's website (yogurt.so): Figolu has none
+    if: github.repository == 'FrigadeHQ/yogurt'
     needs: publish
     runs-on: ubuntu-latest
     steps:
