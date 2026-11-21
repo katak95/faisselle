@@ -12,11 +12,18 @@ Settings → Notes model → Where summaries are written → Amazon Bedrock (Cla
 1. **AWS sign-in start URL**: your IAM Identity Center portal, like `https://my-org.awsapps.com/start`.
 2. **Identity Center region**: the region Identity Center lives in (for example `eu-west-1`).
 3. **Sign in to AWS**: the browser opens AWS's approval page with a code. Approve it there.
-4. Pick the **Account** and the **Role**. The role must be allowed to call Claude through Bedrock's Messages API
-   endpoint (`bedrock-mantle.<region>.api.aws`, signed for the `bedrock-mantle` service).
-5. **Bedrock region** and **Model**: `eu-west-1` and `anthropic.claude-haiku-5-5` by default. If your region serves
-   Claude through a cross-region inference profile, put its ID here.
-6. **Check**: sends one very short request.
+4. Pick the **Account** and the **Role**.
+5. **Bedrock region** and **Model**: `eu-west-1` and `anthropic.claude-haiku-5-5` by default. The model ID chooses
+   how Figolu reaches Bedrock, and so the permission the role needs:
+
+   | Model ID | Endpoint | The role needs |
+   |---|---|---|
+   | `anthropic.claude-haiku-5-5`, `anthropic.claude-haiku-4-5`… (Claude in Amazon Bedrock) | Messages API, `bedrock-mantle.<region>.api.aws` | `bedrock-mantle:CreateInference` |
+   | `eu.anthropic.claude-haiku-4-5-20251001-v1:0`, `anthropic.claude-…-v1:0`, an inference profile (`eu.`, `us.`, `global.`…) or an ARN | InvokeModel, `bedrock-runtime.<region>.amazonaws.com` | `bedrock:InvokeModelWithResponseStream` |
+
+   A role that already works for other projects with InvokeModel works here with the same model ID or inference
+   profile. With Claude Haiku 4.5 and older models, Figolu leaves out the effort level, which they don't take.
+6. **Check**: sends one very short request. When AWS refuses it, the message names the permission the role lacks.
 
 What to check in AWS:
 

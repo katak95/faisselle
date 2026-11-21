@@ -1,4 +1,4 @@
-import { AnthropicBedrockMantle } from '@anthropic-ai/bedrock-sdk'
+import { AnthropicBedrock, AnthropicBedrockMantle } from '@anthropic-ai/bedrock-sdk'
 import type { Llm } from './enhance'
 import type { AwsKeys } from '../aws/sso'
 
@@ -6,6 +6,14 @@ import type { AwsKeys } from '../aws/sso'
  * The notes model on Amazon Bedrock (Claude, by default Claude Haiku 5.5), as an `Llm` like the local one: the same
  * prompts, streamed back the same way. Nothing is loaded: a request goes out when a note is written.
  * The person signs in with AWS IAM Identity Center (aws/sso.ts); the role's keys sign each request.
+ *
+ * Two doors into Bedrock, chosen from the model ID (bedrockEndpoint):
+ * - Claude in Amazon Bedrock, the Messages API on bedrock-mantle (`anthropic.claude-haiku-5-5`): the role needs
+ *   `bedrock-mantle:CreateInference`;
+ * - InvokeModel on bedrock-runtime, with a model ID or an inference profile as other AWS projects use them
+ *   (`eu.anthropic.claude-haiku-4-5-20251001-v1:0`, an ARN): the role needs `bedrock:InvokeModelWithResponseStream`.
+ * @anthropic-ai/bedrock-sdk stays on 0.x: its 1.x sends API version 2026-10-21, which Bedrock takes only for
+ * Claude 4.7 and later, and these roles often use Claude Haiku 4.5.
  */
 
 export type BedrockConfig = { region: string; modelId: string; accountId: string; roleName: string }
@@ -23,6 +31,35 @@ const DEFAULT_MAX_TOKENS = 8192
 const CACHE_FROM_CHARS = 8000
 
 export const validModelId = (v: unknown): v is string => typeof v === 'string' && /^[a-z0-9][a-z0-9.:_/-]{2,199}$/i.test(v)
+
+export type BedrockEndpoint = 'mantle' | 'runtime'
+/**
+ * Which door a model ID goes through: the Messages API's own IDs (`anthropic.claude-haiku-5-5`) on bedrock-mantle;
+ * InvokeModel's versioned IDs (`anthropic.claude-haiku-4-5-20251001-v1:0`), inference profiles (`eu.`, `us.`,
+ * `global.`...) and ARNs on bedrock-runtime.
+ */
+export function bedrockEndpoint(modelId: string): BedrockEndpoint {
+  const id = modelId.trim()
+  if (/^arn:/i.test(id)) return 'runtime'
+  if (/^(us|eu|apac|ap|jp|au|ca|global|us-gov)\./i.test(id)) return 'runtime'
+  if (/-v\d+(:\d+)?$/i.test(id)) return 'runtime'
+  return 'mantle'
+}
+
+/**
+ * What a model takes: the effort level came with Claude Opus 4.5, the Sonnet 4.6 and Haiku 5 generations, and is
+ * refused before (Claude Haiku 4.5, Sonnet 4.5). An ID Figolu can't read is taken as a current model.
+ */
+export function modelTakesEffort(modelId: string): boolean {
+  const m = /claude-(opus|sonnet|haiku|fable|mythos)-(\d+)(?:-(\d+))?/i.exec(modelId)
+  if (!m) return true
+  const family = m[1].toLowerCase(), major = Number(m[2]), minor = m[3] && m[3].length <= 2 ? Number(m[3]) : 0
+  const v = major + minor / 10
+  if (family === 'fable' || family === 'mythos') return true
+  if (family === 'opus') return v >= 4.5
+  if (family === 'sonnet') return v >= 4.6
+  return v >= 5
+}
 export const validAccountId = (v: unknown): v is string => typeof v === 'string' && /^\d{12}$/.test(v)
 export const validRoleName = (v: unknown): v is string => typeof v === 'string' && /^[\w+=,.@-]{1,64}$/.test(v)
 
@@ -33,7 +70,7 @@ export const validRoleName = (v: unknown): v is string => typeof v === 'string' 
 export const estimateTokens = (text: string): number => Math.ceil(text.length / 3)
 
 /** The part of the Anthropic client the notes use: a stand-in in tests */
-export type MessagesClient = Pick<AnthropicBedrockMantle, 'messages'>
+export type MessagesClient = { messages: Pick<AnthropicBedrockMantle['messages'], 'stream'> }
 
 /** what went wrong, in words the notes can log and Settings can show */
 export class BedrockError extends Error {
@@ -41,8 +78,8 @@ export class BedrockError extends Error {
   constructor(message: string, readonly kind: 'sign-in' | 'access' | 'model' | 'refused' | 'other') { super(message) }
 }
 
-export function bedrockClient(region: string, keys: () => Promise<AwsKeys>): MessagesClient {
-  return new AnthropicBedrockMantle({
+export function bedrockClient(region: string, keys: () => Promise<AwsKeys>, endpoint: BedrockEndpoint = 'mantle'): MessagesClient {
+  const options = {
     awsRegion: region,
     // the SSO role's keys, fetched again before they run out (aws/sso.ts)
     providerChainResolver: async () => async () => {
@@ -50,16 +87,21 @@ export function bedrockClient(region: string, keys: () => Promise<AwsKeys>): Mes
       return { accessKeyId: k.accessKeyId, secretAccessKey: k.secretAccessKey, sessionToken: k.sessionToken, expiration: new Date(k.expiration) }
     },
     maxRetries: 3,
-  })
+  }
+  return endpoint === 'runtime' ? new AnthropicBedrock(options) : new AnthropicBedrockMantle(options)
 }
 
-const explain = (e: unknown): Error => {
+const explain = (e: unknown, c: BedrockConfig): Error => {
   if (e instanceof BedrockError) return e
   const err = e as { status?: number; name?: string; message?: string }
+  const endpoint = bedrockEndpoint(c.modelId)
   if (err?.name === 'SignInNeededError') return new BedrockError(err.message ?? 'Sign in to AWS', 'sign-in')
   if (err?.status === 401) return new BedrockError('AWS refused the sign-in: sign in again', 'sign-in')
-  if (err?.status === 403) return new BedrockError('This AWS role may not use Bedrock, or the model is not enabled in this region', 'access')
-  if (err?.status === 404) return new BedrockError('This model is not available in this region', 'model')
+  // the permission differs with the door: say which one this role lacks
+  if (err?.status === 403) return new BedrockError(endpoint === 'runtime'
+    ? `This AWS role may not call ${c.modelId} with bedrock:InvokeModelWithResponseStream in ${c.region}, or the model is not enabled there`
+    : `This AWS role may not call ${c.modelId} with bedrock-mantle:CreateInference in ${c.region}, or the model is not enabled there. A role that works elsewhere with InvokeModel: use its model ID or inference profile (for example eu.anthropic.claude-haiku-4-5-20251001-v1:0)`, 'access')
+  if (err?.status === 404) return new BedrockError(`${c.modelId} is not available in ${c.region}${endpoint === 'mantle' ? ' (Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5)' : ''}`, 'model')
   return e instanceof Error ? e : new Error(String(e))
 }
 
@@ -70,7 +112,7 @@ const explain = (e: unknown): Error => {
 export function createBedrockNotesModel(o: { config: () => BedrockConfig | undefined; client: (c: BedrockConfig) => MessagesClient }) {
   let cached: { key: string; client: MessagesClient } | undefined
   const clientFor = (c: BedrockConfig) => {
-    const key = `${c.region}|${c.accountId}|${c.roleName}`
+    const key = `${c.region}|${c.accountId}|${c.roleName}|${bedrockEndpoint(c.modelId)}`
     if (cached?.key !== key) cached = { key, client: o.client(c) }
     return cached.client
   }
@@ -91,6 +133,10 @@ export function createBedrockNotesModel(o: { config: () => BedrockConfig | undef
         }))
         // short answers (titles, folders, one JSON list) need little effort; the notes themselves a bit more
         const small = (opts?.maxTokens ?? DEFAULT_MAX_TOKENS) <= 256 || !!opts?.summary
+        // Claude Haiku 4.5 and older refuse the effort level: only the JSON format then, if any
+        const effort = modelTakesEffort(c.modelId) ? { effort: small ? 'low' as const : 'medium' as const } : {}
+        const format = opts?.json ? { format: { type: 'json_schema' as const, schema: opts.json } } : undefined
+        const output = effort.effort || format ? { output_config: { ...effort, ...format } } : {}
         try {
           const stream = client.messages.stream({
             model: c.modelId,
@@ -98,7 +144,7 @@ export function createBedrockNotesModel(o: { config: () => BedrockConfig | undef
             messages,
             // thinking would spend the answer's tokens: these prompts say exactly what to write
             thinking: { type: 'disabled' },
-            output_config: { effort: small ? 'low' : 'medium', ...(opts?.json ? { format: { type: 'json_schema' as const, schema: opts.json } } : {}) },
+            ...output,
           }, { signal })
           stream.on('text', (t) => { if (!signal?.aborted) onToken(t) })
           const m = await stream.finalMessage()
@@ -108,7 +154,7 @@ export function createBedrockNotesModel(o: { config: () => BedrockConfig | undef
           return m.content.map((b) => (b.type === 'text' ? b.text : '')).join('')
         } catch (e) {
           if (signal?.aborted) return ''
-          throw explain(e)
+          throw explain(e, c)
         }
       },
     }

@@ -879,5 +879,6 @@
   "Help": "Βοήθεια",
   "Help and settings": "Βοήθεια και ρυθμίσεις",
   "Figolu menu": "Μενού Figolu",
-  "Restart to update · {version}": "Επανεκκίνηση για ενημέρωση · {version}"
+  "Restart to update · {version}": "Επανεκκίνηση για ενημέρωση · {version}",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Το Claude στο Amazon Bedrock δέχεται αναγνωριστικά όπως anthropic.claude-haiku-5-5 (δικαίωμα bedrock-mantle:CreateInference). Ένα αναγνωριστικό InvokeModel ή προφίλ συμπερασμού, όπως eu.anthropic.claude-haiku-4-5-20251001-v1:0, περνά από το bedrock-runtime (δικαίωμα bedrock:InvokeModelWithResponseStream)."
 }

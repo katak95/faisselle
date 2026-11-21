@@ -864,5 +864,6 @@
   "Help": "সহায়তা",
   "Help and settings": "সহায়তা ও সেটিংস",
   "Figolu menu": "Figolu মেনু",
-  "Restart to update · {version}": "আপডেট করতে পুনরায় চালু করুন · {version}"
+  "Restart to update · {version}": "আপডেট করতে পুনরায় চালু করুন · {version}",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock-এ Claude anthropic.claude-haiku-5-5-এর মতো ID নেয় (bedrock-mantle:CreateInference অনুমতি)। InvokeModel ID বা ইনফারেন্স প্রোফাইল, যেমন eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime দিয়ে যায় (bedrock:InvokeModelWithResponseStream অনুমতি)।"
 }
