@@ -18,6 +18,11 @@
   Figolu is a fork of <a href="https://github.com/FrigadeHQ/yogurt">Yogurt</a>, made by <a href="https://frigade.com">Frigade</a>, under the MIT license.
 </p>
 
+## Download
+
+Installers for Mac, Windows and Linux are on the [releases page](https://github.com/katak95/figolu/releases). Figolu
+updates itself from there (on Mac, once the app is signed).
+
 ## What Figolu adds to Yogurt
 
 - **Amazon Bedrock.** Summaries written by Claude on Bedrock (Haiku 5.5 by default) instead of a model on your computer, signed in with AWS IAM Identity Center. No notes model to download.
@@ -27,11 +32,13 @@
 - **Microsoft 365, read only.** The Outlook calendar, related emails and SharePoint / OneDrive documents as context.
 - **Confluence.** A meeting report sent to your personal space, updated when you send it again.
 
+All of these are off until you turn them on in Settings. [How to set them up, and what each one sends where](docs/bedrock-and-m365.md).
+
 ## What it does
 
 - **Live transcripts.** Figolu records calls and turns speech into text as you talk.
 - **Meeting summaries.** Figolu writes up the conversation and any notes you add.
-- **Private by default.** Your audio, transcripts and AI processing stay on your computer.
+- **Private by default.** Your audio, transcripts and AI processing stay on your computer, unless you turn on Bedrock, Microsoft 365 or Confluence in Figolu.
 - **Free and open source.** You can use Figolu without an account.
 - **Who said what.** Figolu names speakers from Zoom, Teams and Meet on Mac, Windows and Linux.
 - **Languages.** Multi-language mode transcribes 99 languages, follows each side of the call in its own language, and keeps up when someone switches languages mid-meeting.
@@ -50,9 +57,9 @@ https://github.com/user-attachments/assets/da16b894-beb1-491a-89e1-fd10666dc9b8
 
 1. **Record.** Start recording your microphone and call audio; you can add your own notes.
 2. **Transcribe.** Figolu uses whisper.cpp and, on supported Macs, Apple SpeechAnalyzer.
-3. **Summarize and ask.** A local open-weight model runs through llama.cpp.
+3. **Summarize and ask.** A local open-weight model runs through llama.cpp, or Claude on Amazon Bedrock in your AWS account if you choose it in Figolu.
 
-Meeting data stays local; Figolu goes online for model downloads and update checks.
+With the local model, meeting data stays on your computer, and Figolu goes online only for model downloads and update checks. With Bedrock, transcripts and notes go to Bedrock in your AWS account; with Microsoft 365, Figolu reads your calendar, emails and documents; with Confluence, it writes the report you send.
 
 <details><summary>Where your meetings, recordings, settings and models are stored</summary>
 
@@ -92,7 +99,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> Yes. Figolu is free and open source under the MIT license. No account is needed.
+> Yes. Figolu is free and open source under the MIT license. No account is needed. With Amazon Bedrock, AWS bills your account for what the model reads and writes (Haiku is among its cheapest models).
 
 </details>
 
@@ -100,7 +107,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> Yes. After a one-time download of the AI models, transcription and summaries run locally on your computer.
+> Yes, with the local notes model: after a one-time download of the AI models, transcription and summaries run locally on your computer. With Amazon Bedrock, recording and transcription still work offline, but summaries need a connection.
 
 </details>
 
@@ -108,7 +115,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> No. Your recordings, transcripts and notes stay on your computer, and Figolu has no server that receives them, so nobody at Figolu can read them. The AI models run on your computer and don't learn from your meetings. Figolu only goes online to download its models, check for updates and, if you add one, read your calendar link.
+> No. Your recordings, transcripts and notes stay on your computer, and Figolu has no server that receives them, so nobody at Figolu can read them. The AI models run on your computer and don't learn from your meetings. Figolu only goes online to download its models, check for updates and, if you add one, read your calendar link, plus Bedrock, Microsoft 365 or Confluence when you turn them on. Amazon Bedrock doesn't use what it receives to train models, and nothing goes to Figolu's authors.
 
 </details>
 
@@ -116,7 +123,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> Figolu keeps everything on your computer: audio, transcripts and notes are never uploaded, and transcription and summaries run offline. That makes it a good fit for client calls, therapy sessions, legal work and board meetings where audio can't go to a cloud service. You can also turn off saving audio in **Settings**, and Figolu is open source, so anyone can check what it does. Follow your own rules on getting consent to record.
+> Figolu keeps everything on your computer: audio, transcripts and notes are never uploaded, and transcription and summaries run offline. That makes it a good fit for client calls, therapy sessions, legal work and board meetings where audio can't go to a cloud service. With Amazon Bedrock on, transcripts and notes leave your computer for your AWS account (audio never does): keep the local model for meetings that must stay on your computer. You can also turn off saving audio in **Settings**, and Figolu is open source, so anyone can check what it does. Follow your own rules on getting consent to record.
 
 </details>
 
@@ -180,7 +187,7 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> Transcription uses Whisper through whisper.cpp, with large-v3-turbo or a smaller model depending on your computer. On supported Macs, Apple SpeechAnalyzer supplies live words while Whisper produces the saved transcript. Summaries and answers use a local open-weight model from the Gemma 4, gpt-oss or Qwen3 families, chosen for your hardware and run through llama.cpp. The app uses Electron and needs no account.
+> Transcription uses Whisper through whisper.cpp, with large-v3-turbo or a smaller model depending on your computer. On supported Macs, Apple SpeechAnalyzer supplies live words while Whisper produces the saved transcript. Summaries and answers use a local open-weight model from the Gemma 4, gpt-oss or Qwen3 families, chosen for your hardware and run through llama.cpp, or Claude on Amazon Bedrock (Haiku 5.5 by default) if you choose it. The app uses Electron and needs no account.
 
 </details>
 
@@ -214,16 +221,19 @@ Meeting data stays local; Figolu goes online for model downloads and update chec
 
 <br>
 
-> On Mac, allow Calendar access in Settings. Figolu reads the calendars already on your computer and lets you choose which ones to show. You do not sign into a calendar account in Figolu.
+> On Mac, allow Calendar access in Settings. Figolu reads the calendars already on your computer and lets you choose which ones to show. On any computer, you can also sign in to Microsoft 365 in Figolu to read your Outlook calendar (read only).
 
 </details>
 
 ## Support
 
 - [Help](docs/README.md)
-- [Discord](https://yogurt.so/discord)
+- [Discord](https://yogurt.so/discord) of Yogurt, the app Figolu is built on
 - [Report a bug](https://github.com/katak95/figolu/issues)
 
 ## Development
+
+- [Build and run locally](docs/building.md)
+- [How Figolu follows Yogurt](docs/syncing-with-yogurt.md): Yogurt's changes are merged and released every day.
 
 [MIT](LICENSE) · Copyright 2026 Frigade (Yogurt). Figolu's changes are under the same license.
