@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { BEDROCK_CONTEXT, createBedrockNotesModel, estimateTokens, type MessagesClient } from '../src/main/notes/bedrock'
+import { BEDROCK_CONTEXT, bedrockClient, bedrockEndpoint, createBedrockNotesModel, estimateTokens, modelTakesEffort, type MessagesClient } from '../src/main/notes/bedrock'
 import { createSwitchingNotesModel } from '../src/main/notes/provider'
 import { createSso, PendingError, SignInNeededError, type SsoApi } from '../src/main/aws/sso'
 
@@ -57,6 +57,55 @@ describe('the notes model on Bedrock', () => {
     await expect(llm.chat('Hi', () => {})).rejects.toMatchObject({ kind: 'access' })
     const refused = await createBedrockNotesModel({ config: () => config, client: () => fakeClient('', 'refusal').client }).llm()
     await expect(refused.chat('Hi', () => {})).rejects.toMatchObject({ kind: 'refused' })
+  })
+
+  it('goes through InvokeModel for the model IDs and inference profiles other AWS projects use', () => {
+    expect(bedrockEndpoint('anthropic.claude-haiku-5-5')).toBe('mantle')
+    expect(bedrockEndpoint('anthropic.claude-haiku-4-5')).toBe('mantle')
+    for (const id of ['eu.anthropic.claude-haiku-4-5-20251001-v1:0', 'anthropic.claude-haiku-4-5-20251001-v1:0', 'global.anthropic.claude-sonnet-4-6', 'us.anthropic.claude-opus-4-5-20251101-v1:0',
+      'arn:aws:bedrock:eu-west-1:123456789012:inference-profile/eu.anthropic.claude-haiku-4-5-20251001-v1:0'])
+      expect(bedrockEndpoint(id), id).toBe('runtime')
+  })
+
+  it('sends the effort level only to the models that take it', () => {
+    for (const id of ['anthropic.claude-haiku-5-5', 'anthropic.claude-opus-4-5', 'eu.anthropic.claude-sonnet-4-6', 'anthropic.claude-fable-5-1', 'something-else'])
+      expect(modelTakesEffort(id), id).toBe(true)
+    for (const id of ['eu.anthropic.claude-haiku-4-5-20251001-v1:0', 'anthropic.claude-sonnet-4-5-20250929-v1:0', 'anthropic.claude-sonnet-4-20250514-v1:0'])
+      expect(modelTakesEffort(id), id).toBe(false)
+  })
+
+  it('writes with Claude Haiku 4.5 on InvokeModel: no effort level, the JSON format kept', async () => {
+    const { client, sent } = fakeClient('[]')
+    const haiku45 = { ...config, modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0' }
+    const llm = await createBedrockNotesModel({ config: () => haiku45, client: () => client }).llm()
+    await llm.chat('Hi', () => {})
+    expect(sent[0].output_config).toBeUndefined()
+    await llm.chat('Hi', () => {}, { json: { type: 'array' } })
+    expect(sent[1].output_config).toEqual({ format: { type: 'json_schema', schema: { type: 'array' } } })
+    expect(sent[1].model).toBe(haiku45.modelId)
+  })
+
+  it('names the permission the role lacks, for the door in use', async () => {
+    const denied = (modelId: string) => createBedrockNotesModel({ config: () => ({ ...config, modelId }), client: () => fakeClient('', 'end_turn', Object.assign(new Error('no'), { status: 403 })).client }).llm()
+    await expect((await denied('anthropic.claude-haiku-5-5')).chat('Hi', () => {})).rejects.toThrow(/bedrock-mantle:CreateInference.*eu\.anthropic\.claude-haiku-4-5/)
+    await expect((await denied('eu.anthropic.claude-haiku-4-5-20251001-v1:0')).chat('Hi', () => {})).rejects.toThrow(/bedrock:InvokeModelWithResponseStream/)
+  })
+
+  it('signs InvokeModel requests for bedrock-runtime, with the API version every Claude model takes there', async () => {
+    const seen: Array<{ url: string; body: string; auth: string }> = []
+    vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
+      seen.push({ url: String(url), body: String(init.body), auth: new Headers(init.headers).get('authorization') ?? '' })
+      return new Response('{"message":"denied"}', { status: 403, headers: { 'content-type': 'application/json' } })
+    })
+    try {
+      const keys = async () => ({ accessKeyId: 'AKIAEXAMPLE', secretAccessKey: 's', sessionToken: 't', expiration: Date.now() + 3_600_000 })
+      for (const [endpoint, model] of [['runtime', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0'], ['mantle', 'anthropic.claude-haiku-5-5']] as const)
+        await bedrockClient('eu-west-1', keys, endpoint).messages.stream({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }).finalMessage().catch(() => {})
+    } finally { vi.unstubAllGlobals() }
+    expect(seen[0].url).toBe('https://bedrock-runtime.eu-west-1.amazonaws.com/model/eu.anthropic.claude-haiku-4-5-20251001-v1:0/invoke-with-response-stream')
+    expect(JSON.parse(seen[0].body)).toMatchObject({ anthropic_version: 'bedrock-2023-05-31' })
+    expect(seen[1].url).toBe('https://bedrock-mantle.eu-west-1.api.aws/anthropic/v1/messages')
+    for (const s of seen) expect(s.auth).toMatch(/^AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE\//)
   })
 
   it('never thinks a text smaller than it is', () => {

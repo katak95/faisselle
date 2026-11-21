@@ -70,7 +70,7 @@ import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
 import { UtilityEngine } from './engine'
 import { createNotesModel } from './notes/model'
-import { createBedrockNotesModel, bedrockClient } from './notes/bedrock'
+import { createBedrockNotesModel, bedrockClient, bedrockEndpoint } from './notes/bedrock'
 import { fakeMessagesClient } from './notes/fake'
 import { createSwitchingNotesModel } from './notes/provider'
 import { createSso } from './aws/sso'
@@ -737,7 +737,7 @@ app.whenReady().then(() => {
   const cloudConfig = () => bedrockConfig(loadSettings(settingsFile), sso)
   const bedrockModel = createBedrockNotesModel({ config: cloudConfig,
     // fake mode: the fake engine answers, as for the local model
-    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, () => sso.credentials(c.accountId, c.roleName))) })
+    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, () => sso.credentials(c.accountId, c.roleName), bedrockEndpoint(c.modelId))) })
   const provider = () => notesProviderSetting(loadSettings(settingsFile))
   const model = createSwitchingNotesModel({ local: localModel, bedrock: bedrockModel, provider })
   /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */

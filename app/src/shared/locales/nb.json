@@ -876,5 +876,6 @@
   "Help": "Hjelp",
   "Help and settings": "Hjelp og innstillinger",
   "Figolu menu": "Figolu-meny",
-  "Restart to update · {version}": "Start på nytt for å oppdatere · {version}"
+  "Restart to update · {version}": "Start på nytt for å oppdatere · {version}",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock bruker ID-er som anthropic.claude-haiku-5-5 (tillatelse bedrock-mantle:CreateInference). En InvokeModel-ID eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (tillatelse bedrock:InvokeModelWithResponseStream)."
 }

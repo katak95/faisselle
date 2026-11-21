@@ -834,5 +834,6 @@
   "Help": "Trợ giúp",
   "Help and settings": "Trợ giúp và cài đặt",
   "Figolu menu": "Menu Figolu",
-  "Restart to update · {version}": "Khởi động lại để cập nhật · {version}"
+  "Restart to update · {version}": "Khởi động lại để cập nhật · {version}",
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude trong Amazon Bedrock nhận ID dạng anthropic.claude-haiku-5-5 (quyền bedrock-mantle:CreateInference). ID InvokeModel hoặc hồ sơ suy luận, như eu.anthropic.claude-haiku-4-5-20251001-v1:0, đi qua bedrock-runtime (quyền bedrock:InvokeModelWithResponseStream)."
 }
