@@ -28,6 +28,7 @@ The first run downloads the AI models, like the installed app.
 
 - **Separate profile:** `YOGURT_USER_DATA=/tmp/yogurt-dev pnpm dev` keeps your real meetings out of it.
 - **Without models:** `YOGURT_FAKE=1 pnpm dev` swaps in a fake transcriber, notes model and call audio, so the whole app runs in seconds.
+- **Mac permissions:** `pnpm dev` starts Electron as *Faisselle Dev* (`com.katak95.faisselle.dev`), answering for its own microphone, call audio, calendar, Accessibility and notifications rather than your terminal's, under its own name in System Settings, apart from the installed app. Signed with your Apple Development certificate when you have one, what you allow stays allowed; macOS may ask once for `codesign` to use its key. See `app/scripts/dev-identity.mjs`.
 - **Linux sandbox:** on Ubuntu 24.04 and other systems that turn off unprivileged user namespaces, Electron's sandbox helper must be owned by root. `pnpm dev` prints the two `sudo` commands when it isn't, and they're needed again after `node_modules` is reinstalled.
 
 ## Test
