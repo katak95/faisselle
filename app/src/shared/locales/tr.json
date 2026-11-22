@@ -879,5 +879,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "İstemci gizli anahtarı, yalnızca bu yeniden yönlendirme URI’si Web platformundaysa",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Bir istemci gizli anahtarı kayıtlı. Değiştirmek için başka birini yazın ya da korumak için boş bırakın.",
   "Remove the secret": "Gizli anahtarı kaldır",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock’taki Claude, anthropic.claude-haiku-5-5 gibi kimlikler alır (bedrock-mantle:CreateInference izni). eu.anthropic.claude-haiku-4-5-20251001-v1:0 gibi bir InvokeModel kimliği veya çıkarım profili bedrock-runtime üzerinden gider (bedrock:InvokeModelWithResponseStream izni)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock’taki Claude, anthropic.claude-haiku-5-5 gibi kimlikler alır (bedrock-mantle:CreateInference izni). eu.anthropic.claude-haiku-4-5-20251001-v1:0 gibi bir InvokeModel kimliği veya çıkarım profili bedrock-runtime üzerinden gider (bedrock:InvokeModelWithResponseStream izni).",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center olmayan bir hesap için Bedrock API anahtarı (AWS ücretsiz planında yoktur). Anahtar zincirinizde tutulur ve yalnızca Bedrock'a gönderilir.",
+  "A key is saved. Paste another to replace it.": "Bir anahtar kayıtlı. Değiştirmek için başka birini yapıştırın.",
+  "Bedrock API key": "Bedrock API anahtarı",
+  "How Faisselle signs in to AWS": "Faisselle AWS'ye nasıl oturum açar",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: oturum açmak için tarayıcı açılır, ardından bir hesap ve rol seçersiniz.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock konsolunda API anahtarları bölümünden bir tane oluşturun. Kısa süreli anahtar en fazla 12 saat ve yalnızca oluşturulduğu bölgede çalışır; uzun süreli anahtar Bedrock'u denemek içindir.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Bu bir Bedrock API anahtarına benzemiyor. Amazon Bedrock konsolundan yeniden kopyalayın."
 }

@@ -24,6 +24,36 @@ function Field({ id, label, value, placeholder, hint, onSave }: { id: string; la
 }
 
 /**
+ * The Bedrock API key: typed or pasted once, then only "a key is saved". Main keeps it sealed; it is never shown
+ * again, so replacing it means pasting a new one.
+ */
+function ApiKeyField({ saved, onChange }: { saved: boolean; onChange(v: CloudNotesView): void }) {
+  const [key, setKey] = useState('')
+  const [refused, setRefused] = useState(false)
+  const save = async () => {
+    const r = await window.yogurt.cloud.setApiKey(key.trim())
+    setRefused(!r.ok)
+    if (r.ok) setKey('')
+    onChange(r.view)
+  }
+  return <div className="settings-row" data-testid="cloud-api-key">
+    <div className="settings-row-copy">
+      <label htmlFor="cloud-api-key-input" className="settings-label">{t('Bedrock API key')}</label>
+      <p id="cloud-api-key-hint" className="settings-description" aria-live="polite">{refused ? t("That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.")
+        : saved ? t('A key is saved. Paste another to replace it.')
+        : t('Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.')}</p>
+      <input id="cloud-api-key-input" data-testid="cloud-api-key-input" type="password" dir="ltr" value={key} autoComplete="off" spellCheck={false} aria-describedby="cloud-api-key-hint"
+        placeholder={saved ? '••••••••' : undefined} onChange={(e) => setKey(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && key.trim()) void save() }}
+        className="mt-2 w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
+    </div>
+    <span className="flex flex-col gap-2">
+      <button data-testid="cloud-api-key-save" className="workspace-button settings-action" disabled={!key.trim()} onClick={() => void save()}>{t('Save')}</button>
+      {saved && <button data-testid="cloud-api-key-remove" className="workspace-button settings-action" onClick={() => { setRefused(false); void window.yogurt.cloud.removeApiKey().then(onChange) }}>{t('Remove')}</button>}
+    </span>
+  </div>
+}
+
+/**
  * Settings → Notes model: written on this computer, or by Claude on Amazon Bedrock. Bedrock needs a sign-in to
  * AWS IAM Identity Center (the browser opens with a code), then an account and a role allowed to use Bedrock.
  */
@@ -73,47 +103,66 @@ export function CloudNotesSettings() {
       </div>
 
       {bedrock && v && <>
-        <Field id="cloud-start-url" label={t('AWS sign-in start URL')} value={v.config.startUrl} placeholder="https://example.awsapps.com/start" onSave={(startUrl) => set({ startUrl })} />
-        <Field id="cloud-sso-region" label={t('Identity Center region')} value={v.config.ssoRegion} placeholder="eu-west-1" onSave={(ssoRegion) => set({ ssoRegion })} />
-
-        <div className="settings-row" data-testid="cloud-sign-in">
+        <div className="settings-row">
           <div className="settings-row-copy">
-            <p className="settings-label">{t('AWS account')}</p>
-            <p className="settings-description" aria-live="polite">{
-              v.sso.state === 'signed-in' ? t('Signed in to {url}', { url: v.sso.startUrl })
-              : v.sso.state === 'pending' ? t('Approve the sign-in in your browser. Code: {code}', { code: v.sso.userCode })
-              : v.sso.state === 'expired' ? t('The sign-in ran out. Sign in again.')
-              : v.sso.state === 'error' ? t("Signing in didn't work. Check the start URL and region, then try again.")
-              : t('Not signed in.')}</p>
-            {v.sso.state === 'pending' && <a className="settings-description underline" href={v.sso.url} target="_blank" rel="noreferrer">{t('Open the sign-in page again')}</a>}
+            <label htmlFor="cloud-auth" className="settings-label">{t('How Faisselle signs in to AWS')}</label>
+            <p id="cloud-auth-description" className="settings-description">{v.config.auth === 'api-key'
+              ? t('A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.')
+              : t('IAM Identity Center: the browser opens to sign in, then you choose an account and a role.')}</p>
           </div>
-          {v.sso.state === 'signed-in'
-            ? <button data-testid="cloud-sign-out" className="workspace-button settings-action" onClick={() => void window.yogurt.cloud.signOut().then(setV)}>{t('Sign out')}</button>
-            : v.sso.state === 'pending'
-            ? <button data-testid="cloud-cancel" className="workspace-button settings-action" onClick={() => void window.yogurt.cloud.cancelSignIn().then(setV)}>{t('Cancel')}</button>
-            : <button data-testid="cloud-sign-in-button" className="workspace-button settings-action" disabled={!v.config.startUrl} onClick={() => void window.yogurt.cloud.signIn().then(setV)}>{t('Sign in to AWS')}</button>}
+          <span className="settings-select-wrap">
+            <select id="cloud-auth" data-testid="cloud-auth" aria-describedby="cloud-auth-description" value={v.config.auth}
+              onChange={(e) => { setTest(undefined); void window.yogurt.cloud.setAuth(e.target.value as 'sso' | 'api-key').then(setV) }} className="settings-select">
+              <option value="sso">{t('IAM Identity Center (SSO)')}</option>
+              <option value="api-key">{t('Bedrock API key')}</option>
+            </select>
+            <ChevronDown size={14} aria-hidden="true" />
+          </span>
         </div>
 
-        {signedIn && <div className="settings-row">
-          <div className="settings-row-copy"><label htmlFor="cloud-account" className="settings-label">{t('Account')}</label></div>
-          <span className="settings-select-wrap">
-            <select id="cloud-account" data-testid="cloud-account" value={v.config.accountId} disabled={!accounts} onChange={(e) => set({ accountId: e.target.value })} className="settings-select">
-              <option value="">{t('Choose…')}</option>
-              {(accounts ?? []).map((a) => <option key={a.id} value={a.id}>{a.name} ({a.id})</option>)}
-            </select>
-            <ChevronDown size={14} aria-hidden="true" />
-          </span>
-        </div>}
-        {signedIn && v.config.accountId && <div className="settings-row">
-          <div className="settings-row-copy"><label htmlFor="cloud-role" className="settings-label">{t('Role')}</label></div>
-          <span className="settings-select-wrap">
-            <select id="cloud-role" data-testid="cloud-role" value={v.config.roleName} disabled={!roles} onChange={(e) => set({ roleName: e.target.value })} className="settings-select">
-              <option value="">{t('Choose…')}</option>
-              {(roles ?? []).map((r) => <option key={r} value={r}>{r}</option>)}
-            </select>
-            <ChevronDown size={14} aria-hidden="true" />
-          </span>
-        </div>}
+        {v.config.auth === 'api-key' ? <ApiKeyField saved={v.hasApiKey} onChange={(next) => { setTest(undefined); setV(next) }} /> : <>
+          <Field id="cloud-start-url" label={t('AWS sign-in start URL')} value={v.config.startUrl} placeholder="https://example.awsapps.com/start" onSave={(startUrl) => set({ startUrl })} />
+          <Field id="cloud-sso-region" label={t('Identity Center region')} value={v.config.ssoRegion} placeholder="eu-west-1" onSave={(ssoRegion) => set({ ssoRegion })} />
+
+          <div className="settings-row" data-testid="cloud-sign-in">
+            <div className="settings-row-copy">
+              <p className="settings-label">{t('AWS account')}</p>
+              <p className="settings-description" aria-live="polite">{
+                v.sso.state === 'signed-in' ? t('Signed in to {url}', { url: v.sso.startUrl })
+                : v.sso.state === 'pending' ? t('Approve the sign-in in your browser. Code: {code}', { code: v.sso.userCode })
+                : v.sso.state === 'expired' ? t('The sign-in ran out. Sign in again.')
+                : v.sso.state === 'error' ? t("Signing in didn't work. Check the start URL and region, then try again.")
+                : t('Not signed in.')}</p>
+              {v.sso.state === 'pending' && <a className="settings-description underline" href={v.sso.url} target="_blank" rel="noreferrer">{t('Open the sign-in page again')}</a>}
+            </div>
+            {v.sso.state === 'signed-in'
+              ? <button data-testid="cloud-sign-out" className="workspace-button settings-action" onClick={() => void window.yogurt.cloud.signOut().then(setV)}>{t('Sign out')}</button>
+              : v.sso.state === 'pending'
+              ? <button data-testid="cloud-cancel" className="workspace-button settings-action" onClick={() => void window.yogurt.cloud.cancelSignIn().then(setV)}>{t('Cancel')}</button>
+              : <button data-testid="cloud-sign-in-button" className="workspace-button settings-action" disabled={!v.config.startUrl} onClick={() => void window.yogurt.cloud.signIn().then(setV)}>{t('Sign in to AWS')}</button>}
+          </div>
+
+          {signedIn && <div className="settings-row">
+            <div className="settings-row-copy"><label htmlFor="cloud-account" className="settings-label">{t('Account')}</label></div>
+            <span className="settings-select-wrap">
+              <select id="cloud-account" data-testid="cloud-account" value={v.config.accountId} disabled={!accounts} onChange={(e) => set({ accountId: e.target.value })} className="settings-select">
+                <option value="">{t('Choose…')}</option>
+                {(accounts ?? []).map((a) => <option key={a.id} value={a.id}>{a.name} ({a.id})</option>)}
+              </select>
+              <ChevronDown size={14} aria-hidden="true" />
+            </span>
+          </div>}
+          {signedIn && v.config.accountId && <div className="settings-row">
+            <div className="settings-row-copy"><label htmlFor="cloud-role" className="settings-label">{t('Role')}</label></div>
+            <span className="settings-select-wrap">
+              <select id="cloud-role" data-testid="cloud-role" value={v.config.roleName} disabled={!roles} onChange={(e) => set({ roleName: e.target.value })} className="settings-select">
+                <option value="">{t('Choose…')}</option>
+                {(roles ?? []).map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <ChevronDown size={14} aria-hidden="true" />
+            </span>
+          </div>}
+        </>}
 
         <Field id="cloud-region" label={t('Bedrock region')} value={v.config.region} placeholder="eu-west-1" onSave={(region) => set({ region })} />
         <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="eu.anthropic.claude-haiku-4-5-20251001-v1:0"

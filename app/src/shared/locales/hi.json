@@ -879,5 +879,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "क्लाइंट सीक्रेट, सिर्फ़ तब जब वह रीडायरेक्ट URI वेब प्लेटफ़ॉर्म पर हो",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "एक क्लाइंट सीक्रेट सेव है। बदलने के लिए दूसरा लिखें, या रखने के लिए खाली छोड़ दें।",
   "Remove the secret": "सीक्रेट हटाएं",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock में Claude, anthropic.claude-haiku-5-5 जैसे ID लेता है (bedrock-mantle:CreateInference अनुमति)। InvokeModel ID या इन्फ़रेंस प्रोफ़ाइल, जैसे eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime से जाती है (bedrock:InvokeModelWithResponseStream अनुमति)।"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock में Claude, anthropic.claude-haiku-5-5 जैसे ID लेता है (bedrock-mantle:CreateInference अनुमति)। InvokeModel ID या इन्फ़रेंस प्रोफ़ाइल, जैसे eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime से जाती है (bedrock:InvokeModelWithResponseStream अनुमति)।",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center के बिना खाते के लिए Bedrock API कुंजी (AWS के मुफ़्त प्लान में यह नहीं है)। यह आपके कीचेन में रखी जाती है और सिर्फ़ Bedrock को भेजी जाती है।",
+  "A key is saved. Paste another to replace it.": "एक कुंजी सहेजी गई है। बदलने के लिए दूसरी कुंजी चिपकाएँ।",
+  "Bedrock API key": "Bedrock API कुंजी",
+  "How Faisselle signs in to AWS": "Faisselle AWS में कैसे साइन इन करता है",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: साइन इन के लिए ब्राउज़र खुलता है, फिर आप खाता और भूमिका चुनते हैं।",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock कंसोल में API कुंजियाँ के तहत एक बनाएँ। अल्पकालिक कुंजी ज़्यादा से ज़्यादा 12 घंटे चलती है और सिर्फ़ उसी क्षेत्र में काम करती है जहाँ बनी थी; दीर्घकालिक कुंजी Bedrock आज़माने के लिए है।",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "यह Bedrock API कुंजी नहीं लगती। इसे Amazon Bedrock कंसोल से फिर कॉपी करें।"
 }

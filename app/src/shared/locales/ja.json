@@ -849,5 +849,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "クライアントシークレット（リダイレクト URI が Web プラットフォームにある場合のみ）",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "クライアントシークレットが保存されています。置き換えるには別の値を入力し、そのままにするには空欄のままにしてください。",
   "Remove the secret": "シークレットを削除",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center のないアカウント向けの Bedrock API キーです（AWS の無料プランにはありません）。キーチェーンに保存され、Bedrock にだけ送られます。",
+  "A key is saved. Paste another to replace it.": "キーが保存されています。置き換えるには別のキーを貼り付けてください。",
+  "Bedrock API key": "Bedrock API キー",
+  "How Faisselle signs in to AWS": "Faisselle が AWS にサインインする方法",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center：ブラウザが開いてサインインし、そのあとアカウントとロールを選びます。",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock コンソールの「API キー」で作成します。短期キーは最長 12 時間有効で、作成したリージョンでのみ使えます。長期キーは Bedrock を試すためのものです。",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Bedrock API キーではないようです。Amazon Bedrock コンソールからもう一度コピーしてください。"
 }

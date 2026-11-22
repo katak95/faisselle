@@ -5,7 +5,8 @@ import type { AwsKeys } from '../aws/sso'
 /**
  * The notes model on Amazon Bedrock (Claude, by default Claude Haiku 5.5), as an `Llm` like the local one: the same
  * prompts, streamed back the same way. Nothing is loaded: a request goes out when a note is written.
- * The person signs in with AWS IAM Identity Center (aws/sso.ts); the role's keys sign each request.
+ * The person signs in with AWS IAM Identity Center (aws/sso.ts) and the role's keys sign each request, or saves a
+ * Bedrock API key (aws/apiKey.ts) sent as a bearer token.
  *
  * Two doors into Bedrock, chosen from the model ID (bedrockEndpoint):
  * - Claude in Amazon Bedrock, the Messages API on bedrock-mantle (`anthropic.claude-haiku-5-5`): the role needs
@@ -16,7 +17,11 @@ import type { AwsKeys } from '../aws/sso'
  * Claude 4.7 and later, and these roles often use Claude Haiku 4.5.
  */
 
-export type BedrockConfig = { region: string; modelId: string; accountId: string; roleName: string }
+/**
+ * auth: the SSO role's keys (accountId, roleName), or a Bedrock API key (both empty). authId names who signs the
+ * requests: another role, or a newly saved key, is another client.
+ */
+export type BedrockConfig = { region: string; modelId: string; auth: 'sso' | 'api-key'; accountId: string; roleName: string; authId: string }
 
 /** Claude Haiku 4.5 through the EU inference profile, which eu-west-1 needs (the bare model ID is refused there) */
 export const BEDROCK_DEFAULTS = { region: 'eu-west-1', modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0' } as const
@@ -79,16 +84,20 @@ export class BedrockError extends Error {
   constructor(message: string, readonly kind: 'sign-in' | 'access' | 'model' | 'refused' | 'other') { super(message) }
 }
 
-export function bedrockClient(region: string, keys: () => Promise<AwsKeys>, endpoint: BedrockEndpoint = 'mantle'): MessagesClient {
-  const options = {
-    awsRegion: region,
-    // the SSO role's keys, fetched again before they run out (aws/sso.ts)
-    providerChainResolver: async () => async () => {
-      const k = await keys()
-      return { accessKeyId: k.accessKeyId, secretAccessKey: k.secretAccessKey, sessionToken: k.sessionToken, expiration: new Date(k.expiration) }
-    },
-    maxRetries: 3,
-  }
+/** who signs the requests: the SSO role's keys, fetched again before they run out (aws/sso.ts), or a Bedrock API key */
+export type BedrockAuth = { keys: () => Promise<AwsKeys> } | { apiKey: string }
+
+export function bedrockClient(region: string, auth: BedrockAuth, endpoint: BedrockEndpoint = 'mantle'): MessagesClient {
+  const options = 'apiKey' in auth
+    ? { awsRegion: region, apiKey: auth.apiKey, maxRetries: 3 }
+    : {
+      awsRegion: region,
+      providerChainResolver: async () => async () => {
+        const k = await auth.keys()
+        return { accessKeyId: k.accessKeyId, secretAccessKey: k.secretAccessKey, sessionToken: k.sessionToken, expiration: new Date(k.expiration) }
+      },
+      maxRetries: 3,
+    }
   return endpoint === 'runtime' ? new AnthropicBedrock(options) : new AnthropicBedrockMantle(options)
 }
 
@@ -97,6 +106,11 @@ const explain = (e: unknown, c: BedrockConfig): Error => {
   const err = e as { status?: number; name?: string; message?: string }
   const endpoint = bedrockEndpoint(c.modelId)
   if (err?.name === 'SignInNeededError') return new BedrockError(err.message ?? 'Sign in to AWS', 'sign-in')
+  if (c.auth === 'api-key') {
+    // a key that ran out, or was deleted, is refused like one that may not call the model
+    if (err?.status === 401) return new BedrockError('Bedrock refused the API key: it may have run out. Save a new one in Settings', 'sign-in')
+    if (err?.status === 403) return new BedrockError(`This Bedrock API key may not call ${c.modelId} in ${c.region}, or it ran out. It needs bedrock:CallWithBearerToken and ${endpoint === 'runtime' ? 'bedrock:InvokeModelWithResponseStream' : 'bedrock-mantle:CreateInference'}, and a short-term key works only in the region it was made in`, 'access')
+  }
   if (err?.status === 401) return new BedrockError('AWS refused the sign-in: sign in again', 'sign-in')
   // the permission differs with the door: say which one this role lacks
   if (err?.status === 403) return new BedrockError(endpoint === 'runtime'
@@ -113,14 +127,14 @@ const explain = (e: unknown, c: BedrockConfig): Error => {
 export function createBedrockNotesModel(o: { config: () => BedrockConfig | undefined; client: (c: BedrockConfig) => MessagesClient }) {
   let cached: { key: string; client: MessagesClient } | undefined
   const clientFor = (c: BedrockConfig) => {
-    const key = `${c.region}|${c.accountId}|${c.roleName}|${bedrockEndpoint(c.modelId)}`
+    const key = `${c.region}|${c.authId}|${bedrockEndpoint(c.modelId)}`
     if (cached?.key !== key) cached = { key, client: o.client(c) }
     return cached.client
   }
 
   const llm = async (signal?: AbortSignal): Promise<Llm> => {
     const c = o.config()
-    if (!c) throw new BedrockError('Bedrock is not set up: sign in to AWS and choose an account and role in Settings', 'sign-in')
+    if (!c) throw new BedrockError('Bedrock is not set up: sign in to AWS and choose an account and role, or save a Bedrock API key, in Settings', 'sign-in')
     const client = clientFor(c)
     return {
       contextSize: BEDROCK_CONTEXT,

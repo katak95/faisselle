@@ -891,5 +891,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "Client secret, kung nasa Web platform lang ang redirect URI na iyon",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "May naka-save na client secret. Mag-type ng iba para palitan ito, o iwanang blangko para panatilihin.",
   "Remove the secret": "Alisin ang secret",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Tumatanggap ang Claude sa Amazon Bedrock ng mga ID gaya ng anthropic.claude-haiku-5-5 (pahintulot na bedrock-mantle:CreateInference). Ang InvokeModel ID o inference profile, gaya ng eu.anthropic.claude-haiku-4-5-20251001-v1:0, ay dumadaan sa bedrock-runtime (pahintulot na bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Tumatanggap ang Claude sa Amazon Bedrock ng mga ID gaya ng anthropic.claude-haiku-5-5 (pahintulot na bedrock-mantle:CreateInference). Ang InvokeModel ID o inference profile, gaya ng eu.anthropic.claude-haiku-4-5-20251001-v1:0, ay dumadaan sa bedrock-runtime (pahintulot na bedrock:InvokeModelWithResponseStream).",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Isang Bedrock API key, para sa account na walang IAM Identity Center (wala nito ang Free plan ng AWS). Nakatago ito sa iyong keychain at sa Bedrock lang ipinapadala.",
+  "A key is saved. Paste another to replace it.": "May naka-save na key. Mag-paste ng iba para palitan ito.",
+  "Bedrock API key": "Bedrock API key",
+  "How Faisselle signs in to AWS": "Paano nagsa-sign in ang Faisselle sa AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: bubukas ang browser para mag-sign in, saka ka pipili ng account at role.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Gumawa ng isa sa Amazon Bedrock console, sa API keys. Ang short-term key ay tumatagal nang hanggang 12 oras at gumagana lang sa region kung saan ito ginawa; ang long-term key ay para subukan ang Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Mukhang hindi iyan Bedrock API key. Kopyahin ulit mula sa Amazon Bedrock console."
 }
