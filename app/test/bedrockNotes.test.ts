@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
-import { mkdtempSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { BEDROCK_CONTEXT, bedrockClient, bedrockEndpoint, createBedrockNotesModel, estimateTokens, modelTakesEffort, type MessagesClient } from '../src/main/notes/bedrock'
 import { createSwitchingNotesModel } from '../src/main/notes/provider'
 import { createSso, PendingError, SignInNeededError, type SsoApi } from '../src/main/aws/sso'
+import { createApiKeyStore, validApiKey } from '../src/main/aws/apiKey'
+import { bedrockConfig } from '../src/main/cloudNotes'
 
 type Sent = { model: string; max_tokens: number; messages: Array<{ role: string; content: Array<{ text: string; cache_control?: unknown }> }>; output_config?: { effort?: string; format?: unknown }; temperature?: number }
 
@@ -25,7 +27,7 @@ function fakeClient(answer = 'Hello there', stop = 'end_turn', fail?: unknown) {
   } } } as unknown as MessagesClient
   return { client, sent }
 }
-const config = { region: 'eu-west-1', modelId: 'anthropic.claude-haiku-5-5', accountId: '123456789012', roleName: 'BedrockUser' }
+const config = { region: 'eu-west-1', modelId: 'anthropic.claude-haiku-5-5', auth: 'sso' as const, accountId: '123456789012', roleName: 'BedrockUser', authId: 'sso:123456789012|BedrockUser' }
 
 describe('the notes model on Bedrock', () => {
   it('streams the answer, and turns earlier prompts into turns', async () => {
@@ -100,12 +102,32 @@ describe('the notes model on Bedrock', () => {
     try {
       const keys = async () => ({ accessKeyId: 'AKIAEXAMPLE', secretAccessKey: 's', sessionToken: 't', expiration: Date.now() + 3_600_000 })
       for (const [endpoint, model] of [['runtime', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0'], ['mantle', 'anthropic.claude-haiku-5-5']] as const)
-        await bedrockClient('eu-west-1', keys, endpoint).messages.stream({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }).finalMessage().catch(() => {})
+        await bedrockClient('eu-west-1', { keys }, endpoint).messages.stream({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }).finalMessage().catch(() => {})
     } finally { vi.unstubAllGlobals() }
     expect(seen[0].url).toBe('https://bedrock-runtime.eu-west-1.amazonaws.com/model/eu.anthropic.claude-haiku-4-5-20251001-v1:0/invoke-with-response-stream')
     expect(JSON.parse(seen[0].body)).toMatchObject({ anthropic_version: 'bedrock-2023-05-31' })
     expect(seen[1].url).toBe('https://bedrock-mantle.eu-west-1.api.aws/anthropic/v1/messages')
     for (const s of seen) expect(s.auth).toMatch(/^AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE\//)
+  })
+
+  it('sends a Bedrock API key as a bearer token, on either door, instead of signing', async () => {
+    const seen: string[] = []
+    vi.stubGlobal('fetch', async (_url: string, init: RequestInit) => {
+      seen.push(new Headers(init.headers).get('authorization') ?? '')
+      return new Response('{"message":"denied"}', { status: 403, headers: { 'content-type': 'application/json' } })
+    })
+    try {
+      for (const [endpoint, model] of [['runtime', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0'], ['mantle', 'anthropic.claude-haiku-5-5']] as const)
+        await bedrockClient('eu-west-1', { apiKey: 'ABSKexampleexampleexample' }, endpoint).messages.stream({ model, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }).finalMessage().catch(() => {})
+    } finally { vi.unstubAllGlobals() }
+    expect(seen).toEqual(['Bearer ABSKexampleexampleexample', 'Bearer ABSKexampleexampleexample'])
+  })
+
+  it("says what a refused API key needs, apart from a role's permissions", async () => {
+    const keyConfig = { ...config, modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0', auth: 'api-key' as const, accountId: '', roleName: '', authId: 'key:1' }
+    const refused = (status: number) => createBedrockNotesModel({ config: () => keyConfig, client: () => fakeClient('', 'end_turn', Object.assign(new Error('no'), { status })).client }).llm()
+    await expect((await refused(403)).chat('Hi', () => {})).rejects.toThrow(/API key may not call .*bedrock:CallWithBearerToken and bedrock:InvokeModelWithResponseStream.*short-term key works only in the region/)
+    await expect((await refused(401)).chat('Hi', () => {})).rejects.toThrow(/refused the API key: it may have run out/)
   })
 
   it('never thinks a text smaller than it is', () => {
@@ -173,3 +195,38 @@ describe('signing in to AWS', () => {
     expect((await sso.signIn({ startUrl: 'http://x', ssoRegion: 'eu-west-1' })).state).toBe('error')
   })
 })
+
+describe('a Bedrock API key', () => {
+  const seal = (p: string) => `sealed:${Buffer.from(p).toString('base64')}`
+  const open = (s: string) => Buffer.from(s.slice(7), 'base64').toString()
+
+  it('is kept sealed, read back after a restart, and removed', () => {
+    const file = join(mkdtempSync(join(tmpdir(), 'yogurt-key-')), 'bedrock-key.json')
+    const store = createApiKeyStore({ file, seal, open, now: () => 42 })
+    expect(store.has()).toBe(false)
+    store.set('ABSKexampleexampleexample')
+    expect(readFileSync(file, 'utf8')).not.toContain('ABSKexample')
+    const again = createApiKeyStore({ file, seal, open })
+    expect([again.get(), again.savedAt()]).toEqual(['ABSKexampleexampleexample', 42])
+    again.remove()
+    expect(createApiKeyStore({ file, seal, open }).has()).toBe(false)
+  })
+
+  it('looks like one: printable, no spaces, not too short', () => {
+    expect(validApiKey('bedrock-api-key-YmVkcm9jay5hbWF6b25hd3MuY29tLz9BY3Rpb249Q2FsbFdpdGhCZWFyZXJUb2tlbg==&Version=1')).toBe(true)
+    expect(validApiKey('short')).toBe(false)
+    expect(validApiKey('has a space in it, it is long enough')).toBe(false)
+    expect(validApiKey(42)).toBe(false)
+  })
+
+  it('makes Bedrock ready without Identity Center, a new key making a new client', () => {
+    const signedOut = { status: () => ({ state: 'signed-out' as const }) } as never
+    const key = { has: () => true, savedAt: () => 7 }
+    const s = { bedrock: { auth: 'api-key' as const, modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0' } }
+    expect(bedrockConfig(s, signedOut, key)).toEqual({ region: 'eu-west-1', modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0', auth: 'api-key', accountId: '', roleName: '', authId: 'key:7' })
+    expect(bedrockConfig(s, signedOut, { has: () => false, savedAt: () => undefined })).toBeUndefined()
+    // the SSO way still needs its sign-in
+    expect(bedrockConfig({ bedrock: { accountId: '123456789012', roleName: 'R' } }, signedOut, key)).toBeUndefined()
+  })
+})
+

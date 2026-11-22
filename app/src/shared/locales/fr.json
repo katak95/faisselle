@@ -988,5 +988,13 @@
   "Thinking": "Réfléchit",
   "Unmute": "Réactiver le micro",
   "What you and the agent say appears here. You can correct any line.": "Ce que vous et l’agent dites apparaît ici. Vous pouvez corriger chaque ligne.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} n’est pas disponible dans {region}. Vérifiez le modèle vocal et la région dans Réglages → Entretiens d’expert."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} n’est pas disponible dans {region}. Vérifiez le modèle vocal et la région dans Réglages → Entretiens d’expert.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Une clé d’API Bedrock, pour un compte sans IAM Identity Center (la formule gratuite d’AWS n’en a pas). Elle est gardée dans votre trousseau et envoyée uniquement à Bedrock.",
+  "A key is saved. Paste another to replace it.": "Une clé est enregistrée. Collez-en une autre pour la remplacer.",
+  "Bedrock API key": "Clé d’API Bedrock",
+  "How Faisselle signs in to AWS": "Comment Faisselle se connecte à AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center : le navigateur s’ouvre pour vous connecter, puis vous choisissez un compte et un rôle.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Créez-en une dans la console Amazon Bedrock, rubrique Clés d’API. Une clé à court terme dure 12 heures au plus et ne fonctionne que dans la région où elle a été créée ; une clé à long terme sert à essayer Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Ce n’est pas une clé d’API Bedrock. Copiez-la de nouveau depuis la console Amazon Bedrock."
 }

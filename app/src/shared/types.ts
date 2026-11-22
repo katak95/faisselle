@@ -168,6 +168,11 @@ export type YogurtApi = {
     signOut(): Promise<CloudNotesView>
     accounts(): Promise<Array<{ id: string; name: string }>>
     roles(accountId: string): Promise<string[]>
+    /** how requests are signed: the SSO role, or a Bedrock API key */
+    setAuth(auth: 'sso' | 'api-key'): Promise<CloudNotesView>
+    /** saves a Bedrock API key; ok false when it doesn't look like one */
+    setApiKey(key: string): Promise<{ ok: boolean; view: CloudNotesView }>
+    removeApiKey(): Promise<CloudNotesView>
     test(): Promise<{ ok: true } | { ok: false; message: string }>
     /** on Bedrock: removes the local notes models' files (they download again if the notes come back here) */
     removeLocal(): Promise<CloudNotesView>
@@ -549,8 +554,10 @@ export type CloudNotesView = {
   /** a notes model fits this computer (it can go back to local) */
   canRunLocally: boolean
   sso: SsoStatus
-  config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
-  /** signed in, with an account and role: notes can be written on Bedrock */
+  config: { auth: 'sso' | 'api-key'; startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
+  /** a Bedrock API key is saved (the key itself never leaves main) */
+  hasApiKey: boolean
+  /** signed in with an account and role, or a key saved: notes can be written on Bedrock */
   ready: boolean
   /** the local notes models' files on this computer (0: none), which Bedrock lets the person remove */
   localBytes: number

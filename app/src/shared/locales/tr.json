@@ -960,5 +960,13 @@
   "Thinking": "Düşünüyor",
   "Unmute": "Sesi aç",
   "What you and the agent say appears here. You can correct any line.": "Sizin ve ajanın söyledikleri burada görünür. Her satırı düzeltebilirsiniz.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model}, {region} bölgesinde kullanılamıyor. Ayarlar → Uzman görüşmeleri bölümünden ses modelini ve bölgeyi kontrol edin."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model}, {region} bölgesinde kullanılamıyor. Ayarlar → Uzman görüşmeleri bölümünden ses modelini ve bölgeyi kontrol edin.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center olmayan bir hesap için Bedrock API anahtarı (AWS ücretsiz planında yoktur). Anahtar zincirinizde tutulur ve yalnızca Bedrock'a gönderilir.",
+  "A key is saved. Paste another to replace it.": "Bir anahtar kayıtlı. Değiştirmek için başka birini yapıştırın.",
+  "Bedrock API key": "Bedrock API anahtarı",
+  "How Faisselle signs in to AWS": "Faisselle AWS'ye nasıl oturum açar",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: oturum açmak için tarayıcı açılır, ardından bir hesap ve rol seçersiniz.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock konsolunda API anahtarları bölümünden bir tane oluşturun. Kısa süreli anahtar en fazla 12 saat ve yalnızca oluşturulduğu bölgede çalışır; uzun süreli anahtar Bedrock'u denemek içindir.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Bu bir Bedrock API anahtarına benzemiyor. Amazon Bedrock konsolundan yeniden kopyalayın."
 }

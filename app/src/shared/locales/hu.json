@@ -960,5 +960,13 @@
   "Thinking": "Gondolkodik",
   "Unmute": "Némítás feloldása",
   "What you and the agent say appears here. You can correct any line.": "Itt jelenik meg, amit ön és az ügynök mond. Bármelyik sort kijavíthatja.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "A(z) {model} nem érhető el itt: {region}. Ellenőrizze a hangmodellt és a régiót a Beállítások → Szakértői interjúk alatt."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "A(z) {model} nem érhető el itt: {region}. Ellenőrizze a hangmodellt és a régiót a Beállítások → Szakértői interjúk alatt.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Bedrock API-kulcs IAM Identity Center nélküli fiókhoz (az AWS ingyenes csomagjában nincs ilyen). A kulcskarikán marad, és csak a Bedrockhoz kerül.",
+  "A key is saved. Paste another to replace it.": "Egy kulcs el van mentve. A cseréjéhez illesszen be egy másikat.",
+  "Bedrock API key": "Bedrock API-kulcs",
+  "How Faisselle signs in to AWS": "Hogyan jelentkezik be a Faisselle az AWS-be",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: a böngésző megnyílik a bejelentkezéshez, majd kiválaszt egy fiókot és egy szerepkört.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Hozzon létre egyet az Amazon Bedrock konzolon, az API-kulcsok alatt. A rövid távú kulcs legfeljebb 12 óráig és csak abban a régióban érvényes, ahol létrejött; a hosszú távú kulcs a Bedrock kipróbálására való.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Ez nem tűnik Bedrock API-kulcsnak. Másolja ki újra az Amazon Bedrock konzolról."
 }

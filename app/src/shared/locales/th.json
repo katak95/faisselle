@@ -930,5 +930,13 @@
   "Thinking": "กำลังคิด",
   "Unmute": "เปิดเสียง",
   "What you and the agent say appears here. You can correct any line.": "สิ่งที่คุณและเอเจนต์พูดจะแสดงที่นี่ คุณแก้ไขได้ทุกบรรทัด",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ใช้ไม่ได้ใน {region} ตรวจสอบโมเดลเสียงและรีเจียนใน การตั้งค่า → การสัมภาษณ์ผู้เชี่ยวชาญ"
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ใช้ไม่ได้ใน {region} ตรวจสอบโมเดลเสียงและรีเจียนใน การตั้งค่า → การสัมภาษณ์ผู้เชี่ยวชาญ",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "คีย์ API ของ Bedrock สำหรับบัญชีที่ไม่มี IAM Identity Center (แผนฟรีของ AWS ไม่มี) เก็บไว้ในพวงกุญแจของคุณและส่งไปที่ Bedrock เท่านั้น",
+  "A key is saved. Paste another to replace it.": "มีคีย์ที่บันทึกไว้แล้ว วางคีย์อื่นเพื่อแทนที่",
+  "Bedrock API key": "คีย์ API ของ Bedrock",
+  "How Faisselle signs in to AWS": "Faisselle ลงชื่อเข้าใช้ AWS อย่างไร",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: เบราว์เซอร์จะเปิดให้ลงชื่อเข้าใช้ จากนั้นคุณเลือกบัญชีและบทบาท",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "สร้างได้ในคอนโซล Amazon Bedrock ที่หัวข้อคีย์ API คีย์ระยะสั้นใช้ได้นานสุด 12 ชั่วโมงและเฉพาะในรีเจียนที่สร้าง ส่วนคีย์ระยะยาวมีไว้สำหรับลองใช้ Bedrock",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "นี่ดูไม่เหมือนคีย์ API ของ Bedrock คัดลอกใหม่จากคอนโซล Amazon Bedrock"
 }

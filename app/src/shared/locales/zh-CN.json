@@ -930,5 +930,13 @@
   "Thinking": "正在思考",
   "Unmute": "取消静音",
   "What you and the agent say appears here. You can correct any line.": "你和智能体说的话会显示在这里。每一行都可以更正。",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} 在 {region} 不可用。请在“设置 → 专家访谈”中检查语音模型和区域。"
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} 在 {region} 不可用。请在“设置 → 专家访谈”中检查语音模型和区域。",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Bedrock API 密钥，适用于没有 IAM Identity Center 的账户（AWS 免费套餐没有）。它保存在你的钥匙串中，只会发送给 Bedrock。",
+  "A key is saved. Paste another to replace it.": "已保存一个密钥。粘贴另一个即可替换。",
+  "Bedrock API key": "Bedrock API 密钥",
+  "How Faisselle signs in to AWS": "Faisselle 如何登录 AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center：浏览器会打开以便登录，然后你选择账户和角色。",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "在 Amazon Bedrock 控制台的“API 密钥”中创建。短期密钥最长有效 12 小时，且只能在创建它的区域使用；长期密钥用于试用 Bedrock。",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "这看起来不像 Bedrock API 密钥。请从 Amazon Bedrock 控制台重新复制。"
 }

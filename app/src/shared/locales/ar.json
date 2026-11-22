@@ -1028,5 +1028,13 @@
   "Thinking": "يفكر",
   "Unmute": "إلغاء الكتم",
   "What you and the agent say appears here. You can correct any line.": "يظهر هنا ما تقوله أنت والوكيل. يمكنك تصحيح أي سطر.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} غير متاح في {region}. تحقّق من نموذج الصوت والمنطقة في الإعدادات ← مقابلات الخبراء."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} غير متاح في {region}. تحقّق من نموذج الصوت والمنطقة في الإعدادات ← مقابلات الخبراء.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "مفتاح API لـ Bedrock، لحساب بلا IAM Identity Center (الخطة المجانية في AWS لا تتضمنه). يُحفظ في سلسلة المفاتيح ولا يُرسل إلا إلى Bedrock.",
+  "A key is saved. Paste another to replace it.": "يوجد مفتاح محفوظ. الصق مفتاحًا آخر لاستبداله.",
+  "Bedrock API key": "مفتاح API لـ Bedrock",
+  "How Faisselle signs in to AWS": "كيف يسجّل Faisselle الدخول إلى AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: يُفتح المتصفح لتسجيل الدخول، ثم تختار حسابًا ودورًا.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "أنشئ مفتاحًا في وحدة تحكم Amazon Bedrock، ضمن مفاتيح API. يدوم المفتاح القصير الأجل 12 ساعة على الأكثر ولا يعمل إلا في المنطقة التي أُنشئ فيها؛ أما المفتاح الطويل الأجل فهو لتجربة Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "لا يبدو هذا مفتاح API لـ Bedrock. انسخه مجددًا من وحدة تحكم Amazon Bedrock."
 }

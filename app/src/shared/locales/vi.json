@@ -930,5 +930,13 @@
   "Thinking": "Đang suy nghĩ",
   "Unmute": "Bật tiếng",
   "What you and the agent say appears here. You can correct any line.": "Những gì bạn và tác tử nói sẽ hiện ở đây. Bạn có thể sửa bất kỳ dòng nào.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} không có tại {region}. Hãy kiểm tra mô hình giọng nói và khu vực trong Cài đặt → Phỏng vấn chuyên gia."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} không có tại {region}. Hãy kiểm tra mô hình giọng nói và khu vực trong Cài đặt → Phỏng vấn chuyên gia.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Khóa API Bedrock, cho tài khoản không có IAM Identity Center (gói miễn phí của AWS không có). Khóa được lưu trong chuỗi khóa của bạn và chỉ gửi tới Bedrock.",
+  "A key is saved. Paste another to replace it.": "Đã lưu một khóa. Dán khóa khác để thay thế.",
+  "Bedrock API key": "Khóa API Bedrock",
+  "How Faisselle signs in to AWS": "Cách Faisselle đăng nhập AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: trình duyệt mở ra để đăng nhập, sau đó bạn chọn tài khoản và vai trò.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Tạo khóa trong bảng điều khiển Amazon Bedrock, mục Khóa API. Khóa ngắn hạn dùng được tối đa 12 giờ và chỉ ở khu vực đã tạo; khóa dài hạn dùng để thử Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Đây không giống khóa API Bedrock. Hãy sao chép lại từ bảng điều khiển Amazon Bedrock."
 }

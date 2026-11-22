@@ -930,5 +930,13 @@
   "Thinking": "생각하는 중",
   "Unmute": "음소거 해제",
   "What you and the agent say appears here. You can correct any line.": "사용자와 에이전트가 말한 내용이 여기에 표시됩니다. 어떤 줄이든 수정할 수 있습니다.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model}은(는) {region}에서 사용할 수 없습니다. 설정 → 전문가 인터뷰에서 음성 모델과 리전을 확인하세요."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model}은(는) {region}에서 사용할 수 없습니다. 설정 → 전문가 인터뷰에서 음성 모델과 리전을 확인하세요.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center가 없는 계정을 위한 Bedrock API 키입니다(AWS 무료 플랜에는 없습니다). 키체인에 보관되며 Bedrock에만 전송됩니다.",
+  "A key is saved. Paste another to replace it.": "키가 저장되어 있습니다. 바꾸려면 다른 키를 붙여 넣으세요.",
+  "Bedrock API key": "Bedrock API 키",
+  "How Faisselle signs in to AWS": "Faisselle이 AWS에 로그인하는 방법",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: 브라우저가 열려 로그인한 다음 계정과 역할을 선택합니다.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock 콘솔의 API 키에서 만드세요. 단기 키는 최대 12시간 동안 유효하며 만든 리전에서만 작동합니다. 장기 키는 Bedrock을 써 보기 위한 것입니다.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Bedrock API 키가 아닌 것 같습니다. Amazon Bedrock 콘솔에서 다시 복사하세요."
 }

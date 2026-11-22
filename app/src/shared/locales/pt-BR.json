@@ -988,5 +988,13 @@
   "Thinking": "Pensando",
   "Unmute": "Ativar som",
   "What you and the agent say appears here. You can correct any line.": "O que você e o agente dizem aparece aqui. Você pode corrigir qualquer linha.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} não está disponível em {region}. Confira o modelo de voz e a região em Ajustes → Entrevistas com especialistas."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} não está disponível em {region}. Confira o modelo de voz e a região em Ajustes → Entrevistas com especialistas.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Uma chave de API do Bedrock, para uma conta sem IAM Identity Center (o plano gratuito da AWS não tem). Ela fica no seu chaveiro e só é enviada ao Bedrock.",
+  "A key is saved. Paste another to replace it.": "Há uma chave salva. Cole outra para substituí-la.",
+  "Bedrock API key": "Chave de API do Bedrock",
+  "How Faisselle signs in to AWS": "Como o Faisselle entra na AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: o navegador abre para você entrar e depois você escolhe uma conta e uma função.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Crie uma no console do Amazon Bedrock, em Chaves de API. Uma chave de curto prazo dura no máximo 12 horas e só funciona na região em que foi criada; uma chave de longo prazo serve para experimentar o Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Isso não parece uma chave de API do Bedrock. Copie-a de novo do console do Amazon Bedrock."
 }

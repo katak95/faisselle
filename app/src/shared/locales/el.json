@@ -975,5 +975,13 @@
   "Thinking": "Σκέφτεται",
   "Unmute": "Κατάργηση σίγασης",
   "What you and the agent say appears here. You can correct any line.": "Εδώ εμφανίζονται όσα λέτε εσείς και ο πράκτορας. Μπορείτε να διορθώσετε οποιαδήποτε γραμμή.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "Το {model} δεν είναι διαθέσιμο στο {region}. Ελέγξτε το μοντέλο φωνής και την περιοχή στις Ρυθμίσεις → Συνεντεύξεις ειδικών."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "Το {model} δεν είναι διαθέσιμο στο {region}. Ελέγξτε το μοντέλο φωνής και την περιοχή στις Ρυθμίσεις → Συνεντεύξεις ειδικών.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Ένα κλειδί API του Bedrock, για λογαριασμό χωρίς IAM Identity Center (το δωρεάν πρόγραμμα του AWS δεν έχει). Φυλάσσεται στη μπρελόκ κλειδιών σας και στέλνεται μόνο στο Bedrock.",
+  "A key is saved. Paste another to replace it.": "Υπάρχει αποθηκευμένο κλειδί. Επικολλήστε άλλο για να το αντικαταστήσετε.",
+  "Bedrock API key": "Κλειδί API του Bedrock",
+  "How Faisselle signs in to AWS": "Πώς συνδέεται το Faisselle στο AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: ανοίγει το πρόγραμμα περιήγησης για σύνδεση και μετά επιλέγετε λογαριασμό και ρόλο.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Δημιουργήστε ένα στην κονσόλα του Amazon Bedrock, στα Κλειδιά API. Ένα βραχυπρόθεσμο κλειδί διαρκεί έως 12 ώρες και λειτουργεί μόνο στην περιοχή όπου δημιουργήθηκε· ένα μακροπρόθεσμο κλειδί είναι για δοκιμή του Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Αυτό δεν μοιάζει με κλειδί API του Bedrock. Αντιγράψτε το ξανά από την κονσόλα του Amazon Bedrock."
 }

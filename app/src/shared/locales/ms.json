@@ -930,5 +930,13 @@
   "Thinking": "Berfikir",
   "Unmute": "Nyahsenyap",
   "What you and the agent say appears here. You can correct any line.": "Apa yang anda dan ejen katakan muncul di sini. Anda boleh membetulkan mana-mana baris.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} tidak tersedia di {region}. Semak model suara dan rantau dalam Tetapan → Temu bual pakar."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} tidak tersedia di {region}. Semak model suara dan rantau dalam Tetapan → Temu bual pakar.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Kunci API Bedrock, untuk akaun tanpa IAM Identity Center (pelan percuma AWS tidak memilikinya). Ia disimpan dalam rantai kunci anda dan dihantar ke Bedrock sahaja.",
+  "A key is saved. Paste another to replace it.": "Satu kunci telah disimpan. Tampal yang lain untuk menggantikannya.",
+  "Bedrock API key": "Kunci API Bedrock",
+  "How Faisselle signs in to AWS": "Cara Faisselle log masuk ke AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: pelayar dibuka untuk log masuk, kemudian anda memilih akaun dan peranan.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Cipta satu dalam konsol Amazon Bedrock, di bawah Kunci API. Kunci jangka pendek bertahan paling lama 12 jam dan hanya berfungsi di rantau ia dicipta; kunci jangka panjang untuk mencuba Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Itu tidak kelihatan seperti kunci API Bedrock. Salin semula daripada konsol Amazon Bedrock."
 }

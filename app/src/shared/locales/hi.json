@@ -960,5 +960,13 @@
   "Thinking": "सोच रहा है",
   "Unmute": "अनम्यूट करें",
   "What you and the agent say appears here. You can correct any line.": "आप और एजेंट जो कहते हैं वह यहाँ दिखता है। आप कोई भी पंक्ति सुधार सकते हैं।",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} {region} में उपलब्ध नहीं है। सेटिंग्स → विशेषज्ञ इंटरव्यू में वॉइस मॉडल और क्षेत्र जाँचें।"
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} {region} में उपलब्ध नहीं है। सेटिंग्स → विशेषज्ञ इंटरव्यू में वॉइस मॉडल और क्षेत्र जाँचें।",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center के बिना खाते के लिए Bedrock API कुंजी (AWS के मुफ़्त प्लान में यह नहीं है)। यह आपके कीचेन में रखी जाती है और सिर्फ़ Bedrock को भेजी जाती है।",
+  "A key is saved. Paste another to replace it.": "एक कुंजी सहेजी गई है। बदलने के लिए दूसरी कुंजी चिपकाएँ।",
+  "Bedrock API key": "Bedrock API कुंजी",
+  "How Faisselle signs in to AWS": "Faisselle AWS में कैसे साइन इन करता है",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: साइन इन के लिए ब्राउज़र खुलता है, फिर आप खाता और भूमिका चुनते हैं।",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock कंसोल में API कुंजियाँ के तहत एक बनाएँ। अल्पकालिक कुंजी ज़्यादा से ज़्यादा 12 घंटे चलती है और सिर्फ़ उसी क्षेत्र में काम करती है जहाँ बनी थी; दीर्घकालिक कुंजी Bedrock आज़माने के लिए है।",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "यह Bedrock API कुंजी नहीं लगती। इसे Amazon Bedrock कंसोल से फिर कॉपी करें।"
 }

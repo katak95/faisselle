@@ -978,5 +978,13 @@
   "Thinking": "Miettii",
   "Unmute": "Poista mykistys",
   "What you and the agent say appears here. You can correct any line.": "Sinun ja agentin puheet näkyvät tässä. Voit korjata minkä tahansa rivin.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ei ole saatavilla alueella {region}. Tarkista puhemalli ja alue kohdassa Asetukset → Asiantuntijahaastattelut."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ei ole saatavilla alueella {region}. Tarkista puhemalli ja alue kohdassa Asetukset → Asiantuntijahaastattelut.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Bedrock-API-avain tilille, jolla ei ole IAM Identity Centeriä (AWS:n ilmaisessa paketissa sitä ei ole). Se säilytetään avainnipussasi ja lähetetään vain Bedrockille.",
+  "A key is saved. Paste another to replace it.": "Avain on tallennettu. Liitä toinen korvataksesi sen.",
+  "Bedrock API key": "Bedrock-API-avain",
+  "How Faisselle signs in to AWS": "Miten Faisselle kirjautuu AWS:ään",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: selain avautuu kirjautumista varten, minkä jälkeen valitset tilin ja roolin.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Luo avain Amazon Bedrock -konsolissa kohdassa API-avaimet. Lyhytaikainen avain on voimassa enintään 12 tuntia ja vain alueella, jolla se luotiin; pitkäaikainen avain on tarkoitettu Bedrockin kokeiluun.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Tämä ei näytä Bedrock-API-avaimelta. Kopioi se uudelleen Amazon Bedrock -konsolista."
 }

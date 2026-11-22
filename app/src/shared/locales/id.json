@@ -930,5 +930,13 @@
   "Thinking": "Berpikir",
   "Unmute": "Bunyikan",
   "What you and the agent say appears here. You can correct any line.": "Apa yang Anda dan agen katakan muncul di sini. Anda bisa mengoreksi baris mana pun.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} tidak tersedia di {region}. Periksa model suara dan region di Pengaturan → Wawancara pakar."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} tidak tersedia di {region}. Periksa model suara dan region di Pengaturan → Wawancara pakar.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Kunci API Bedrock, untuk akun tanpa IAM Identity Center (paket gratis AWS tidak memilikinya). Kunci disimpan di keychain Anda dan hanya dikirim ke Bedrock.",
+  "A key is saved. Paste another to replace it.": "Ada kunci yang tersimpan. Tempel kunci lain untuk menggantinya.",
+  "Bedrock API key": "Kunci API Bedrock",
+  "How Faisselle signs in to AWS": "Cara Faisselle masuk ke AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: browser terbuka untuk masuk, lalu Anda memilih akun dan peran.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Buat di konsol Amazon Bedrock, bagian Kunci API. Kunci jangka pendek berlaku paling lama 12 jam dan hanya di region tempat dibuat; kunci jangka panjang untuk mencoba Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Itu tidak tampak seperti kunci API Bedrock. Salin lagi dari konsol Amazon Bedrock."
 }

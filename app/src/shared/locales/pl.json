@@ -1008,5 +1008,13 @@
   "Thinking": "Myśli",
   "Unmute": "Wyłącz wyciszenie",
   "What you and the agent say appears here. You can correct any line.": "Tu pojawia się to, co mówisz Ty i agent. Możesz poprawić każdy wiersz.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} nie jest dostępny w {region}. Sprawdź model głosu i region w Ustawienia → Wywiady eksperckie."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} nie jest dostępny w {region}. Sprawdź model głosu i region w Ustawienia → Wywiady eksperckie.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Klucz API Bedrock dla konta bez IAM Identity Center (darmowy plan AWS go nie ma). Jest przechowywany w pęku kluczy i wysyłany tylko do Bedrock.",
+  "A key is saved. Paste another to replace it.": "Klucz jest zapisany. Wklej inny, aby go zastąpić.",
+  "Bedrock API key": "Klucz API Bedrock",
+  "How Faisselle signs in to AWS": "Jak Faisselle loguje się do AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: przeglądarka otwiera się do logowania, a potem wybierasz konto i rolę.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Utwórz go w konsoli Amazon Bedrock, w sekcji Klucze API. Klucz krótkoterminowy działa najwyżej 12 godzin i tylko w regionie, w którym go utworzono; klucz długoterminowy służy do wypróbowania Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "To nie wygląda na klucz API Bedrock. Skopiuj go ponownie z konsoli Amazon Bedrock."
 }

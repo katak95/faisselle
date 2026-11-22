@@ -48,11 +48,13 @@ export type InterviewDraft = Pick<Interview, 'title' | 'domain' | 'goal' | 'lang
 
 /**
  * voiceRegion and voiceModelId: Amazon Nova Sonic, in a region of its own (it runs in a few regions only, without
- * cross-region inference). analysisModelId: Claude for planning, analysis and skills; the notes model when empty.
+ * cross-region inference). analysisModelId: Claude for planning, analysis and skills; the notes model when emptied.
  * keepAudio: the interview's audio is kept on this computer (and can be removed on its own).
  */
 export type ExpertSettings = { voiceRegion: string; voiceModelId: string; analysisModelId: string; keepAudio: boolean }
-export const EXPERT_DEFAULTS: ExpertSettings = { voiceRegion: 'eu-north-1', voiceModelId: 'amazon.nova-2-5-sonic', analysisModelId: '', keepAudio: true }
+// Claude Sonnet 4.5 through the EU inference profile: newer Claude models come through AWS Marketplace, which the
+// AWS Free plan leaves out
+export const EXPERT_DEFAULTS: ExpertSettings = { voiceRegion: 'eu-north-1', voiceModelId: 'amazon.nova-2-5-sonic', analysisModelId: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0', keepAudio: true }
 
 /** where it all goes: Bedrock as set up for the notes (Settings → Notes model), and the folder it is kept in */
 export type ExpertView = {

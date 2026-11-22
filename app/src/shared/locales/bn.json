@@ -960,5 +960,13 @@
   "Thinking": "ভাবছে",
   "Unmute": "আনমিউট করুন",
   "What you and the agent say appears here. You can correct any line.": "আপনি ও এজেন্ট যা বলেন তা এখানে দেখা যায়। যেকোনো লাইন সংশোধন করতে পারেন।",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} {region}-এ উপলব্ধ নয়। সেটিংস → বিশেষজ্ঞ সাক্ষাৎকার-এ ভয়েস মডেল ও অঞ্চল দেখুন।"
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} {region}-এ উপলব্ধ নয়। সেটিংস → বিশেষজ্ঞ সাক্ষাৎকার-এ ভয়েস মডেল ও অঞ্চল দেখুন।",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center ছাড়া অ্যাকাউন্টের জন্য একটি Bedrock API কী (AWS-এর ফ্রি প্ল্যানে এটি নেই)। এটি আপনার কিচেইনে রাখা হয় এবং শুধু Bedrock-এ পাঠানো হয়।",
+  "A key is saved. Paste another to replace it.": "একটি কী সেভ করা আছে। বদলাতে অন্য একটি পেস্ট করুন।",
+  "Bedrock API key": "Bedrock API কী",
+  "How Faisselle signs in to AWS": "Faisselle কীভাবে AWS-এ সাইন ইন করে",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: সাইন ইনের জন্য ব্রাউজার খোলে, তারপর আপনি একটি অ্যাকাউন্ট ও ভূমিকা বেছে নেন।",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock কনসোলে API কী অংশে একটি তৈরি করুন। স্বল্পমেয়াদি কী সর্বোচ্চ 12 ঘণ্টা চলে এবং যে অঞ্চলে তৈরি হয়েছে শুধু সেখানেই কাজ করে; দীর্ঘমেয়াদি কী Bedrock চেষ্টা করে দেখার জন্য।",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "এটি Bedrock API কী বলে মনে হচ্ছে না। Amazon Bedrock কনসোল থেকে আবার কপি করুন।"
 }

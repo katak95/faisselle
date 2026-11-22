@@ -1003,5 +1003,13 @@
   "Thinking": "Přemýšlí",
   "Unmute": "Zrušit ztlumení",
   "What you and the agent say appears here. You can correct any line.": "Zde se zobrazuje, co říkáte vy a agent. Každý řádek můžete opravit.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} není v {region} dostupný. Zkontrolujte hlasový model a region v Nastavení → Rozhovory s odborníky."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} není v {region} dostupný. Zkontrolujte hlasový model a region v Nastavení → Rozhovory s odborníky.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Klíč API Bedrock pro účet bez IAM Identity Center (bezplatný tarif AWS ho nemá). Ukládá se do vaší klíčenky a posílá se jen do Bedrock.",
+  "A key is saved. Paste another to replace it.": "Klíč je uložen. Vložte jiný, pokud ho chcete nahradit.",
+  "Bedrock API key": "Klíč API Bedrock",
+  "How Faisselle signs in to AWS": "Jak se Faisselle přihlašuje k AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: otevře se prohlížeč k přihlášení a pak vyberete účet a roli.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Vytvořte ho v konzoli Amazon Bedrock v části Klíče API. Krátkodobý klíč platí nejvýše 12 hodin a jen v regionu, kde vznikl; dlouhodobý klíč je určen k vyzkoušení Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Tohle nevypadá jako klíč API Bedrock. Zkopírujte ho znovu z konzole Amazon Bedrock."
 }

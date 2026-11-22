@@ -930,5 +930,13 @@
   "Thinking": "考えています",
   "Unmute": "ミュート解除",
   "What you and the agent say appears here. You can correct any line.": "あなたとエージェントの発言がここに表示されます。どの行も修正できます。",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} は {region} では利用できません。設定 → エキスパートインタビュー で音声モデルとリージョンを確認してください。"
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} は {region} では利用できません。設定 → エキスパートインタビュー で音声モデルとリージョンを確認してください。",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "IAM Identity Center のないアカウント向けの Bedrock API キーです（AWS の無料プランにはありません）。キーチェーンに保存され、Bedrock にだけ送られます。",
+  "A key is saved. Paste another to replace it.": "キーが保存されています。置き換えるには別のキーを貼り付けてください。",
+  "Bedrock API key": "Bedrock API キー",
+  "How Faisselle signs in to AWS": "Faisselle が AWS にサインインする方法",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center：ブラウザが開いてサインインし、そのあとアカウントとロールを選びます。",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Amazon Bedrock コンソールの「API キー」で作成します。短期キーは最長 12 時間有効で、作成したリージョンでのみ使えます。長期キーは Bedrock を試すためのものです。",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Bedrock API キーではないようです。Amazon Bedrock コンソールからもう一度コピーしてください。"
 }

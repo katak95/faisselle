@@ -4,6 +4,7 @@
 //   … → contentEnd (audio) → promptEnd → sessionEnd
 import { randomUUID } from 'node:crypto'
 import { INPUT_RATE, OUTPUT_RATE } from '../../shared/expert/voice'
+import type { BedrockAuth } from '../notes/bedrock'
 
 export type SonicEvent = Record<string, unknown>
 export type HistoryTurn = { role: 'USER' | 'ASSISTANT'; text: string }
@@ -138,12 +139,21 @@ export function sonicError(e: unknown): SonicError {
 /** one connection: the events sent, and what comes back; ends when the input ends or the signal aborts */
 export type SonicTransport = (o: { region: string; modelId: string; input: AsyncIterable<SonicEvent>; signal: AbortSignal }) => AsyncIterable<SonicEvent>
 
-/** the real one: Bedrock Runtime in the region, with the role's keys (aws/sso.ts) */
-export function bedrockSonicTransport(keys: () => Promise<{ accessKeyId: string; secretAccessKey: string; sessionToken: string; expiration: number }>): SonicTransport {
+/**
+ * The real one: Bedrock Runtime in the region, signed like the notes: with the SSO role's keys (aws/sso.ts), or a
+ * Bedrock API key sent as a bearer token (aws/apiKey.ts). auth is read again for each connection.
+ */
+export function bedrockSonicTransport(auth: () => BedrockAuth): SonicTransport {
   return async function* ({ region, modelId, input, signal }) {
     const { BedrockRuntimeClient, InvokeModelWithBidirectionalStreamCommand } = await import('@aws-sdk/client-bedrock-runtime')
-    const client = new BedrockRuntimeClient({ region, maxAttempts: 1,
-      credentials: async () => { const k = await keys(); return { accessKeyId: k.accessKeyId, secretAccessKey: k.secretAccessKey, sessionToken: k.sessionToken, expiration: new Date(k.expiration) } } })
+    let a: BedrockAuth
+    try { a = auth() } catch (e) { throw sonicError(e) }
+    const client = 'apiKey' in a
+      ? new BedrockRuntimeClient({ region, maxAttempts: 1, token: async () => ({ token: a.apiKey }), authSchemePreference: ['httpBearerAuth'] })
+      : new BedrockRuntimeClient({ region, maxAttempts: 1, credentials: async () => {
+        const k = await a.keys()
+        return { accessKeyId: k.accessKeyId, secretAccessKey: k.secretAccessKey, sessionToken: k.sessionToken, expiration: new Date(k.expiration) }
+      } })
     const encoder = new TextEncoder(), decoder = new TextDecoder()
     async function* body() { for await (const e of input) yield { chunk: { bytes: encoder.encode(JSON.stringify(e)) } } }
     try {

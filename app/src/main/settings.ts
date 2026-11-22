@@ -61,7 +61,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
   notesProvider?: 'bedrock'
   /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
-  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
+  bedrock?: { /** how requests are signed: the SSO role (when left out) or a Bedrock API key (aws/apiKey.ts) */ auth?: 'sso' | 'api-key'; startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
   /** summary templates the person wrote (shared/templates.ts) */
   templates?: Array<{ id: string; name: string; instructions: string }>
   /** the template new notes follow; the general notes when left out */

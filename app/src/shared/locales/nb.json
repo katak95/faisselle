@@ -972,5 +972,13 @@
   "Thinking": "Tenker",
   "Unmute": "Slå på lyd",
   "What you and the agent say appears here. You can correct any line.": "Det du og agenten sier, vises her. Du kan rette hvilken som helst linje.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} er ikke tilgjengelig i {region}. Sjekk stemmemodell og region under Innstillinger → Ekspertintervjuer."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} er ikke tilgjengelig i {region}. Sjekk stemmemodell og region under Innstillinger → Ekspertintervjuer.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "En Bedrock-API-nøkkel, for en konto uten IAM Identity Center (AWS sin gratisplan har ikke det). Den lagres i nøkkelringen din og sendes bare til Bedrock.",
+  "A key is saved. Paste another to replace it.": "En nøkkel er lagret. Lim inn en annen for å erstatte den.",
+  "Bedrock API key": "Bedrock-API-nøkkel",
+  "How Faisselle signs in to AWS": "Hvordan Faisselle logger på AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: nettleseren åpnes for pålogging, deretter velger du en konto og en rolle.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Lag en i Amazon Bedrock-konsollen under API-nøkler. En kortsiktig nøkkel varer i høyst 12 timer og virker bare i regionen den ble laget i; en langsiktig nøkkel er ment for å prøve Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Det ser ikke ut som en Bedrock-API-nøkkel. Kopier den på nytt fra Amazon Bedrock-konsollen."
 }

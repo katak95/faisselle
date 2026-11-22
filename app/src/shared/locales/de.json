@@ -972,5 +972,13 @@
   "Thinking": "Denkt nach",
   "Unmute": "Stummschaltung aufheben",
   "What you and the agent say appears here. You can correct any line.": "Was Sie und der Agent sagen, erscheint hier. Sie können jede Zeile korrigieren.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ist in {region} nicht verfügbar. Prüfen Sie Sprachmodell und Region unter Einstellungen → Experteninterviews."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} ist in {region} nicht verfügbar. Prüfen Sie Sprachmodell und Region unter Einstellungen → Experteninterviews.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Ein Bedrock-API-Schlüssel, für ein Konto ohne IAM Identity Center (das kostenlose AWS-Modell hat keines). Er bleibt in Ihrem Schlüsselbund und wird nur an Bedrock gesendet.",
+  "A key is saved. Paste another to replace it.": "Ein Schlüssel ist gespeichert. Fügen Sie einen anderen ein, um ihn zu ersetzen.",
+  "Bedrock API key": "Bedrock-API-Schlüssel",
+  "How Faisselle signs in to AWS": "Wie sich Faisselle bei AWS anmeldet",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: Der Browser öffnet sich zur Anmeldung, dann wählen Sie ein Konto und eine Rolle.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Erstellen Sie einen in der Amazon-Bedrock-Konsole unter API-Schlüssel. Ein kurzfristiger Schlüssel gilt höchstens 12 Stunden und nur in der Region, in der er erstellt wurde; ein langfristiger Schlüssel ist zum Ausprobieren von Bedrock gedacht.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Das sieht nicht nach einem Bedrock-API-Schlüssel aus. Kopieren Sie ihn erneut aus der Amazon-Bedrock-Konsole."
 }

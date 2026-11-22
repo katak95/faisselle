@@ -989,5 +989,13 @@
   "Thinking": "Se gândește",
   "Unmute": "Reactivează microfonul",
   "What you and the agent say appears here. You can correct any line.": "Ce spuneți tu și agentul apare aici. Poți corecta orice rând.",
-  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} nu este disponibil în {region}. Verifică modelul vocal și regiunea în Setări → Interviuri cu experți."
+  "{model} is not available in {region}. Check the voice model and region in Settings → Expert interviews.": "{model} nu este disponibil în {region}. Verifică modelul vocal și regiunea în Setări → Interviuri cu experți.",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "O cheie API Bedrock, pentru un cont fără IAM Identity Center (planul gratuit AWS nu are). Este păstrată în brelocul tău și trimisă doar la Bedrock.",
+  "A key is saved. Paste another to replace it.": "O cheie este salvată. Lipește alta pentru a o înlocui.",
+  "Bedrock API key": "Cheie API Bedrock",
+  "How Faisselle signs in to AWS": "Cum se conectează Faisselle la AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: browserul se deschide pentru conectare, apoi alegi un cont și un rol.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Creează una în consola Amazon Bedrock, la Chei API. O cheie pe termen scurt durează cel mult 12 ore și funcționează doar în regiunea unde a fost creată; o cheie pe termen lung este pentru a încerca Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Asta nu pare o cheie API Bedrock. Copiaz-o din nou din consola Amazon Bedrock."
 }
