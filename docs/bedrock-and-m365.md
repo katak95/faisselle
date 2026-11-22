@@ -13,7 +13,7 @@ Settings → Notes model → Where summaries are written → Amazon Bedrock (Cla
 2. **Identity Center region**: the region Identity Center lives in (for example `eu-west-1`).
 3. **Sign in to AWS**: the browser opens AWS's approval page with a code. Approve it there.
 4. Pick the **Account** and the **Role**.
-5. **Bedrock region** and **Model**: `eu-west-1` and `anthropic.claude-haiku-5-5` by default. The model ID chooses
+5. **Bedrock region** and **Model**: `eu-west-1` and `eu.anthropic.claude-haiku-4-5-20251001-v1:0` (Claude Haiku 4.5 through the EU inference profile) by default. The model ID chooses
    how Faisselle reaches Bedrock, and so the permission the role needs:
 
    | Model ID | Endpoint | The role needs |

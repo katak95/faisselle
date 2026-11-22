@@ -18,7 +18,8 @@ import type { AwsKeys } from '../aws/sso'
 
 export type BedrockConfig = { region: string; modelId: string; accountId: string; roleName: string }
 
-export const BEDROCK_DEFAULTS = { region: 'eu-west-1', modelId: 'anthropic.claude-haiku-5-5' } as const
+/** Claude Haiku 4.5 through the EU inference profile, which eu-west-1 needs (the bare model ID is refused there) */
+export const BEDROCK_DEFAULTS = { region: 'eu-west-1', modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0' } as const
 
 /**
  * What the notes may read at once. Haiku 5.5 costs more above 100K input tokens: staying under it keeps a long

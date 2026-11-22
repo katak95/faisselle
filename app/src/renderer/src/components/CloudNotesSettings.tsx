@@ -116,7 +116,7 @@ export function CloudNotesSettings() {
         </div>}
 
         <Field id="cloud-region" label={t('Bedrock region')} value={v.config.region} placeholder="eu-west-1" onSave={(region) => set({ region })} />
-        <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="anthropic.claude-haiku-5-5"
+        <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="eu.anthropic.claude-haiku-4-5-20251001-v1:0"
           hint={t('Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).')}
           onSave={(modelId) => set({ modelId })} />
 
