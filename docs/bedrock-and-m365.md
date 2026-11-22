@@ -7,13 +7,31 @@ text and meaning search stay on your computer.
 
 ## Amazon Bedrock
 
-Settings → Notes model → Where summaries are written → Amazon Bedrock (Claude).
+Settings → Notes model → Where summaries are written → Amazon Bedrock (Claude), then **How Faisselle signs in to
+AWS**: IAM Identity Center (SSO), or a Bedrock API key.
+
+### With IAM Identity Center (SSO)
 
 1. **AWS sign-in start URL**: your IAM Identity Center portal, like `https://my-org.awsapps.com/start`.
 2. **Identity Center region**: the region Identity Center lives in (for example `eu-west-1`).
 3. **Sign in to AWS**: the browser opens AWS's approval page with a code. Approve it there.
 4. Pick the **Account** and the **Role**.
-5. **Bedrock region** and **Model**: `eu-west-1` and `anthropic.claude-haiku-5-5` by default. The model ID chooses
+### With a Bedrock API key
+
+For an account without IAM Identity Center, like one on the AWS Free plan. Make a key in the Amazon Bedrock console
+(API keys) and paste it in Settings. Faisselle seals it with the system's keychain (`userData/bedrock-key.json`),
+keeps it in the main process and sends it only to Bedrock, as a bearer token. It is never shown again: paste a new
+one to replace it.
+
+- A **short-term key** lasts up to 12 hours (or the console session) and works only in the region it was made in:
+  the Bedrock region below must be that one.
+- A **long-term key** lasts until the date you set. It creates an IAM user, and AWS recommends it only for trying
+  Bedrock out.
+- The key's identity needs `bedrock:CallWithBearerToken` besides the permission in the table below.
+
+### Region and model
+
+5. **Bedrock region** and **Model**: `eu-west-1` and `eu.anthropic.claude-haiku-4-5-20251001-v1:0` (Claude Haiku 4.5 through the EU inference profile) by default. The model ID chooses
    how Faisselle reaches Bedrock, and so the permission the role needs:
 
    | Model ID | Endpoint | The role needs |

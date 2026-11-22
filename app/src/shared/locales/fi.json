@@ -897,5 +897,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "Asiakassalaisuus, vain jos uudelleenohjaus-URI on Web-alustalla",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Asiakassalaisuus on tallennettu. Kirjoita uusi korvataksesi sen tai jätä tyhjäksi säilyttääksesi sen.",
   "Remove the secret": "Poista salaisuus",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude Amazon Bedrockissa käyttää tunnuksia kuten anthropic.claude-haiku-5-5 (oikeus bedrock-mantle:CreateInference). InvokeModel-tunnus tai päättelyprofiili, kuten eu.anthropic.claude-haiku-4-5-20251001-v1:0, kulkee bedrock-runtimen kautta (oikeus bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude Amazon Bedrockissa käyttää tunnuksia kuten anthropic.claude-haiku-5-5 (oikeus bedrock-mantle:CreateInference). InvokeModel-tunnus tai päättelyprofiili, kuten eu.anthropic.claude-haiku-4-5-20251001-v1:0, kulkee bedrock-runtimen kautta (oikeus bedrock:InvokeModelWithResponseStream).",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Bedrock-API-avain tilille, jolla ei ole IAM Identity Centeriä (AWS:n ilmaisessa paketissa sitä ei ole). Se säilytetään avainnipussasi ja lähetetään vain Bedrockille.",
+  "A key is saved. Paste another to replace it.": "Avain on tallennettu. Liitä toinen korvataksesi sen.",
+  "Bedrock API key": "Bedrock-API-avain",
+  "How Faisselle signs in to AWS": "Miten Faisselle kirjautuu AWS:ään",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: selain avautuu kirjautumista varten, minkä jälkeen valitset tilin ja roolin.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Luo avain Amazon Bedrock -konsolissa kohdassa API-avaimet. Lyhytaikainen avain on voimassa enintään 12 tuntia ja vain alueella, jolla se luotiin; pitkäaikainen avain on tarkoitettu Bedrockin kokeiluun.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Tämä ei näytä Bedrock-API-avaimelta. Kopioi se uudelleen Amazon Bedrock -konsolista."
 }

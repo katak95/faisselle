@@ -891,5 +891,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "Clientgeheim, alleen als die omleidings-URI op het webplatform staat",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Er is een clientgeheim opgeslagen. Typ een ander om het te vervangen, of laat leeg om het te houden.",
   "Remove the secret": "Geheim verwijderen",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock gebruikt ID’s zoals anthropic.claude-haiku-5-5 (machtiging bedrock-mantle:CreateInference). Een InvokeModel-ID of inferentieprofiel, zoals eu.anthropic.claude-haiku-4-5-20251001-v1:0, gaat via bedrock-runtime (machtiging bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock gebruikt ID’s zoals anthropic.claude-haiku-5-5 (machtiging bedrock-mantle:CreateInference). Een InvokeModel-ID of inferentieprofiel, zoals eu.anthropic.claude-haiku-4-5-20251001-v1:0, gaat via bedrock-runtime (machtiging bedrock:InvokeModelWithResponseStream).",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Een Bedrock-API-sleutel, voor een account zonder IAM Identity Center (het gratis AWS-abonnement heeft dat niet). Hij blijft in je sleutelhanger en gaat alleen naar Bedrock.",
+  "A key is saved. Paste another to replace it.": "Er is een sleutel bewaard. Plak een andere om hem te vervangen.",
+  "Bedrock API key": "Bedrock-API-sleutel",
+  "How Faisselle signs in to AWS": "Hoe Faisselle zich aanmeldt bij AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: de browser opent om je aan te melden, daarna kies je een account en een rol.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "Maak er een in de Amazon Bedrock-console, onder API-sleutels. Een kortlopende sleutel geldt hoogstens 12 uur en alleen in de regio waar hij is gemaakt; een langlopende sleutel is bedoeld om Bedrock uit te proberen.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "Dat lijkt geen Bedrock-API-sleutel. Kopieer hem opnieuw uit de Amazon Bedrock-console."
 }

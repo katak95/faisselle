@@ -901,5 +901,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "סוד לקוח, רק אם כתובת ה-URI להפניה נמצאת בפלטפורמת Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "סוד לקוח שמור. אפשר להקליד אחר כדי להחליף אותו, או להשאיר ריק כדי לשמור אותו.",
   "Remove the secret": "הסרת הסוד",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ב-Amazon Bedrock מקבל מזהים כמו anthropic.claude-haiku-5-5 (הרשאה bedrock-mantle:CreateInference). מזהה InvokeModel או פרופיל הסקה, כמו eu.anthropic.claude-haiku-4-5-20251001-v1:0, עובר דרך bedrock-runtime (הרשאה bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ב-Amazon Bedrock מקבל מזהים כמו anthropic.claude-haiku-5-5 (הרשאה bedrock-mantle:CreateInference). מזהה InvokeModel או פרופיל הסקה, כמו eu.anthropic.claude-haiku-4-5-20251001-v1:0, עובר דרך bedrock-runtime (הרשאה bedrock:InvokeModelWithResponseStream).",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "מפתח API של Bedrock, לחשבון בלי IAM Identity Center (בתוכנית החינמית של AWS אין). הוא נשמר במחזיק המפתחות ונשלח רק ל-Bedrock.",
+  "A key is saved. Paste another to replace it.": "מפתח שמור. אפשר להדביק מפתח אחר כדי להחליף אותו.",
+  "Bedrock API key": "מפתח API של Bedrock",
+  "How Faisselle signs in to AWS": "איך Faisselle מתחברת ל-AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center: הדפדפן נפתח להתחברות, ואז בוחרים חשבון ותפקיד.",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "אפשר ליצור מפתח במסוף Amazon Bedrock, בקטע מפתחות API. מפתח לטווח קצר תקף עד 12 שעות ורק באזור שבו נוצר; מפתח לטווח ארוך נועד לנסות את Bedrock.",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "זה לא נראה כמו מפתח API של Bedrock. יש להעתיק אותו שוב ממסוף Amazon Bedrock."
 }

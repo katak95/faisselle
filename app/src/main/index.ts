@@ -74,6 +74,7 @@ import { createBedrockNotesModel, bedrockClient, bedrockEndpoint } from './notes
 import { fakeMessagesClient } from './notes/fake'
 import { createSwitchingNotesModel } from './notes/provider'
 import { createSso } from './aws/sso'
+import { createApiKeyStore } from './aws/apiKey'
 import { awsSsoApi } from './aws/ssoApi'
 import { fakeSsoApi } from './aws/fakeSso'
 import { bedrockConfig, hookCloud } from './cloudNotes'
@@ -749,10 +750,14 @@ app.whenReady().then(() => {
     openExternal: (url) => { if (!isFake()) void shell.openExternal(url) },
     onChange: () => cloud?.statusChanged(),
   })
-  const cloudConfig = () => bedrockConfig(loadSettings(settingsFile), sso)
+  // or a Bedrock API key instead (accounts without Identity Center), sealed like the SSO token
+  const bedrockKey = createApiKeyStore({ file: join(userDataDir(), 'bedrock-key.json'),
+    seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
+    open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()) })
+  const cloudConfig = () => bedrockConfig(loadSettings(settingsFile), sso, bedrockKey)
   const bedrockModel = createBedrockNotesModel({ config: cloudConfig,
     // fake mode: the fake engine answers, as for the local model
-    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, () => sso.credentials(c.accountId, c.roleName), bedrockEndpoint(c.modelId))) })
+    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, c.auth === 'api-key' ? { apiKey: bedrockKey.get() ?? '' } : { keys: () => sso.credentials(c.accountId, c.roleName) }, bedrockEndpoint(c.modelId))) })
   const provider = () => notesProviderSetting(loadSettings(settingsFile))
   const model = createSwitchingNotesModel({ local: localModel, bedrock: bedrockModel, provider })
   /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */
@@ -767,7 +772,7 @@ app.whenReady().then(() => {
   }, 'enhance')))
   setup.onNotesModel(() => { queue.modelArrived(); conversations.refresh() })
   cloud = hookCloud({
-    file: settingsFile, sso, canRunLocally: () => setup.canRunLocally(),
+    file: settingsFile, sso, apiKey: bedrockKey, canRunLocally: () => setup.canRunLocally(),
     send: (v) => win?.webContents.send('cloud:changed', v),
     changed: (p) => {
       if (p === 'local') setup.localNotesWanted()

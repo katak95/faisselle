@@ -849,5 +849,13 @@
   "Client secret, only if that redirect URI is on the Web platform": "客户端密码，仅当该重定向 URI 位于 Web 平台时填写",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "已保存客户端密码。输入新的可替换，留空则保留。",
   "Remove the secret": "删除密码",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 这样的 ID（权限 bedrock-mantle:CreateInference）。InvokeModel ID 或推理配置文件（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（权限 bedrock:InvokeModelWithResponseStream）。"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 这样的 ID（权限 bedrock-mantle:CreateInference）。InvokeModel ID 或推理配置文件（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（权限 bedrock:InvokeModelWithResponseStream）。",
+  "A Bedrock API key, for an account without IAM Identity Center (the AWS Free plan has none). It is kept in your keychain and only sent to Bedrock.": "Bedrock API 密钥，适用于没有 IAM Identity Center 的账户（AWS 免费套餐没有）。它保存在你的钥匙串中，只会发送给 Bedrock。",
+  "A key is saved. Paste another to replace it.": "已保存一个密钥。粘贴另一个即可替换。",
+  "Bedrock API key": "Bedrock API 密钥",
+  "How Faisselle signs in to AWS": "Faisselle 如何登录 AWS",
+  "IAM Identity Center (SSO)": "IAM Identity Center (SSO)",
+  "IAM Identity Center: the browser opens to sign in, then you choose an account and a role.": "IAM Identity Center：浏览器会打开以便登录，然后你选择账户和角色。",
+  "Make one in the Amazon Bedrock console, under API keys. A short-term key lasts up to 12 hours and works only in the region it was made in; a long-term key is meant for trying Bedrock out.": "在 Amazon Bedrock 控制台的“API 密钥”中创建。短期密钥最长有效 12 小时，且只能在创建它的区域使用；长期密钥用于试用 Bedrock。",
+  "That doesn't look like a Bedrock API key. Copy it again from the Amazon Bedrock console.": "这看起来不像 Bedrock API 密钥。请从 Amazon Bedrock 控制台重新复制。"
 }
