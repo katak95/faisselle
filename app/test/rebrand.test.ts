@@ -9,7 +9,8 @@ import { faisselleVersion, nextFaisselleVersion } from '../scripts/version.mjs'
 it('leaves Faisselle as it is: the rename it does is already done here', () => {
   const root = join(import.meta.dirname, '../..')
   expect(execFileSync('python3', [join(root, 'app/scripts/rebrand.py'), '--check', root], { encoding: 'utf8' }).trim()).toBe('')
-})
+// it reads the whole repository: a few seconds alone, more while every other test runs beside it
+}, 30_000)
 
 it("follows Yogurt's version: X.Y.Z is X.Y.(Z×100), then one more for each Faisselle release in between", () => {
   expect(faisselleVersion('0.3.59')).toBe('0.3.5900')
