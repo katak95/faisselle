@@ -50,6 +50,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     process.exit(1)
   }
 
+  // a Mac: Electron starts as Faisselle Dev, answering for its own permissions (scripts/dev-identity.mjs)
+  if (process.platform === 'darwin') Object.assign(process.env, (await import('./dev-identity.mjs')).setUp(app))
+
   const args = electronArgs(process.platform, process.env, process.argv.slice(2))
   const electronVite = join(dirname(resolve('electron-vite/package.json')), 'bin', 'electron-vite.js')
   process.exit(run(process.execPath, [electronVite, 'dev', ...(args.length ? ['--', ...args] : [])]))
