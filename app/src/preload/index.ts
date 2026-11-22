@@ -1,5 +1,6 @@
 import type { MeterPacket } from '../shared/speechWave'
 import { audioUpload } from './audioUpload'
+import { expert } from './expert'
 import type { WidgetLayout } from '../shared/widgetMorph'
 import { contextBridge, ipcRenderer } from 'electron'
 import { capabilities, platformOf } from '../shared/platform'
@@ -337,6 +338,7 @@ const api: YogurtApi = {
       return () => { ipcRenderer.removeListener('sidebar:toggle', on) }
     },
   },
+  expert,
   nav: {
     takeAsk: () => ipcRenderer.invoke('nav:take-ask'),
     onAsk: (cb) => { const fn = () => cb(); ipcRenderer.on('nav:ask', fn); return () => { ipcRenderer.off('nav:ask', fn) } },

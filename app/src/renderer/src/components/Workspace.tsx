@@ -4,7 +4,7 @@ import { toasts } from './TrashToast'
 import { askDestination } from '../../../shared/askContext'
 import * as Sidebar from '@animate-ui/react/primitives/sidebar'
 import { useEffect, useState, type ReactNode } from 'react'
-import { ChevronLeft, ChevronRight, MeetingFile, AskBubble, Search, SidebarToggle } from './Icons'
+import { ChevronLeft, ChevronRight, MeetingFile, AskBubble, Mic, Search, SidebarToggle } from './Icons'
 import type { MeetingView, Folder, WidgetView } from '../../../shared/types'
 import { t } from '../../../shared/i18n'
 import { command, keys, onMac } from '../keys'
@@ -31,7 +31,7 @@ export function Workspace({ route, meeting, folders, go, back, forward, search, 
   const sidebarTransition = { duration: sidebarMotion ? 0.2 : 0, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
   const note = route.startsWith('/note/')
   // a saved chat (/chat/<id>) is still under Chat
-  const section = route.startsWith('/settings/') ? '/settings' : route.startsWith('/chat/') ? '/chat' : route
+  const section = route.startsWith('/settings/') ? '/settings' : route.startsWith('/chat/') ? '/chat' : route.startsWith('/interview/') ? '/interviews' : route
   const returnToRecording = recording?.kind === 'recording' && route !== `/note/${recording.meetingId}`
   useEffect(() => {
     const ask = () => {
@@ -58,11 +58,12 @@ export function Workspace({ route, meeting, folders, go, back, forward, search, 
   const links = [
     { route: '', label: t('Meetings'), Icon: MeetingFile },
     { route: '/chat', label: t('Ask'), Icon: AskBubble },
+    { route: '/interviews', label: t('Interviews'), Icon: Mic },
   ]
   const folder = route.startsWith('/folder/') ? folders?.find((s) => route === `/folder/${s.id}`) : undefined
   const current = links.find((link) => link.route === section) ?? (route.startsWith('/folder/') ? { label: folder?.name ?? t('Folder') } : undefined)
   const label = note ? (meeting && route === `/note/${meeting.id}` ? meeting.title : t('Meeting')) : route.startsWith('/settings') ? t('Settings') : route === '/trash' ? t('Trash') : current?.label ?? t('Meetings')
-  const nav = (link: typeof links[number]) => <button key={link.route} data-testid={link.route === '' ? 'nav-home' : 'nav-chat'}
+  const nav = (link: typeof links[number]) => <button key={link.route} data-testid={link.route === '' ? 'nav-home' : link.route === '/chat' ? 'nav-chat' : 'nav-interviews'}
     data-sidebar="menu-button" aria-label={link.label} title={collapsed ? link.label : undefined} className="workspace-nav" aria-current={section === link.route || link.route === '' && route === '/meetings' ? 'page' : undefined} onClick={() => go(link.route)}>
     <link.Icon size={16} aria-hidden="true" /><span>{link.label}</span>
   </button>

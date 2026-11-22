@@ -1,4 +1,5 @@
 import { ReadError } from './components/InlineError'
+import { expertScreen } from './expert/Interviews'
 import { LoadingContent } from './components/LoadingContent'
 import { MeetingListLoading } from './screens/Home'
 import { StartRecording } from './components/StartRecording'
@@ -197,6 +198,8 @@ export function App() {
     folderSuggestion={suggestedFolder ? { folder: suggestedFolder, dismiss: () => dismissFolderSuggestion(noteId) } : undefined} />
     : chatId !== undefined ? <ChatPage id={chatId} go={go} openSource={openSource} />
     : trash ? <Trash open={open} /> : folderScreen || <Home open={open} openFolder={(id) => go(`/folder/${id}`)} agendaJump={agendaJump} />
+  // expert interviews (expert/), Faisselle's own screens
+  const shown = expertScreen(route, go) ?? screen
   const mac = window.yogurt.platform === 'darwin'
   const startupError = !setup && setupFailed
   const launching = mac && !startupError && (!booted || holding)
@@ -205,7 +208,7 @@ export function App() {
   const inWorkspace = !starting && ready
   const page = starting
     ? <><TitleBar />{startupError ? <ReadError testId="setup-read-error" retry={() => setSetupAttempt(n => n + 1)} /> : boot}</>
-    : ready ? <Workspace route={route} meeting={meeting} folders={folders} go={go} back={history.current.length ? back : undefined} forward={future.current.length ? forward : undefined} search={() => setSearching(true)} shortcuts={openShortcuts} collapsed={sidebarCollapsed} sidebarMotion={sidebarMotion} toggleSidebar={toggleSidebar}>{screen}</Workspace>
+    : ready ? <Workspace route={route} meeting={meeting} folders={folders} go={go} back={history.current.length ? back : undefined} forward={future.current.length ? forward : undefined} search={() => setSearching(true)} shortcuts={openShortcuts} collapsed={sidebarCollapsed} sidebarMotion={sidebarMotion} toggleSidebar={toggleSidebar}>{shown}</Workspace>
     : <><TitleBar />{setup.phase === 'checking' && firstRunDone ? boot : <Onboarding state={setup} plan={plan} onDone={() => setPlan({ intro: false, steps: [] })} />}</>
   return <AskRecordingWait value={recordingWait}>
     {mac && <MacLaunch active={launching} />}

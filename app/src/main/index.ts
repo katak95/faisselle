@@ -76,7 +76,7 @@ import { createSwitchingNotesModel } from './notes/provider'
 import { createSso } from './aws/sso'
 import { awsSsoApi } from './aws/ssoApi'
 import { fakeSsoApi } from './aws/fakeSso'
-import { bedrockConfig, hookCloud } from './cloudNotes'
+import { bedrockConfig, bedrockSettings, hookCloud } from './cloudNotes'
 import { createM365 } from './m365/client'
 import { bothSources, createM365Context } from './m365/context'
 import { fakeM365Server, fakeMicrosoftSignIn } from './m365/fake'
@@ -88,6 +88,8 @@ import { createAtlassian } from './atlassian/client'
 import { createOAuthStore } from './atlassian/oauth'
 import { fakeAtlassianServer, fakeConfluence } from './atlassian/fake'
 import { hookAtlassian } from './atlassian/ipc'
+import { ExpertStore } from './expert/store'
+import { hookExpert } from './expert/ipc'
 import { notesProviderSetting } from './settings'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -836,6 +838,12 @@ app.whenReady().then(() => {
   })
   atlassianIpc = hookAtlassian({ file: settingsFile, atlassian, store, send: (v) => win?.webContents.send('atlassian:changed', v), changed: (id) => extras.push(id) })
   if (loadSettings(settingsFile).atlassian?.enabled) void atlassian.resume()
+  // expert interviews (expert/): Bedrock as set up for the notes, kept in a database of their own
+  // a database that can't be opened leaves the interviews unreadable, never the meetings
+  try {
+    hookExpert({ store: new ExpertStore(join(userDataDir(), 'expert')), window: () => win, locale: uiLanguage,
+      bedrock: () => { const b = bedrockSettings(loadSettings(settingsFile)); return { ready: !!cloudConfig(), region: b.region, modelId: b.modelId } } })
+  } catch (e) { console.error('opening the expert interviews failed', e) }
   let finishing = false, discardUnsaved = false
   const savedTranscriptions = createSavedTranscriptions({
     store, ready: () => !!setup.installed()?.asr, recording: () => !!activeMeeting() || !!resumingId || finishing, live: transcriptOpen,

@@ -386,6 +386,8 @@ export type YogurtApi = {
     setOpen(open: boolean | null): void
     onToggle(cb: () => void): () => void
   }
+  /** expert interviews (Faisselle, shared/expert/types.ts) */
+  expert: import('./expert/types').ExpertApi
   nav: {
     takeAsk(): Promise<boolean>
     onAsk(cb: () => void): () => void
