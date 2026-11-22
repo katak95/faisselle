@@ -1,20 +1,10 @@
-import { _electron as electron, expect, test, type Page } from '@playwright/test'
+import { _electron as electron, expect, test } from '@playwright/test'
+import { signInToBedrock } from './expert'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { delimiter, join } from 'node:path'
 
 const main = join(import.meta.dirname, '../out/main/index.js')
-
-/** Bedrock as for the notes (fake mode signs in at once), so the interview can be agreed to */
-async function signInToBedrock(page: Page) {
-  await page.evaluate(async () => {
-    await window.yogurt.cloud.setProvider('bedrock')
-    await window.yogurt.cloud.setConfig({ startUrl: 'https://example.awsapps.com/start' })
-    await window.yogurt.cloud.signIn()
-  })
-  await expect.poll(() => page.evaluate(() => window.yogurt.cloud.get().then((v) => v.sso.state)), { timeout: 10_000 }).toBe('signed-in')
-  await page.evaluate(() => window.yogurt.cloud.setConfig({ accountId: '123456789012', roleName: 'BedrockUser' }))
-}
 
 test('an expert interview is prepared, agreed to, found again after a restart, and deleted', async () => {
   test.setTimeout(120_000)

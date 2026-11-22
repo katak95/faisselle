@@ -2,8 +2,9 @@
 // here never mixes with meeting notes, their backups or their schema. Each interview has a folder beside it for its audio.
 import { DatabaseSync } from 'node:sqlite'
 import { randomUUID } from 'node:crypto'
-import { mkdirSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import type { Speaker, TranscriptSegment } from '../../shared/expert/voice'
 import { EXPERT_DEFAULTS, isInterviewLanguage, type Consent, type ExpertSettings, type Interview, type InterviewCard, type InterviewDraft, type InterviewSource, type InterviewState } from '../../shared/expert/types'
 
 type Row = Record<string, unknown>
@@ -19,6 +20,15 @@ const MIGRATIONS: string[] = [
      name TEXT NOT NULL, content TEXT NOT NULL, bytes INTEGER NOT NULL, added_at INTEGER NOT NULL);
    CREATE INDEX sources_interview ON sources(interview_id);
    CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);`,
+  // the voice interview: its connections (a session each, offset_ms where it starts in the interview) and its lines
+  `CREATE TABLE sessions (
+     id TEXT PRIMARY KEY, interview_id TEXT NOT NULL REFERENCES interviews(id) ON DELETE CASCADE,
+     started_at INTEGER NOT NULL, ended_at INTEGER, offset_ms INTEGER NOT NULL, region TEXT NOT NULL, model_id TEXT NOT NULL, end_reason TEXT);
+   CREATE INDEX sessions_interview ON sessions(interview_id);
+   CREATE TABLE segments (
+     id TEXT PRIMARY KEY, interview_id TEXT NOT NULL REFERENCES interviews(id) ON DELETE CASCADE, session_id TEXT NOT NULL,
+     speaker TEXT NOT NULL, text TEXT NOT NULL, at_ms INTEGER NOT NULL, original TEXT);
+   CREATE INDEX segments_interview ON segments(interview_id, at_ms);`,
 ]
 export const EXPERT_DB_VERSION = MIGRATIONS.length
 
@@ -37,6 +47,10 @@ const interviewOf = (r: Row): Interview => ({
   language: isInterviewLanguage(r.language) ? r.language : 'en-US', minutes: Number(r.minutes),
   state: STATES.includes(r.state as InterviewState) ? r.state as InterviewState : 'draft',
   consent: consentOf(r.consent), createdAt: Number(r.created_at), updatedAt: Number(r.updated_at),
+})
+const segmentOf = (r: Row): TranscriptSegment => ({
+  id: String(r.id), interviewId: String(r.interview_id), sessionId: String(r.session_id), speaker: r.speaker === 'agent' ? 'agent' : 'expert',
+  text: String(r.text), atMs: Number(r.at_ms), edited: r.original !== null && r.original !== undefined, original: r.original === null || r.original === undefined ? null : String(r.original),
 })
 const sourceOf = (r: Row): InterviewSource => ({ id: String(r.id), name: String(r.name), bytes: Number(r.bytes), addedAt: Number(r.added_at) })
 
@@ -132,6 +146,60 @@ export class ExpertStore {
     const gone = this.db.prepare('DELETE FROM interviews WHERE id = ?').run(id).changes > 0
     rmSync(this.folder(id), { recursive: true, force: true })
     return gone
+  }
+
+  setState(id: string, state: InterviewState) {
+    this.db.prepare('UPDATE interviews SET state = ?, updated_at = ? WHERE id = ?').run(state, this.now(), id)
+  }
+
+  /** a new connection, starting where the interview stands (the length of its earlier sessions) */
+  startSession(id: string, region: string, modelId: string): { id: string; offsetMs: number } {
+    const s = { id: randomUUID(), offsetMs: this.elapsedMs(id) }
+    this.db.prepare('INSERT INTO sessions (id, interview_id, started_at, offset_ms, region, model_id) VALUES (?, ?, ?, ?, ?, ?)').run(s.id, id, this.now(), s.offsetMs, region, modelId)
+    return s
+  }
+
+  endSession(sessionId: string, reason: string) {
+    this.db.prepare('UPDATE sessions SET ended_at = ?, end_reason = ? WHERE id = ? AND ended_at IS NULL').run(this.now(), reason, sessionId)
+  }
+
+  /** how long the interview has run: its sessions that ended (one still open counts up to its last line) */
+  elapsedMs(id: string): number {
+    const rows = this.db.prepare(`SELECT s.started_at, s.ended_at, s.offset_ms, (SELECT MAX(at_ms) FROM segments g WHERE g.session_id = s.id) AS last
+      FROM sessions s WHERE s.interview_id = ?`).all(id) as Row[]
+    return rows.reduce((max, r) => Math.max(max, r.ended_at !== null ? Number(r.offset_ms) + Number(r.ended_at) - Number(r.started_at) : Number(r.last ?? r.offset_ms)), 0)
+  }
+
+  addSegment(s: { interviewId: string; sessionId: string; speaker: Speaker; text: string; atMs: number }): TranscriptSegment {
+    const id = randomUUID()
+    this.db.prepare('INSERT INTO segments (id, interview_id, session_id, speaker, text, at_ms) VALUES (?, ?, ?, ?, ?, ?)').run(id, s.interviewId, s.sessionId, s.speaker, s.text, Math.round(s.atMs))
+    return { ...s, id, atMs: Math.round(s.atMs), edited: false, original: null }
+  }
+
+  segments(id: string): TranscriptSegment[] {
+    return (this.db.prepare('SELECT * FROM segments WHERE interview_id = ? ORDER BY at_ms, rowid').all(id) as Row[]).map(segmentOf)
+  }
+
+  /** the expert's correction: what was heard is kept as the original, once */
+  editSegment(id: string, segmentId: string, text: string): TranscriptSegment | undefined {
+    this.db.prepare('UPDATE segments SET original = COALESCE(original, text), text = ? WHERE id = ? AND interview_id = ?').run(text, segmentId, id)
+    // back to what was heard: no longer a correction
+    this.db.prepare('UPDATE segments SET original = NULL WHERE id = ? AND original = text').run(segmentId)
+    const r = this.db.prepare('SELECT * FROM segments WHERE id = ? AND interview_id = ?').get(segmentId, id) as Row | undefined
+    if (r) this.touch(id)
+    return r && segmentOf(r)
+  }
+
+  /** the audio files in the interview's folder, and their size */
+  audioBytes(id: string): number {
+    const dir = this.folder(id)
+    if (!existsSync(dir)) return 0
+    return readdirSync(dir).filter((f) => f.endsWith('.wav')).reduce((n, f) => n + statSync(join(dir, f)).size, 0)
+  }
+
+  /** the audio alone: the transcript and everything made from it stay */
+  deleteAudio(id: string) {
+    rmSync(this.folder(id), { recursive: true, force: true })
   }
 
   private touch(id: string) { this.db.prepare('UPDATE interviews SET updated_at = ? WHERE id = ?').run(this.now(), id) }

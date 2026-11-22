@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron'
 import type { ExpertApi } from '../shared/expert/types'
+import type { TranscriptSegment, VoiceView } from '../shared/expert/voice'
 
 /** window.yogurt.expert: expert interviews (main/expert/ipc.ts) */
 export const expert: ExpertApi = {
@@ -13,6 +14,21 @@ export const expert: ExpertApi = {
   removeSource: (id, sourceId) => ipcRenderer.invoke('expert:remove-source', id, sourceId),
   consent: (id) => ipcRenderer.invoke('expert:consent', id),
   delete: (id) => ipcRenderer.invoke('expert:delete', id),
+  editSegment: (id, segmentId, text) => ipcRenderer.invoke('expert:edit-segment', id, segmentId, text),
+  deleteAudio: (id) => ipcRenderer.invoke('expert:delete-audio', id),
   showData: () => { ipcRenderer.send('expert:show-data') },
   onChange: (fn) => { const f = () => fn(); ipcRenderer.on('expert:changed', f); return () => { ipcRenderer.off('expert:changed', f) } },
+  voice: {
+    state: () => ipcRenderer.invoke('expert:voice-state'),
+    start: (id) => ipcRenderer.invoke('expert:voice-start', id),
+    pause: () => ipcRenderer.invoke('expert:voice-pause'),
+    resume: () => ipcRenderer.invoke('expert:voice-resume'),
+    stop: () => ipcRenderer.invoke('expert:voice-stop'),
+    mute: (on) => ipcRenderer.invoke('expert:voice-mute', on),
+    audio: (frame) => { ipcRenderer.send('expert:voice-audio', frame) },
+    onState: (fn) => { const f = (_e: unknown, v: VoiceView) => fn(v); ipcRenderer.on('expert:voice-state', f); return () => { ipcRenderer.off('expert:voice-state', f) } },
+    onAudio: (fn) => { const f = (_e: unknown, pcm: Uint8Array) => fn(pcm); ipcRenderer.on('expert:voice-audio', f); return () => { ipcRenderer.off('expert:voice-audio', f) } },
+    onInterrupted: (fn) => { const f = () => fn(); ipcRenderer.on('expert:voice-interrupted', f); return () => { ipcRenderer.off('expert:voice-interrupted', f) } },
+    onSegment: (fn) => { const f = (_e: unknown, s: TranscriptSegment) => fn(s); ipcRenderer.on('expert:voice-segment', f); return () => { ipcRenderer.off('expert:voice-segment', f) } },
+  },
 }

@@ -73,7 +73,7 @@ import { createNotesModel } from './notes/model'
 import { createBedrockNotesModel, bedrockClient, bedrockEndpoint } from './notes/bedrock'
 import { fakeMessagesClient } from './notes/fake'
 import { createSwitchingNotesModel } from './notes/provider'
-import { createSso } from './aws/sso'
+import { createSso, SignInNeededError } from './aws/sso'
 import { awsSsoApi } from './aws/ssoApi'
 import { fakeSsoApi } from './aws/fakeSso'
 import { bedrockConfig, bedrockSettings, hookCloud } from './cloudNotes'
@@ -90,6 +90,8 @@ import { fakeAtlassianServer, fakeConfluence } from './atlassian/fake'
 import { hookAtlassian } from './atlassian/ipc'
 import { ExpertStore } from './expert/store'
 import { hookExpert } from './expert/ipc'
+import { bedrockSonicTransport } from './expert/sonic'
+import { fakeSonicTransport } from './expert/sonicFake'
 import { notesProviderSetting } from './settings'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -842,7 +844,8 @@ app.whenReady().then(() => {
   // a database that can't be opened leaves the interviews unreadable, never the meetings
   try {
     hookExpert({ store: new ExpertStore(join(userDataDir(), 'expert')), window: () => win, locale: uiLanguage,
-      bedrock: () => { const b = bedrockSettings(loadSettings(settingsFile)); return { ready: !!cloudConfig(), region: b.region, modelId: b.modelId } } })
+      bedrock: () => { const b = bedrockSettings(loadSettings(settingsFile)); return { ready: !!cloudConfig(), region: b.region, modelId: b.modelId } },
+      sonic: isFake() ? fakeSonicTransport() : bedrockSonicTransport(() => { const c = cloudConfig(); return c ? sso.credentials(c.accountId, c.roleName) : Promise.reject(new SignInNeededError('Not signed in to AWS')) }) })
   } catch (e) { console.error('opening the expert interviews failed', e) }
   let finishing = false, discardUnsaved = false
   const savedTranscriptions = createSavedTranscriptions({

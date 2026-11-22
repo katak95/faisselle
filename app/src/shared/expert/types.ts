@@ -1,3 +1,5 @@
+import type { TranscriptSegment, VoiceApi } from './voice'
+
 // Expert interviews (Faisselle): an expert talks with a voice agent on Amazon Bedrock, and what they know becomes
 // Agent Skills. What main keeps (main/expert/store.ts) and what the window sees of it; every check a page's input
 // goes through is here too, so main and the screens agree on the limits.
@@ -40,7 +42,7 @@ export type Interview = {
 export type InterviewSource = { id: string; name: string; bytes: number; addedAt: number }
 
 export type InterviewCard = Interview & { sources: number }
-export type InterviewDetail = { interview: Interview; sources: InterviewSource[] }
+export type InterviewDetail = { interview: Interview; sources: InterviewSource[]; segments: TranscriptSegment[]; audioBytes: number }
 
 export type InterviewDraft = Pick<Interview, 'title' | 'domain' | 'goal' | 'language' | 'minutes'>
 
@@ -75,8 +77,13 @@ export type ExpertApi = {
   consent(id: string): Promise<Interview | null>
   /** the interview, its sources and its audio, for good */
   delete(id: string): Promise<boolean>
+  /** the expert's correction of a line; what was heard is kept beside it */
+  editSegment(id: string, segmentId: string, text: string): Promise<TranscriptSegment | null>
+  /** the interview's audio alone; the transcript stays */
+  deleteAudio(id: string): Promise<boolean>
   showData(): void
   onChange(fn: () => void): () => void
+  voice: VoiceApi
 }
 
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
