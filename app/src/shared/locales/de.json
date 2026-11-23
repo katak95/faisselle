@@ -891,5 +891,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Client-Geheimnis, nur wenn dieser Umleitungs-URI auf der Web-Plattform ist",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Ein Client-Geheimnis ist gespeichert. Gib ein anderes ein, um es zu ersetzen, oder lass das Feld leer, um es zu behalten.",
   "Remove the secret": "Geheimnis entfernen",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock nimmt IDs wie anthropic.claude-haiku-5-5 (Berechtigung bedrock-mantle:CreateInference). Eine InvokeModel-ID oder ein Inferenzprofil wie eu.anthropic.claude-haiku-4-5-20251001-v1:0 läuft über bedrock-runtime (Berechtigung bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock nimmt IDs wie anthropic.claude-haiku-5-5 (Berechtigung bedrock-mantle:CreateInference). Eine InvokeModel-ID oder ein Inferenzprofil wie eu.anthropic.claude-haiku-4-5-20251001-v1:0 läuft über bedrock-runtime (Berechtigung bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Einrichtung teilen",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Deine Modelle und Verbindungen in einer Datei, um sie jemand anderem zu geben: wo Zusammenfassungen geschrieben werden, Bedrock, Microsoft 365, Confluence und deine eigenen Wörter. Kein Passwort, kein Schlüssel und keine Anmeldung kommen hinein: Jede Person meldet sich mit ihren eigenen Konten an.",
+  "Export the setup": "Einrichtung exportieren",
+  "Import a setup": "Einrichtung importieren",
+  "Choose what to apply from this setup:": "Wähle, was du aus dieser Einrichtung übernimmst:",
+  "Apply": "Übernehmen",
+  "Setup exported.": "Einrichtung exportiert.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Einrichtung übernommen. Melde dich bei Bedarf oben mit deinen eigenen Konten an.",
+  "Nothing in this setup changes yours.": "Diese Einrichtung ändert nichts an deiner.",
+  "That file isn't a Faisselle setup.": "Diese Datei ist keine Faisselle-Einrichtung.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Diese Einrichtung stammt aus einer neueren Faisselle. Aktualisiere Faisselle und versuche es erneut.",
+  "Couldn't read that setup. Try again.": "Diese Einrichtung konnte nicht gelesen werden. Versuche es erneut.",
+  "Couldn't save the setup. Try again, or pick another place.": "Die Einrichtung konnte nicht gespeichert werden. Versuche es erneut oder wähle einen anderen Ort.",
+  "This preview is out of date. Import the setup again.": "Diese Vorschau ist veraltet. Importiere die Einrichtung erneut.",
+  "Words added": "Hinzugefügte Wörter",
+  "Not set": "Nicht festgelegt"
 }

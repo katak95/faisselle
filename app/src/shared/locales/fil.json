@@ -891,5 +891,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Client secret, kung nasa Web platform lang ang redirect URI na iyon",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "May naka-save na client secret. Mag-type ng iba para palitan ito, o iwanang blangko para panatilihin.",
   "Remove the secret": "Alisin ang secret",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Tumatanggap ang Claude sa Amazon Bedrock ng mga ID gaya ng anthropic.claude-haiku-5-5 (pahintulot na bedrock-mantle:CreateInference). Ang InvokeModel ID o inference profile, gaya ng eu.anthropic.claude-haiku-4-5-20251001-v1:0, ay dumadaan sa bedrock-runtime (pahintulot na bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Tumatanggap ang Claude sa Amazon Bedrock ng mga ID gaya ng anthropic.claude-haiku-5-5 (pahintulot na bedrock-mantle:CreateInference). Ang InvokeModel ID o inference profile, gaya ng eu.anthropic.claude-haiku-4-5-20251001-v1:0, ay dumadaan sa bedrock-runtime (pahintulot na bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Ibahagi ang setup",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ang mga model at connector mo sa isang file, para ibigay sa iba: kung saan isinusulat ang mga buod, Bedrock, Microsoft 365, Confluence at ang sarili mong mga salita. Walang password, key o sign-in dito: magsa-sign in ang bawat isa gamit ang sarili nilang mga account.",
+  "Export the setup": "I-export ang setup",
+  "Import a setup": "Mag-import ng setup",
+  "Choose what to apply from this setup:": "Piliin kung ano ang ilalapat mula sa setup na ito:",
+  "Apply": "Ilapat",
+  "Setup exported.": "Na-export ang setup.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Nailapat ang setup. Mag-sign in gamit ang sarili mong mga account sa mga seksyon sa itaas kung kailangan.",
+  "Nothing in this setup changes yours.": "Walang anuman sa setup na ito ang magbabago sa iyo.",
+  "That file isn't a Faisselle setup.": "Hindi setup ng Faisselle ang file na iyan.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Mula sa mas bagong Faisselle ang setup na ito. I-update ang Faisselle, saka subukan ulit.",
+  "Couldn't read that setup. Try again.": "Hindi mabasa ang setup na iyan. Subukan ulit.",
+  "Couldn't save the setup. Try again, or pick another place.": "Hindi ma-save ang setup. Subukan ulit, o pumili ng ibang lugar.",
+  "This preview is out of date. Import the setup again.": "Luma na ang preview na ito. I-import ulit ang setup.",
+  "Words added": "Mga salitang idinagdag",
+  "Not set": "Hindi nakatakda"
 }

@@ -891,5 +891,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Klienthemmelighet, bare hvis omdirigerings-URI-en er på nettplattformen",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "En klienthemmelighet er lagret. Skriv inn en ny for å erstatte den, eller la feltet stå tomt for å beholde den.",
   "Remove the secret": "Fjern hemmeligheten",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock bruker ID-er som anthropic.claude-haiku-5-5 (tillatelse bedrock-mantle:CreateInference). En InvokeModel-ID eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (tillatelse bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock bruker ID-er som anthropic.claude-haiku-5-5 (tillatelse bedrock-mantle:CreateInference). En InvokeModel-ID eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (tillatelse bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Del oppsettet",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modellene og tilkoblingene dine i én fil som du kan gi til noen andre: hvor sammendrag skrives, Bedrock, Microsoft 365, Confluence og dine egne ord. Ingen passord, nøkler eller pålogginger blir med: hver person logger på med sine egne kontoer.",
+  "Export the setup": "Eksporter oppsettet",
+  "Import a setup": "Importer et oppsett",
+  "Choose what to apply from this setup:": "Velg hva du vil bruke fra dette oppsettet:",
+  "Apply": "Bruk",
+  "Setup exported.": "Oppsettet er eksportert.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Oppsettet er brukt. Logg på med dine egne kontoer i delene over ved behov.",
+  "Nothing in this setup changes yours.": "Ingenting i dette oppsettet endrer ditt.",
+  "That file isn't a Faisselle setup.": "Filen er ikke et Faisselle-oppsett.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Oppsettet er fra en nyere Faisselle. Oppdater Faisselle og prøv igjen.",
+  "Couldn't read that setup. Try again.": "Kunne ikke lese oppsettet. Prøv igjen.",
+  "Couldn't save the setup. Try again, or pick another place.": "Kunne ikke lagre oppsettet. Prøv igjen, eller velg et annet sted.",
+  "This preview is out of date. Import the setup again.": "Forhåndsvisningen er utdatert. Importer oppsettet på nytt.",
+  "Words added": "Ord lagt til",
+  "Not set": "Ikke angitt"
 }

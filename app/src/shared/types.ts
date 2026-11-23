@@ -217,6 +217,13 @@ export type YogurtApi = {
     setDocuments(on: boolean): Promise<M365View>
     onChange(fn: (v: M365View) => void): () => void
   }
+  /** Settings → Share the setup: the models and connectors (never a secret) to a file, and from one, section by section */
+  setupShare: {
+    export(): Promise<{ ok: true } | { ok: false; error: 'cancelled' | 'failed' }>
+    open(): Promise<ShareOpened>
+    apply(token: string, sections: ShareSection[]): Promise<ShareApplied>
+    show(): void
+  }
   /** AI apps on this Mac reading meetings through MCP (Settings) */
   mcp: {
     status(): Promise<McpStatus>
@@ -596,6 +603,13 @@ export type M365Status =
   | { state: 'error'; message: string; consent?: boolean; problem?: 'secret-needed' | 'secret-wrong' | 'secret-not-allowed' | 'redirect-mismatch' | 'expired' | 'port-busy' }
 /** browser: signed in with the browser on the app's own redirect URI (authorization code + PKCE), not the device code */
 export type M365Method = 'code' | 'browser'
+/** Settings → Share the setup: a section of the file, one field that changes, and what importing it would change */
+export type ShareSection = 'notes' | 'm365' | 'confluence' | 'vocabulary'
+export type ShareChange = { section: ShareSection; field: string; from: string; to: string }
+export type SharePreview = { section: ShareSection; changes: ShareChange[] }
+export type ShareOpened = { ok: true; token: string; preview: SharePreview[]; appVersion: string; exportedAt: string } | { ok: false; error: 'cancelled' | 'invalid' | 'newer' | 'failed' }
+export type ShareApplied = { ok: true; applied: ShareSection[] } | { ok: false; error: 'expired' | 'failed' }
+
 export type M365View = { status: M365Status; calendar: boolean; clientId: string; tenantId: string
   method: M365Method; redirectUri: string; /** a client secret is saved (never sent back) */ hasSecret: boolean
   /** SharePoint and OneDrive search is on; documentsRefused: Microsoft refused it until an administrator approves */

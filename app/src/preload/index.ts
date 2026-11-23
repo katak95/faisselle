@@ -258,6 +258,12 @@ const api: YogurtApi = {
     setDocuments: (on) => ipcRenderer.invoke('m365:documents', on),
     onChange: (fn) => { const f = (_e: unknown, v: M365View) => fn(v); ipcRenderer.on('m365:changed', f); return () => { ipcRenderer.off('m365:changed', f) } },
   },
+  setupShare: {
+    export: () => ipcRenderer.invoke('setup-share:export'),
+    open: () => ipcRenderer.invoke('setup-share:open'),
+    apply: (token, sections) => ipcRenderer.invoke('setup-share:apply', token, sections),
+    show: () => ipcRenderer.send('setup-share:show'),
+  },
   cloud: {
     get: () => ipcRenderer.invoke('cloud:get'),
     setProvider: (p) => ipcRenderer.invoke('cloud:provider', p),

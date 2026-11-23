@@ -891,5 +891,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Klienthemlighet, bara om omdirigerings-URI:n finns på webbplattformen",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "En klienthemlighet är sparad. Skriv en ny för att ersätta den, eller lämna tomt för att behålla den.",
   "Remove the secret": "Ta bort hemligheten",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock använder id:n som anthropic.claude-haiku-5-5 (behörighet bedrock-mantle:CreateInference). Ett InvokeModel-id eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (behörighet bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock använder id:n som anthropic.claude-haiku-5-5 (behörighet bedrock-mantle:CreateInference). Ett InvokeModel-id eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (behörighet bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Dela inställningarna",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Dina modeller och kopplingar i en fil som du kan ge till någon annan: var sammanfattningar skrivs, Bedrock, Microsoft 365, Confluence och dina egna ord. Inga lösenord, nycklar eller inloggningar följer med: var och en loggar in med sina egna konton.",
+  "Export the setup": "Exportera inställningarna",
+  "Import a setup": "Importera inställningar",
+  "Choose what to apply from this setup:": "Välj vad du vill använda från de här inställningarna:",
+  "Apply": "Använd",
+  "Setup exported.": "Inställningarna har exporterats.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Inställningarna har tillämpats. Logga in med dina egna konton i avsnitten ovan vid behov.",
+  "Nothing in this setup changes yours.": "Inget i de här inställningarna ändrar dina.",
+  "That file isn't a Faisselle setup.": "Filen innehåller inga Faisselle-inställningar.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Inställningarna kommer från en nyare Faisselle. Uppdatera Faisselle och försök igen.",
+  "Couldn't read that setup. Try again.": "Det gick inte att läsa inställningarna. Försök igen.",
+  "Couldn't save the setup. Try again, or pick another place.": "Det gick inte att spara inställningarna. Försök igen eller välj en annan plats.",
+  "This preview is out of date. Import the setup again.": "Förhandsvisningen är inaktuell. Importera inställningarna igen.",
+  "Words added": "Tillagda ord",
+  "Not set": "Inte angivet"
 }

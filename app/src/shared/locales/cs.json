@@ -922,5 +922,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Tajný klíč klienta, jen pokud je tento URI pro přesměrování na platformě Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Tajný klíč klienta je uložený. Zadejte jiný, chcete-li ho nahradit, nebo nechte prázdné a zůstane.",
   "Remove the secret": "Odebrat tajný klíč",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude v Amazon Bedrock bere ID jako anthropic.claude-haiku-5-5 (oprávnění bedrock-mantle:CreateInference). ID pro InvokeModel nebo profil inference, například eu.anthropic.claude-haiku-4-5-20251001-v1:0, jde přes bedrock-runtime (oprávnění bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude v Amazon Bedrock bere ID jako anthropic.claude-haiku-5-5 (oprávnění bedrock-mantle:CreateInference). ID pro InvokeModel nebo profil inference, například eu.anthropic.claude-haiku-4-5-20251001-v1:0, jde přes bedrock-runtime (oprávnění bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Sdílet nastavení",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Vaše modely a připojení v jednom souboru, který můžete předat někomu jinému: kde se píšou shrnutí, Bedrock, Microsoft 365, Confluence a vaše vlastní slova. Nejsou v něm hesla, klíče ani přihlášení: každý se přihlásí vlastními účty.",
+  "Export the setup": "Exportovat nastavení",
+  "Import a setup": "Importovat nastavení",
+  "Choose what to apply from this setup:": "Vyberte, co z tohoto nastavení použít:",
+  "Apply": "Použít",
+  "Setup exported.": "Nastavení bylo exportováno.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Nastavení bylo použito. V případě potřeby se přihlaste vlastními účty v sekcích výše.",
+  "Nothing in this setup changes yours.": "Nic v tomto nastavení nemění to vaše.",
+  "That file isn't a Faisselle setup.": "Tento soubor není nastavení Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Toto nastavení pochází z novější verze Faisselle. Aktualizujte Faisselle a zkuste to znovu.",
+  "Couldn't read that setup. Try again.": "Toto nastavení se nepodařilo načíst. Zkuste to znovu.",
+  "Couldn't save the setup. Try again, or pick another place.": "Nastavení se nepodařilo uložit. Zkuste to znovu nebo vyberte jiné místo.",
+  "This preview is out of date. Import the setup again.": "Tento náhled už není aktuální. Importujte nastavení znovu.",
+  "Words added": "Přidaná slova",
+  "Not set": "Nenastaveno"
 }

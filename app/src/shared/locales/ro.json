@@ -908,5 +908,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Secret de client, doar dacă acel URI de redirecționare e pe platforma Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Un secret de client e salvat. Scrie altul ca să-l înlocuiești sau lasă gol ca să-l păstrezi.",
   "Remove the secret": "Elimină secretul",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude în Amazon Bedrock primește ID-uri precum anthropic.claude-haiku-5-5 (permisiunea bedrock-mantle:CreateInference). Un ID InvokeModel sau un profil de inferență, precum eu.anthropic.claude-haiku-4-5-20251001-v1:0, trece prin bedrock-runtime (permisiunea bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude în Amazon Bedrock primește ID-uri precum anthropic.claude-haiku-5-5 (permisiunea bedrock-mantle:CreateInference). Un ID InvokeModel sau un profil de inferență, precum eu.anthropic.claude-haiku-4-5-20251001-v1:0, trece prin bedrock-runtime (permisiunea bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Partajează configurarea",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelele și conectorii tăi într-un singur fișier, pe care îl poți da altcuiva: unde se scriu rezumatele, Bedrock, Microsoft 365, Confluence și cuvintele tale personalizate. Nu conține parole, chei sau conectări: fiecare se conectează cu propriile conturi.",
+  "Export the setup": "Exportă configurarea",
+  "Import a setup": "Importă o configurare",
+  "Choose what to apply from this setup:": "Alege ce aplici din această configurare:",
+  "Apply": "Aplică",
+  "Setup exported.": "Configurare exportată.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Configurare aplicată. Conectează-te cu propriile conturi în secțiunile de mai sus, dacă e nevoie.",
+  "Nothing in this setup changes yours.": "Nimic din această configurare nu o schimbă pe a ta.",
+  "That file isn't a Faisselle setup.": "Fișierul nu este o configurare Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Configurarea provine dintr-o versiune mai nouă de Faisselle. Actualizează Faisselle și încearcă din nou.",
+  "Couldn't read that setup. Try again.": "Configurarea nu a putut fi citită. Încearcă din nou.",
+  "Couldn't save the setup. Try again, or pick another place.": "Configurarea nu a putut fi salvată. Încearcă din nou sau alege alt loc.",
+  "This preview is out of date. Import the setup again.": "Previzualizarea nu mai este actuală. Importă din nou configurarea.",
+  "Words added": "Cuvinte adăugate",
+  "Not set": "Nesetat"
 }

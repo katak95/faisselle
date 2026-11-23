@@ -879,5 +879,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "क्लाइंट सीक्रेट, सिर्फ़ तब जब वह रीडायरेक्ट URI वेब प्लेटफ़ॉर्म पर हो",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "एक क्लाइंट सीक्रेट सेव है। बदलने के लिए दूसरा लिखें, या रखने के लिए खाली छोड़ दें।",
   "Remove the secret": "सीक्रेट हटाएं",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock में Claude, anthropic.claude-haiku-5-5 जैसे ID लेता है (bedrock-mantle:CreateInference अनुमति)। InvokeModel ID या इन्फ़रेंस प्रोफ़ाइल, जैसे eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime से जाती है (bedrock:InvokeModelWithResponseStream अनुमति)।"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock में Claude, anthropic.claude-haiku-5-5 जैसे ID लेता है (bedrock-mantle:CreateInference अनुमति)। InvokeModel ID या इन्फ़रेंस प्रोफ़ाइल, जैसे eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime से जाती है (bedrock:InvokeModelWithResponseStream अनुमति)।",
+  "Share the setup": "सेटअप साझा करें",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "आपके मॉडल और कनेक्टर एक फ़ाइल में, किसी और को देने के लिए: सारांश कहाँ लिखे जाते हैं, Bedrock, Microsoft 365, Confluence और आपके अपने शब्द। इसमें कोई पासवर्ड, कुंजी या साइन-इन नहीं होता: हर व्यक्ति अपने खातों से साइन इन करता है।",
+  "Export the setup": "सेटअप एक्सपोर्ट करें",
+  "Import a setup": "सेटअप इंपोर्ट करें",
+  "Choose what to apply from this setup:": "इस सेटअप से क्या लागू करना है, चुनें:",
+  "Apply": "लागू करें",
+  "Setup exported.": "सेटअप एक्सपोर्ट हो गया।",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "सेटअप लागू हो गया। ज़रूरत हो तो ऊपर के सेक्शन में अपने खातों से साइन इन करें।",
+  "Nothing in this setup changes yours.": "इस सेटअप में ऐसा कुछ नहीं है जो आपका सेटअप बदले।",
+  "That file isn't a Faisselle setup.": "यह फ़ाइल Faisselle सेटअप नहीं है।",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "यह सेटअप Faisselle के नए वर्शन से है। Faisselle अपडेट करें, फिर दोबारा कोशिश करें।",
+  "Couldn't read that setup. Try again.": "यह सेटअप पढ़ा नहीं जा सका। दोबारा कोशिश करें।",
+  "Couldn't save the setup. Try again, or pick another place.": "सेटअप सेव नहीं हो सका। दोबारा कोशिश करें या कोई दूसरी जगह चुनें।",
+  "This preview is out of date. Import the setup again.": "यह प्रीव्यू पुराना हो गया है। सेटअप फिर से इंपोर्ट करें।",
+  "Words added": "जोड़े गए शब्द",
+  "Not set": "सेट नहीं"
 }

@@ -849,5 +849,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "클라이언트 암호(리디렉션 URI가 웹 플랫폼에 있는 경우에만)",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "클라이언트 암호가 저장되어 있습니다. 바꾸려면 다른 값을 입력하고, 유지하려면 비워 두세요.",
   "Remove the secret": "암호 삭제",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock의 Claude는 anthropic.claude-haiku-5-5 같은 ID를 사용합니다(bedrock-mantle:CreateInference 권한). eu.anthropic.claude-haiku-4-5-20251001-v1:0 같은 InvokeModel ID나 추론 프로필은 bedrock-runtime을 거칩니다(bedrock:InvokeModelWithResponseStream 권한)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock의 Claude는 anthropic.claude-haiku-5-5 같은 ID를 사용합니다(bedrock-mantle:CreateInference 권한). eu.anthropic.claude-haiku-4-5-20251001-v1:0 같은 InvokeModel ID나 추론 프로필은 bedrock-runtime을 거칩니다(bedrock:InvokeModelWithResponseStream 권한).",
+  "Share the setup": "설정 공유",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "모델과 커넥터를 파일 하나에 담아 다른 사람에게 줄 수 있습니다: 요약을 작성하는 곳, Bedrock, Microsoft 365, Confluence, 사용자 단어. 암호, 키, 로그인 정보는 들어가지 않으며, 각자 자신의 계정으로 로그인합니다.",
+  "Export the setup": "설정 내보내기",
+  "Import a setup": "설정 가져오기",
+  "Choose what to apply from this setup:": "이 설정에서 적용할 항목을 선택하세요:",
+  "Apply": "적용",
+  "Setup exported.": "설정을 내보냈습니다.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "설정을 적용했습니다. 필요하면 위 섹션에서 자신의 계정으로 로그인하세요.",
+  "Nothing in this setup changes yours.": "이 설정에는 내 설정을 바꾸는 내용이 없습니다.",
+  "That file isn't a Faisselle setup.": "이 파일은 Faisselle 설정이 아닙니다.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "이 설정은 최신 버전의 Faisselle에서 만들어졌습니다. Faisselle을 업데이트한 후 다시 시도하세요.",
+  "Couldn't read that setup. Try again.": "설정을 읽을 수 없습니다. 다시 시도하세요.",
+  "Couldn't save the setup. Try again, or pick another place.": "설정을 저장할 수 없습니다. 다시 시도하거나 다른 위치를 선택하세요.",
+  "This preview is out of date. Import the setup again.": "이 미리 보기는 오래되었습니다. 설정을 다시 가져오세요.",
+  "Words added": "추가된 단어",
+  "Not set": "설정 안 됨"
 }

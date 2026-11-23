@@ -919,5 +919,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Секрет клиента, только если этот URI перенаправления на платформе «Веб»",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Секрет клиента сохранён. Введите другой, чтобы заменить его, или оставьте поле пустым, чтобы сохранить.",
   "Remove the secret": "Удалить секрет",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude в Amazon Bedrock принимает идентификаторы вида anthropic.claude-haiku-5-5 (разрешение bedrock-mantle:CreateInference). Идентификатор InvokeModel или профиль вывода, например eu.anthropic.claude-haiku-4-5-20251001-v1:0, идёт через bedrock-runtime (разрешение bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude в Amazon Bedrock принимает идентификаторы вида anthropic.claude-haiku-5-5 (разрешение bedrock-mantle:CreateInference). Идентификатор InvokeModel или профиль вывода, например eu.anthropic.claude-haiku-4-5-20251001-v1:0, идёт через bedrock-runtime (разрешение bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Поделиться настройками",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ваши модели и подключения в одном файле, чтобы передать их другому человеку: где пишутся сводки, Bedrock, Microsoft 365, Confluence и ваши слова. В нём нет паролей, ключей и входов: каждый входит в свои учётные записи сам.",
+  "Export the setup": "Экспортировать настройки",
+  "Import a setup": "Импортировать настройки",
+  "Choose what to apply from this setup:": "Выберите, что применить из этих настроек:",
+  "Apply": "Применить",
+  "Setup exported.": "Настройки экспортированы.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Настройки применены. При необходимости войдите в свои учётные записи в разделах выше.",
+  "Nothing in this setup changes yours.": "В этих настройках нет ничего, что изменило бы ваши.",
+  "That file isn't a Faisselle setup.": "Этот файл не является настройками Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Эти настройки из более новой версии Faisselle. Обновите Faisselle и повторите попытку.",
+  "Couldn't read that setup. Try again.": "Не удалось прочитать настройки. Повторите попытку.",
+  "Couldn't save the setup. Try again, or pick another place.": "Не удалось сохранить настройки. Повторите попытку или выберите другое место.",
+  "This preview is out of date. Import the setup again.": "Этот предпросмотр устарел. Импортируйте настройки ещё раз.",
+  "Words added": "Добавленные слова",
+  "Not set": "Не задано"
 }

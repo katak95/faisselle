@@ -927,5 +927,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Klucz tajny klienta, tylko jeśli ten URI przekierowania jest na platformie Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Klucz tajny klienta jest zapisany. Wpisz inny, aby go zastąpić, lub zostaw puste, aby go zachować.",
   "Remove the secret": "Usuń klucz tajny",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude w Amazon Bedrock przyjmuje identyfikatory takie jak anthropic.claude-haiku-5-5 (uprawnienie bedrock-mantle:CreateInference). Identyfikator InvokeModel lub profil wnioskowania, np. eu.anthropic.claude-haiku-4-5-20251001-v1:0, idzie przez bedrock-runtime (uprawnienie bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude w Amazon Bedrock przyjmuje identyfikatory takie jak anthropic.claude-haiku-5-5 (uprawnienie bedrock-mantle:CreateInference). Identyfikator InvokeModel lub profil wnioskowania, np. eu.anthropic.claude-haiku-4-5-20251001-v1:0, idzie przez bedrock-runtime (uprawnienie bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Udostępnij konfigurację",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Twoje modele i połączenia w jednym pliku, który możesz przekazać komuś innemu: gdzie powstają podsumowania, Bedrock, Microsoft 365, Confluence i Twoje własne słowa. Nie ma w nim haseł, kluczy ani logowań: każdy loguje się na własne konta.",
+  "Export the setup": "Eksportuj konfigurację",
+  "Import a setup": "Importuj konfigurację",
+  "Choose what to apply from this setup:": "Wybierz, co zastosować z tej konfiguracji:",
+  "Apply": "Zastosuj",
+  "Setup exported.": "Konfiguracja wyeksportowana.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Konfiguracja zastosowana. W razie potrzeby zaloguj się na własne konta w sekcjach powyżej.",
+  "Nothing in this setup changes yours.": "Nic w tej konfiguracji nie zmienia Twojej.",
+  "That file isn't a Faisselle setup.": "Ten plik nie jest konfiguracją Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Ta konfiguracja pochodzi z nowszej wersji Faisselle. Zaktualizuj Faisselle i spróbuj ponownie.",
+  "Couldn't read that setup. Try again.": "Nie udało się odczytać tej konfiguracji. Spróbuj ponownie.",
+  "Couldn't save the setup. Try again, or pick another place.": "Nie udało się zapisać konfiguracji. Spróbuj ponownie lub wybierz inne miejsce.",
+  "This preview is out of date. Import the setup again.": "Ten podgląd jest nieaktualny. Zaimportuj konfigurację ponownie.",
+  "Words added": "Dodane słowa",
+  "Not set": "Nie ustawiono"
 }
