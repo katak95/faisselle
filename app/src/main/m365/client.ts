@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { createRequire } from 'node:module'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { UtilityProcessTransport } from './serverProcess'
 import type { M365Status } from '../../shared/types'
 import { deviceCode, enabledTools, needsAdminConsent, toolJson, TOOLS, type CallTool } from './tools'
 import { authorizeUrl, M365AuthError, parseRedirect, pkce, tokenRequest, type AppConfig, type Fetch, type TokenStore } from './oauth'
@@ -9,7 +9,7 @@ import { waitForCode } from '../atlassian/oauth'
 
 /**
  * Microsoft 365 as an MCP client: Faisselle starts the Softeria ms-365-mcp-server (read only, calendar and mail tools
- * only) with Electron's own Node, and talks to it over stdio. Signing in is Microsoft's device code: the browser opens
+ * only) in an Electron utility process (src/m365/worker.ts, serverProcess.ts), and talks to it as over stdio. Signing in is Microsoft's device code: the browser opens
  * microsoft.com/devicelogin and the person types the code shown in Settings. The server keeps its token in Faisselle's
  * folder.
  *
@@ -17,7 +17,7 @@ import { waitForCode } from '../atlassian/oauth'
  * the token on the app's own redirect URI, gives it to the server (MS365_MCP_OAUTH_TOKEN) and starts the server again
  * with a new one before it runs out.
  */
-export type M365Options = { dataDir: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
+export type M365Options = { dataDir: string; /** the built worker the server runs in (out/main/m365.js) */ worker?: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
   /** SharePoint and OneDrive search: work-account mode, with Microsoft Search's wider read permissions (read when the server starts) */
   documents?: () => boolean
   /** the browser sign-in (an app without public client flows): its redirect URI, when that's the method */
@@ -38,7 +38,6 @@ async function startServer(o: M365Options, token?: string): Promise<{ call: Call
   const env: Record<string, string> = {}
   for (const [k, v] of Object.entries(process.env)) if (v !== undefined && !/^(ELECTRON_|NODE_OPTIONS$)/.test(k)) env[k] = v
   Object.assign(env, {
-    ELECTRON_RUN_AS_NODE: '1',
     MS365_MCP_TOKEN_CACHE_PATH: join(o.dataDir, 'm365-token-cache.json'),
     MS365_MCP_SELECTED_ACCOUNT_PATH: join(o.dataDir, 'm365-account.json'),
     MS365_MCP_LOG_DIR: join(o.dataDir, 'logs'),
@@ -48,8 +47,12 @@ async function startServer(o: M365Options, token?: string): Promise<{ call: Call
     ...(token ? { MS365_MCP_OAUTH_TOKEN: token } : {}),
   })
   const documents = o.documents?.() ?? false
-  const transport = new StdioClientTransport({ command: process.execPath, args: [serverScript(), '--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)], env, stderr: 'pipe' })
-  transport.stderr?.on('data', (b: Buffer) => { const line = b.toString().trim(); if (line) console.info('M365', line.slice(0, 500)) })
+  if (!o.worker) throw new Error('The Microsoft 365 server has no worker to run in')
+  const transport = new UtilityProcessTransport({ worker: o.worker, script: serverScript(), env,
+    args: ['--read-only', ...(documents ? ['--org-mode'] : []), '--enabled-tools', enabledTools(documents)],
+    // what the server says on stderr goes to main.log: why it stopped, when it does
+    stderr: (line) => console.info('M365', line.slice(0, 500)) })
+  transport.onerror = (e) => console.warn('M365', e.message)
   const client = new Client({ name: 'Faisselle', version: '1' })
   await client.connect(transport)
   return {

@@ -3,7 +3,7 @@ import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { markdownBody, pageTitle, personalSpace, publishReport, storageBody, type Report } from '../src/main/atlassian/publish'
-import { argsFor, createToolbox, formatFor, pagesOf, sitesOf, spacesOf, toolJson, type ToolInfo } from '../src/main/atlassian/tools'
+import { argsFor, createToolbox, describeTools, formatFor, pagesOf, sitesOf, spacesOf, toolJson, type ToolInfo } from '../src/main/atlassian/tools'
 import { fakeAtlassianServer, fakeConfluence } from '../src/main/atlassian/fake'
 import { createAtlassian } from '../src/main/atlassian/client'
 import { createOAuthStore, oauthProvider, waitForCode } from '../src/main/atlassian/oauth'
@@ -48,6 +48,18 @@ describe("Atlassian's tools, read from what the server lists", () => {
     expect(calls[0]).toEqual(['executeWrite', { toolName: 'createConfluenceContent', args: { title: 'x', contentFormat: 'storage' } }])
     expect(box.can('create')).toBe(true)
     expect(box.can('get')).toBe(false)
+  })
+  it('gives the gateway the site it needs, besides the tool and its arguments ("Failed to fetch cloud ID for: ." otherwise)', async () => {
+    const calls: Array<[string, unknown]> = []
+    const box = createToolbox([{ name: 'executeRead', inputSchema: { properties: { cloudId: {}, toolName: {}, toolInput: {} }, required: ['cloudId', 'toolName'] } }], async (n, a) => { calls.push([n, a]); return {} })
+    await box.call('personalSpace', { cloudId: 'site-1' })
+    expect(calls[0]).toEqual(['executeRead', { cloudId: 'site-1', toolName: 'getConfluencePersonalSpace', toolInput: { cloudId: 'site-1' } }])
+  })
+  it('puts the site in a parameter named after it, whatever its exact name', () => {
+    const tool: ToolInfo = { name: 'getConfluencePersonalSpace', inputSchema: { properties: { cloudIdOrSiteUrl: {} }, required: ['cloudIdOrSiteUrl'] } }
+    expect(argsFor(tool, { cloudId: 'site-1' })).toEqual({ cloudIdOrSiteUrl: 'site-1' })
+    expect(argsFor({ name: 'x', inputSchema: { properties: { siteUrl: {} } } }, { cloudId: 'https://acme.atlassian.net' })).toEqual({ siteUrl: 'https://acme.atlassian.net' })
+    expect(describeTools([tool, { name: 'getAccessibleAtlassianResources' }])).toBe('getConfluencePersonalSpace(cloudIdOrSiteUrl*) getAccessibleAtlassianResources()')
   })
   it('reads sites, spaces and pages from wrapped answers', () => {
     expect(sitesOf([{ id: 'c1', name: 'Acme', url: 'https://acme.atlassian.net' }])).toEqual([{ id: 'c1', name: 'Acme', url: 'https://acme.atlassian.net' }])
@@ -127,6 +139,13 @@ describe('signing in to Atlassian', () => {
     const other = await waitForCode({ port: 0, state: () => 'abc' })
     expect((await fetch(`http://127.0.0.1:${other.port}/elsewhere`)).status).toBe(404)
     other.close()
+  })
+  it('answers on ::1 too, for a browser that reaches localhost over IPv6', async () => {
+    const w = await waitForCode({ port: 0, state: () => 'abc', path: '/callback', fixedPort: true })
+    const v6 = await fetch(`http://[::1]:${w.port}/callback?code=C6&state=abc`).then((r) => r.status, () => 'no IPv6 here')
+    if (v6 === 'no IPv6 here') { w.close(); return }
+    expect(v6).toBe(200)
+    expect(await w.code).toBe('C6')
   })
 })
 

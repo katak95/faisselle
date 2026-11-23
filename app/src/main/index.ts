@@ -588,7 +588,7 @@ app.whenReady().then(() => {
     seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
     open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()) })
   const fakeMicrosoft = isFake() ? fakeMicrosoftSignIn() : undefined
-  const m365 = createM365({ dataDir: userDataDir(), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
+  const m365 = createM365({ dataDir: userDataDir(), worker: join(__dirname, 'm365.js'), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
     documents: () => loadSettings(m365File).m365?.documents === true,
     browser: () => { const s = loadSettings(m365File).m365; return s?.method === 'browser' ? { redirectUri: s.redirectUri ?? DEFAULT_REDIRECT } : null },
     store: m365Tokens,
