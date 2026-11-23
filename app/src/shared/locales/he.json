@@ -917,5 +917,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "לא ניתן לשמור את ההגדרות. כדאי לנסות שוב או לבחור מקום אחר.",
   "This preview is out of date. Import the setup again.": "התצוגה המקדימה הזו כבר לא עדכנית. צריך לייבא את ההגדרות שוב.",
   "Words added": "מילים שנוספו",
-  "Not set": "לא הוגדר"
+  "Not set": "לא הוגדר",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "הסיכום ממתין לכניסה מחדש ל-AWS. הוא יתחיל מעצמו ברגע שתתבצע כניסה.",
+  "The summary is waiting for the notes model to finish downloading.": "הסיכום ממתין לסיום ההורדה של מודל ההערות."
 }

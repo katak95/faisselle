@@ -935,5 +935,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Не вдалося зберегти налаштування. Спробуйте ще раз або виберіть інше місце.",
   "This preview is out of date. Import the setup again.": "Цей попередній перегляд застарів. Імпортуйте налаштування ще раз.",
   "Words added": "Додані слова",
-  "Not set": "Не задано"
+  "Not set": "Не задано",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Підсумок чекає, поки ви знову ввійдете в AWS. Він почнеться сам, щойно ви ввійдете.",
+  "The summary is waiting for the notes model to finish downloading.": "Підсумок чекає завершення завантаження моделі нотаток."
 }

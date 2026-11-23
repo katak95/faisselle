@@ -865,5 +865,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "无法保存设置。请重试，或选择其他位置。",
   "This preview is out of date. Import the setup again.": "此预览已过期。请重新导入设置。",
   "Words added": "新增词语",
-  "Not set": "未设置"
+  "Not set": "未设置",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "摘要正在等待你重新登录 AWS。登录后会自动开始。",
+  "The summary is waiting for the notes model to finish downloading.": "摘要正在等待笔记模型下载完成。"
 }

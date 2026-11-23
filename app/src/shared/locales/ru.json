@@ -935,5 +935,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Не удалось сохранить настройки. Повторите попытку или выберите другое место.",
   "This preview is out of date. Import the setup again.": "Этот предпросмотр устарел. Импортируйте настройки ещё раз.",
   "Words added": "Добавленные слова",
-  "Not set": "Не задано"
+  "Not set": "Не задано",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Сводка ждёт, пока вы снова войдёте в AWS. Она начнётся сама, как только вы войдёте.",
+  "The summary is waiting for the notes model to finish downloading.": "Сводка ждёт окончания загрузки модели заметок."
 }

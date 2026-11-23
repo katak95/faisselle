@@ -865,5 +865,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "บันทึกการตั้งค่าไม่ได้ ลองอีกครั้งหรือเลือกที่อื่น",
   "This preview is out of date. Import the setup again.": "ตัวอย่างนี้ไม่เป็นปัจจุบันแล้ว นำเข้าการตั้งค่าอีกครั้ง",
   "Words added": "คำที่เพิ่ม",
-  "Not set": "ยังไม่ได้ตั้ง"
+  "Not set": "ยังไม่ได้ตั้ง",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "สรุปกำลังรอให้คุณลงชื่อเข้าใช้ AWS อีกครั้ง จะเริ่มเองเมื่อคุณลงชื่อเข้าใช้แล้ว",
+  "The summary is waiting for the notes model to finish downloading.": "สรุปกำลังรอให้โมเดลโน้ตดาวน์โหลดเสร็จ"
 }

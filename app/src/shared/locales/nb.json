@@ -907,5 +907,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Kunne ikke lagre oppsettet. Prøv igjen, eller velg et annet sted.",
   "This preview is out of date. Import the setup again.": "Forhåndsvisningen er utdatert. Importer oppsettet på nytt.",
   "Words added": "Ord lagt til",
-  "Not set": "Ikke angitt"
+  "Not set": "Ikke angitt",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Sammendraget venter på at du logger på AWS igjen. Det starter av seg selv når du er logget på.",
+  "The summary is waiting for the notes model to finish downloading.": "Sammendraget venter på at notatmodellen er ferdig nedlastet."
 }

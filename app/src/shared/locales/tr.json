@@ -895,5 +895,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Kurulum kaydedilemedi. Yeniden deneyin veya başka bir yer seçin.",
   "This preview is out of date. Import the setup again.": "Bu önizleme güncel değil. Kurulumu yeniden içe aktarın.",
   "Words added": "Eklenen sözcükler",
-  "Not set": "Ayarlanmadı"
+  "Not set": "Ayarlanmadı",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Özet, AWS’de yeniden oturum açmanızı bekliyor. Oturum açtığınızda kendiliğinden başlar.",
+  "The summary is waiting for the notes model to finish downloading.": "Özet, not modelinin indirilmesinin bitmesini bekliyor."
 }

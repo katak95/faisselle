@@ -910,5 +910,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά ή επιλέξτε άλλη θέση.",
   "This preview is out of date. Import the setup again.": "Αυτή η προεπισκόπηση δεν είναι πια επίκαιρη. Εισαγάγετε ξανά τις ρυθμίσεις.",
   "Words added": "Λέξεις που προστέθηκαν",
-  "Not set": "Δεν έχει οριστεί"
+  "Not set": "Δεν έχει οριστεί",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Η περίληψη περιμένει να συνδεθείτε ξανά στο AWS. Ξεκινά μόνη της μόλις συνδεθείτε.",
+  "The summary is waiting for the notes model to finish downloading.": "Η περίληψη περιμένει να ολοκληρωθεί η λήψη του μοντέλου σημειώσεων."
 }

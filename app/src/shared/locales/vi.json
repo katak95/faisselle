@@ -865,5 +865,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Không lưu được thiết lập. Hãy thử lại hoặc chọn nơi khác.",
   "This preview is out of date. Import the setup again.": "Bản xem trước này đã cũ. Hãy nhập lại thiết lập.",
   "Words added": "Từ đã thêm",
-  "Not set": "Chưa đặt"
+  "Not set": "Chưa đặt",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Bản tóm tắt đang chờ bạn đăng nhập lại AWS. Nó sẽ tự bắt đầu khi bạn đã đăng nhập.",
+  "The summary is waiting for the notes model to finish downloading.": "Bản tóm tắt đang chờ mô hình ghi chú tải xong."
 }

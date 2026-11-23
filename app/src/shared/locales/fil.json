@@ -907,5 +907,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Hindi ma-save ang setup. Subukan ulit, o pumili ng ibang lugar.",
   "This preview is out of date. Import the setup again.": "Luma na ang preview na ito. I-import ulit ang setup.",
   "Words added": "Mga salitang idinagdag",
-  "Not set": "Hindi nakatakda"
+  "Not set": "Hindi nakatakda",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Hinihintay ng buod na mag-sign in ka ulit sa AWS. Kusa itong magsisimula kapag naka-sign in ka na.",
+  "The summary is waiting for the notes model to finish downloading.": "Hinihintay ng buod na matapos ma-download ang notes model."
 }

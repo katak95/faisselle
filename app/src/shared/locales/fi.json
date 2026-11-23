@@ -913,5 +913,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Asetuksia ei voitu tallentaa. Yritä uudelleen tai valitse toinen sijainti.",
   "This preview is out of date. Import the setup again.": "Esikatselu on vanhentunut. Tuo asetukset uudelleen.",
   "Words added": "Lisätyt sanat",
-  "Not set": "Ei asetettu"
+  "Not set": "Ei asetettu",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Yhteenveto odottaa, että kirjaudut uudelleen AWS:ään. Se alkaa itsestään, kun olet kirjautunut.",
+  "The summary is waiting for the notes model to finish downloading.": "Yhteenveto odottaa, että muistiinpanomallin lataus valmistuu."
 }

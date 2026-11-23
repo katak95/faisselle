@@ -907,5 +907,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Det gick inte att spara inställningarna. Försök igen eller välj en annan plats.",
   "This preview is out of date. Import the setup again.": "Förhandsvisningen är inaktuell. Importera inställningarna igen.",
   "Words added": "Tillagda ord",
-  "Not set": "Inte angivet"
+  "Not set": "Inte angivet",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Sammanfattningen väntar på att du loggar in på AWS igen. Den startar av sig själv när du är inloggad.",
+  "The summary is waiting for the notes model to finish downloading.": "Sammanfattningen väntar på att anteckningsmodellen laddas ned klart."
 }

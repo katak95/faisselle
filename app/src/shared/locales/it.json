@@ -926,5 +926,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Impossibile salvare la configurazione. Riprova o scegli un’altra posizione.",
   "This preview is out of date. Import the setup again.": "Questa anteprima non è più aggiornata. Importa di nuovo la configurazione.",
   "Words added": "Parole aggiunte",
-  "Not set": "Non impostato"
+  "Not set": "Non impostato",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Il riassunto attende che tu acceda di nuovo ad AWS. Parte da solo appena hai effettuato l’accesso.",
+  "The summary is waiting for the notes model to finish downloading.": "Il riassunto attende che il modello delle note finisca di scaricarsi."
 }

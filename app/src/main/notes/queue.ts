@@ -54,6 +54,8 @@ export function createQueue(o: {
   idleMs?: number
   /** a notes model is on the Mac (first run: not until its download lands); nothing runs before */
   modelReady?: () => boolean
+  /** what the jobs wait for when the model isn't ready, for the log (the AWS sign-in, the download…) */
+  waitingFor?: () => string
 }) {
   const waiting: Entry[] = []
   let running: { entry: Entry; abort: AbortController } | undefined
@@ -107,7 +109,7 @@ export function createQueue(o: {
     if (i === -1) i = waiting.findIndex((e) => (e.kind === 'index' || e.kind === 'folder') && allowed(e.kind))
     if (i === -1) {
       if (!waiting.length) armIdle()
-      else if (o.modelReady && !o.modelReady() && !saidWait) { saidWait = true; console.info('NOTES', 'waiting for the notes model to finish downloading') }
+      else if (o.modelReady && !o.modelReady() && !saidWait) { saidWait = true; console.info('NOTES', o.waitingFor?.() ?? 'waiting for the notes model to finish downloading') }
       watching(); return
     }
     disarmIdle()

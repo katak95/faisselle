@@ -865,5 +865,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "Tidak dapat menyimpan tetapan. Cuba lagi atau pilih tempat lain.",
   "This preview is out of date. Import the setup again.": "Pratonton ini sudah lapuk. Import tetapan sekali lagi.",
   "Words added": "Perkataan ditambah",
-  "Not set": "Tidak ditetapkan"
+  "Not set": "Tidak ditetapkan",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Ringkasan menunggu anda log masuk semula ke AWS. Ia bermula sendiri sebaik sahaja anda log masuk.",
+  "The summary is waiting for the notes model to finish downloading.": "Ringkasan menunggu model nota selesai dimuat turun."
 }

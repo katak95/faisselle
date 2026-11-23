@@ -963,5 +963,7 @@
   "Couldn't save the setup. Try again, or pick another place.": "تعذّر حفظ الإعداد. حاول مرة أخرى أو اختر مكانًا آخر.",
   "This preview is out of date. Import the setup again.": "هذه المعاينة قديمة. استورد الإعداد مرة أخرى.",
   "Words added": "الكلمات المضافة",
-  "Not set": "غير محدد"
+  "Not set": "غير محدد",
+  "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "الملخص ينتظر أن تسجّل الدخول إلى AWS مرة أخرى. يبدأ تلقائيًا بمجرد تسجيل الدخول.",
+  "The summary is waiting for the notes model to finish downloading.": "الملخص ينتظر انتهاء تنزيل نموذج الملاحظات."
 }
