@@ -893,7 +893,6 @@
   "Remove the secret": "Fjern hemmeligheten",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock bruker ID-er som anthropic.claude-haiku-5-5 (tillatelse bedrock-mantle:CreateInference). En InvokeModel-ID eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (tillatelse bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Del oppsettet",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modellene og tilkoblingene dine i én fil som du kan gi til noen andre: hvor sammendrag skrives, Bedrock, Microsoft 365, Confluence og dine egne ord. Ingen passord, nøkler eller pålogginger blir med: hver person logger på med sine egne kontoer.",
   "Export the setup": "Eksporter oppsettet",
   "Import a setup": "Importer et oppsett",
   "Choose what to apply from this setup:": "Velg hva du vil bruke fra dette oppsettet:",
@@ -910,5 +909,12 @@
   "Not set": "Ikke angitt",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Sammendraget venter på at du logger på AWS igjen. Det starter av seg selv når du er logget på.",
   "The summary is waiting for the notes model to finish downloading.": "Sammendraget venter på at notatmodellen er ferdig nedlastet.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Sammendraget skrives når opptaket stopper: denne datamaskinen bruker bare notatmodellen når ingenting tas opp."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Sammendraget skrives når opptaket stopper: denne datamaskinen bruker bare notatmodellen når ingenting tas opp.",
+  "Company context": "Bedriftskontekst",
+  "About your organisation": "Om organisasjonen din",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Hva organisasjonen din gjør, kundene, produktene, teamene og begrepene: KI-en bruker det som bakgrunn for sammendrag, oppgaver, oppfølgings-e-post, orienteringer og Spør. På Amazon Bedrock sendes det med.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "For eksempel: Acme lager faktureringsprogramvare for tannleger i Frankrike og Belgia. Kundene våre er klinikker og tannlegegrupper. Team: Salg, Kundesuksess, Produkt. «MRR» er månedlig gjentakende inntekt; «Q3-utrullingen» er flyttingen av alle klinikker til den nye versjonen.",
+  "Model for each use": "Modell for hver bruk",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "La en bruk stå tom for å skrive den med modellen over. Hver modell går gjennom endepunktet ID-en krever, som over.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modellene og tilkoblingene dine i én fil som du kan gi til noen andre: hvor sammendrag skrives, Bedrock og modellene, bedriftskonteksten din, Microsoft 365, Confluence og dine egne ord. Ingen passord, nøkler eller pålogginger blir med: hver person logger på med sine egne kontoer."
 }

@@ -910,7 +910,6 @@
   "Remove the secret": "Elimină secretul",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude în Amazon Bedrock primește ID-uri precum anthropic.claude-haiku-5-5 (permisiunea bedrock-mantle:CreateInference). Un ID InvokeModel sau un profil de inferență, precum eu.anthropic.claude-haiku-4-5-20251001-v1:0, trece prin bedrock-runtime (permisiunea bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Partajează configurarea",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelele și conectorii tăi într-un singur fișier, pe care îl poți da altcuiva: unde se scriu rezumatele, Bedrock, Microsoft 365, Confluence și cuvintele tale personalizate. Nu conține parole, chei sau conectări: fiecare se conectează cu propriile conturi.",
   "Export the setup": "Exportă configurarea",
   "Import a setup": "Importă o configurare",
   "Choose what to apply from this setup:": "Alege ce aplici din această configurare:",
@@ -927,5 +926,12 @@
   "Not set": "Nesetat",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Rezumatul așteaptă să te conectezi din nou la AWS. Pornește singur după ce te conectezi.",
   "The summary is waiting for the notes model to finish downloading.": "Rezumatul așteaptă să se termine descărcarea modelului de note.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Rezumatul va fi scris după ce se oprește înregistrarea: acest computer folosește modelul de note doar când nu se înregistrează nimic."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Rezumatul va fi scris după ce se oprește înregistrarea: acest computer folosește modelul de note doar când nu se înregistrează nimic.",
+  "Company context": "Contextul companiei",
+  "About your organisation": "Despre organizația ta",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Ce face organizația ta, clienții, produsele, echipele și termenii ei: AI le folosește drept context pentru rezumate, sarcini, e-mailuri de urmărire, informări și Întreabă. Pe Amazon Bedrock este trimis odată cu ele.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "De exemplu: Acme face software de facturare pentru dentiști din Franța și Belgia. Clienții noștri sunt cabinete și grupuri stomatologice. Echipe: Vânzări, Succesul clienților, Produs. „MRR” este venitul recurent lunar; „lansarea din T3” este trecerea tuturor cabinetelor la noua versiune.",
+  "Model for each use": "Model pentru fiecare utilizare",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Lasă o utilizare goală ca să fie scrisă cu modelul de mai sus. Fiecare model trece prin punctul de acces pe care îl cere ID-ul lui, ca mai sus.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelele și conectorii tăi într-un singur fișier, pe care îl poți da altcuiva: unde se scriu rezumatele, Bedrock și modelele lui, contextul companiei tale, Microsoft 365, Confluence și cuvintele tale personalizate. Nu conține parole, chei sau conectări: fiecare se conectează cu propriile conturi."
 }

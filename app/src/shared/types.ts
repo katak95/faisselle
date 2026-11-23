@@ -345,7 +345,7 @@ export type YogurtApi = {
   }
   settings: {
     /** myName: what the person is called in meetings (their Mac's full name, macName, when they never changed it) */
-    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Faisselle's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; includeRecordingCredit: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
+    get(): Promise<{ theme: Theme; openAtLogin: boolean; showInMenuBar: boolean; showNextMeeting: boolean; showRecordingPill: boolean; appVisibility: AppVisibility; /** the language picked; '' follows the Mac */ language: string; /** the language in use */ locale: string; /** the Mac's language, among Faisselle's */ systemLocale: string; myName: string; macName: string; /** a recording stops by itself when its call ends (off: ask first) */ stopWhenCallEnds: boolean; recordingReminder: boolean; includeRecordingCredit: boolean; keepRecordings: boolean; /** personal jargon, spelled as typed */ jargon: string[]; /** what the person wrote about their organisation */ organisation: string; /** the language people speak in meetings */ spoken: import('./spoken').Spoken; /** default summary language; '' follows the meeting */ summaryLanguage: string }>
     /** blank goes back to the Mac's full name */
     setName(name: string): Promise<void>
     setTheme(v: Theme): Promise<void>
@@ -360,6 +360,8 @@ export type YogurtApi = {
     setKeepRecordings(on: boolean): Promise<void>
     /** saves the whole list; gives back what was kept */
     setJargon(terms: string[]): Promise<string[]>
+    /** Settings → Company context: saved trimmed and cut to its length; returns what was kept */
+    setOrganisation(text: string): Promise<string>
     /** the interface language ('' follows the Mac); gives back the one now in use */
     setLanguage(id: string): Promise<string>
     setSummaryLanguage(id: string): Promise<void>
@@ -556,7 +558,7 @@ export type CloudNotesView = {
   /** a notes model fits this computer (it can go back to local) */
   canRunLocally: boolean
   sso: SsoStatus
-  config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string }
+  config: { startUrl: string; ssoRegion: string; accountId: string; roleName: string; region: string; modelId: string; /** a model for some uses; '' in setConfig gives a use back to modelId */ models: Partial<Record<ModelUse, string>> }
   /** signed in, with an account and role: notes can be written on Bedrock */
   ready: boolean
   /** the local notes models' files on this computer (0: none), which Bedrock lets the person remove */
@@ -606,7 +608,10 @@ export type M365Status =
 /** browser: signed in with the browser on the app's own redirect URI (authorization code + PKCE), not the device code */
 export type M365Method = 'code' | 'browser'
 /** Settings → Share the setup: a section of the file, one field that changes, and what importing it would change */
-export type ShareSection = 'notes' | 'm365' | 'confluence' | 'vocabulary'
+/** what an answer is for, so each use can have its own model on Bedrock (Settings → Model for each use) */
+export type ModelUse = 'summary' | 'actions' | 'followup' | 'brief' | 'ask'
+export const MODEL_USES: ModelUse[] = ['summary', 'actions', 'followup', 'brief', 'ask']
+export type ShareSection = 'notes' | 'context' | 'm365' | 'confluence' | 'vocabulary'
 export type ShareChange = { section: ShareSection; field: string; from: string; to: string }
 export type SharePreview = { section: ShareSection; changes: ShareChange[] }
 export type ShareOpened = { ok: true; token: string; preview: SharePreview[]; appVersion: string; exportedAt: string } | { ok: false; error: 'cancelled' | 'invalid' | 'newer' | 'failed' }

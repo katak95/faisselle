@@ -5,6 +5,7 @@ import { PERMISSION_KINDS, type PermissionKind, type Permissions } from './permi
 import { firstRunPlan, missing, nudge } from '../shared/onboarding'
 import type { OnboardingPlan } from '../shared/types'
 import { cleanJargon } from '../shared/jargon'
+import { cleanOrganisation } from './organisation'
 import { isLocale, setLanguage } from '../shared/i18n'
 import { SPOKEN, type Spoken } from '../shared/spoken'
 
@@ -62,7 +63,7 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
     // what the Mac says, so a change in System Settings shows here
     // locale: every window (main, card, widget) shows the interface language
     // language: the one picked ('' is the Mac's); locale: the one in use; systemLocale: the Mac's, for the picker
-    return { theme: s.theme ?? 'system', openAtLogin: d.loginOn(s.openAtLogin), showInMenuBar: visible.showInMenuBar, showNextMeeting: s.showNextMeeting !== false, showRecordingPill: visible.showRecordingPill, appVisibility: !visible.showInMenuBar ? 'dock' : visible.showInDock ? 'both' : 'menu-bar', language: isLocale(s.language) ? s.language : '', locale: localeOf(s, systemLocale()), systemLocale: systemLocale(), myName: s.myName?.trim() || d.macName(), macName: d.macName(), stopWhenCallEnds: stopsWhenCallEnds(s), recordingReminder: recordingReminderOn(s), includeRecordingCredit: includesRecordingCredit(s), keepRecordings: s.keepRecordings !== false, jargon: cleanJargon(s.jargon), spoken: spokenSetting(s), summaryLanguage: summaryLanguageSetting(s) }
+    return { theme: s.theme ?? 'system', openAtLogin: d.loginOn(s.openAtLogin), showInMenuBar: visible.showInMenuBar, showNextMeeting: s.showNextMeeting !== false, showRecordingPill: visible.showRecordingPill, appVisibility: !visible.showInMenuBar ? 'dock' : visible.showInDock ? 'both' : 'menu-bar', language: isLocale(s.language) ? s.language : '', locale: localeOf(s, systemLocale()), systemLocale: systemLocale(), myName: s.myName?.trim() || d.macName(), macName: d.macName(), stopWhenCallEnds: stopsWhenCallEnds(s), recordingReminder: recordingReminderOn(s), includeRecordingCredit: includesRecordingCredit(s), keepRecordings: s.keepRecordings !== false, jargon: cleanJargon(s.jargon), organisation: cleanOrganisation(s.organisation), spoken: spokenSetting(s), summaryLanguage: summaryLanguageSetting(s) }
   }
   ipcMain.handle('settings:get', read)
   // what the person is called in meetings (who "You" is when naming voices); blank: the Mac's full name again
@@ -116,6 +117,11 @@ export function hookPreferences(d: { file: string; permissions: Permissions; ask
     return jargon
   }
   ipcMain.handle('settings:jargon', (_e, v: unknown) => setJargon(v))
+  ipcMain.handle('settings:organisation', (_e, v: unknown) => {
+    const text = cleanOrganisation(v)
+    updateSettings(d.file, { organisation: text || undefined })
+    return text
+  })
   // English only is the default, so only Multi-language is written down; true: saved
   const setSpoken = (v: unknown): boolean => {
     if (!SPOKEN.includes(v as Spoken)) return false

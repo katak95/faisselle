@@ -881,7 +881,6 @@
   "Remove the secret": "Gizli anahtarı kaldır",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock’taki Claude, anthropic.claude-haiku-5-5 gibi kimlikler alır (bedrock-mantle:CreateInference izni). eu.anthropic.claude-haiku-4-5-20251001-v1:0 gibi bir InvokeModel kimliği veya çıkarım profili bedrock-runtime üzerinden gider (bedrock:InvokeModelWithResponseStream izni).",
   "Share the setup": "Kurulumu paylaş",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelleriniz ve bağlayıcılarınız, başka birine verebileceğiniz tek bir dosyada: özetlerin nerede yazıldığı, Bedrock, Microsoft 365, Confluence ve özel sözcükleriniz. İçinde parola, anahtar veya oturum yoktur: herkes kendi hesaplarıyla oturum açar.",
   "Export the setup": "Kurulumu dışa aktar",
   "Import a setup": "Kurulum içe aktar",
   "Choose what to apply from this setup:": "Bu kurulumdan neyi uygulayacağınızı seçin:",
@@ -898,5 +897,12 @@
   "Not set": "Ayarlanmadı",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Özet, AWS’de yeniden oturum açmanızı bekliyor. Oturum açtığınızda kendiliğinden başlar.",
   "The summary is waiting for the notes model to finish downloading.": "Özet, not modelinin indirilmesinin bitmesini bekliyor.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Özet kayıt durduğunda yazılacak: bu bilgisayar not modelini yalnızca hiçbir şey kaydedilmezken kullanır."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Özet kayıt durduğunda yazılacak: bu bilgisayar not modelini yalnızca hiçbir şey kaydedilmezken kullanır.",
+  "Company context": "Şirket bağlamı",
+  "About your organisation": "Kuruluşunuz hakkında",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Kuruluşunuzun ne yaptığı, müşterileri, ürünleri, ekipleri ve terimleri: yapay zekâ bunu özetler, görevler, takip e-postaları, brifingler ve Sor için arka plan olarak kullanır. Amazon Bedrock’ta bunlarla birlikte gönderilir.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Örneğin: Acme, Fransa ve Belçika’daki diş hekimleri için faturalama yazılımı yapar. Müşterilerimiz klinikler ve diş hekimliği gruplarıdır. Ekipler: Satış, Müşteri başarısı, Ürün. “MRR” aylık yinelenen gelirdir; “3. çeyrek geçişi” tüm kliniklerin yeni sürüme taşınmasıdır.",
+  "Model for each use": "Her kullanım için model",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Bir kullanımı boş bırakırsanız yukarıdaki modelle yazılır. Her model, kimliğinin gerektirdiği uç noktadan geçer, yukarıdaki gibi.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelleriniz ve bağlayıcılarınız, başka birine verebileceğiniz tek bir dosyada: özetlerin nerede yazıldığı, Bedrock ve modelleri, şirket bağlamınız, Microsoft 365, Confluence ve özel sözcükleriniz. İçinde parola, anahtar veya oturum yoktur: herkes kendi hesaplarıyla oturum açar."
 }

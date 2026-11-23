@@ -903,7 +903,6 @@
   "Remove the secret": "הסרת הסוד",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ב-Amazon Bedrock מקבל מזהים כמו anthropic.claude-haiku-5-5 (הרשאה bedrock-mantle:CreateInference). מזהה InvokeModel או פרופיל הסקה, כמו eu.anthropic.claude-haiku-4-5-20251001-v1:0, עובר דרך bedrock-runtime (הרשאה bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "שיתוף ההגדרות",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "המודלים והחיבורים שלך בקובץ אחד שאפשר לתת למישהו אחר: איפה נכתבים הסיכומים, Bedrock,‏ Microsoft 365,‏ Confluence והמילים המותאמות שלך. אין בו סיסמה, מפתח או כניסה: כל אחד נכנס עם החשבונות שלו.",
   "Export the setup": "ייצוא ההגדרות",
   "Import a setup": "ייבוא הגדרות",
   "Choose what to apply from this setup:": "בחירה מה להחיל מההגדרות האלה:",
@@ -920,5 +919,12 @@
   "Not set": "לא הוגדר",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "הסיכום ממתין לכניסה מחדש ל-AWS. הוא יתחיל מעצמו ברגע שתתבצע כניסה.",
   "The summary is waiting for the notes model to finish downloading.": "הסיכום ממתין לסיום ההורדה של מודל ההערות.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "הסיכום ייכתב אחרי שההקלטה תיעצר: המחשב הזה משתמש במודל ההערות רק כשאין הקלטה."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "הסיכום ייכתב אחרי שההקלטה תיעצר: המחשב הזה משתמש במודל ההערות רק כשאין הקלטה.",
+  "Company context": "הקשר החברה",
+  "About your organisation": "על הארגון שלך",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "מה הארגון שלך עושה, הלקוחות, המוצרים, הצוותים והמונחים שלו: הבינה המלאכותית משתמשת בזה כרקע לסיכומים, למשימות, למיילים אחרי הפגישה, לתדריכים ולשאלות. ב-Amazon Bedrock הוא נשלח יחד איתם.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "לדוגמה: Acme מפתחת תוכנת חיוב לרופאי שיניים בצרפת ובבלגיה. הלקוחות שלנו הם מרפאות ורשתות מרפאות שיניים. צוותים: מכירות, הצלחת לקוחות, מוצר. „MRR” הוא ההכנסה החוזרת החודשית; „ההשקה ברבעון השלישי” היא המעבר של כל המרפאות לגרסה החדשה.",
+  "Model for each use": "מודל לכל שימוש",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "אפשר להשאיר שימוש ריק כדי שייכתב עם המודל שלמעלה. כל מודל עובר דרך נקודת הקצה שהמזהה שלו דורש, כמו למעלה.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "המודלים והחיבורים שלך בקובץ אחד שאפשר לתת למישהו אחר: איפה נכתבים הסיכומים, Bedrock והמודלים שלו, הקשר החברה שלך, Microsoft 365,‏ Confluence והמילים המותאמות שלך. אין בו סיסמה, מפתח או כניסה: כל אחד נכנס עם החשבונות שלו."
 }

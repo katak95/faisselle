@@ -851,7 +851,6 @@
   "Remove the secret": "シークレットを削除",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。",
   "Share the setup": "設定を共有",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "モデルとコネクタを 1 つのファイルにまとめて、ほかの人に渡せます：要約を書く場所、Bedrock、Microsoft 365、Confluence、カスタム単語。パスワード、キー、サインイン情報は含まれません。各自が自分のアカウントでサインインします。",
   "Export the setup": "設定を書き出す",
   "Import a setup": "設定を読み込む",
   "Choose what to apply from this setup:": "この設定から適用する項目を選んでください：",
@@ -868,5 +867,12 @@
   "Not set": "未設定",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "要約は AWS への再サインインを待っています。サインインすると自動的に始まります。",
   "The summary is waiting for the notes model to finish downloading.": "要約はメモ用モデルのダウンロード完了を待っています。",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "録音が止まると要約が書かれます。このコンピュータは、何も録音していないときだけメモ用モデルを使います。"
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "録音が止まると要約が書かれます。このコンピュータは、何も録音していないときだけメモ用モデルを使います。",
+  "Company context": "会社のコンテキスト",
+  "About your organisation": "組織について",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "組織の事業、顧客、製品、チーム、用語：AI はこれを要約、アクション、フォローアップメール、ブリーフ、質問の背景として読みます。Amazon Bedrock では一緒に送信されます。",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "例：Acme はフランスとベルギーの歯科医向けに請求ソフトを開発しています。顧客は歯科医院と歯科グループです。チーム：営業、カスタマーサクセス、プロダクト。「MRR」は月次経常収益、「Q3 ロールアウト」は全医院の新バージョンへの移行です。",
+  "Model for each use": "用途ごとのモデル",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "用途を空欄にすると、上のモデルで書かれます。各モデルは、その ID が求めるエンドポイントを通ります（上と同じ）。",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "モデルとコネクタを 1 つのファイルにまとめて、ほかの人に渡せます：要約を書く場所、Bedrock とそのモデル、会社のコンテキスト、Microsoft 365、Confluence、カスタム単語。パスワード、キー、サインイン情報は含まれません。各自が自分のアカウントでサインインします。"
 }

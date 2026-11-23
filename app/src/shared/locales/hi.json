@@ -881,7 +881,6 @@
   "Remove the secret": "सीक्रेट हटाएं",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock में Claude, anthropic.claude-haiku-5-5 जैसे ID लेता है (bedrock-mantle:CreateInference अनुमति)। InvokeModel ID या इन्फ़रेंस प्रोफ़ाइल, जैसे eu.anthropic.claude-haiku-4-5-20251001-v1:0, bedrock-runtime से जाती है (bedrock:InvokeModelWithResponseStream अनुमति)।",
   "Share the setup": "सेटअप साझा करें",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "आपके मॉडल और कनेक्टर एक फ़ाइल में, किसी और को देने के लिए: सारांश कहाँ लिखे जाते हैं, Bedrock, Microsoft 365, Confluence और आपके अपने शब्द। इसमें कोई पासवर्ड, कुंजी या साइन-इन नहीं होता: हर व्यक्ति अपने खातों से साइन इन करता है।",
   "Export the setup": "सेटअप एक्सपोर्ट करें",
   "Import a setup": "सेटअप इंपोर्ट करें",
   "Choose what to apply from this setup:": "इस सेटअप से क्या लागू करना है, चुनें:",
@@ -898,5 +897,12 @@
   "Not set": "सेट नहीं",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "सारांश आपके AWS में फिर से साइन इन करने का इंतज़ार कर रहा है। साइन इन होते ही यह अपने-आप शुरू हो जाएगा।",
   "The summary is waiting for the notes model to finish downloading.": "सारांश नोट्स मॉडल के डाउनलोड पूरा होने का इंतज़ार कर रहा है।",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "रिकॉर्डिंग रुकने के बाद सारांश लिखा जाएगा: यह कंप्यूटर नोट्स मॉडल तभी चलाता है जब कुछ रिकॉर्ड न हो रहा हो।"
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "रिकॉर्डिंग रुकने के बाद सारांश लिखा जाएगा: यह कंप्यूटर नोट्स मॉडल तभी चलाता है जब कुछ रिकॉर्ड न हो रहा हो।",
+  "Company context": "कंपनी का संदर्भ",
+  "About your organisation": "आपके संगठन के बारे में",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "आपका संगठन क्या करता है, उसके ग्राहक, उत्पाद, टीमें और शब्द: AI इसे सारांश, काम, फ़ॉलो-अप ईमेल, ब्रीफ़ और पूछें के लिए पृष्ठभूमि के रूप में पढ़ता है। Amazon Bedrock पर यह उनके साथ भेजा जाता है।",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "उदाहरण: Acme फ़्रांस और बेल्जियम के दंत चिकित्सकों के लिए बिलिंग सॉफ़्टवेयर बनाती है। हमारे ग्राहक क्लिनिक और डेंटल समूह हैं। टीमें: बिक्री, ग्राहक सफलता, उत्पाद। \"MRR\" मासिक आवर्ती राजस्व है; \"Q3 रोलआउट\" सभी क्लिनिकों का नए वर्शन पर जाना है।",
+  "Model for each use": "हर इस्तेमाल के लिए मॉडल",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "किसी इस्तेमाल को खाली छोड़ें ताकि वह ऊपर वाले मॉडल से लिखा जाए। हर मॉडल उस एंडपॉइंट से जाता है जो उसका ID मांगता है, जैसा ऊपर है।",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "आपके मॉडल और कनेक्टर एक फ़ाइल में, किसी और को देने के लिए: सारांश कहाँ लिखे जाते हैं, Bedrock और उसके मॉडल, आपकी कंपनी का संदर्भ, Microsoft 365, Confluence और आपके अपने शब्द। इसमें कोई पासवर्ड, कुंजी या साइन-इन नहीं होता: हर व्यक्ति अपने खातों से साइन इन करता है।"
 }

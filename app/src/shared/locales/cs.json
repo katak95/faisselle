@@ -924,7 +924,6 @@
   "Remove the secret": "Odebrat tajný klíč",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude v Amazon Bedrock bere ID jako anthropic.claude-haiku-5-5 (oprávnění bedrock-mantle:CreateInference). ID pro InvokeModel nebo profil inference, například eu.anthropic.claude-haiku-4-5-20251001-v1:0, jde přes bedrock-runtime (oprávnění bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Sdílet nastavení",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Vaše modely a připojení v jednom souboru, který můžete předat někomu jinému: kde se píšou shrnutí, Bedrock, Microsoft 365, Confluence a vaše vlastní slova. Nejsou v něm hesla, klíče ani přihlášení: každý se přihlásí vlastními účty.",
   "Export the setup": "Exportovat nastavení",
   "Import a setup": "Importovat nastavení",
   "Choose what to apply from this setup:": "Vyberte, co z tohoto nastavení použít:",
@@ -941,5 +940,12 @@
   "Not set": "Nenastaveno",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Shrnutí čeká, až se znovu přihlásíte k AWS. Spustí se samo, jakmile budete přihlášeni.",
   "The summary is waiting for the notes model to finish downloading.": "Shrnutí čeká na dokončení stahování modelu poznámek.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Shrnutí se napíše, jakmile nahrávání skončí: tento počítač používá model poznámek, jen když se nic nenahrává."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Shrnutí se napíše, jakmile nahrávání skončí: tento počítač používá model poznámek, jen když se nic nenahrává.",
+  "Company context": "Kontext firmy",
+  "About your organisation": "O vaší organizaci",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Čím se vaše organizace zabývá, její zákazníci, produkty, týmy a pojmy: AI to používá jako kontext pro shrnutí, úkoly, e-maily po schůzce, podklady a Zeptat se. V Amazon Bedrock se posílá spolu s nimi.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Například: Acme vyvíjí fakturační software pro zubaře ve Francii a Belgii. Našimi zákazníky jsou ordinace a zubní skupiny. Týmy: Prodej, Úspěch zákazníků, Produkt. „MRR“ je měsíční opakovaný příjem; „nasazení ve 3. čtvrtletí“ je přechod všech ordinací na novou verzi.",
+  "Model for each use": "Model pro každé použití",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Nechte použití prázdné, aby se psalo modelem výše. Každý model jde přes koncový bod, který vyžaduje jeho ID, jako výše.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Vaše modely a připojení v jednom souboru, který můžete předat někomu jinému: kde se píšou shrnutí, Bedrock a jeho modely, kontext vaší firmy, Microsoft 365, Confluence a vaše vlastní slova. Nejsou v něm hesla, klíče ani přihlášení: každý se přihlásí vlastními účty."
 }

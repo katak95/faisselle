@@ -20,6 +20,7 @@ import { TemplateSettings } from '../components/TemplateSettings'
 import { M365Settings } from '../components/M365Settings'
 import { AtlassianSettings } from '../components/AtlassianSettings'
 import { SetupShare } from '../components/SetupShare'
+import { CompanyContext } from '../components/CompanyContext'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -273,6 +274,8 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
           </div>
 
           <CloudNotesSettings key={`cloud-${setupRev}`} />
+
+          <CompanyContext key={`company-${setupRev}`} />
 
           <TemplateSettings />
 

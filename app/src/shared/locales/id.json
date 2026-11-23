@@ -851,7 +851,6 @@
   "Remove the secret": "Hapus rahasia",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude di Amazon Bedrock memakai ID seperti anthropic.claude-haiku-5-5 (izin bedrock-mantle:CreateInference). ID InvokeModel atau profil inferensi, seperti eu.anthropic.claude-haiku-4-5-20251001-v1:0, lewat bedrock-runtime (izin bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Bagikan pengaturan",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Model dan konektor Anda dalam satu file untuk diberikan ke orang lain: tempat ringkasan ditulis, Bedrock, Microsoft 365, Confluence, dan kata khusus Anda. Tidak ada kata sandi, kunci, atau login di dalamnya: setiap orang masuk dengan akunnya sendiri.",
   "Export the setup": "Ekspor pengaturan",
   "Import a setup": "Impor pengaturan",
   "Choose what to apply from this setup:": "Pilih yang ingin diterapkan dari pengaturan ini:",
@@ -868,5 +867,12 @@
   "Not set": "Belum diatur",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Ringkasan menunggu Anda masuk lagi ke AWS. Ringkasan akan mulai sendiri setelah Anda masuk.",
   "The summary is waiting for the notes model to finish downloading.": "Ringkasan menunggu model catatan selesai diunduh.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Ringkasan akan ditulis setelah perekaman berhenti: komputer ini hanya menjalankan model catatan saat tidak ada yang direkam."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Ringkasan akan ditulis setelah perekaman berhenti: komputer ini hanya menjalankan model catatan saat tidak ada yang direkam.",
+  "Company context": "Konteks perusahaan",
+  "About your organisation": "Tentang organisasi Anda",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Apa yang dilakukan organisasi Anda, klien, produk, tim, dan istilahnya: AI membacanya sebagai latar untuk ringkasan, tugas, email tindak lanjut, brief, dan Tanya. Di Amazon Bedrock, konteks ini dikirim bersamanya.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Misalnya: Acme membuat perangkat lunak penagihan untuk dokter gigi di Prancis dan Belgia. Klien kami adalah klinik dan grup dokter gigi. Tim: Penjualan, Kesuksesan pelanggan, Produk. \"MRR\" adalah pendapatan berulang bulanan; \"peluncuran Q3\" adalah pemindahan semua klinik ke versi baru.",
+  "Model for each use": "Model untuk setiap penggunaan",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Kosongkan penggunaan agar ditulis dengan model di atas. Setiap model lewat endpoint yang diminta ID-nya, seperti di atas.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Model dan konektor Anda dalam satu file untuk diberikan ke orang lain: tempat ringkasan ditulis, Bedrock dan modelnya, konteks perusahaan Anda, Microsoft 365, Confluence, dan kata khusus Anda. Tidak ada kata sandi, kunci, atau login di dalamnya: setiap orang masuk dengan akunnya sendiri."
 }

@@ -2,6 +2,7 @@ import { peopleRule } from '../notes/enhance'
 import { clock } from '../../shared/transcript'
 import type { Item } from './retrieve'
 import { CITE } from '../../shared/citations'
+import { organisationBlock } from '../organisation'
 
 /**
  * The prompt for a question across meetings. It starts with the same instructions every time, byte for byte, so the
@@ -60,6 +61,7 @@ export function libraryPrompt(i: { items: Item[]; question: string; history: His
     libraryHead + (i.items.length ? sourcesText(i.items) : 'No meetings matched this question.'),
     '</sources>',
     '',
+    ...organisationBlock(),
     `Today is ${day(i.now)}.`,
     ...(i.spelling ? [i.spelling] : []),
     'Answer the question below from the sources, with their numbers like [1].',

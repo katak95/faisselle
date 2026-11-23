@@ -66,6 +66,7 @@ import { helperWatch, killAllWatches } from './callNames/watch'
 import { macFullName } from './user'
 import { setJargon, setOwnerName } from './vocab'
 import { cleanJargon } from '../shared/jargon'
+import { setOrganisation } from './organisation'
 import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
 import { UtilityEngine } from './engine'
@@ -661,6 +662,7 @@ app.whenReady().then(() => {
   const me = () => loadSettings(settingsFile).myName?.trim() || macName()
   setOwnerName(me)
   setJargon(() => cleanJargon(loadSettings(settingsFile).jargon))
+  setOrganisation(() => loadSettings(settingsFile).organisation ?? '')
   // names from the call: the call app is read while a meeting records, and each line of the other side gets the name talking then
   const callNames = hookCallNames({
     store, watch: !caps.callNames ? () => ({ stop() {} }) : isFake() ? fakeCallWatch : helperWatch(helperPath), myNames: () => [me(), macName()],

@@ -131,13 +131,29 @@ What may be needed on Atlassian's side:
 - Some organisations restrict OAuth redirects: the `localhost` callback above must then be allowed.
 - You need a personal space in Confluence (Profile → Personal space). Faisselle says so if there is none.
 
+## A model for each use (Bedrock)
+
+Settings → Notes model → **Model for each use**: a model for the summaries, the action items, the follow-up email,
+the brief or Ask, instead of the main **Model** (for example Claude Haiku for the summaries and Claude Sonnet for the
+brief). A use left empty is written with the main model. Each model goes through the endpoint its ID calls for (see
+the table above), so the role needs the permission for each one used. Titles and folder suggestions follow the main
+model.
+
+## Company context
+
+Settings → **Company context** → **About your organisation**: what your organisation does, its clients, products,
+teams and words, in your own words (up to 4,000 characters). The AI reads it as background, never as something said
+in the meeting, for the summaries, the action items, the follow-up email, the brief and Ask, on this computer or on
+Bedrock (where it is sent with them). It is shared with the setup below.
+
 ## Sharing the setup with someone else
 
 Settings → **Share the setup** → **Export the setup** writes the models and connectors in one file (JSON), to give
 to a colleague:
 
 - where summaries are written (this computer or Bedrock), and Bedrock's sign-in start URL, Identity Center region,
-  Bedrock region and model;
+  Bedrock region, model and models for each use;
+- the company context;
 - Microsoft 365: the organisation's app (client and tenant IDs), how to sign in (code or browser, with the redirect
   URI), the Outlook calendar and SharePoint/OneDrive search switches;
 - Confluence: the site in use;
@@ -147,6 +163,6 @@ Never a secret or a sign-in: no AWS token, account or role, no Bedrock API key, 
 no Atlassian sign-in or personal space.
 
 **Import a setup** shows what each part would change, current value → new one. The person keeps the parts they want
-and **Apply**: the custom words are added to theirs, never replaced. They then sign in with their own accounts (AWS,
+and **Apply**: the custom words are added to theirs, never replaced; the company context replaces theirs. They then sign in with their own accounts (AWS,
 Microsoft 365, Atlassian) in the sections above. A file is checked with the same rules as Settings: a field that
 doesn't pass them is left out.

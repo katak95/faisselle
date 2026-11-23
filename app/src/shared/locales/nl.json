@@ -893,7 +893,6 @@
   "Remove the secret": "Geheim verwijderen",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock gebruikt ID’s zoals anthropic.claude-haiku-5-5 (machtiging bedrock-mantle:CreateInference). Een InvokeModel-ID of inferentieprofiel, zoals eu.anthropic.claude-haiku-4-5-20251001-v1:0, gaat via bedrock-runtime (machtiging bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Instellingen delen",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Je modellen en koppelingen in één bestand, om aan iemand anders te geven: waar samenvattingen worden geschreven, Bedrock, Microsoft 365, Confluence en je eigen woorden. Er staat geen wachtwoord, sleutel of aanmelding in: iedereen meldt zich aan met de eigen accounts.",
   "Export the setup": "Instellingen exporteren",
   "Import a setup": "Instellingen importeren",
   "Choose what to apply from this setup:": "Kies wat je uit deze instellingen overneemt:",
@@ -910,5 +909,12 @@
   "Not set": "Niet ingesteld",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "De samenvatting wacht tot je je opnieuw aanmeldt bij AWS. Ze begint vanzelf zodra je bent aangemeld.",
   "The summary is waiting for the notes model to finish downloading.": "De samenvatting wacht tot het notitiemodel klaar is met downloaden.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "De samenvatting wordt geschreven zodra de opname stopt: deze computer gebruikt het notitiemodel alleen als er niets wordt opgenomen."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "De samenvatting wordt geschreven zodra de opname stopt: deze computer gebruikt het notitiemodel alleen als er niets wordt opgenomen.",
+  "Company context": "Bedrijfscontext",
+  "About your organisation": "Over je organisatie",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Wat je organisatie doet, haar klanten, producten, teams en begrippen: de AI gebruikt het als achtergrond voor samenvattingen, actiepunten, follow-upmails, briefings en Vragen. Op Amazon Bedrock wordt het meegestuurd.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Bijvoorbeeld: Acme maakt factuursoftware voor tandartsen in Frankrijk en België. Onze klanten zijn praktijken en tandartsgroepen. Teams: Sales, Customer success, Product. ‘MRR’ is de maandelijks terugkerende omzet; ‘de Q3-uitrol’ is de overstap van alle praktijken naar de nieuwe versie.",
+  "Model for each use": "Model per gebruik",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Laat een gebruik leeg om het met het model hierboven te schrijven. Elk model gaat via het eindpunt dat zijn ID vraagt, zoals hierboven.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Je modellen en koppelingen in één bestand, om aan iemand anders te geven: waar samenvattingen worden geschreven, Bedrock en zijn modellen, je bedrijfscontext, Microsoft 365, Confluence en je eigen woorden. Er staat geen wachtwoord, sleutel of aanmelding in: iedereen meldt zich aan met de eigen accounts."
 }

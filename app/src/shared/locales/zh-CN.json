@@ -851,7 +851,6 @@
   "Remove the secret": "删除密码",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 这样的 ID（权限 bedrock-mantle:CreateInference）。InvokeModel ID 或推理配置文件（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（权限 bedrock:InvokeModelWithResponseStream）。",
   "Share the setup": "共享设置",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "把你的模型和连接器放进一个文件，交给别人使用：摘要在哪里撰写、Bedrock、Microsoft 365、Confluence 以及你的自定义词语。文件中不含任何密码、密钥或登录信息：每个人都用自己的账户登录。",
   "Export the setup": "导出设置",
   "Import a setup": "导入设置",
   "Choose what to apply from this setup:": "选择要从此设置中应用的内容：",
@@ -868,5 +867,12 @@
   "Not set": "未设置",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "摘要正在等待你重新登录 AWS。登录后会自动开始。",
   "The summary is waiting for the notes model to finish downloading.": "摘要正在等待笔记模型下载完成。",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "录音停止后会撰写摘要：这台电脑只在没有录音时运行笔记模型。"
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "录音停止后会撰写摘要：这台电脑只在没有录音时运行笔记模型。",
+  "Company context": "公司背景",
+  "About your organisation": "关于你的组织",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "你的组织做什么、它的客户、产品、团队和用语：AI 会把这些作为摘要、待办事项、跟进邮件、简报和提问的背景。在 Amazon Bedrock 上，它会随之一起发送。",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "例如：Acme 为法国和比利时的牙医开发计费软件。我们的客户是诊所和牙科集团。团队：销售、客户成功、产品。“MRR”是月度经常性收入；“第三季度上线”是把所有诊所迁移到新版本。",
+  "Model for each use": "按用途选择模型",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "某个用途留空时，用上面的模型撰写。每个模型都经由其 ID 所要求的端点，同上。",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "把你的模型和连接器放进一个文件，交给别人使用：摘要在哪里撰写、Bedrock 及其模型、你的公司背景、Microsoft 365、Confluence 以及你的自定义词语。文件中不含任何密码、密钥或登录信息：每个人都用自己的账户登录。"
 }

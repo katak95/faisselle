@@ -912,7 +912,6 @@
   "Remove the secret": "Rimuovi il segreto",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude in Amazon Bedrock usa ID come anthropic.claude-haiku-5-5 (autorizzazione bedrock-mantle:CreateInference). Un ID InvokeModel o un profilo di inferenza, come eu.anthropic.claude-haiku-4-5-20251001-v1:0, passa da bedrock-runtime (autorizzazione bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Condividi la configurazione",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "I tuoi modelli e connettori in un file da dare a un’altra persona: dove vengono scritti i riassunti, Bedrock, Microsoft 365, Confluence e le tue parole personalizzate. Non contiene password, chiavi o accessi: ognuno accede con i propri account.",
   "Export the setup": "Esporta la configurazione",
   "Import a setup": "Importa una configurazione",
   "Choose what to apply from this setup:": "Scegli cosa applicare di questa configurazione:",
@@ -929,5 +928,12 @@
   "Not set": "Non impostato",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Il riassunto attende che tu acceda di nuovo ad AWS. Parte da solo appena hai effettuato l’accesso.",
   "The summary is waiting for the notes model to finish downloading.": "Il riassunto attende che il modello delle note finisca di scaricarsi.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Il riassunto verrà scritto al termine della registrazione: questo computer usa il modello delle note solo quando non registra nulla."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Il riassunto verrà scritto al termine della registrazione: questo computer usa il modello delle note solo quando non registra nulla.",
+  "Company context": "Contesto aziendale",
+  "About your organisation": "Sulla tua organizzazione",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Cosa fa la tua organizzazione, i suoi clienti, prodotti, team e termini: l’IA lo usa come contesto per riassunti, azioni, email di follow-up, brief e Chiedi. Su Amazon Bedrock viene inviato con essi.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Per esempio: Acme sviluppa software di fatturazione per dentisti in Francia e Belgio. I nostri clienti sono studi e gruppi dentistici. Team: Vendite, Customer success, Prodotto. «MRR» è il ricavo ricorrente mensile; «il rilascio del T3» è il passaggio di tutti gli studi alla nuova versione.",
+  "Model for each use": "Modello per ogni uso",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Lascia vuoto un uso per scriverlo con il modello sopra. Ogni modello passa dall’endpoint indicato dal suo ID, come sopra.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "I tuoi modelli e connettori in un file da dare a un’altra persona: dove vengono scritti i riassunti, Bedrock e i suoi modelli, il contesto aziendale, Microsoft 365, Confluence e le tue parole personalizzate. Non contiene password, chiavi o accessi: ognuno accede con i propri account."
 }

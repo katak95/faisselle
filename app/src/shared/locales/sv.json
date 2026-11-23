@@ -893,7 +893,6 @@
   "Remove the secret": "Ta bort hemligheten",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock använder id:n som anthropic.claude-haiku-5-5 (behörighet bedrock-mantle:CreateInference). Ett InvokeModel-id eller en inferensprofil, som eu.anthropic.claude-haiku-4-5-20251001-v1:0, går via bedrock-runtime (behörighet bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Dela inställningarna",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Dina modeller och kopplingar i en fil som du kan ge till någon annan: var sammanfattningar skrivs, Bedrock, Microsoft 365, Confluence och dina egna ord. Inga lösenord, nycklar eller inloggningar följer med: var och en loggar in med sina egna konton.",
   "Export the setup": "Exportera inställningarna",
   "Import a setup": "Importera inställningar",
   "Choose what to apply from this setup:": "Välj vad du vill använda från de här inställningarna:",
@@ -910,5 +909,12 @@
   "Not set": "Inte angivet",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Sammanfattningen väntar på att du loggar in på AWS igen. Den startar av sig själv när du är inloggad.",
   "The summary is waiting for the notes model to finish downloading.": "Sammanfattningen väntar på att anteckningsmodellen laddas ned klart.",
-  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Sammanfattningen skrivs när inspelningen slutar: den här datorn använder bara anteckningsmodellen när inget spelas in."
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Sammanfattningen skrivs när inspelningen slutar: den här datorn använder bara anteckningsmodellen när inget spelas in.",
+  "Company context": "Företagskontext",
+  "About your organisation": "Om din organisation",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Vad din organisation gör, dess kunder, produkter, team och begrepp: AI:n använder det som bakgrund för sammanfattningar, uppgifter, uppföljningsmejl, genomgångar och Fråga. På Amazon Bedrock skickas det med.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Till exempel: Acme gör faktureringsprogram för tandläkare i Frankrike och Belgien. Våra kunder är kliniker och tandläkargrupper. Team: Sälj, Kundframgång, Produkt. ”MRR” är den månatligt återkommande intäkten; ”Q3-utrullningen” är flytten av alla kliniker till den nya versionen.",
+  "Model for each use": "Modell för varje användning",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Lämna en användning tom för att skriva den med modellen ovan. Varje modell går via den slutpunkt som dess id kräver, som ovan.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Dina modeller och kopplingar i en fil som du kan ge till någon annan: var sammanfattningar skrivs, Bedrock och dess modeller, din företagskontext, Microsoft 365, Confluence och dina egna ord. Inga lösenord, nycklar eller inloggningar följer med: var och en loggar in med sina egna konton."
 }
