@@ -50,8 +50,10 @@ export class MissingToolError extends Error {
 /** the property of a schema that takes this argument, if any */
 export function propFor(tool: ToolInfo, arg: string): string | undefined {
   const props = tool.inputSchema?.properties ?? {}
-  return (ALIASES[arg] ?? [arg]).find((n) => n in props)
+  return (ALIASES[arg] ?? [arg]).find((n) => n in props) ?? (arg === 'cloudId' ? cloudProp(Object.keys(props)) : undefined)
 }
+/** the site goes in a parameter named after it even when the name isn't one Faisselle knows (cloudIdOrUrl, siteUrl…) */
+const cloudProp = (props: string[]) => props.find((p) => /cloud/i.test(p)) ?? props.find((p) => /^site/i.test(p))
 
 /** the body format to ask for: storage (Confluence's XHTML) when the tool offers it, else markdown, else what it has */
 export function formatFor(tool: ToolInfo): { prop: string; value: string } | undefined {
@@ -96,13 +98,24 @@ export function createToolbox(tools: ToolInfo[], raw: RawCall) {
       const g = gateway(WRITES.includes(need))
       if (!g) throw new MissingToolError(need)
       const props = Object.keys(g.inputSchema?.properties ?? {})
-      const nameProp = ['tool', 'toolName', 'name', 'action'].find((p) => props.includes(p)) ?? 'tool'
-      const argsProp = ['arguments', 'args', 'input', 'params', 'parameters'].find((p) => props.includes(p)) ?? 'arguments'
-      return raw(g.name, { [nameProp]: NEEDS[need][0], [argsProp]: { ...args, ...(format ? { contentFormat: format } : {}) } })
+      const nameProp = ['tool', 'toolName', 'name', 'action', 'operation'].find((p) => props.includes(p)) ?? 'tool'
+      const argsProp = ['arguments', 'args', 'input', 'params', 'parameters', 'toolInput'].find((p) => props.includes(p)) ?? 'arguments'
+      const inner = Object.fromEntries(Object.entries({ ...args, ...(format ? { contentFormat: format } : {}) }).filter(([, v]) => v !== undefined))
+      const call: Record<string, unknown> = { [nameProp]: NEEDS[need][0], [argsProp]: inner }
+      // what the gateway itself takes besides the tool and its arguments (the site's cloudId above all) goes in too
+      for (const [k, v] of Object.entries(inner)) {
+        const prop = [...(ALIASES[k] ?? [k]), ...(k === 'cloudId' ? [cloudProp(props)] : [])].find((n) => !!n && props.includes(n) && n !== nameProp && n !== argsProp)
+        if (prop && !(prop in call)) call[prop] = v
+      }
+      return raw(g.name, call)
     },
   }
 }
 export type Toolbox = ReturnType<typeof createToolbox>
+
+/** the server's tools and the names of their parameters, for main.log (no values, nothing private) */
+export const describeTools = (tools: ToolInfo[]): string =>
+  tools.map((t) => `${t.name}(${Object.keys(t.inputSchema?.properties ?? {}).map((p) => (t.inputSchema?.required ?? []).includes(p) ? `${p}*` : p).join(',')})`).join(' ')
 
 /** a tool's answer as JSON: the first text block parsed, or the text itself; an error answer throws */
 export function toolJson(result: unknown): unknown {

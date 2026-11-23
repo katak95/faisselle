@@ -86,7 +86,7 @@ export async function waitForCode(o: { port: number; state: () => string | undef
   path?: string; fixedPort?: boolean; service?: string }): Promise<{ code: Promise<string>; port: number; close(): void }> {
   let resolve!: (code: string) => void, reject!: (e: Error) => void
   const code = new Promise<string>((res, rej) => { resolve = res; reject = rej })
-  const server: Server = createServer((req, res) => {
+  const handle = (req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse) => {
     const url = new URL(req.url ?? '/', 'http://localhost')
     if (url.pathname !== (o.path ?? '/oauth/callback')) { res.writeHead(404).end(); return }
     const error = url.searchParams.get('error')
@@ -96,15 +96,20 @@ export async function waitForCode(o: { port: number; state: () => string | undef
     if (url.searchParams.get('state') !== o.state()) { res.end(PAGE('Sign-in not finished', 'This page did not come from Faisselle’s sign-in.')); reject(new Error('The sign-in state did not match')); return }
     res.end(PAGE(`Signed in to ${o.service ?? 'Atlassian'}`, 'You can close this tab and go back to Faisselle.'))
     resolve(got)
-  })
+  }
+  const server: Server = createServer(handle)
+  // a browser may reach "localhost" over IPv6 first: the same page on ::1 too, still on this computer only
+  const v6: Server = createServer(handle)
   const listen = (port: number) => new Promise<number>((res, rej) => {
     server.once('error', rej)
     server.listen(port, '127.0.0.1', () => { server.off('error', rej); res((server.address() as { port: number }).port) })
   })
   // the preferred port when it's free, else any free one (the registration then changes)
   const port = await (o.fixedPort ? listen(o.port) : listen(o.port).catch(() => listen(0)))
+  // best effort: no IPv6 on this computer, or the port taken there, and 127.0.0.1 alone answers
+  await new Promise<void>((res) => { v6.once('error', () => res()); v6.listen(port, '::1', () => res()) })
   const timer = setTimeout(() => reject(new Error('The sign-in took too long')), o.timeoutMs ?? 5 * 60_000)
-  const close = () => { clearTimeout(timer); server.close() }
+  const close = () => { clearTimeout(timer); server.close(); if (v6.listening) v6.close() }
   o.signal?.addEventListener('abort', () => { reject(new Error('Sign-in cancelled')); close() }, { once: true })
   code.catch(() => {}).finally(close)
   return { code, port, close }
