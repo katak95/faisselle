@@ -24,7 +24,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import { basename, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { isFake, userDataDir } from './paths'
+import { isFake, modelsFolder, userDataDir } from './paths'
 import { logToFile } from './log'
 import { includesRecordingCredit, loadSettings, localeOf, keepsRecording, recordingReminderOn, spokenSetting, stopsWhenCallEnds, updateSettings, visibilityOf, summaryLanguageSetting } from './settings'
 import { CALL_GONE_MS, micPids, useCallApps, watchEveryMs, type MicApp } from './detect'
@@ -51,9 +51,10 @@ import { calendars, eventIds, matchesEvent, setCalendarSelection, setCalendarOwn
 import { createCalendarLinks } from './calendarLink'
 import { getCalendar } from './calendarLink/get'
 import { createSignals } from './detectSignals'
+import { createMicWatch, spawnMicWatch } from './micWatch'
 import { Watcher } from './watch'
 import { createPrompts } from './prompts'
-import { activeMeeting, bindMeetingApp, getMeeting, initMeetings, onMeetingBound, onMeetingChange, onMeetingStart, onMeetingStop, onMeetingStopSaved, refreshEventSnapshots, linkEvent, unlinkEvent, prepareMeeting, startPreparedMeeting, resumeMeeting, pauseMeetingClock, renameMeeting, retryStopSave, setAttendees, startMeeting, stopMeeting, stopSavePending, withStopState } from './meeting'
+import { activeMeeting, bindMeetingApp, getMeeting, initMeetings, onMeetingBound, onMeetingChange, onMeetingStart, onMeetingStop, onMeetingStopSaved, createFolderNote, refreshEventSnapshots, linkEvent, unlinkEvent, prepareMeeting, startPreparedMeeting, resumeMeeting, pauseMeetingClock, renameMeeting, retryStopSave, setAttendees, startMeeting, stopMeeting, stopSavePending, withStopState } from './meeting'
 import { deleteMeeting } from './deleteMeeting'
 import { emptyTrash, moveToTrash, purgeTrash } from './trash'
 import { isId, text, rewriteNote } from './ipcArgs'
@@ -189,7 +190,9 @@ function createWindow() {
 /** Windows and Linux: what graphics the notes engine can use; null when it can't tell (or crashed checking: it then runs without them) */
 let probeGpu: () => Promise<GpuProbe | null> = async () => null
 function createSetup(): SetupController {
-  const modelsDir = join(userDataDir(), 'models')
+  const modelsDir = modelsFolder()
+  // the Windows installer may have put them on another drive: the log says where they are looked for
+  console.info(`MODELS dir=${modelsDir}`)
   return new SetupController({
     modelsDir,
     upgradePreference: {
@@ -317,7 +320,12 @@ let indexerRef: { schedule(): Promise<unknown> } | undefined
 /** Notice calls, offer to take notes, stop when the call ends (or ask, with that setting off). Starts nothing without a click. */
 function startDetection() {
   if (isFake()) setHelper(fakeHelper)
-  const signals = createSignals({ helper: runHelper, events: readCalendar })
+  // On a Mac one mic watch runs for Faisselle's whole life: a new helper per reading wore out coreaudiod and powerd (#143)
+  const micWatch = process.platform === 'darwin' && !isFake()
+    ? createMicWatch({ start: spawnMicWatch(helperPath), poll: () => runHelper(['mic-apps']), recording: () => !!activeMeeting() })
+    : undefined
+  app.on('will-quit', () => micWatch?.stop())
+  const signals = createSignals({ helper: runHelper, micApps: micWatch?.read, events: readCalendar })
   refreshCalendarConsumers = () => signals.invalidateCalendar()
   let lastReading: { micApps: MicApp[]; runningApps?: string[] } | undefined
   // yogurt-system (Windows, Linux) reads no single process yet; the Mac helper does
@@ -328,7 +336,7 @@ function startDetection() {
     read: async (at) => (lastReading = await signals.read(at)), now, active: activeMeeting, bindApp: bindMeetingApp,
     offer: (p) => prompts.offer(p), askStop: (m) => prompts.askStop(m), hide: () => prompts.hide(),
     // the call ended: the same stop as the widget's Stop button, then say so
-    autoStop: (m) => { widget.callEnded(m.id); stopMeeting(m.id); prompts.stopped(m) },
+    autoStop: (m) => { widget.callEnded(m.id); stopMeeting(m.id, 'call-ended'); prompts.stopped(m) },
     silentMs: () => { if (isFake() && fakeSilence !== undefined) return fakeSilence; const m = activeMeeting(); return m ? liveSilentMs(m.id) : 0 },
     autoStopOn: () => stopsWhenCallEnds(loadSettings(join(userDataDir(), 'settings.json'))),
     // no "Take notes?" while onboarding is still on screen
@@ -340,7 +348,7 @@ function startDetection() {
   const prompts = createPrompts({
     windowVisible: () => !!win && win.isVisible() && !win.isMinimized(),
     takeNotes: (p) => begin({ title: p.title || t('{app} call', { app: p.app ?? '' }).trim(), event: p.event, app: p.app }),
-    stop: (id) => { stopMeeting(id) },
+    stop: (id) => { stopMeeting(id, 'card') },
     dismissed: (key) => watcher.dismiss(key),
     keepGoing: () => watcher.keepGoing(),
     dismissStop: () => watcher.dismissStop(),
@@ -354,7 +362,7 @@ function startDetection() {
     showRecordingPill: () => showRecordingPill,
     os: platform, windowOs: process.platform,
     open: (id) => goTo(`/note/${id}`),
-    stop: (id) => { stopMeeting(id) },
+    stop: (id) => { stopMeeting(id, 'widget') },
     foreground: () => !!win && !win.isDestroyed() && win.isVisible() && !win.isMinimized() && win.isFocused(),
   })
   onMeetingStart(() => { prompts.hide(); watcher.cleared() })
@@ -372,7 +380,7 @@ function startDetection() {
   updateWidgetVisibility = widget.visibilityChanged
   sendWidgetTranscript = widget.transcript
   /** The one way notes start: the card's Take notes, and home's Start notes and New note. Opens the note. */
-  function begin(p: { title: string; event: CalEvent | null; app: string | null }) {
+  function begin(p: { title: string; event: CalEvent | null; app: string | null; folderId?: string }) {
     const alreadyRecording = !!activeMeeting()
     const m = startMeeting(p)
     const resume = resumesNote(m)
@@ -382,7 +390,7 @@ function startDetection() {
   // home: Start notes for a calendar event (looked up here, never taken from the page), or New note with none; an AI
   // app's start_recording the same way, with its own title if it gave one
   // gone: the event left the calendar since the page showed it (moved, cancelled); failed: anything else, in plain words on the page
-  const startNotes = async (o: { eventId?: string; title?: string }): Promise<StartResult> => {
+  const startNotes = async (o: { eventId?: string; title?: string; folderId?: string }): Promise<StartResult> => {
     try {
       const cur = activeMeeting()
       if (cur) { goTo(`/note/${cur.id}`); return { id: cur.id, alreadyRecording: true } }
@@ -391,13 +399,20 @@ function startDetection() {
         event = (await comingUp()).find((e) => matchesEvent(e, o.eventId!)) ?? null
         if (!event) return { error: 'gone' }
       }
-      return begin({ title: o.title ?? event?.title ?? '', event, app: null })
+      return begin({ title: o.title ?? event?.title ?? '', event, app: null, folderId: o.folderId })
     } catch (e) {
       console.error('start notes failed', e)
       return { error: 'failed' }
     }
   }
-  ipcMain.handle('meetings:start', (_e, eventId: unknown) => startNotes(typeof eventId === 'string' ? { eventId } : {}))
+  ipcMain.handle('meetings:start', (_e, eventId: unknown, folderId?: unknown): Promise<StartResult> | StartResult => {
+    if (folderId !== undefined && !isId(folderId)) return { error: 'failed' }
+    return startNotes({ eventId: typeof eventId === 'string' ? eventId : undefined, folderId })
+  })
+  ipcMain.handle('meetings:folder-note', (_e, folderId: unknown) => {
+    if (!isId(folderId)) throw new Error('Invalid folder')
+    return createFolderNote(folderId).id
+  })
   ipcMain.handle('meetings:prepare', async (_e, eventId: unknown, at: unknown): Promise<StartResult> => {
     if (typeof eventId !== 'string' || typeof at !== 'number' || !Number.isFinite(at) || !Number.isFinite(new Date(at).getTime())) return { error: 'gone' }
     try {
@@ -424,7 +439,7 @@ function startDetection() {
     }
   })
   // the note's own Stop button: the same stop as the widget and the menu bar
-  ipcMain.on('meetings:stop', (_e, id: unknown) => { if (isId(id) && activeMeeting()?.id === id) stopMeeting(id) })
+  ipcMain.on('meetings:stop', (_e, id: unknown) => { if (isId(id) && activeMeeting()?.id === id) stopMeeting(id, 'note') })
   const pauseRecording = (id: unknown, paused: unknown) => {
     if (!isId(id) || typeof paused !== 'boolean' || activeMeeting()?.id !== id) return false
     const changed = setRecordingPaused(id, paused)
@@ -440,7 +455,7 @@ function startDetection() {
     showRecordingPill: () => showRecordingPill,
     open: () => { presented++; showMain() },
     newNote: () => { if (!activeMeeting()) begin({ title: '', event: null, app: null }) },
-    stop: (id) => { stopMeeting(id) },
+    stop: (id) => { stopMeeting(id, 'menu') },
     pause: pauseRecording,
     ask: askFromMenu, settings: () => goTo('/settings'),
     openNote: (id) => { const note = storeRef?.meeting(id); if (note && note.trashedAt == null) goTo(`/note/${id}`) },
@@ -650,7 +665,7 @@ app.whenReady().then(() => {
   hookCapture({ dirOf: (id) => join(userDataDir(), 'meetings', id), onStart: onMeetingStart, onStop: onMeetingStop, speech: (id) => speechLocaleFor(id),
     mic: () => loadSettings(settingsFile).mic ?? null,
     // recording that can't go on ends the meeting, with the notes kept
-    stopMeeting: (id) => { stopMeeting(id) } })
+    stopMeeting: (id) => { stopMeeting(id, 'recorder') } })
   // 32 GB and up: the notes model reads each meeting in as it happens (notes/readAhead.ts)
   const readsAhead = !isFake() && readAheadAllowed(os.totalmem())
   // the notes model: one job at a time, recording first; loaded when needed, the best one downloaded
@@ -886,7 +901,7 @@ app.whenReady().then(() => {
       notesReady: () => !!setup.notesPath(),
       startRecording: (o) => recordingControls?.start(o) ?? Promise.resolve({ error: 'failed' as const }),
       pauseRecording: (id, paused) => recordingControls?.pause(id, paused) ?? false,
-      stopRecording: (id) => { if (activeMeeting()?.id !== id) return false; stopMeeting(id); return true },
+      stopRecording: (id) => { if (activeMeeting()?.id !== id) return false; stopMeeting(id, 'ai-app'); return true },
       recording: () => activeMeeting(),
       setJargon: (terms) => preferences.setJargon(terms),
       setSpoken: (v) => preferences.setSpoken(v),
@@ -976,6 +991,8 @@ app.whenReady().then(() => {
     e.preventDefault()
     if (finishing) return
     finishing = true
+    // #127: a quit left no line of its own, so what it stopped (whisper-server loading) looked like a crash
+    console.info('APP quitting')
      savedTranscriptions.shutdown()
     void (async () => {
       const flushed = await flushRenderer()
@@ -994,7 +1011,7 @@ app.whenReady().then(() => {
       }
       // If final unload is vetoed, the resumed UI must describe the same stopped capture.
       const recording = activeMeeting()
-      if (recording) stopMeeting(recording.id)
+      if (recording) stopMeeting(recording.id, 'quit')
       // Music, recorder files and transcription still receive the same bounded graceful shutdown.
       await Promise.all([media.resume(), settleRecording().then(() => settleTranscription())])
       allowQuit = true
