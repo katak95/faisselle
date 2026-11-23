@@ -836,7 +836,6 @@
   "Atlassian didn't connect. Try again.": "Hindi nakakonekta ang Atlassian. Subukan ulit.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Tumanggi ang Confluence: hindi ka puwedeng magsulat sa personal space mo.",
-  "Connect Atlassian in Settings first.": "Ikonekta muna ang Atlassian sa Settings.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Nakakonekta sa {site}{account}. Mapupunta ang mga ulat sa personal space mo, sa ilalim ng “Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "Hindi na-save ang pinakabagong mga pagbabago mo. Subukan ulit bago magpadala.",
   "Couldn't send to Confluence.": "Hindi naipadala sa Confluence.",
@@ -916,5 +915,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Halimbawa: Gumagawa ang Acme ng billing software para sa mga dentista sa France at Belgium. Ang mga kliyente namin ay mga klinika at dental group. Mga team: Sales, Customer success, Product. Ang \"MRR\" ay ang buwanang paulit-ulit na kita; ang \"Q3 rollout\" ay ang paglipat ng lahat ng klinika sa bagong bersyon.",
   "Model for each use": "Model para sa bawat gamit",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Iwanang blangko ang isang gamit para isulat ito gamit ang model sa itaas. Dumadaan ang bawat model sa endpoint na hinihingi ng ID nito, gaya sa itaas.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ang mga model at connector mo sa isang file, para ibigay sa iba: kung saan isinusulat ang mga buod, ang Bedrock at ang mga model nito, ang konteksto ng kumpanya mo, Microsoft 365, Confluence at ang sarili mong mga salita. Walang password, key o sign-in dito: magsa-sign in ang bawat isa gamit ang sarili nilang mga account."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ang mga model at connector mo sa isang file, para ibigay sa iba: kung saan isinusulat ang mga buod, ang Bedrock at ang mga model nito, ang konteksto ng kumpanya mo, Microsoft 365, Confluence at ang sarili mong mga salita. Walang password, key o sign-in dito: magsa-sign in ang bawat isa gamit ang sarili nilang mga account.",
+  "Your {service} sign-in ran out.": "Nag-expire na ang pag-sign in mo sa {service}.",
+  "Sign in again": "Mag-sign in ulit",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Nag-expire na ang pag-sign in mo sa Confluence. Mag-sign in ulit, saka ipadala.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Nag-expire na ang pag-sign in mo sa Confluence. Mag-sign in ulit muna.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Nag-expire na ang pag-sign in mo sa Microsoft 365: ihahanda ang brief nang walang imbitasyon, email at dokumento."
 }

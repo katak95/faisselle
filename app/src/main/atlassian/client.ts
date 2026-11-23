@@ -106,6 +106,8 @@ export function createAtlassian(o: { store: OAuthStore; openExternal(url: string
       set({ state: 'starting' })
       try { const c = await open(true, mine); if (mine === attempt) await settle(c); else await c.close() } catch (e) { if (mine === attempt) fail(e) }
     },
+    /** tests (fake mode): the sign-in runs out, as when Atlassian refuses it at the next start */
+    ranOut() { if (status.state === 'connected') set({ state: 'signed-out' }) },
     cancel() { attempt++; cancel?.abort(); if (status.state === 'pending' || status.state === 'starting') set({ state: o.store.signedIn() ? 'signed-out' : 'off' }) },
     async signOut() {
       attempt++; cancel?.abort()

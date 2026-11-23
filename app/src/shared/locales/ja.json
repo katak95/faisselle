@@ -794,7 +794,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian に接続できませんでした。もう一度お試しください。",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence に拒否されました：個人用スペースに書き込めません。",
-  "Connect Atlassian in Settings first.": "まず設定で Atlassian に接続してください。",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "{site}{account} に接続済み。議事録は個人用スペースの「Meeting notes」の下に入ります。",
   "Couldn't save your latest changes. Try again before sending.": "最新の変更を保存できませんでした。送信する前にもう一度お試しください。",
   "Couldn't send to Confluence.": "Confluence に送信できませんでした。",
@@ -874,5 +873,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "例：Acme はフランスとベルギーの歯科医向けに請求ソフトを開発しています。顧客は歯科医院と歯科グループです。チーム：営業、カスタマーサクセス、プロダクト。「MRR」は月次経常収益、「Q3 ロールアウト」は全医院の新バージョンへの移行です。",
   "Model for each use": "用途ごとのモデル",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "用途を空欄にすると、上のモデルで書かれます。各モデルは、その ID が求めるエンドポイントを通ります（上と同じ）。",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "モデルとコネクタを 1 つのファイルにまとめて、ほかの人に渡せます：要約を書く場所、Bedrock とそのモデル、会社のコンテキスト、Microsoft 365、Confluence、カスタム単語。パスワード、キー、サインイン情報は含まれません。各自が自分のアカウントでサインインします。"
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "モデルとコネクタを 1 つのファイルにまとめて、ほかの人に渡せます：要約を書く場所、Bedrock とそのモデル、会社のコンテキスト、Microsoft 365、Confluence、カスタム単語。パスワード、キー、サインイン情報は含まれません。各自が自分のアカウントでサインインします。",
+  "Your {service} sign-in ran out.": "{service} のサインインの有効期限が切れました。",
+  "Sign in again": "もう一度サインイン",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Confluence のサインインの有効期限が切れました。もう一度サインインしてから送信してください。",
+  "Your Confluence sign-in ran out. Sign in again first.": "Confluence のサインインの有効期限が切れました。先にもう一度サインインしてください。",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Microsoft 365 のサインインの有効期限が切れました。ブリーフは招待、メール、ドキュメントなしで作成されます。"
 }

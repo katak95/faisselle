@@ -864,7 +864,6 @@
   "Atlassian didn't connect. Try again.": "Не удалось подключиться к Atlassian. Попробуйте снова.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence отказал: вы не можете писать в личное пространство.",
-  "Connect Atlassian in Settings first.": "Сначала подключите Atlassian в Настройках.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Подключено к {site}{account}. Отчёты попадают в ваше личное пространство, в «Meeting notes».",
   "Couldn't save your latest changes. Try again before sending.": "Не удалось сохранить последние изменения. Попробуйте ещё раз перед отправкой.",
   "Couldn't send to Confluence.": "Не удалось отправить в Confluence.",
@@ -944,5 +943,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Например: Acme делает программы для выставления счетов стоматологам во Франции и Бельгии. Наши клиенты — клиники и стоматологические сети. Команды: Продажи, Успех клиентов, Продукт. «MRR» — ежемесячная регулярная выручка; «развёртывание в III квартале» — переход всех клиник на новую версию.",
   "Model for each use": "Модель для каждого случая",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Оставьте случай пустым, чтобы писать его моделью выше. Каждая модель идёт через конечную точку, которую требует её идентификатор, как выше.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ваши модели и подключения в одном файле, чтобы передать их другому человеку: где пишутся сводки, Bedrock и его модели, контекст вашей компании, Microsoft 365, Confluence и ваши слова. В нём нет паролей, ключей и входов: каждый входит в свои учётные записи сам."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ваши модели и подключения в одном файле, чтобы передать их другому человеку: где пишутся сводки, Bedrock и его модели, контекст вашей компании, Microsoft 365, Confluence и ваши слова. В нём нет паролей, ключей и входов: каждый входит в свои учётные записи сам.",
+  "Your {service} sign-in ran out.": "Срок входа в {service} истёк.",
+  "Sign in again": "Войти снова",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Срок входа в Confluence истёк. Войдите снова, затем отправьте.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Срок входа в Confluence истёк. Сначала войдите снова.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Срок входа в Microsoft 365 истёк: справка готовится без приглашения, писем и документов."
 }

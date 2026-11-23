@@ -46,6 +46,7 @@ export function M365Settings() {
             : st?.state === 'starting' ? t('Connecting…')
             : st?.state === 'error' && st.problem ? problemText(st.problem)
             : st?.state === 'error' && st.consent ? t('Your administrator has to approve the permissions Faisselle asks for. Send them the docs, or turn off SharePoint and OneDrive search.')
+            : st?.state === 'signed-out' && st.expired ? t('The sign-in ran out. Connect again.')
             : st?.state === 'error' ? t("Microsoft 365 didn't connect. Try again, or ask your administrator to allow the app.")
             : t('Read your Outlook calendar, and the invite and recent emails with the people in a meeting, to prepare briefs and write better summaries.')}</p>
           {st?.state === 'pending' && <a className="settings-description underline" href={st.url} target="_blank" rel="noreferrer">{t('Open the Microsoft page again')}</a>}

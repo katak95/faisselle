@@ -892,7 +892,6 @@
   "Atlassian didn't connect. Try again.": "تعذّر الاتصال بـ Atlassian. أعد المحاولة.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "رفض Confluence: لا يمكنك الكتابة في مساحتك الشخصية.",
-  "Connect Atlassian in Settings first.": "صِل Atlassian في الإعدادات أولًا.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "متصل بـ {site}{account}. تذهب المحاضر إلى مساحتك الشخصية تحت «Meeting notes».",
   "Couldn't save your latest changes. Try again before sending.": "تعذّر حفظ آخر تغييراتك. أعد المحاولة قبل الإرسال.",
   "Couldn't send to Confluence.": "تعذّر الإرسال إلى Confluence.",
@@ -972,5 +971,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "مثلًا: تصنع Acme برنامج فوترة لأطباء الأسنان في فرنسا وبلجيكا. عملاؤنا عيادات ومجموعات طب أسنان. الفرق: المبيعات، ونجاح العملاء، والمنتج. «MRR» هو الإيراد الشهري المتكرر؛ و«طرح الربع الثالث» هو نقل كل العيادات إلى الإصدار الجديد.",
   "Model for each use": "نموذج لكل استخدام",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "اترك استخدامًا فارغًا ليُكتب بالنموذج أعلاه. يمر كل نموذج عبر نقطة الوصول التي يطلبها معرّفه، كما في الأعلى.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "نماذجك وموصلاتك في ملف واحد لتعطيه لشخص آخر: أين تُكتب الملخصات، وBedrock ونماذجه، وسياق شركتك، وMicrosoft 365، وConfluence، وكلماتك المخصصة. لا يحتوي على أي كلمة مرور أو مفتاح أو تسجيل دخول: يسجّل كل شخص الدخول بحساباته الخاصة."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "نماذجك وموصلاتك في ملف واحد لتعطيه لشخص آخر: أين تُكتب الملخصات، وBedrock ونماذجه، وسياق شركتك، وMicrosoft 365، وConfluence، وكلماتك المخصصة. لا يحتوي على أي كلمة مرور أو مفتاح أو تسجيل دخول: يسجّل كل شخص الدخول بحساباته الخاصة.",
+  "Your {service} sign-in ran out.": "انتهت صلاحية تسجيل دخولك إلى {service}.",
+  "Sign in again": "سجّل الدخول مجددًا",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "انتهت صلاحية تسجيل دخولك إلى Confluence. سجّل الدخول مجددًا ثم أرسله.",
+  "Your Confluence sign-in ran out. Sign in again first.": "انتهت صلاحية تسجيل دخولك إلى Confluence. سجّل الدخول مجددًا أولًا.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "انتهت صلاحية تسجيل دخولك إلى Microsoft 365: يُعَدّ الملخص التمهيدي دون الدعوة والرسائل والمستندات."
 }

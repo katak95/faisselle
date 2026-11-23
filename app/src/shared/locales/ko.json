@@ -794,7 +794,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian에 연결하지 못했어요. 다시 시도하세요.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence가 거부했어요: 개인 스페이스에 쓸 수 없어요.",
-  "Connect Atlassian in Settings first.": "먼저 설정에서 Atlassian을 연결하세요.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "{site}{account}에 연결됨. 회의록은 개인 스페이스의 ‘Meeting notes’ 아래에 들어가요.",
   "Couldn't save your latest changes. Try again before sending.": "최근 변경 사항을 저장하지 못했어요. 보내기 전에 다시 시도하세요.",
   "Couldn't send to Confluence.": "Confluence로 보내지 못했어요.",
@@ -874,5 +873,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "예: Acme는 프랑스와 벨기에의 치과의사를 위한 청구 소프트웨어를 만듭니다. 고객은 치과와 치과 그룹입니다. 팀: 영업, 고객 성공, 제품. \"MRR\"은 월간 반복 매출이고, \"3분기 출시\"는 모든 치과를 새 버전으로 옮기는 일입니다.",
   "Model for each use": "용도별 모델",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "용도를 비워 두면 위의 모델로 작성됩니다. 각 모델은 ID가 요구하는 엔드포인트를 거칩니다(위와 같음).",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "모델과 커넥터를 파일 하나에 담아 다른 사람에게 줄 수 있습니다: 요약을 작성하는 곳, Bedrock과 그 모델, 회사 컨텍스트, Microsoft 365, Confluence, 사용자 단어. 암호, 키, 로그인 정보는 들어가지 않으며, 각자 자신의 계정으로 로그인합니다."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "모델과 커넥터를 파일 하나에 담아 다른 사람에게 줄 수 있습니다: 요약을 작성하는 곳, Bedrock과 그 모델, 회사 컨텍스트, Microsoft 365, Confluence, 사용자 단어. 암호, 키, 로그인 정보는 들어가지 않으며, 각자 자신의 계정으로 로그인합니다.",
+  "Your {service} sign-in ran out.": "{service} 로그인이 만료되었습니다.",
+  "Sign in again": "다시 로그인",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Confluence 로그인이 만료되었습니다. 다시 로그인한 뒤 보내세요.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Confluence 로그인이 만료되었습니다. 먼저 다시 로그인하세요.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Microsoft 365 로그인이 만료되었습니다. 브리핑은 초대, 이메일, 문서 없이 준비됩니다."
 }

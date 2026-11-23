@@ -91,6 +91,19 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
   /** bumped when a setup is imported: the sections it touches read their settings again */
   const [setupRev, setSetupRev] = useState(0)
   const scroll = useScrollMemory<HTMLDivElement>('settings', !!prefs && !!perms)
+  // a sign-in to do again (from Home, a note or sharing): its section, once it is on screen
+  useEffect(() => {
+    const target = ({ bedrock: 'cloud-sign-in', m365: 'settings-m365', atlassian: 'settings-atlassian' } as Record<string, string>)[focus ?? '']
+    if (!target) return
+    let tries = 0, frame = 0
+    const look = () => {
+      const el = document.querySelector<HTMLElement>(`[data-testid="${target}"]`)
+      if (el) { el.scrollIntoView({ block: 'center', behavior: 'instant' }); el.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({ preventScroll: true }); return }
+      if (++tries < 120) frame = requestAnimationFrame(look)
+    }
+    frame = requestAnimationFrame(look)
+    return () => cancelAnimationFrame(frame)
+  }, [focus])
   useEffect(() => { void window.yogurt.settings.get().then(setPrefs) }, [revision])
   const reload = useCallback(() => { void window.yogurt.permissions.status().then(setPerms) }, [])
   useEffect(() => {
