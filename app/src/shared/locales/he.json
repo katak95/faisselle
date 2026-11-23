@@ -919,5 +919,6 @@
   "Words added": "מילים שנוספו",
   "Not set": "לא הוגדר",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "הסיכום ממתין לכניסה מחדש ל-AWS. הוא יתחיל מעצמו ברגע שתתבצע כניסה.",
-  "The summary is waiting for the notes model to finish downloading.": "הסיכום ממתין לסיום ההורדה של מודל ההערות."
+  "The summary is waiting for the notes model to finish downloading.": "הסיכום ממתין לסיום ההורדה של מודל ההערות.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "הסיכום ייכתב אחרי שההקלטה תיעצר: המחשב הזה משתמש במודל ההערות רק כשאין הקלטה."
 }

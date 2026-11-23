@@ -940,5 +940,6 @@
   "Words added": "Přidaná slova",
   "Not set": "Nenastaveno",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Shrnutí čeká, až se znovu přihlásíte k AWS. Spustí se samo, jakmile budete přihlášeni.",
-  "The summary is waiting for the notes model to finish downloading.": "Shrnutí čeká na dokončení stahování modelu poznámek."
+  "The summary is waiting for the notes model to finish downloading.": "Shrnutí čeká na dokončení stahování modelu poznámek.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Shrnutí se napíše, jakmile nahrávání skončí: tento počítač používá model poznámek, jen když se nic nenahrává."
 }

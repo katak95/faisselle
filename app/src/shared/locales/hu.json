@@ -897,5 +897,6 @@
   "Words added": "Hozzáadott szavak",
   "Not set": "Nincs megadva",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Az összefoglaló arra vár, hogy újra bejelentkezz az AWS-be. Magától elindul, amint bejelentkeztél.",
-  "The summary is waiting for the notes model to finish downloading.": "Az összefoglaló arra vár, hogy a jegyzetmodell letöltése befejeződjön."
+  "The summary is waiting for the notes model to finish downloading.": "Az összefoglaló arra vár, hogy a jegyzetmodell letöltése befejeződjön.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Az összefoglaló a felvétel leállítása után készül el: ez a számítógép csak akkor használja a jegyzetmodellt, ha nincs felvétel."
 }

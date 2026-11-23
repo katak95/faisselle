@@ -909,5 +909,6 @@
   "Words added": "Tillagda ord",
   "Not set": "Inte angivet",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Sammanfattningen väntar på att du loggar in på AWS igen. Den startar av sig själv när du är inloggad.",
-  "The summary is waiting for the notes model to finish downloading.": "Sammanfattningen väntar på att anteckningsmodellen laddas ned klart."
+  "The summary is waiting for the notes model to finish downloading.": "Sammanfattningen väntar på att anteckningsmodellen laddas ned klart.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Sammanfattningen skrivs när inspelningen slutar: den här datorn använder bara anteckningsmodellen när inget spelas in."
 }

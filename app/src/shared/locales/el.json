@@ -912,5 +912,6 @@
   "Words added": "Λέξεις που προστέθηκαν",
   "Not set": "Δεν έχει οριστεί",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Η περίληψη περιμένει να συνδεθείτε ξανά στο AWS. Ξεκινά μόνη της μόλις συνδεθείτε.",
-  "The summary is waiting for the notes model to finish downloading.": "Η περίληψη περιμένει να ολοκληρωθεί η λήψη του μοντέλου σημειώσεων."
+  "The summary is waiting for the notes model to finish downloading.": "Η περίληψη περιμένει να ολοκληρωθεί η λήψη του μοντέλου σημειώσεων.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Η περίληψη θα γραφτεί μόλις σταματήσει η εγγραφή: αυτός ο υπολογιστής χρησιμοποιεί το μοντέλο σημειώσεων μόνο όταν δεν εγγράφεται τίποτα."
 }

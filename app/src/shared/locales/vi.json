@@ -867,5 +867,6 @@
   "Words added": "Từ đã thêm",
   "Not set": "Chưa đặt",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Bản tóm tắt đang chờ bạn đăng nhập lại AWS. Nó sẽ tự bắt đầu khi bạn đã đăng nhập.",
-  "The summary is waiting for the notes model to finish downloading.": "Bản tóm tắt đang chờ mô hình ghi chú tải xong."
+  "The summary is waiting for the notes model to finish downloading.": "Bản tóm tắt đang chờ mô hình ghi chú tải xong.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Bản tóm tắt sẽ được viết khi ghi âm dừng: máy tính này chỉ chạy mô hình ghi chú khi không ghi gì."
 }

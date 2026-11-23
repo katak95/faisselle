@@ -458,8 +458,9 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
           className="mx-auto mt-2 flex w-full max-w-[720px] items-center justify-between gap-3 rounded-xl border border-line bg-float px-3 py-2 text-[13px] text-ink">
           <span>{notes.waitingFor === 'aws-sign-in'
             ? t('The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.')
+            : notes.waitingFor === 'recording' ? t('The summary will be written once the recording stops: this computer runs the notes model only when nothing records.')
             : t('The summary is waiting for the notes model to finish downloading.')}</span>
-          <button className="workspace-button shrink-0" onClick={() => window.yogurt.nav.go('/settings/notes-model')}>{notes.waitingFor === 'aws-sign-in' ? t('Sign in to AWS') : t('Settings')}</button>
+          {notes.waitingFor !== 'recording' && <button className="workspace-button shrink-0" onClick={() => window.yogurt.nav.go('/settings/notes-model')}>{notes.waitingFor === 'aws-sign-in' ? t('Sign in to AWS') : t('Settings')}</button>}
         </div>}
         <div ref={setChatAnchor} className="note-reading-area">
           <div ref={panels} className="note-panels">

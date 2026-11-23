@@ -897,5 +897,6 @@
   "Words added": "जोड़े गए शब्द",
   "Not set": "सेट नहीं",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "सारांश आपके AWS में फिर से साइन इन करने का इंतज़ार कर रहा है। साइन इन होते ही यह अपने-आप शुरू हो जाएगा।",
-  "The summary is waiting for the notes model to finish downloading.": "सारांश नोट्स मॉडल के डाउनलोड पूरा होने का इंतज़ार कर रहा है।"
+  "The summary is waiting for the notes model to finish downloading.": "सारांश नोट्स मॉडल के डाउनलोड पूरा होने का इंतज़ार कर रहा है।",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "रिकॉर्डिंग रुकने के बाद सारांश लिखा जाएगा: यह कंप्यूटर नोट्स मॉडल तभी चलाता है जब कुछ रिकॉर्ड न हो रहा हो।"
 }

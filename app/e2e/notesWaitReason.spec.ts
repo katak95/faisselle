@@ -39,3 +39,31 @@ test('a summary waiting for the AWS sign-in says so, and starts by itself after 
     await expect(page.getByTestId('note-waiting-for')).toHaveCount(0, { timeout: 20_000 })
   } finally { await app.close() }
 })
+
+// a 24 GB Mac (under the small-Mac line) on Bedrock: a summary is written while another meeting records
+test('on Bedrock, a smaller Mac writes a summary while another meeting records', async () => {
+  test.setTimeout(120_000)
+  const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_FAKE: '1', YOGURT_FAKE_SMALL_MAC: '1', YOGURT_USER_DATA: mkdtempSync(join(tmpdir(), 'faisselle-small-')) } })
+  try {
+    const page = await app.firstWindow()
+    await expect(page.getByTestId('home')).toBeVisible()
+    const [meeting] = await app.evaluate(() => (globalThis as any).__fake__.chatMeetings()) as string[]
+    await page.evaluate(async () => {
+      await window.yogurt.cloud.setProvider('bedrock')
+      await window.yogurt.cloud.setConfig({ startUrl: 'https://example.awsapps.com/start' })
+      await window.yogurt.cloud.signIn()
+    })
+    await expect.poll(() => page.evaluate(() => window.yogurt.cloud.get().then((v) => v.sso.state)), { timeout: 10_000 }).toBe('signed-in')
+    await page.evaluate(() => window.yogurt.cloud.setConfig({ accountId: '123456789012', roleName: 'BedrockUser' }))
+    // another meeting starts recording
+    await page.getByTestId('new-note').click()
+    await expect(page.getByTestId('note-state')).toHaveAttribute('data-state', 'recording')
+    await page.evaluate((id) => window.yogurt.nav.go(`/note/${id}`), meeting)
+    await page.getByTestId('note-summary-tab').click()
+    await page.getByTestId('note-template').click()
+    await page.locator('[data-testid="note-template-option"][data-id="client"]').click()
+    const prompts = () => app.evaluate(() => (globalThis as any).__fake__.prompts().notes as string[])
+    await expect.poll(async () => (await prompts()).some((p) => p.includes('This meeting was a call with a client')), { timeout: 30_000 }).toBe(true)
+    await expect(page.getByTestId('note-waiting-for')).toHaveCount(0)
+  } finally { await app.close() }
+})

@@ -937,5 +937,6 @@
   "Words added": "Додані слова",
   "Not set": "Не задано",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Підсумок чекає, поки ви знову ввійдете в AWS. Він почнеться сам, щойно ви ввійдете.",
-  "The summary is waiting for the notes model to finish downloading.": "Підсумок чекає завершення завантаження моделі нотаток."
+  "The summary is waiting for the notes model to finish downloading.": "Підсумок чекає завершення завантаження моделі нотаток.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Підсумок буде написано, коли запис зупиниться: цей комп’ютер використовує модель нотаток, лише коли нічого не записується."
 }

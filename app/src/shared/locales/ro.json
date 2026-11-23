@@ -926,5 +926,6 @@
   "Words added": "Cuvinte adăugate",
   "Not set": "Nesetat",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Rezumatul așteaptă să te conectezi din nou la AWS. Pornește singur după ce te conectezi.",
-  "The summary is waiting for the notes model to finish downloading.": "Rezumatul așteaptă să se termine descărcarea modelului de note."
+  "The summary is waiting for the notes model to finish downloading.": "Rezumatul așteaptă să se termine descărcarea modelului de note.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Rezumatul va fi scris după ce se oprește înregistrarea: acest computer folosește modelul de note doar când nu se înregistrează nimic."
 }

@@ -909,5 +909,6 @@
   "Words added": "Hinzugefügte Wörter",
   "Not set": "Nicht festgelegt",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Die Zusammenfassung wartet, bis du dich wieder bei AWS anmeldest. Sie startet von selbst, sobald du angemeldet bist.",
-  "The summary is waiting for the notes model to finish downloading.": "Die Zusammenfassung wartet, bis das Notizmodell heruntergeladen ist."
+  "The summary is waiting for the notes model to finish downloading.": "Die Zusammenfassung wartet, bis das Notizmodell heruntergeladen ist.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Die Zusammenfassung wird geschrieben, sobald die Aufnahme endet: Dieser Computer nutzt das Notizmodell nur, wenn nichts aufgenommen wird."
 }

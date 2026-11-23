@@ -922,5 +922,6 @@
   "Words added": "Palabras añadidas",
   "Not set": "Sin definir",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "El resumen espera a que vuelvas a iniciar sesión en AWS. Empieza solo en cuanto inicies sesión.",
-  "The summary is waiting for the notes model to finish downloading.": "El resumen espera a que termine de descargarse el modelo de notas."
+  "The summary is waiting for the notes model to finish downloading.": "El resumen espera a que termine de descargarse el modelo de notas.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "El resumen se escribirá cuando termine la grabación: este ordenador solo usa el modelo de notas cuando no se graba nada."
 }

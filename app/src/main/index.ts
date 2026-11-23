@@ -761,11 +761,13 @@ app.whenReady().then(() => {
   /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */
   const notesReady = () => (provider() === 'bedrock' ? !!cloudConfig() : !!setup.notesPath())
   /** why notes can't start: on Bedrock, the AWS sign-in (it runs out after the organisation's session length) */
-  const notesWaitingFor = (): 'aws-sign-in' | 'notes-model' | undefined => (notesReady() ? undefined : provider() === 'bedrock' ? 'aws-sign-in' : 'notes-model')
+  const notesWaitingFor = (): 'aws-sign-in' | 'notes-model' | 'recording' | undefined => (!notesReady() ? (provider() === 'bedrock' ? 'aws-sign-in' : 'notes-model')
+    // a smaller Mac writes with the local model only once nothing records (Bedrock doesn't wait)
+    : provider() !== 'bedrock' && smallMac && !!activeMeeting() ? 'recording' : undefined)
   // first run: the notes model lands after recording already works; jobs wait in the queue for it
   // the embedding model (meaning search across meetings) runs in the same worker and is let go with the notes model
   const embedder = createEmbedder({ engine, modelPath: () => setup.installed()?.embed, id: bundledCatalog.embedding.id, dims: bundledCatalog.embedding.dims })
-  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: notesReady,
+  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: notesReady, remote: () => provider() === 'bedrock',
     waitingFor: () => (notesWaitingFor() === 'aws-sign-in' ? 'waiting for the AWS sign-in (Settings → Notes model): Bedrock is not signed in, or no account and role are chosen' : 'waiting for the notes model to finish downloading') })
   ipcMain.handle('setup:remove-upgrade', () => setup.removeUpgrade(remove => queue.enqueue(async () => {
     await model.unload()

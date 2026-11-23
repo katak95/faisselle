@@ -867,5 +867,6 @@
   "Words added": "追加された単語",
   "Not set": "未設定",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "要約は AWS への再サインインを待っています。サインインすると自動的に始まります。",
-  "The summary is waiting for the notes model to finish downloading.": "要約はメモ用モデルのダウンロード完了を待っています。"
+  "The summary is waiting for the notes model to finish downloading.": "要約はメモ用モデルのダウンロード完了を待っています。",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "録音が止まると要約が書かれます。このコンピュータは、何も録音していないときだけメモ用モデルを使います。"
 }

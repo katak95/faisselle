@@ -867,5 +867,6 @@
   "Words added": "추가된 단어",
   "Not set": "설정 안 됨",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "요약이 AWS 재로그인을 기다리고 있습니다. 로그인하면 자동으로 시작됩니다.",
-  "The summary is waiting for the notes model to finish downloading.": "요약이 노트 모델 다운로드 완료를 기다리고 있습니다."
+  "The summary is waiting for the notes model to finish downloading.": "요약이 노트 모델 다운로드 완료를 기다리고 있습니다.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "녹음이 멈추면 요약이 작성됩니다. 이 컴퓨터는 아무것도 녹음하지 않을 때만 노트 모델을 실행합니다."
 }

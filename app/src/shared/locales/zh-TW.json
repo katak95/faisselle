@@ -867,5 +867,6 @@
   "Words added": "新增的詞語",
   "Not set": "未設定",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "摘要正在等待你重新登入 AWS。登入後會自動開始。",
-  "The summary is waiting for the notes model to finish downloading.": "摘要正在等待筆記模型下載完成。"
+  "The summary is waiting for the notes model to finish downloading.": "摘要正在等待筆記模型下載完成。",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "錄音停止後會撰寫摘要：這台電腦只在沒有錄音時執行筆記模型。"
 }

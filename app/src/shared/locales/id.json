@@ -867,5 +867,6 @@
   "Words added": "Kata yang ditambahkan",
   "Not set": "Belum diatur",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Ringkasan menunggu Anda masuk lagi ke AWS. Ringkasan akan mulai sendiri setelah Anda masuk.",
-  "The summary is waiting for the notes model to finish downloading.": "Ringkasan menunggu model catatan selesai diunduh."
+  "The summary is waiting for the notes model to finish downloading.": "Ringkasan menunggu model catatan selesai diunduh.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Ringkasan akan ditulis setelah perekaman berhenti: komputer ini hanya menjalankan model catatan saat tidak ada yang direkam."
 }

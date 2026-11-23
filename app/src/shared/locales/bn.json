@@ -897,5 +897,6 @@
   "Words added": "যোগ করা শব্দ",
   "Not set": "সেট করা নেই",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "সারাংশটি আপনার আবার AWS-এ সাইন ইন করার অপেক্ষায় আছে। সাইন ইন করলেই এটি নিজে থেকে শুরু হবে।",
-  "The summary is waiting for the notes model to finish downloading.": "সারাংশটি নোট মডেলের ডাউনলোড শেষ হওয়ার অপেক্ষায় আছে।"
+  "The summary is waiting for the notes model to finish downloading.": "সারাংশটি নোট মডেলের ডাউনলোড শেষ হওয়ার অপেক্ষায় আছে।",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "রেকর্ডিং থামলে সারাংশ লেখা হবে: এই কম্পিউটার কিছু রেকর্ড না হলে তবেই নোট মডেল চালায়।"
 }

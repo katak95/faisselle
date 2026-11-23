@@ -909,5 +909,6 @@
   "Words added": "Mga salitang idinagdag",
   "Not set": "Hindi nakatakda",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Hinihintay ng buod na mag-sign in ka ulit sa AWS. Kusa itong magsisimula kapag naka-sign in ka na.",
-  "The summary is waiting for the notes model to finish downloading.": "Hinihintay ng buod na matapos ma-download ang notes model."
+  "The summary is waiting for the notes model to finish downloading.": "Hinihintay ng buod na matapos ma-download ang notes model.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Isusulat ang buod kapag huminto na ang recording: pinapatakbo lang ng computer na ito ang notes model kapag walang nire-record."
 }

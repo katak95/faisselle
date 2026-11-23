@@ -937,5 +937,6 @@
   "Words added": "Добавленные слова",
   "Not set": "Не задано",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Сводка ждёт, пока вы снова войдёте в AWS. Она начнётся сама, как только вы войдёте.",
-  "The summary is waiting for the notes model to finish downloading.": "Сводка ждёт окончания загрузки модели заметок."
+  "The summary is waiting for the notes model to finish downloading.": "Сводка ждёт окончания загрузки модели заметок.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Сводка будет написана, когда запись остановится: этот компьютер использует модель заметок, только когда ничего не записывается."
 }

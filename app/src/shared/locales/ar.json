@@ -965,5 +965,6 @@
   "Words added": "الكلمات المضافة",
   "Not set": "غير محدد",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "الملخص ينتظر أن تسجّل الدخول إلى AWS مرة أخرى. يبدأ تلقائيًا بمجرد تسجيل الدخول.",
-  "The summary is waiting for the notes model to finish downloading.": "الملخص ينتظر انتهاء تنزيل نموذج الملاحظات."
+  "The summary is waiting for the notes model to finish downloading.": "الملخص ينتظر انتهاء تنزيل نموذج الملاحظات.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "سيُكتب الملخص بعد توقف التسجيل: هذا الكمبيوتر يستخدم نموذج الملاحظات فقط عندما لا يُسجَّل شيء."
 }

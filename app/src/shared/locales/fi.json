@@ -915,5 +915,6 @@
   "Words added": "Lisätyt sanat",
   "Not set": "Ei asetettu",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Yhteenveto odottaa, että kirjaudut uudelleen AWS:ään. Se alkaa itsestään, kun olet kirjautunut.",
-  "The summary is waiting for the notes model to finish downloading.": "Yhteenveto odottaa, että muistiinpanomallin lataus valmistuu."
+  "The summary is waiting for the notes model to finish downloading.": "Yhteenveto odottaa, että muistiinpanomallin lataus valmistuu.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Yhteenveto kirjoitetaan, kun tallennus loppuu: tämä tietokone käyttää muistiinpanomallia vain, kun mitään ei tallenneta."
 }

@@ -897,5 +897,6 @@
   "Words added": "Eklenen sözcükler",
   "Not set": "Ayarlanmadı",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Özet, AWS’de yeniden oturum açmanızı bekliyor. Oturum açtığınızda kendiliğinden başlar.",
-  "The summary is waiting for the notes model to finish downloading.": "Özet, not modelinin indirilmesinin bitmesini bekliyor."
+  "The summary is waiting for the notes model to finish downloading.": "Özet, not modelinin indirilmesinin bitmesini bekliyor.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Özet kayıt durduğunda yazılacak: bu bilgisayar not modelini yalnızca hiçbir şey kaydedilmezken kullanır."
 }

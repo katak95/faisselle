@@ -928,5 +928,6 @@
   "Words added": "Parole aggiunte",
   "Not set": "Non impostato",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "Il riassunto attende che tu acceda di nuovo ad AWS. Parte da solo appena hai effettuato l’accesso.",
-  "The summary is waiting for the notes model to finish downloading.": "Il riassunto attende che il modello delle note finisca di scaricarsi."
+  "The summary is waiting for the notes model to finish downloading.": "Il riassunto attende che il modello delle note finisca di scaricarsi.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "Il riassunto verrà scritto al termine della registrazione: questo computer usa il modello delle note solo quando non registra nulla."
 }

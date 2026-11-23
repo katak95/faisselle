@@ -909,5 +909,6 @@
   "Words added": "Toegevoegde woorden",
   "Not set": "Niet ingesteld",
   "The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.": "De samenvatting wacht tot je je opnieuw aanmeldt bij AWS. Ze begint vanzelf zodra je bent aangemeld.",
-  "The summary is waiting for the notes model to finish downloading.": "De samenvatting wacht tot het notitiemodel klaar is met downloaden."
+  "The summary is waiting for the notes model to finish downloading.": "De samenvatting wacht tot het notitiemodel klaar is met downloaden.",
+  "The summary will be written once the recording stops: this computer runs the notes model only when nothing records.": "De samenvatting wordt geschreven zodra de opname stopt: deze computer gebruikt het notitiemodel alleen als er niets wordt opgenomen."
 }
