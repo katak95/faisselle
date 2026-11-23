@@ -6,7 +6,7 @@ import { osWords } from '../keys'
 
 type Opened = Extract<ShareOpened, { ok: true }>
 
-const sectionTitle = (s: ShareSection) => ({ notes: t('Notes model'), m365: t('Microsoft 365'), confluence: t('Confluence'), vocabulary: t('Custom words') })[s]
+const sectionTitle = (s: ShareSection) => ({ notes: t('Notes model'), context: t('Company context'), m365: t('Microsoft 365'), confluence: t('Confluence'), vocabulary: t('Custom words') })[s]
 
 /** a field's name and values in the interface's words; ids, addresses and words as they are */
 function fieldLabel(c: ShareChange): string {
@@ -15,7 +15,12 @@ function fieldLabel(c: ShareChange): string {
     'notes.region': t('Bedrock region'), 'notes.modelId': t('Model'),
     'm365.clientId': t('Application (client) ID'), 'm365.tenantId': t('Directory (tenant) ID'), 'm365.method': t('Sign in with'),
     'm365.redirectUri': t('Redirect URI'), 'm365.calendar': t('Show the Outlook calendar'), 'm365.documents': t('Search SharePoint and OneDrive'),
-    'confluence.site': t('Site'), 'vocabulary.words': t('Words added'),
+    'confluence.site': t('Site'), 'vocabulary.words': t('Words added'), 'context.text': t('About your organisation'),
+  }
+  if (c.field.startsWith('models.')) {
+    const use = c.field.slice('models.'.length)
+    const name = ({ summary: t('Summary'), actions: t('Action items'), followup: t('Follow-up email'), brief: t('Brief'), ask: t('Ask') } as Record<string, string>)[use] ?? use
+    return `${t('Model')} · ${name}`
   }
   return labels[`${c.section}.${c.field}`] ?? c.field
 }
@@ -70,7 +75,7 @@ export function SetupShare({ onApplied }: { onApplied(): void }) {
     <>
       <h2 className="settings-section-heading">{t('Share the setup')}</h2>
       <div data-testid="setup-share" className="settings-group settings-backup">
-        <p className="settings-description">{t('Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.')}</p>
+        <p className="settings-description">{t('Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.')}</p>
         <div className="settings-backup-actions">
           <button data-testid="setup-export" disabled={!!busy} onClick={() => void exportIt()} className="workspace-button">
             <Download size={14} aria-hidden="true" className="text-muted" />{busy === 'export' ? t('Exporting…') : t('Export the setup')}
@@ -89,7 +94,7 @@ export function SetupShare({ onApplied }: { onApplied(): void }) {
             <ul className="mt-2 flex flex-col gap-1 ps-6">
               {p.changes.map((c) => <li key={c.field} className="settings-description" dir="auto">
                 <span className="text-ink">{fieldLabel(c)}</span>{' · '}
-                {c.field === 'words' ? <span dir="ltr">{c.to}</span> : <><span className="line-through" dir="ltr">{valueLabel(c, c.from)}</span>{' → '}<span className="text-ink" dir="ltr">{valueLabel(c, c.to)}</span></>}
+                {c.field === 'words' ? <span dir="ltr">{c.to}</span> : c.field === 'text' ? <span className="text-ink" dir="auto">{valueLabel(c, c.to)}</span> : <><span className="line-through" dir="ltr">{valueLabel(c, c.from)}</span>{' → '}<span className="text-ink" dir="ltr">{valueLabel(c, c.to)}</span></>}
               </li>)}
             </ul>
           </div>)}

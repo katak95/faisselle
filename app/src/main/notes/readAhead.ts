@@ -174,7 +174,7 @@ export function hookReadAhead(p: {
         // read in steps first (they can be stopped); the chat then only reads the question and writes
         await llm.readAhead(summaryHead(n) + part, signal)
         if (signal.aborted) return
-        const summary = tidyNotes(await llm.chat(summaryPrompt(part, n, language), () => {}, { summary: true, maxTokens: SUMMARY_TOKENS }))
+        const summary = tidyNotes(await llm.chat(summaryPrompt(part, n, language), () => {}, { summary: true, maxTokens: SUMMARY_TOKENS, use: 'summary' }))
         if (signal.aborted) return
         s.parts.push({ lines: lines.slice(from, end), summary })
         from = end

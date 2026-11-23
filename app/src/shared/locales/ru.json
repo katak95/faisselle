@@ -921,7 +921,6 @@
   "Remove the secret": "Удалить секрет",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude в Amazon Bedrock принимает идентификаторы вида anthropic.claude-haiku-5-5 (разрешение bedrock-mantle:CreateInference). Идентификатор InvokeModel или профиль вывода, например eu.anthropic.claude-haiku-4-5-20251001-v1:0, идёт через bedrock-runtime (разрешение bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Поделиться настройками",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ваши модели и подключения в одном файле, чтобы передать их другому человеку: где пишутся сводки, Bedrock, Microsoft 365, Confluence и ваши слова. В нём нет паролей, ключей и входов: каждый входит в свои учётные записи сам.",
   "Export the setup": "Экспортировать настройки",
   "Import a setup": "Импортировать настройки",
   "Choose what to apply from this setup:": "Выберите, что применить из этих настроек:",
@@ -935,5 +934,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Не удалось сохранить настройки. Повторите попытку или выберите другое место.",
   "This preview is out of date. Import the setup again.": "Этот предпросмотр устарел. Импортируйте настройки ещё раз.",
   "Words added": "Добавленные слова",
-  "Not set": "Не задано"
+  "Not set": "Не задано",
+  "Company context": "Контекст компании",
+  "About your organisation": "О вашей организации",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Чем занимается ваша организация, её клиенты, продукты, команды и термины: ИИ использует это как фон для сводок, задач, писем после встречи, брифингов и функции «Спросить». В Amazon Bedrock он отправляется вместе с ними.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Например: Acme делает программы для выставления счетов стоматологам во Франции и Бельгии. Наши клиенты — клиники и стоматологические сети. Команды: Продажи, Успех клиентов, Продукт. «MRR» — ежемесячная регулярная выручка; «развёртывание в III квартале» — переход всех клиник на новую версию.",
+  "Model for each use": "Модель для каждого случая",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Оставьте случай пустым, чтобы писать его моделью выше. Каждая модель идёт через конечную точку, которую требует её идентификатор, как выше.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ваши модели и подключения в одном файле, чтобы передать их другому человеку: где пишутся сводки, Bedrock и его модели, контекст вашей компании, Microsoft 365, Confluence и ваши слова. В нём нет паролей, ключей и входов: каждый входит в свои учётные записи сам."
 }

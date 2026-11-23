@@ -893,7 +893,6 @@
   "Remove the secret": "Alisin ang secret",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Tumatanggap ang Claude sa Amazon Bedrock ng mga ID gaya ng anthropic.claude-haiku-5-5 (pahintulot na bedrock-mantle:CreateInference). Ang InvokeModel ID o inference profile, gaya ng eu.anthropic.claude-haiku-4-5-20251001-v1:0, ay dumadaan sa bedrock-runtime (pahintulot na bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Ibahagi ang setup",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ang mga model at connector mo sa isang file, para ibigay sa iba: kung saan isinusulat ang mga buod, Bedrock, Microsoft 365, Confluence at ang sarili mong mga salita. Walang password, key o sign-in dito: magsa-sign in ang bawat isa gamit ang sarili nilang mga account.",
   "Export the setup": "I-export ang setup",
   "Import a setup": "Mag-import ng setup",
   "Choose what to apply from this setup:": "Piliin kung ano ang ilalapat mula sa setup na ito:",
@@ -907,5 +906,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Hindi ma-save ang setup. Subukan ulit, o pumili ng ibang lugar.",
   "This preview is out of date. Import the setup again.": "Luma na ang preview na ito. I-import ulit ang setup.",
   "Words added": "Mga salitang idinagdag",
-  "Not set": "Hindi nakatakda"
+  "Not set": "Hindi nakatakda",
+  "Company context": "Konteksto ng kumpanya",
+  "About your organisation": "Tungkol sa organisasyon mo",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Kung ano ang ginagawa ng organisasyon mo, ang mga kliyente, produkto, team at salita nito: binabasa ito ng AI bilang background para sa mga buod, gawain, follow-up email, brief at Magtanong. Sa Amazon Bedrock, ipinapadala ito kasama nila.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Halimbawa: Gumagawa ang Acme ng billing software para sa mga dentista sa France at Belgium. Ang mga kliyente namin ay mga klinika at dental group. Mga team: Sales, Customer success, Product. Ang \"MRR\" ay ang buwanang paulit-ulit na kita; ang \"Q3 rollout\" ay ang paglipat ng lahat ng klinika sa bagong bersyon.",
+  "Model for each use": "Model para sa bawat gamit",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Iwanang blangko ang isang gamit para isulat ito gamit ang model sa itaas. Dumadaan ang bawat model sa endpoint na hinihingi ng ID nito, gaya sa itaas.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Ang mga model at connector mo sa isang file, para ibigay sa iba: kung saan isinusulat ang mga buod, ang Bedrock at ang mga model nito, ang konteksto ng kumpanya mo, Microsoft 365, Confluence at ang sarili mong mga salita. Walang password, key o sign-in dito: magsa-sign in ang bawat isa gamit ang sarili nilang mga account."
 }

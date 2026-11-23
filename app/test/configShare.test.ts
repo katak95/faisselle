@@ -68,6 +68,25 @@ describe('sharing the setup', () => {
     expect(previewShare(mine, buildShare(mine, { appVersion: 'x', site }))).toEqual([])
   })
 
+  it('shares the company context and the models for each use', () => {
+    const withMore: Settings = { ...mine, organisation: 'Acme makes billing software for dentists.', bedrock: { ...mine.bedrock, models: { brief: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0' } } }
+    const f = buildShare(withMore, { appVersion: 'x', site })
+    expect(f.context).toBe('Acme makes billing software for dentists.')
+    expect(f.notes?.models).toEqual({ brief: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0' })
+    expect(parseShare(JSON.stringify(f))).toEqual({ ok: true, setup: f })
+    const theirs: Settings = { organisation: 'Our own text', bedrock: { models: { summary: 'anthropic.claude-haiku-5-5' } } }
+    const preview = previewShare(theirs, f)
+    expect(preview.find((p) => p.section === 'context')?.changes).toEqual([{ section: 'context', field: 'text', from: 'Our own text', to: 'Acme makes billing software for dentists.' }])
+    expect(preview.find((p) => p.section === 'notes')?.changes).toEqual(expect.arrayContaining([
+      { section: 'notes', field: 'models.summary', from: 'anthropic.claude-haiku-5-5', to: '' },
+      { section: 'notes', field: 'models.brief', from: '', to: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0' },
+    ]))
+    const patch = applyShare(theirs, f, ['context', 'notes'])
+    // the context is one text: it replaces theirs; the uses are the sharer's
+    expect(patch.organisation).toBe('Acme makes billing software for dentists.')
+    expect(patch.bedrock?.models).toEqual({ brief: 'eu.anthropic.claude-sonnet-4-5-20250929-v1:0' })
+  })
+
   it("applies only the sections kept, adds to the vocabulary, and keeps the person's own account and role", () => {
     const theirs: Settings = { bedrock: { accountId: '999999999999', roleName: 'Theirs' }, jargon: ['Kickoff'], m365: { enabled: true, calendar: false } }
     const setup = buildShare(mine, { appVersion: 'x', site })

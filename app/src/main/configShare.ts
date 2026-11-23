@@ -1,10 +1,11 @@
 import type { Settings } from './settings'
 import { validRegion, validStartUrl } from './aws/sso'
-import { validModelId } from './notes/bedrock'
+import { cleanModels, validModelId } from './notes/bedrock'
 import { GUID, validTenant } from './m365/ipc'
 import { DEFAULT_REDIRECT, parseRedirect } from './m365/oauth'
 import { cleanJargon } from '../shared/jargon'
-import type { ShareChange, ShareSection, SharePreview } from '../shared/types'
+import { cleanOrganisation } from './organisation'
+import { MODEL_USES, type ModelUse, type ShareChange, type ShareSection, type SharePreview } from '../shared/types'
 
 /**
  * Faisselle's models and connectors as a file another person imports (Settings → Share the setup): where the notes
@@ -24,10 +25,14 @@ export type SharedSetup = {
   version: number
   exportedAt: string
   appVersion: string
-  notes?: { provider: 'local' | 'bedrock'; startUrl?: string; ssoRegion?: string; region?: string; modelId?: string }
+  notes?: { provider: 'local' | 'bedrock'; startUrl?: string; ssoRegion?: string; region?: string; modelId?: string
+    /** a model for some uses (summaries, brief…) instead of modelId */
+    models?: Partial<Record<ModelUse, string>> }
   m365?: { clientId?: string; tenantId?: string; method: 'code' | 'browser'; redirectUri?: string; calendar: boolean; documents: boolean }
   confluence?: { siteId: string; siteName?: string; siteUrl?: string }
   vocabulary?: string[]
+  /** Settings → Company context */
+  context?: string
 }
 
 /** the setup on this computer, as a file to share; site: the Confluence site in use, when connected */
@@ -36,7 +41,8 @@ export function buildShare(s: Settings, o: { appVersion: string; now?: Date; sit
   const out: SharedSetup = { kind: SHARE_KIND, version: SHARE_VERSION, exportedAt: (o.now ?? new Date()).toISOString(), appVersion: o.appVersion,
     notes: { provider: s.notesProvider === 'bedrock' ? 'bedrock' : 'local',
       ...(b.startUrl ? { startUrl: b.startUrl } : {}), ...(b.ssoRegion ? { ssoRegion: b.ssoRegion } : {}),
-      ...(b.region ? { region: b.region } : {}), ...(b.modelId ? { modelId: b.modelId } : {}) } }
+      ...(b.region ? { region: b.region } : {}), ...(b.modelId ? { modelId: b.modelId } : {}),
+      ...(Object.keys(cleanModels(b.models)).length ? { models: cleanModels(b.models) } : {}) } }
   if (m && (m.enabled || m.clientId || m.method))
     out.m365 = { ...(m.clientId ? { clientId: m.clientId } : {}), ...(m.tenantId ? { tenantId: m.tenantId } : {}), method: m.method === 'browser' ? 'browser' : 'code',
       ...(m.method === 'browser' ? { redirectUri: m.redirectUri ?? DEFAULT_REDIRECT } : {}), calendar: m.calendar !== false, documents: m.documents === true }
@@ -44,6 +50,8 @@ export function buildShare(s: Settings, o: { appVersion: string; now?: Date; sit
   if (siteId && s.atlassian?.enabled !== false) out.confluence = { siteId, ...(o.site ? { siteName: o.site.name, siteUrl: o.site.url } : {}) }
   const words = cleanJargon(s.jargon)
   if (words.length) out.vocabulary = words
+  const context = cleanOrganisation(s.organisation)
+  if (context) out.context = context
   return out
 }
 
@@ -62,7 +70,8 @@ export function parseShare(raw: string): { ok: true; setup: SharedSetup } | { ok
     const n = v.notes
     setup.notes = { provider: n.provider === 'bedrock' ? 'bedrock' : 'local',
       ...(validStartUrl(n.startUrl) ? { startUrl: n.startUrl } : {}), ...(validRegion(n.ssoRegion) ? { ssoRegion: n.ssoRegion } : {}),
-      ...(validRegion(n.region) ? { region: n.region } : {}), ...(validModelId(n.modelId) ? { modelId: n.modelId } : {}) }
+      ...(validRegion(n.region) ? { region: n.region } : {}), ...(validModelId(n.modelId) ? { modelId: n.modelId } : {}),
+      ...(Object.keys(cleanModels(n.models)).length ? { models: cleanModels(n.models) } : {}) }
   }
   if (isObj(v.m365)) {
     const m = v.m365
@@ -81,6 +90,8 @@ export function parseShare(raw: string): { ok: true; setup: SharedSetup } | { ok
   }
   const words = cleanJargon(v.vocabulary)
   if (words.length) setup.vocabulary = words
+  const context = cleanOrganisation(v.context)
+  if (context) setup.context = context
   return { ok: true, setup }
 }
 
@@ -99,6 +110,8 @@ export function previewShare(s: Settings, setup: SharedSetup): SharePreview[] {
       ...(n.ssoRegion ? change('notes', 'ssoRegion', b.ssoRegion, n.ssoRegion) : []),
       ...(n.region ? change('notes', 'region', b.region, n.region) : []),
       ...(n.modelId ? change('notes', 'modelId', b.modelId, n.modelId) : []),
+      // a use left to the main model shows as not set
+      ...MODEL_USES.flatMap((u: ModelUse) => change('notes', `models.${u}`, cleanModels(b.models)[u], n.models?.[u])),
     ]
     if (changes.length) out.push({ section: 'notes', changes })
   }
@@ -116,6 +129,12 @@ export function previewShare(s: Settings, setup: SharedSetup): SharePreview[] {
     const changes = change('confluence', 'site', s.atlassian?.siteId, setup.confluence.siteId)
       .map((c) => ({ ...c, to: setup.confluence!.siteName ?? setup.confluence!.siteUrl ?? c.to }))
     if (changes.length) out.push({ section: 'confluence', changes })
+  }
+  if (setup.context) {
+    const here = cleanOrganisation(s.organisation)
+    // a long text shown by its start
+    const short = (v: string) => (v.length > 160 ? `${v.slice(0, 160).trimEnd()}…` : v)
+    if (here !== setup.context) out.push({ section: 'context', changes: [{ section: 'context', field: 'text', from: short(here), to: short(setup.context) }] })
   }
   if (setup.vocabulary) {
     const here = new Set(cleanJargon(s.jargon).map((w) => w.toLowerCase()))
@@ -136,7 +155,9 @@ export function applyShare(s: Settings, setup: SharedSetup, sections: ShareSecti
     const n = setup.notes
     patch.notesProvider = n.provider === 'bedrock' ? 'bedrock' : undefined
     patch.bedrock = { ...s.bedrock, ...(n.startUrl ? { startUrl: n.startUrl } : {}), ...(n.ssoRegion ? { ssoRegion: n.ssoRegion } : {}),
-      ...(n.region ? { region: n.region } : {}), ...(n.modelId ? { modelId: n.modelId } : {}) }
+      ...(n.region ? { region: n.region } : {}), ...(n.modelId ? { modelId: n.modelId } : {}),
+      // the uses are the sharer's: theirs replace the person's own (none: each use back to the main model)
+      models: n.models && Object.keys(n.models).length ? { ...n.models } : undefined }
   }
   if (want.has('m365') && setup.m365) {
     const m = setup.m365
@@ -144,6 +165,8 @@ export function applyShare(s: Settings, setup: SharedSetup, sections: ShareSecti
       redirectUri: m.method === 'browser' && m.redirectUri !== DEFAULT_REDIRECT ? m.redirectUri : undefined,
       calendar: m.calendar ? undefined : false, documents: m.documents || undefined }
   }
+  // the company context is one text: it replaces the person's own
+  if (want.has('context') && setup.context) patch.organisation = setup.context
   if (want.has('confluence') && setup.confluence) patch.atlassian = { ...s.atlassian, siteId: setup.confluence.siteId }
   if (want.has('vocabulary') && setup.vocabulary) {
     const here = cleanJargon(s.jargon), seen = new Set(here.map((w) => w.toLowerCase()))

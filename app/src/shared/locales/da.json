@@ -893,7 +893,6 @@
   "Remove the secret": "Fjern hemmeligheden",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude i Amazon Bedrock bruger id’er som anthropic.claude-haiku-5-5 (tilladelse bedrock-mantle:CreateInference). Et InvokeModel-id eller en inferensprofil som eu.anthropic.claude-haiku-4-5-20251001-v1:0 går gennem bedrock-runtime (tilladelse bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Del opsætningen",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Dine modeller og forbindelser i én fil, som du kan give til en anden: hvor resuméer skrives, Bedrock, Microsoft 365, Confluence og dine egne ord. Ingen adgangskode, nøgle eller login kommer med: hver person logger ind med sine egne konti.",
   "Export the setup": "Eksportér opsætningen",
   "Import a setup": "Importér en opsætning",
   "Choose what to apply from this setup:": "Vælg, hvad du vil anvende fra denne opsætning:",
@@ -907,5 +906,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Opsætningen kunne ikke gemmes. Prøv igen, eller vælg et andet sted.",
   "This preview is out of date. Import the setup again.": "Forhåndsvisningen er forældet. Importér opsætningen igen.",
   "Words added": "Tilføjede ord",
-  "Not set": "Ikke angivet"
+  "Not set": "Ikke angivet",
+  "Company context": "Virksomhedskontekst",
+  "About your organisation": "Om din organisation",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Hvad din organisation laver, dens kunder, produkter, teams og begreber: AI’en bruger det som baggrund for resuméer, opgaver, opfølgningsmails, briefinger og Spørg. På Amazon Bedrock sendes det med.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "For eksempel: Acme laver faktureringssoftware til tandlæger i Frankrig og Belgien. Vores kunder er klinikker og tandlægegrupper. Teams: Salg, Kundesucces, Produkt. \"MRR\" er den månedlige tilbagevendende omsætning; \"Q3-udrulningen\" er flytningen af alle klinikker til den nye version.",
+  "Model for each use": "Model for hver brug",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Lad en brug stå tom for at skrive den med modellen ovenfor. Hver model går gennem det endpoint, dens id kræver, som ovenfor.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Dine modeller og forbindelser i én fil, som du kan give til en anden: hvor resuméer skrives, Bedrock og dets modeller, din virksomhedskontekst, Microsoft 365, Confluence og dine egne ord. Ingen adgangskode, nøgle eller login kommer med: hver person logger ind med sine egne konti."
 }

@@ -8,7 +8,7 @@ import { isFake } from './paths'
 import { t } from '../shared/i18n'
 import type { ShareApplied, ShareOpened, ShareSection } from '../shared/types'
 
-const SECTIONS: ShareSection[] = ['notes', 'm365', 'confluence', 'vocabulary']
+const SECTIONS: ShareSection[] = ['notes', 'context', 'm365', 'confluence', 'vocabulary']
 /** a file larger than this isn't a setup */
 const MAX_BYTES = 256 * 1024
 
