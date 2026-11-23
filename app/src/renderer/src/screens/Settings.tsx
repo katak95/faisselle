@@ -19,6 +19,7 @@ import { CloudNotesSettings } from '../components/CloudNotesSettings'
 import { TemplateSettings } from '../components/TemplateSettings'
 import { M365Settings } from '../components/M365Settings'
 import { AtlassianSettings } from '../components/AtlassianSettings'
+import { SetupShare } from '../components/SetupShare'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -86,6 +87,8 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
   const [prefs, setPrefs] = useState<Awaited<ReturnType<typeof window.yogurt.settings.get>>>()
   const [name, setName] = useState('')
   const [generalReady, setGeneralReady] = useState(false)
+  /** bumped when a setup is imported: the sections it touches read their settings again */
+  const [setupRev, setSetupRev] = useState(0)
   const scroll = useScrollMemory<HTMLDivElement>('settings', !!prefs && !!perms)
   useEffect(() => { void window.yogurt.settings.get().then(setPrefs) }, [revision])
   const reload = useCallback(() => { void window.yogurt.permissions.status().then(setPerms) }, [])
@@ -266,16 +269,18 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
             <AppLanguage />
             <SummaryLanguage />
             <SpokenSetting />
-            <Jargon />
+            <Jargon key={`jargon-${setupRev}`} />
           </div>
 
-          <CloudNotesSettings />
+          <CloudNotesSettings key={`cloud-${setupRev}`} />
 
           <TemplateSettings />
 
-          <M365Settings />
+          <M365Settings key={`m365-${setupRev}`} />
 
-          <AtlassianSettings />
+          <AtlassianSettings key={`atlassian-${setupRev}`} />
+
+          <SetupShare onApplied={() => { setSetupRev((n) => n + 1); void window.yogurt.settings.get().then(setPrefs) }} />
 
           <Backup onImported={() => { void window.yogurt.settings.get().then(setPrefs) }} />
 

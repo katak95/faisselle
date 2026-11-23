@@ -849,5 +849,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "客户端密码，仅当该重定向 URI 位于 Web 平台时填写",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "已保存客户端密码。输入新的可替换，留空则保留。",
   "Remove the secret": "删除密码",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 这样的 ID（权限 bedrock-mantle:CreateInference）。InvokeModel ID 或推理配置文件（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（权限 bedrock:InvokeModelWithResponseStream）。"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock 中的 Claude 使用 anthropic.claude-haiku-5-5 这样的 ID（权限 bedrock-mantle:CreateInference）。InvokeModel ID 或推理配置文件（如 eu.anthropic.claude-haiku-4-5-20251001-v1:0）走 bedrock-runtime（权限 bedrock:InvokeModelWithResponseStream）。",
+  "Share the setup": "共享设置",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "把你的模型和连接器放进一个文件，交给别人使用：摘要在哪里撰写、Bedrock、Microsoft 365、Confluence 以及你的自定义词语。文件中不含任何密码、密钥或登录信息：每个人都用自己的账户登录。",
+  "Export the setup": "导出设置",
+  "Import a setup": "导入设置",
+  "Choose what to apply from this setup:": "选择要从此设置中应用的内容：",
+  "Apply": "应用",
+  "Setup exported.": "已导出设置。",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "已应用设置。如有需要，请在上方各部分用你自己的账户登录。",
+  "Nothing in this setup changes yours.": "此设置中没有会改变你设置的内容。",
+  "That file isn't a Faisselle setup.": "该文件不是 Faisselle 设置。",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "此设置来自更新版本的 Faisselle。请更新 Faisselle 后重试。",
+  "Couldn't read that setup. Try again.": "无法读取该设置。请重试。",
+  "Couldn't save the setup. Try again, or pick another place.": "无法保存设置。请重试，或选择其他位置。",
+  "This preview is out of date. Import the setup again.": "此预览已过期。请重新导入设置。",
+  "Words added": "新增词语",
+  "Not set": "未设置"
 }

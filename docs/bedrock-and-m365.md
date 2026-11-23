@@ -130,3 +130,23 @@ What may be needed on Atlassian's side:
   permission for it. Settings says so when Atlassian refuses.
 - Some organisations restrict OAuth redirects: the `localhost` callback above must then be allowed.
 - You need a personal space in Confluence (Profile → Personal space). Faisselle says so if there is none.
+
+## Sharing the setup with someone else
+
+Settings → **Share the setup** → **Export the setup** writes the models and connectors in one file (JSON), to give
+to a colleague:
+
+- where summaries are written (this computer or Bedrock), and Bedrock's sign-in start URL, Identity Center region,
+  Bedrock region and model;
+- Microsoft 365: the organisation's app (client and tenant IDs), how to sign in (code or browser, with the redirect
+  URI), the Outlook calendar and SharePoint/OneDrive search switches;
+- Confluence: the site in use;
+- the custom words.
+
+Never a secret or a sign-in: no AWS token, account or role, no Bedrock API key, no Microsoft client secret or token,
+no Atlassian sign-in or personal space.
+
+**Import a setup** shows what each part would change, current value → new one. The person keeps the parts they want
+and **Apply**: the custom words are added to theirs, never replaced. They then sign in with their own accounts (AWS,
+Microsoft 365, Atlassian) in the sections above. A file is checked with the same rules as Settings: a field that
+doesn't pass them is left out.

@@ -904,5 +904,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Secreto de cliente, solo si ese URI de redirección está en la plataforma Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Hay un secreto de cliente guardado. Escribe otro para reemplazarlo o deja el campo vacío para conservarlo.",
   "Remove the secret": "Quitar el secreto",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude en Amazon Bedrock usa ID como anthropic.claude-haiku-5-5 (permiso bedrock-mantle:CreateInference). Un ID de InvokeModel o un perfil de inferencia, como eu.anthropic.claude-haiku-4-5-20251001-v1:0, pasa por bedrock-runtime (permiso bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude en Amazon Bedrock usa ID como anthropic.claude-haiku-5-5 (permiso bedrock-mantle:CreateInference). Un ID de InvokeModel o un perfil de inferencia, como eu.anthropic.claude-haiku-4-5-20251001-v1:0, pasa por bedrock-runtime (permiso bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Compartir la configuración",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Tus modelos y conectores en un archivo, para dárselo a otra persona: dónde se escriben los resúmenes, Bedrock, Microsoft 365, Confluence y tus palabras personalizadas. No incluye contraseñas, claves ni inicios de sesión: cada persona inicia sesión con sus propias cuentas.",
+  "Export the setup": "Exportar la configuración",
+  "Import a setup": "Importar una configuración",
+  "Choose what to apply from this setup:": "Elige qué aplicar de esta configuración:",
+  "Apply": "Aplicar",
+  "Setup exported.": "Configuración exportada.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Configuración aplicada. Inicia sesión con tus propias cuentas en las secciones de arriba si hace falta.",
+  "Nothing in this setup changes yours.": "Nada en esta configuración cambia la tuya.",
+  "That file isn't a Faisselle setup.": "Ese archivo no es una configuración de Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Esta configuración viene de una Faisselle más reciente. Actualiza Faisselle y vuelve a intentarlo.",
+  "Couldn't read that setup. Try again.": "No se pudo leer esa configuración. Vuelve a intentarlo.",
+  "Couldn't save the setup. Try again, or pick another place.": "No se pudo guardar la configuración. Vuelve a intentarlo o elige otro lugar.",
+  "This preview is out of date. Import the setup again.": "Esta vista previa está desactualizada. Vuelve a importar la configuración.",
+  "Words added": "Palabras añadidas",
+  "Not set": "Sin definir"
 }

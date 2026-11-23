@@ -100,6 +100,7 @@ import { createIndexer } from './library/indexer'
 import { hookConversations } from './library/conversations'
 import { hookShare } from './share'
 import { hookBackup } from './backupIpc'
+import { hookSetupShare } from './configShareIpc'
 import { hookFolders } from './foldersIpc'
 import { hookMcp } from './mcp'
 import { startedHidden } from './mcp/paths'
@@ -742,6 +743,8 @@ app.whenReady().then(() => {
   const localModel = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // the notes on Amazon Bedrock instead (Settings → Notes model): signed in with AWS IAM Identity Center
   let cloud: ReturnType<typeof hookCloud> | undefined
+  /** the notes moved between this computer and Bedrock (Settings, or a setup imported) */
+  let notesChanged: (p: 'local' | 'bedrock') => void = () => {}
   const sso = createSso({
     file: join(userDataDir(), 'aws-sso.json'), api: isFake() ? fakeSsoApi() : awsSsoApi(),
     seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
@@ -766,14 +769,15 @@ app.whenReady().then(() => {
     remove()
   }, 'enhance')))
   setup.onNotesModel(() => { queue.modelArrived(); conversations.refresh() })
+  notesChanged = (p) => {
+    if (p === 'local') setup.localNotesWanted()
+    else { setup.cloudChosen(); void model.switched().catch((e) => console.error('letting the local notes model go failed', e)) }
+    queue.modelArrived(); conversations.refresh()
+  }
   cloud = hookCloud({
     file: settingsFile, sso, canRunLocally: () => setup.canRunLocally(),
     send: (v) => win?.webContents.send('cloud:changed', v),
-    changed: (p) => {
-      if (p === 'local') setup.localNotesWanted()
-      else { setup.cloudChosen(); void model.switched().catch((e) => console.error('letting the local notes model go failed', e)) }
-      queue.modelArrived(); conversations.refresh()
-    },
+    changed: (p) => notesChanged(p),
     test: async () => { const llm = await bedrockModel.llm(); await llm.chat('Reply with the single word OK.', () => {}, { maxTokens: 16 }) },
     localNotesBytes: () => setup.localNotesBytes(),
     // on Bedrock no new job reaches the local model (and the queue waits while Bedrock isn't signed in yet): let it go, then its files
@@ -989,6 +993,25 @@ app.whenReady().then(() => {
   const foldersChanged = () => { win?.webContents.send('folders:changed'); folderSuggestions.refresh() }
   hookFolders({ store, changed: foldersChanged })
   // every meeting to one file and back; what an import adds shows up on home
+  // Settings → Share the setup: models and connectors to a file, and from one (never a secret)
+  hookSetupShare({ file: settingsFile, window: () => win,
+    site: () => { try { return atlassian.current().site } catch { return undefined } },
+    applied: (sections, before, after) => {
+      if (sections.includes('notes')) {
+        const p = after.notesProvider === 'bedrock' ? 'bedrock' : 'local'
+        if (p !== (before.notesProvider === 'bedrock' ? 'bedrock' : 'local')) notesChanged(p)
+        if (cloud) win?.webContents.send('cloud:changed', cloud.view())
+      }
+      if (sections.includes('m365')) {
+        const b = before.m365 ?? {}, a = after.m365 ?? {}
+        // another app, tenant or way of signing in: the sign-in made with the old one is no use
+        if (b.clientId !== a.clientId || b.tenantId !== a.tenantId || b.method !== a.method) m365Tokens.setTokens(undefined)
+        void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() })
+        refreshCalendarConsumers()
+        m365Ipc?.push()
+      }
+      if (sections.includes('confluence')) { atlassian.siteChanged(); atlassianIpc?.push() }
+    } })
   hookBackup({ getRecordingPill: () => visibilityOf(loadSettings(settingsFile), platform).showRecordingPill,
     setRecordingPill: preferences.setRecordingPill, db: store.db, meetingsDir: join(userDataDir(), 'meetings'), window: () => win, recording: () => !!activeMeeting() || !!resumingId,
     changed: () => { win?.webContents.send('meetings:changed'); win?.webContents.send('conversations:list', conversations.list()); void indexer.refresh(); folderSuggestions.refresh() },

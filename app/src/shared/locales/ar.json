@@ -947,5 +947,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "سر العميل، فقط إذا كان عنوان URI لإعادة التوجيه على منصة الويب",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "تم حفظ سر عميل. اكتب سرًا آخر لاستبداله، أو اترك الحقل فارغًا للاحتفاظ به.",
   "Remove the secret": "إزالة السر",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "يقبل Claude في Amazon Bedrock معرّفات مثل anthropic.claude-haiku-5-5 (الإذن bedrock-mantle:CreateInference). أما معرّف InvokeModel أو ملف الاستدلال، مثل eu.anthropic.claude-haiku-4-5-20251001-v1:0، فيمرّ عبر bedrock-runtime (الإذن bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "يقبل Claude في Amazon Bedrock معرّفات مثل anthropic.claude-haiku-5-5 (الإذن bedrock-mantle:CreateInference). أما معرّف InvokeModel أو ملف الاستدلال، مثل eu.anthropic.claude-haiku-4-5-20251001-v1:0، فيمرّ عبر bedrock-runtime (الإذن bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "مشاركة الإعداد",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "نماذجك وموصلاتك في ملف واحد لتعطيه لشخص آخر: أين تُكتب الملخصات، وBedrock، وMicrosoft 365، وConfluence، وكلماتك المخصصة. لا يحتوي على أي كلمة مرور أو مفتاح أو تسجيل دخول: يسجّل كل شخص الدخول بحساباته الخاصة.",
+  "Export the setup": "تصدير الإعداد",
+  "Import a setup": "استيراد إعداد",
+  "Choose what to apply from this setup:": "اختر ما تطبّقه من هذا الإعداد:",
+  "Apply": "تطبيق",
+  "Setup exported.": "تم تصدير الإعداد.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "تم تطبيق الإعداد. سجّل الدخول بحساباتك الخاصة في الأقسام أعلاه عند الحاجة.",
+  "Nothing in this setup changes yours.": "لا شيء في هذا الإعداد يغيّر إعدادك.",
+  "That file isn't a Faisselle setup.": "هذا الملف ليس إعدادًا من Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "هذا الإعداد من إصدار أحدث من Faisselle. حدّث Faisselle ثم حاول مرة أخرى.",
+  "Couldn't read that setup. Try again.": "تعذّرت قراءة هذا الإعداد. حاول مرة أخرى.",
+  "Couldn't save the setup. Try again, or pick another place.": "تعذّر حفظ الإعداد. حاول مرة أخرى أو اختر مكانًا آخر.",
+  "This preview is out of date. Import the setup again.": "هذه المعاينة قديمة. استورد الإعداد مرة أخرى.",
+  "Words added": "الكلمات المضافة",
+  "Not set": "غير محدد"
 }

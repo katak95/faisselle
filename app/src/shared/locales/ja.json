@@ -849,5 +849,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "クライアントシークレット（リダイレクト URI が Web プラットフォームにある場合のみ）",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "クライアントシークレットが保存されています。置き換えるには別の値を入力し、そのままにするには空欄のままにしてください。",
   "Remove the secret": "シークレットを削除",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。"
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock の Claude は anthropic.claude-haiku-5-5 のような ID を使います（権限 bedrock-mantle:CreateInference）。eu.anthropic.claude-haiku-4-5-20251001-v1:0 のような InvokeModel の ID や推論プロファイルは bedrock-runtime を通ります（権限 bedrock:InvokeModelWithResponseStream）。",
+  "Share the setup": "設定を共有",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "モデルとコネクタを 1 つのファイルにまとめて、ほかの人に渡せます：要約を書く場所、Bedrock、Microsoft 365、Confluence、カスタム単語。パスワード、キー、サインイン情報は含まれません。各自が自分のアカウントでサインインします。",
+  "Export the setup": "設定を書き出す",
+  "Import a setup": "設定を読み込む",
+  "Choose what to apply from this setup:": "この設定から適用する項目を選んでください：",
+  "Apply": "適用",
+  "Setup exported.": "設定を書き出しました。",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "設定を適用しました。必要に応じて、上のセクションで自分のアカウントにサインインしてください。",
+  "Nothing in this setup changes yours.": "この設定にはあなたの設定を変える内容がありません。",
+  "That file isn't a Faisselle setup.": "このファイルは Faisselle の設定ではありません。",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "この設定は新しいバージョンの Faisselle で作られています。Faisselle をアップデートしてから、もう一度お試しください。",
+  "Couldn't read that setup. Try again.": "この設定を読み込めませんでした。もう一度お試しください。",
+  "Couldn't save the setup. Try again, or pick another place.": "設定を保存できませんでした。もう一度試すか、別の場所を選んでください。",
+  "This preview is out of date. Import the setup again.": "このプレビューは古くなっています。設定をもう一度読み込んでください。",
+  "Words added": "追加された単語",
+  "Not set": "未設定"
 }

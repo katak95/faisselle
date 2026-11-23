@@ -849,5 +849,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Bí mật máy khách, chỉ khi URI chuyển hướng đó nằm trên nền tảng Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Đã lưu một bí mật máy khách. Nhập cái khác để thay thế, hoặc để trống để giữ nguyên.",
   "Remove the secret": "Xóa bí mật",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude trong Amazon Bedrock nhận ID dạng anthropic.claude-haiku-5-5 (quyền bedrock-mantle:CreateInference). ID InvokeModel hoặc hồ sơ suy luận, như eu.anthropic.claude-haiku-4-5-20251001-v1:0, đi qua bedrock-runtime (quyền bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude trong Amazon Bedrock nhận ID dạng anthropic.claude-haiku-5-5 (quyền bedrock-mantle:CreateInference). ID InvokeModel hoặc hồ sơ suy luận, như eu.anthropic.claude-haiku-4-5-20251001-v1:0, đi qua bedrock-runtime (quyền bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Chia sẻ thiết lập",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Các mô hình và trình kết nối của bạn trong một tệp để đưa cho người khác: nơi viết bản tóm tắt, Bedrock, Microsoft 365, Confluence và các từ tùy chỉnh của bạn. Không có mật khẩu, khóa hay thông tin đăng nhập nào trong đó: mỗi người đăng nhập bằng tài khoản của riêng mình.",
+  "Export the setup": "Xuất thiết lập",
+  "Import a setup": "Nhập thiết lập",
+  "Choose what to apply from this setup:": "Chọn những gì cần áp dụng từ thiết lập này:",
+  "Apply": "Áp dụng",
+  "Setup exported.": "Đã xuất thiết lập.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Đã áp dụng thiết lập. Đăng nhập bằng tài khoản của bạn ở các mục bên trên nếu cần.",
+  "Nothing in this setup changes yours.": "Không có gì trong thiết lập này thay đổi thiết lập của bạn.",
+  "That file isn't a Faisselle setup.": "Tệp đó không phải thiết lập Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Thiết lập này từ Faisselle mới hơn. Hãy cập nhật Faisselle rồi thử lại.",
+  "Couldn't read that setup. Try again.": "Không đọc được thiết lập đó. Hãy thử lại.",
+  "Couldn't save the setup. Try again, or pick another place.": "Không lưu được thiết lập. Hãy thử lại hoặc chọn nơi khác.",
+  "This preview is out of date. Import the setup again.": "Bản xem trước này đã cũ. Hãy nhập lại thiết lập.",
+  "Words added": "Từ đã thêm",
+  "Not set": "Chưa đặt"
 }

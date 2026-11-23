@@ -894,5 +894,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Μυστικό προγράμματος-πελάτη, μόνο αν το URI ανακατεύθυνσης είναι στην πλατφόρμα Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Έχει αποθηκευτεί μυστικό προγράμματος-πελάτη. Πληκτρολογήστε άλλο για αντικατάσταση ή αφήστε κενό για να το κρατήσετε.",
   "Remove the secret": "Αφαίρεση μυστικού",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Το Claude στο Amazon Bedrock δέχεται αναγνωριστικά όπως anthropic.claude-haiku-5-5 (δικαίωμα bedrock-mantle:CreateInference). Ένα αναγνωριστικό InvokeModel ή προφίλ συμπερασμού, όπως eu.anthropic.claude-haiku-4-5-20251001-v1:0, περνά από το bedrock-runtime (δικαίωμα bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Το Claude στο Amazon Bedrock δέχεται αναγνωριστικά όπως anthropic.claude-haiku-5-5 (δικαίωμα bedrock-mantle:CreateInference). Ένα αναγνωριστικό InvokeModel ή προφίλ συμπερασμού, όπως eu.anthropic.claude-haiku-4-5-20251001-v1:0, περνά από το bedrock-runtime (δικαίωμα bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "Κοινή χρήση ρυθμίσεων",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Τα μοντέλα και οι συνδέσεις σας σε ένα αρχείο για να το δώσετε σε κάποιον άλλο: πού γράφονται οι περιλήψεις, Bedrock, Microsoft 365, Confluence και οι δικές σας λέξεις. Δεν περιέχει κωδικούς, κλειδιά ή συνδέσεις: ο καθένας συνδέεται με τους δικούς του λογαριασμούς.",
+  "Export the setup": "Εξαγωγή ρυθμίσεων",
+  "Import a setup": "Εισαγωγή ρυθμίσεων",
+  "Choose what to apply from this setup:": "Επιλέξτε τι θα εφαρμόσετε από αυτές τις ρυθμίσεις:",
+  "Apply": "Εφαρμογή",
+  "Setup exported.": "Οι ρυθμίσεις εξήχθησαν.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Οι ρυθμίσεις εφαρμόστηκαν. Συνδεθείτε με τους δικούς σας λογαριασμούς στις παραπάνω ενότητες, αν χρειάζεται.",
+  "Nothing in this setup changes yours.": "Τίποτα σε αυτές τις ρυθμίσεις δεν αλλάζει τις δικές σας.",
+  "That file isn't a Faisselle setup.": "Αυτό το αρχείο δεν είναι ρυθμίσεις του Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Αυτές οι ρυθμίσεις προέρχονται από νεότερο Faisselle. Ενημερώστε το Faisselle και δοκιμάστε ξανά.",
+  "Couldn't read that setup. Try again.": "Δεν ήταν δυνατή η ανάγνωση των ρυθμίσεων. Δοκιμάστε ξανά.",
+  "Couldn't save the setup. Try again, or pick another place.": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά ή επιλέξτε άλλη θέση.",
+  "This preview is out of date. Import the setup again.": "Αυτή η προεπισκόπηση δεν είναι πια επίκαιρη. Εισαγάγετε ξανά τις ρυθμίσεις.",
+  "Words added": "Λέξεις που προστέθηκαν",
+  "Not set": "Δεν έχει οριστεί"
 }

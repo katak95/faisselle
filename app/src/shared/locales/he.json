@@ -901,5 +901,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "סוד לקוח, רק אם כתובת ה-URI להפניה נמצאת בפלטפורמת Web",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "סוד לקוח שמור. אפשר להקליד אחר כדי להחליף אותו, או להשאיר ריק כדי לשמור אותו.",
   "Remove the secret": "הסרת הסוד",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ב-Amazon Bedrock מקבל מזהים כמו anthropic.claude-haiku-5-5 (הרשאה bedrock-mantle:CreateInference). מזהה InvokeModel או פרופיל הסקה, כמו eu.anthropic.claude-haiku-4-5-20251001-v1:0, עובר דרך bedrock-runtime (הרשאה bedrock:InvokeModelWithResponseStream)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ב-Amazon Bedrock מקבל מזהים כמו anthropic.claude-haiku-5-5 (הרשאה bedrock-mantle:CreateInference). מזהה InvokeModel או פרופיל הסקה, כמו eu.anthropic.claude-haiku-4-5-20251001-v1:0, עובר דרך bedrock-runtime (הרשאה bedrock:InvokeModelWithResponseStream).",
+  "Share the setup": "שיתוף ההגדרות",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "המודלים והחיבורים שלך בקובץ אחד שאפשר לתת למישהו אחר: איפה נכתבים הסיכומים, Bedrock,‏ Microsoft 365,‏ Confluence והמילים המותאמות שלך. אין בו סיסמה, מפתח או כניסה: כל אחד נכנס עם החשבונות שלו.",
+  "Export the setup": "ייצוא ההגדרות",
+  "Import a setup": "ייבוא הגדרות",
+  "Choose what to apply from this setup:": "בחירה מה להחיל מההגדרות האלה:",
+  "Apply": "החלה",
+  "Setup exported.": "ההגדרות יוצאו.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "ההגדרות הוחלו. אפשר להיכנס עם החשבונות שלך בחלקים שלמעלה לפי הצורך.",
+  "Nothing in this setup changes yours.": "שום דבר בהגדרות האלה לא משנה את שלך.",
+  "That file isn't a Faisselle setup.": "הקובץ הזה אינו הגדרות של Faisselle.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "ההגדרות האלה מגרסה חדשה יותר של Faisselle. צריך לעדכן את Faisselle ולנסות שוב.",
+  "Couldn't read that setup. Try again.": "לא ניתן לקרוא את ההגדרות האלה. כדאי לנסות שוב.",
+  "Couldn't save the setup. Try again, or pick another place.": "לא ניתן לשמור את ההגדרות. כדאי לנסות שוב או לבחור מקום אחר.",
+  "This preview is out of date. Import the setup again.": "התצוגה המקדימה הזו כבר לא עדכנית. צריך לייבא את ההגדרות שוב.",
+  "Words added": "מילים שנוספו",
+  "Not set": "לא הוגדר"
 }

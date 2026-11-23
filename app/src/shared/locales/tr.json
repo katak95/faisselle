@@ -879,5 +879,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "İstemci gizli anahtarı, yalnızca bu yeniden yönlendirme URI’si Web platformundaysa",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Bir istemci gizli anahtarı kayıtlı. Değiştirmek için başka birini yazın ya da korumak için boş bırakın.",
   "Remove the secret": "Gizli anahtarı kaldır",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock’taki Claude, anthropic.claude-haiku-5-5 gibi kimlikler alır (bedrock-mantle:CreateInference izni). eu.anthropic.claude-haiku-4-5-20251001-v1:0 gibi bir InvokeModel kimliği veya çıkarım profili bedrock-runtime üzerinden gider (bedrock:InvokeModelWithResponseStream izni)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Amazon Bedrock’taki Claude, anthropic.claude-haiku-5-5 gibi kimlikler alır (bedrock-mantle:CreateInference izni). eu.anthropic.claude-haiku-4-5-20251001-v1:0 gibi bir InvokeModel kimliği veya çıkarım profili bedrock-runtime üzerinden gider (bedrock:InvokeModelWithResponseStream izni).",
+  "Share the setup": "Kurulumu paylaş",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelleriniz ve bağlayıcılarınız, başka birine verebileceğiniz tek bir dosyada: özetlerin nerede yazıldığı, Bedrock, Microsoft 365, Confluence ve özel sözcükleriniz. İçinde parola, anahtar veya oturum yoktur: herkes kendi hesaplarıyla oturum açar.",
+  "Export the setup": "Kurulumu dışa aktar",
+  "Import a setup": "Kurulum içe aktar",
+  "Choose what to apply from this setup:": "Bu kurulumdan neyi uygulayacağınızı seçin:",
+  "Apply": "Uygula",
+  "Setup exported.": "Kurulum dışa aktarıldı.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "Kurulum uygulandı. Gerekirse yukarıdaki bölümlerde kendi hesaplarınızla oturum açın.",
+  "Nothing in this setup changes yours.": "Bu kurulumdaki hiçbir şey sizinkini değiştirmiyor.",
+  "That file isn't a Faisselle setup.": "Bu dosya bir Faisselle kurulumu değil.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Bu kurulum daha yeni bir Faisselle’den. Faisselle’i güncelleyip yeniden deneyin.",
+  "Couldn't read that setup. Try again.": "Bu kurulum okunamadı. Yeniden deneyin.",
+  "Couldn't save the setup. Try again, or pick another place.": "Kurulum kaydedilemedi. Yeniden deneyin veya başka bir yer seçin.",
+  "This preview is out of date. Import the setup again.": "Bu önizleme güncel değil. Kurulumu yeniden içe aktarın.",
+  "Words added": "Eklenen sözcükler",
+  "Not set": "Ayarlanmadı"
 }

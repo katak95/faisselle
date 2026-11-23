@@ -879,5 +879,21 @@
   "Client secret, only if that redirect URI is on the Web platform": "Ügyfélkulcs, csak ha ez az átirányítási URI a Web platformon van",
   "A client secret is saved. Type another to replace it, or leave empty to keep it.": "Egy ügyfélkulcs mentve van. Írj be egy másikat a cseréjéhez, vagy hagyd üresen a megtartásához.",
   "Remove the secret": "Kulcs eltávolítása",
-  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Az Amazon Bedrockban futó Claude ilyen azonosítókat vár: anthropic.claude-haiku-5-5 (bedrock-mantle:CreateInference engedély). Az InvokeModel-azonosító vagy következtetési profil, például eu.anthropic.claude-haiku-4-5-20251001-v1:0, a bedrock-runtime-on keresztül megy (bedrock:InvokeModelWithResponseStream engedély)."
+  "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Az Amazon Bedrockban futó Claude ilyen azonosítókat vár: anthropic.claude-haiku-5-5 (bedrock-mantle:CreateInference engedély). Az InvokeModel-azonosító vagy következtetési profil, például eu.anthropic.claude-haiku-4-5-20251001-v1:0, a bedrock-runtime-on keresztül megy (bedrock:InvokeModelWithResponseStream engedély).",
+  "Share the setup": "Beállítások megosztása",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "A modelljeid és kapcsolataid egy fájlban, hogy másnak odaadhasd: hol készülnek az összefoglalók, Bedrock, Microsoft 365, Confluence és a saját szavaid. Nincs benne jelszó, kulcs vagy bejelentkezés: mindenki a saját fiókjaival jelentkezik be.",
+  "Export the setup": "Beállítások exportálása",
+  "Import a setup": "Beállítások importálása",
+  "Choose what to apply from this setup:": "Válaszd ki, mit alkalmazol ezekből a beállításokból:",
+  "Apply": "Alkalmazás",
+  "Setup exported.": "A beállítások exportálva.",
+  "Setup applied. Sign in with your own accounts in the sections above where needed.": "A beállítások alkalmazva. Szükség esetén jelentkezz be a saját fiókjaiddal a fenti részekben.",
+  "Nothing in this setup changes yours.": "Ezekben a beállításokban semmi sem változtat a tieiden.",
+  "That file isn't a Faisselle setup.": "Ez a fájl nem Faisselle-beállítás.",
+  "This setup is from a newer Faisselle. Update Faisselle, then try again.": "Ezek a beállítások egy újabb Faisselle-ből származnak. Frissítsd a Faisselle-t, és próbáld újra.",
+  "Couldn't read that setup. Try again.": "Nem sikerült beolvasni a beállításokat. Próbáld újra.",
+  "Couldn't save the setup. Try again, or pick another place.": "Nem sikerült menteni a beállításokat. Próbáld újra, vagy válassz másik helyet.",
+  "This preview is out of date. Import the setup again.": "Ez az előnézet elavult. Importáld újra a beállításokat.",
+  "Words added": "Hozzáadott szavak",
+  "Not set": "Nincs megadva"
 }
