@@ -311,6 +311,7 @@ const api: YogurtApi = {
     setRecordingReminder: (on) => ipcRenderer.invoke('settings:recording-reminder', on),
     setKeepRecordings: (on) => ipcRenderer.invoke('settings:keep-recordings', on),
     setJargon: (terms) => ipcRenderer.invoke('settings:jargon', terms),
+    setOrganisation: (text) => ipcRenderer.invoke('settings:organisation', text),
     setLanguage: (id) => ipcRenderer.invoke('settings:language', id),
     setSummaryLanguage: (id) => ipcRenderer.invoke('settings:summary-language', id),
     onLanguage: (cb) => { const f = (_e: unknown, locale: string) => cb(locale); ipcRenderer.on('settings:language', f); return () => { ipcRenderer.off('settings:language', f) } },

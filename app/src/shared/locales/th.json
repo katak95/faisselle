@@ -851,7 +851,6 @@
   "Remove the secret": "นำข้อมูลลับออก",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude ใน Amazon Bedrock ใช้ ID แบบ anthropic.claude-haiku-5-5 (สิทธิ์ bedrock-mantle:CreateInference) ส่วน ID ของ InvokeModel หรือโปรไฟล์การอนุมาน เช่น eu.anthropic.claude-haiku-4-5-20251001-v1:0 จะผ่าน bedrock-runtime (สิทธิ์ bedrock:InvokeModelWithResponseStream)",
   "Share the setup": "แชร์การตั้งค่า",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "โมเดลและตัวเชื่อมต่อของคุณในไฟล์เดียวเพื่อส่งให้คนอื่น: ที่ที่สรุปถูกเขียน, Bedrock, Microsoft 365, Confluence และคำเฉพาะของคุณ ไม่มีรหัสผ่าน คีย์ หรือการลงชื่อเข้าใช้อยู่ในไฟล์: แต่ละคนลงชื่อเข้าใช้ด้วยบัญชีของตัวเอง",
   "Export the setup": "ส่งออกการตั้งค่า",
   "Import a setup": "นำเข้าการตั้งค่า",
   "Choose what to apply from this setup:": "เลือกสิ่งที่จะใช้จากการตั้งค่านี้:",
@@ -865,5 +864,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "บันทึกการตั้งค่าไม่ได้ ลองอีกครั้งหรือเลือกที่อื่น",
   "This preview is out of date. Import the setup again.": "ตัวอย่างนี้ไม่เป็นปัจจุบันแล้ว นำเข้าการตั้งค่าอีกครั้ง",
   "Words added": "คำที่เพิ่ม",
-  "Not set": "ยังไม่ได้ตั้ง"
+  "Not set": "ยังไม่ได้ตั้ง",
+  "Company context": "บริบทของบริษัท",
+  "About your organisation": "เกี่ยวกับองค์กรของคุณ",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "องค์กรของคุณทำอะไร ลูกค้า ผลิตภัณฑ์ ทีม และคำศัพท์ขององค์กร: AI ใช้เป็นพื้นหลังสำหรับสรุป งาน อีเมลติดตามผล บรีฟ และถาม บน Amazon Bedrock จะส่งไปพร้อมกัน",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "ตัวอย่าง: Acme ทำซอฟต์แวร์ออกใบแจ้งหนี้สำหรับทันตแพทย์ในฝรั่งเศสและเบลเยียม ลูกค้าของเราคือคลินิกและกลุ่มทันตกรรม ทีม: ฝ่ายขาย, ความสำเร็จของลูกค้า, ผลิตภัณฑ์ \"MRR\" คือรายได้ประจำรายเดือน \"การเปิดตัวไตรมาส 3\" คือการย้ายทุกคลินิกไปเวอร์ชันใหม่",
+  "Model for each use": "โมเดลสำหรับแต่ละการใช้งาน",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "เว้นการใช้งานว่างไว้เพื่อให้เขียนด้วยโมเดลด้านบน แต่ละโมเดลจะผ่านปลายทางที่ ID ของมันกำหนด เหมือนด้านบน",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "โมเดลและตัวเชื่อมต่อของคุณในไฟล์เดียวเพื่อส่งให้คนอื่น: ที่ที่สรุปถูกเขียน, Bedrock และโมเดลของมัน, บริบทของบริษัทคุณ, Microsoft 365, Confluence และคำเฉพาะของคุณ ไม่มีรหัสผ่าน คีย์ หรือการลงชื่อเข้าใช้อยู่ในไฟล์: แต่ละคนลงชื่อเข้าใช้ด้วยบัญชีของตัวเอง"
 }

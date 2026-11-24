@@ -1,6 +1,7 @@
 import { AnthropicBedrock, AnthropicBedrockMantle } from '@anthropic-ai/bedrock-sdk'
 import type { Llm } from './enhance'
 import type { AwsKeys } from '../aws/sso'
+import { MODEL_USES, type ModelUse } from '../../shared/types'
 
 /**
  * The notes model on Amazon Bedrock (Claude, by default Claude Haiku 5.5), as an `Llm` like the local one: the same
@@ -16,7 +17,20 @@ import type { AwsKeys } from '../aws/sso'
  * Claude 4.7 and later, and these roles often use Claude Haiku 4.5.
  */
 
-export type BedrockConfig = { region: string; modelId: string; accountId: string; roleName: string }
+export type BedrockConfig = { region: string; modelId: string; accountId: string; roleName: string
+  /** a model for some uses instead of modelId */
+  models?: Partial<Record<import('../../shared/types').ModelUse, string>> }
+
+/** the models for each use, only the valid ones */
+export function cleanModels(v: unknown): Partial<Record<ModelUse, string>> {
+  const out: Partial<Record<ModelUse, string>> = {}
+  if (!v || typeof v !== 'object') return out
+  for (const use of MODEL_USES) { const m = (v as Record<string, unknown>)[use]; if (validModelId(m)) out[use] = m }
+  return out
+}
+
+/** the model for a use: its own when Settings gives one, else the main one */
+export const modelFor = (c: Pick<BedrockConfig, 'modelId' | 'models'>, use?: import('../../shared/types').ModelUse): string => (use && c.models?.[use]) || c.modelId
 
 export const BEDROCK_DEFAULTS = { region: 'eu-west-1', modelId: 'anthropic.claude-haiku-5-5' } as const
 
@@ -110,17 +124,22 @@ const explain = (e: unknown, c: BedrockConfig): Error => {
  * the next note.
  */
 export function createBedrockNotesModel(o: { config: () => BedrockConfig | undefined; client: (c: BedrockConfig) => MessagesClient }) {
-  let cached: { key: string; client: MessagesClient } | undefined
-  const clientFor = (c: BedrockConfig) => {
-    const key = `${c.region}|${c.accountId}|${c.roleName}|${bedrockEndpoint(c.modelId)}`
-    if (cached?.key !== key) cached = { key, client: o.client(c) }
-    return cached.client
+  // one client per door: a use whose model goes through the other endpoint gets its own
+  const clients = new Map<string, MessagesClient>()
+  let clientsKey = ''
+  const clientFor = (c: BedrockConfig, modelId: string) => {
+    const base = `${c.region}|${c.accountId}|${c.roleName}`
+    if (base !== clientsKey) { clients.clear(); clientsKey = base }
+    const endpoint = bedrockEndpoint(modelId)
+    let client = clients.get(endpoint)
+    if (!client) { client = o.client({ ...c, modelId }); clients.set(endpoint, client) }
+    return client
   }
 
   const llm = async (signal?: AbortSignal): Promise<Llm> => {
     const c = o.config()
     if (!c) throw new BedrockError('Bedrock is not set up: sign in to AWS and choose an account and role in Settings', 'sign-in')
-    const client = clientFor(c)
+
     return {
       contextSize: BEDROCK_CONTEXT,
       count: async (texts) => texts.map(estimateTokens),
@@ -132,14 +151,16 @@ export function createBedrockNotesModel(o: { config: () => BedrockConfig | undef
           content: [{ type: 'text' as const, text, ...(i === 0 && text.length >= CACHE_FROM_CHARS ? { cache_control: { type: 'ephemeral' as const } } : {}) }],
         }))
         // short answers (titles, folders, one JSON list) need little effort; the notes themselves a bit more
+        const model = modelFor(c, opts?.use)
+        const client = clientFor(c, model)
         const small = (opts?.maxTokens ?? DEFAULT_MAX_TOKENS) <= 256 || !!opts?.summary
         // Claude Haiku 4.5 and older refuse the effort level: only the JSON format then, if any
-        const effort = modelTakesEffort(c.modelId) ? { effort: small ? 'low' as const : 'medium' as const } : {}
+        const effort = modelTakesEffort(model) ? { effort: small ? 'low' as const : 'medium' as const } : {}
         const format = opts?.json ? { format: { type: 'json_schema' as const, schema: opts.json } } : undefined
         const output = effort.effort || format ? { output_config: { ...effort, ...format } } : {}
         try {
           const stream = client.messages.stream({
-            model: c.modelId,
+            model,
             max_tokens: opts?.maxTokens ?? DEFAULT_MAX_TOKENS,
             messages,
             // thinking would spend the answer's tokens: these prompts say exactly what to write
@@ -150,11 +171,11 @@ export function createBedrockNotesModel(o: { config: () => BedrockConfig | undef
           const m = await stream.finalMessage()
           if (m.stop_reason === 'refusal') throw new BedrockError('The model declined to write this', 'refused')
           const u = m.usage
-          console.info('TIMING', `bedrock ${c.modelId}: read ${u.input_tokens + (u.cache_read_input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0)} tok (${u.cache_read_input_tokens ?? 0} cached), wrote ${u.output_tokens} tok`)
+          console.info('TIMING', `bedrock ${model}${opts?.use ? ` (${opts.use})` : ''}: read ${u.input_tokens + (u.cache_read_input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0)} tok (${u.cache_read_input_tokens ?? 0} cached), wrote ${u.output_tokens} tok`)
           return m.content.map((b) => (b.type === 'text' ? b.text : '')).join('')
         } catch (e) {
           if (signal?.aborted) return ''
-          throw explain(e, c)
+          throw explain(e, { ...c, modelId: model })
         }
       },
     }

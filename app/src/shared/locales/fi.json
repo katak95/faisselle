@@ -899,7 +899,6 @@
   "Remove the secret": "Poista salaisuus",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude Amazon Bedrockissa käyttää tunnuksia kuten anthropic.claude-haiku-5-5 (oikeus bedrock-mantle:CreateInference). InvokeModel-tunnus tai päättelyprofiili, kuten eu.anthropic.claude-haiku-4-5-20251001-v1:0, kulkee bedrock-runtimen kautta (oikeus bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Jaa asetukset",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Mallisi ja yhteytesi yhdessä tiedostossa toiselle annettavaksi: missä yhteenvedot kirjoitetaan, Bedrock, Microsoft 365, Confluence ja omat sanasi. Salasanoja, avaimia tai kirjautumisia ei tule mukaan: jokainen kirjautuu omilla tileillään.",
   "Export the setup": "Vie asetukset",
   "Import a setup": "Tuo asetukset",
   "Choose what to apply from this setup:": "Valitse, mitä otat käyttöön näistä asetuksista:",
@@ -913,5 +912,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Asetuksia ei voitu tallentaa. Yritä uudelleen tai valitse toinen sijainti.",
   "This preview is out of date. Import the setup again.": "Esikatselu on vanhentunut. Tuo asetukset uudelleen.",
   "Words added": "Lisätyt sanat",
-  "Not set": "Ei asetettu"
+  "Not set": "Ei asetettu",
+  "Company context": "Yrityksen konteksti",
+  "About your organisation": "Organisaatiostasi",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Mitä organisaatiosi tekee, sen asiakkaat, tuotteet, tiimit ja termit: tekoäly käyttää sitä taustana yhteenvedoissa, tehtävissä, jatkosähköposteissa, valmisteluissa ja Kysy-toiminnossa. Amazon Bedrockissa se lähetetään niiden mukana.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Esimerkiksi: Acme tekee laskutusohjelmistoa hammaslääkäreille Ranskassa ja Belgiassa. Asiakkaitamme ovat klinikat ja hammaslääkäriketjut. Tiimit: Myynti, Asiakasmenestys, Tuote. ”MRR” on kuukausittainen toistuva tulo; ”Q3-käyttöönotto” on kaikkien klinikoiden siirto uuteen versioon.",
+  "Model for each use": "Malli kullekin käytölle",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Jätä käyttö tyhjäksi, niin se kirjoitetaan yllä olevalla mallilla. Kukin malli kulkee sen tunnuksen vaatiman päätepisteen kautta, kuten yllä.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Mallisi ja yhteytesi yhdessä tiedostossa toiselle annettavaksi: missä yhteenvedot kirjoitetaan, Bedrock ja sen mallit, yrityksesi konteksti, Microsoft 365, Confluence ja omat sanasi. Salasanoja, avaimia tai kirjautumisia ei tule mukaan: jokainen kirjautuu omilla tileillään."
 }

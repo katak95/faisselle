@@ -5,6 +5,7 @@ import { LOCALES } from '../../shared/i18n'
 import { respell, spellingLine, type MeetingWords } from '../vocab'
 import type { TemplatePrompt } from '../../shared/templates'
 import { ACTIONS_SCHEMA, actionsPrompt } from './actions'
+import { organisationBlock } from '../organisation'
 
 /**
  * Enhanced notes: the person's own notes plus the transcript, written up by the notes model as Markdown.
@@ -23,7 +24,9 @@ export type Llm = {
    */
   chat(prompt: string, onToken: (text: string) => void, o?: { summary?: boolean; maxTokens?: number; before?: string[]; /** colder sampling for an answer that must come out the same each time */ temperature?: number
     /** a JSON answer shaped by this JSON Schema: a cloud model is held to it, a local one is only asked (callers check what comes back) */
-    json?: Record<string, unknown> }): Promise<string>
+    json?: Record<string, unknown>
+    /** what the answer is for: on Bedrock each use may have its own model (Settings → Model for each use) */
+    use?: import('../../shared/types').ModelUse }): Promise<string>
   /** reads the start of a prompt into the model without answering, so a prompt that starts the same way later reads only the rest */
   readAhead?(text: string, signal?: AbortSignal): Promise<void>
 }
@@ -119,6 +122,7 @@ export function enhancePrompt(i: PromptInput): string {
     ...(mins != null ? [`Length: about ${mins} minute${mins === 1 ? '' : 's'}.`] : []),
     '',
     ...(mine ? ['Notes they typed, before or during the meeting. They show what they care about and flagged, and facts they know that may not have been said. They are hints for writing the notes, not text to copy:', '<notes>', mine, '</notes>', ''] : []),
+    ...organisationBlock(),
     ...(i.context ? [contextIntro, '<context>', i.context, '</context>', ''] : []),
     'How to write them, so they read at a glance:',
     i.summaryLanguage
@@ -436,7 +440,7 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
       input.signal?.throwIfAborted()
       const n = summaries.length + 1
       onPart?.(n, done.length + pieces.length)
-      summaries.push(tidyNotes(await llm.chat(summaryPrompt(piece, n, language), () => {}, { summary: true, maxTokens: SUMMARY_TOKENS })))
+      summaries.push(tidyNotes(await llm.chat(summaryPrompt(piece, n, language), () => {}, { summary: true, maxTokens: SUMMARY_TOKENS, use: 'summary' })))
     }
     input.signal?.throwIfAborted()
     transcript = summaries.map((s, i) => `Part ${i + 1}:\n${s}`).join('\n')
@@ -444,7 +448,7 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
   }
 
   const prompt = enhancePrompt({ ...base, transcript, parts })
-  let md = tidyNotes(await llm.chat(prompt, (text) => { if (!input.signal?.aborted) onToken(text) }, { maxTokens: NOTES_TOKENS }), !!input.note?.trim())
+  let md = tidyNotes(await llm.chat(prompt, (text) => { if (!input.signal?.aborted) onToken(text) }, { maxTokens: NOTES_TOKENS, use: 'summary' }), !!input.note?.trim())
   input.signal?.throwIfAborted()
   const written = md
   // the model sometimes stops before the next steps (it samples): ask for just that part, after what it wrote. Notes
@@ -458,7 +462,7 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
       held += t
       if (held.trimStart().startsWith('#')) { showing = true; onToken(`\n${held.trimStart()}`) }
     }
-    const more = tidyNotes(await llm.chat([nextStepsPrompt(summaryLanguage ? 'the same language as the notes; write the bullets in that language too' : language), ...rewriteInstruction(input.note), ...(input.note?.trim() ? ['If that instruction excludes next steps, answer only NONE.'] : [])].join('\n'), show, { maxTokens: 400, before: [prompt, md] }))
+    const more = tidyNotes(await llm.chat([nextStepsPrompt(summaryLanguage ? 'the same language as the notes; write the bullets in that language too' : language), ...rewriteInstruction(input.note), ...(input.note?.trim() ? ['If that instruction excludes next steps, answer only NONE.'] : [])].join('\n'), show, { maxTokens: 400, before: [prompt, md] , use: 'summary' }))
     input.signal?.throwIfAborted()
     // only a real next-steps list is kept; anything else it said is dropped
     if (OWNER.test(more)) md = `${md}\n${more}`
@@ -467,7 +471,7 @@ export async function enhance(input: EnhanceInput, llm: Llm, onToken: (text: str
   if (written) input.titleLater?.((model) => model.chat([titlePrompt(summaryLanguage ? '' : language, input.me, input.meeting.attendees), ...(input.note?.trim() ? ['Use the language requested in this rewrite instruction for the title too; its other requests apply only to the notes:', JSON.stringify(input.note.slice(0, REWRITE_NOTE_MAX).trim())] : [])].join('\n'), () => {}, { maxTokens: 40, before: [prompt, written], temperature: 0.3 })
     .then((raw) => cleanTitle(raw, input.me), (e) => { console.error('a title from the notes failed', e); return '' }))
   // the action items, as a list to tick: asked after the notes are saved, following on from them (actions.ts)
-  if (md) { const final = md; input.actionsLater?.((model) => model.chat(actionsPrompt(), () => {}, { maxTokens: 1500, before: [prompt, final], json: ACTIONS_SCHEMA })) }
+  if (md) { const final = md; input.actionsLater?.((model) => model.chat(actionsPrompt(), () => {}, { maxTokens: 1500, before: [prompt, final], json: ACTIONS_SCHEMA, use: 'actions' })) }
   input.signal?.throwIfAborted()
   return markMine(withoutCopies(md, input.mine), input.mine)
 }

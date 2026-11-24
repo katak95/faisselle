@@ -50,6 +50,8 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   hiddenCalendarIds?: string[]
   /** Hide events without a call link; off unless enabled. */
   hideEventsWithoutCallLink?: boolean
+  /** what the person wrote about their organisation, as background for the notes, the brief and Ask (organisation.ts) */
+  organisation?: string
   /** names, products and acronyms to spell right in transcripts and notes (shared/jargon.ts) */
   jargon?: string[]
   /** the language people speak in meetings: English only unless 'multi' (shared/spoken.ts) */
@@ -61,7 +63,9 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
   notesProvider?: 'bedrock'
   /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
-  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
+  bedrock?: { startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string
+    /** a model for some uses (summaries, brief…) instead of modelId (Settings → Model for each use) */
+    models?: Partial<Record<import('../shared/types').ModelUse, string>> }
   /** summary templates the person wrote (shared/templates.ts) */
   templates?: Array<{ id: string; name: string; instructions: string }>
   /** the template new notes follow; the general notes when left out */

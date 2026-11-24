@@ -851,7 +851,6 @@
   "Remove the secret": "Xóa bí mật",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Claude trong Amazon Bedrock nhận ID dạng anthropic.claude-haiku-5-5 (quyền bedrock-mantle:CreateInference). ID InvokeModel hoặc hồ sơ suy luận, như eu.anthropic.claude-haiku-4-5-20251001-v1:0, đi qua bedrock-runtime (quyền bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Chia sẻ thiết lập",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Các mô hình và trình kết nối của bạn trong một tệp để đưa cho người khác: nơi viết bản tóm tắt, Bedrock, Microsoft 365, Confluence và các từ tùy chỉnh của bạn. Không có mật khẩu, khóa hay thông tin đăng nhập nào trong đó: mỗi người đăng nhập bằng tài khoản của riêng mình.",
   "Export the setup": "Xuất thiết lập",
   "Import a setup": "Nhập thiết lập",
   "Choose what to apply from this setup:": "Chọn những gì cần áp dụng từ thiết lập này:",
@@ -865,5 +864,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Không lưu được thiết lập. Hãy thử lại hoặc chọn nơi khác.",
   "This preview is out of date. Import the setup again.": "Bản xem trước này đã cũ. Hãy nhập lại thiết lập.",
   "Words added": "Từ đã thêm",
-  "Not set": "Chưa đặt"
+  "Not set": "Chưa đặt",
+  "Company context": "Bối cảnh công ty",
+  "About your organisation": "Về tổ chức của bạn",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Tổ chức của bạn làm gì, khách hàng, sản phẩm, nhóm và thuật ngữ: AI dùng nó làm bối cảnh cho bản tóm tắt, việc cần làm, email theo dõi, bản tóm lược và Hỏi. Trên Amazon Bedrock, nó được gửi kèm.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Ví dụ: Acme làm phần mềm lập hóa đơn cho nha sĩ ở Pháp và Bỉ. Khách hàng của chúng tôi là các phòng khám và chuỗi nha khoa. Nhóm: Kinh doanh, Thành công khách hàng, Sản phẩm. \"MRR\" là doanh thu định kỳ hằng tháng; \"đợt triển khai Q3\" là việc chuyển mọi phòng khám sang phiên bản mới.",
+  "Model for each use": "Mô hình cho từng mục đích",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Để trống một mục đích để viết nó bằng mô hình ở trên. Mỗi mô hình đi qua điểm cuối mà ID của nó yêu cầu, như ở trên.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Các mô hình và trình kết nối của bạn trong một tệp để đưa cho người khác: nơi viết bản tóm tắt, Bedrock và các mô hình của nó, bối cảnh công ty bạn, Microsoft 365, Confluence và các từ tùy chỉnh của bạn. Không có mật khẩu, khóa hay thông tin đăng nhập nào trong đó: mỗi người đăng nhập bằng tài khoản của riêng mình."
 }

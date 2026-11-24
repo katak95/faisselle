@@ -896,7 +896,6 @@
   "Remove the secret": "Αφαίρεση μυστικού",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "Το Claude στο Amazon Bedrock δέχεται αναγνωριστικά όπως anthropic.claude-haiku-5-5 (δικαίωμα bedrock-mantle:CreateInference). Ένα αναγνωριστικό InvokeModel ή προφίλ συμπερασμού, όπως eu.anthropic.claude-haiku-4-5-20251001-v1:0, περνά από το bedrock-runtime (δικαίωμα bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "Κοινή χρήση ρυθμίσεων",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Τα μοντέλα και οι συνδέσεις σας σε ένα αρχείο για να το δώσετε σε κάποιον άλλο: πού γράφονται οι περιλήψεις, Bedrock, Microsoft 365, Confluence και οι δικές σας λέξεις. Δεν περιέχει κωδικούς, κλειδιά ή συνδέσεις: ο καθένας συνδέεται με τους δικούς του λογαριασμούς.",
   "Export the setup": "Εξαγωγή ρυθμίσεων",
   "Import a setup": "Εισαγωγή ρυθμίσεων",
   "Choose what to apply from this setup:": "Επιλέξτε τι θα εφαρμόσετε από αυτές τις ρυθμίσεις:",
@@ -910,5 +909,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά ή επιλέξτε άλλη θέση.",
   "This preview is out of date. Import the setup again.": "Αυτή η προεπισκόπηση δεν είναι πια επίκαιρη. Εισαγάγετε ξανά τις ρυθμίσεις.",
   "Words added": "Λέξεις που προστέθηκαν",
-  "Not set": "Δεν έχει οριστεί"
+  "Not set": "Δεν έχει οριστεί",
+  "Company context": "Πλαίσιο εταιρείας",
+  "About your organisation": "Σχετικά με τον οργανισμό σας",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "Τι κάνει ο οργανισμός σας, οι πελάτες, τα προϊόντα, οι ομάδες και οι όροι του: η ΤΝ το χρησιμοποιεί ως υπόβαθρο για περιλήψεις, ενέργειες, email παρακολούθησης, ενημερώσεις και την Ερώτηση. Στο Amazon Bedrock αποστέλλεται μαζί τους.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Για παράδειγμα: η Acme φτιάχνει λογισμικό τιμολόγησης για οδοντιάτρους σε Γαλλία και Βέλγιο. Πελάτες μας είναι ιατρεία και οδοντιατρικοί όμιλοι. Ομάδες: Πωλήσεις, Επιτυχία πελατών, Προϊόν. «MRR» είναι τα μηνιαία επαναλαμβανόμενα έσοδα· «η διάθεση του Γ΄ τριμήνου» είναι η μετάβαση όλων των ιατρείων στη νέα έκδοση.",
+  "Model for each use": "Μοντέλο για κάθε χρήση",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Αφήστε μια χρήση κενή για να γράφεται με το παραπάνω μοντέλο. Κάθε μοντέλο περνά από το τελικό σημείο που ζητά το αναγνωριστικό του, όπως παραπάνω.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Τα μοντέλα και οι συνδέσεις σας σε ένα αρχείο για να το δώσετε σε κάποιον άλλο: πού γράφονται οι περιλήψεις, το Bedrock και τα μοντέλα του, το πλαίσιο της εταιρείας σας, Microsoft 365, Confluence και οι δικές σας λέξεις. Δεν περιέχει κωδικούς, κλειδιά ή συνδέσεις: ο καθένας συνδέεται με τους δικούς του λογαριασμούς."
 }

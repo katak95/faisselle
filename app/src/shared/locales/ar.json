@@ -949,7 +949,6 @@
   "Remove the secret": "إزالة السر",
   "Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).": "يقبل Claude في Amazon Bedrock معرّفات مثل anthropic.claude-haiku-5-5 (الإذن bedrock-mantle:CreateInference). أما معرّف InvokeModel أو ملف الاستدلال، مثل eu.anthropic.claude-haiku-4-5-20251001-v1:0، فيمرّ عبر bedrock-runtime (الإذن bedrock:InvokeModelWithResponseStream).",
   "Share the setup": "مشاركة الإعداد",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "نماذجك وموصلاتك في ملف واحد لتعطيه لشخص آخر: أين تُكتب الملخصات، وBedrock، وMicrosoft 365، وConfluence، وكلماتك المخصصة. لا يحتوي على أي كلمة مرور أو مفتاح أو تسجيل دخول: يسجّل كل شخص الدخول بحساباته الخاصة.",
   "Export the setup": "تصدير الإعداد",
   "Import a setup": "استيراد إعداد",
   "Choose what to apply from this setup:": "اختر ما تطبّقه من هذا الإعداد:",
@@ -963,5 +962,12 @@
   "Couldn't save the setup. Try again, or pick another place.": "تعذّر حفظ الإعداد. حاول مرة أخرى أو اختر مكانًا آخر.",
   "This preview is out of date. Import the setup again.": "هذه المعاينة قديمة. استورد الإعداد مرة أخرى.",
   "Words added": "الكلمات المضافة",
-  "Not set": "غير محدد"
+  "Not set": "غير محدد",
+  "Company context": "سياق الشركة",
+  "About your organisation": "عن مؤسستك",
+  "What your organisation does, its clients, products, teams and words: the AI reads it as background for summaries, action items, follow-up emails, briefs and Ask. On Amazon Bedrock it is sent with them.": "ما تفعله مؤسستك، وعملاؤها ومنتجاتها وفرقها ومصطلحاتها: يستخدمه الذكاء الاصطناعي خلفيةً للملخصات والمهام ورسائل المتابعة والإحاطات وميزة «اسأل». على Amazon Bedrock يُرسل معها.",
+  "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "مثلًا: تصنع Acme برنامج فوترة لأطباء الأسنان في فرنسا وبلجيكا. عملاؤنا عيادات ومجموعات طب أسنان. الفرق: المبيعات، ونجاح العملاء، والمنتج. «MRR» هو الإيراد الشهري المتكرر؛ و«طرح الربع الثالث» هو نقل كل العيادات إلى الإصدار الجديد.",
+  "Model for each use": "نموذج لكل استخدام",
+  "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "اترك استخدامًا فارغًا ليُكتب بالنموذج أعلاه. يمر كل نموذج عبر نقطة الوصول التي يطلبها معرّفه، كما في الأعلى.",
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "نماذجك وموصلاتك في ملف واحد لتعطيه لشخص آخر: أين تُكتب الملخصات، وBedrock ونماذجه، وسياق شركتك، وMicrosoft 365، وConfluence، وكلماتك المخصصة. لا يحتوي على أي كلمة مرور أو مفتاح أو تسجيل دخول: يسجّل كل شخص الدخول بحساباته الخاصة."
 }
