@@ -19,6 +19,24 @@ export class FakeEngine implements Engine {
     ] }), onToken, signal)
     if (prompt.includes('Write the follow-up email')) return this.stream(JSON.stringify({ subject: 'Launch plan: next steps',
       body: 'Hi all,\n\nThanks for the time today. Here is what we agreed:\n- The site goes live on Tuesday.\n- The email goes out on Wednesday morning.\n\nBest,\nYou' }), onToken, signal)
+    // an expert interview's analysis (expert/analyze.ts): what the stand-in voice heard, and two questions to ask next
+    if (prompt.startsWith("You are helping turn an expert's know-how into Agent Skills")) {
+      const closes = prompt.includes('fourth working day') ? 'fourth' : 'fifth'
+      return this.stream(JSON.stringify({
+        summary: `The expert closes the books on the ${closes} working day, after reconciling the bank accounts and the supplier invoices.`,
+        coverage: 'partial', gaps: 'What happens when a reconciliation does not balance is not covered yet.',
+        items: [
+          { kind: 'procedure', title: 'Month-end close order', detail: 'Reconcile the bank accounts first, then the supplier invoices.', quotes: ['First I reconcile the bank accounts, then the supplier invoices.'] },
+          { kind: 'rule', title: 'Close date', detail: `The books close on the ${closes} working day of the month.`, quotes: [`We close the books on the ${closes} working day of the month.`] },
+        ],
+        followUps: prompt.includes('<asked>') && prompt.includes('What do you do when the bank reconciliation does not balance?')
+          ? [{ question: 'Who approves the close once it is done?', why: 'The hand-over at the end is missing.' }]
+          : [
+            { question: 'What do you do when the bank reconciliation does not balance?', why: 'The agent needs to know what to do in that case.' },
+            { question: 'Who approves the close once it is done?', why: 'The hand-over at the end is missing.' },
+          ],
+      }), onToken, signal)
+    }
     if (prompt.startsWith('You will prepare')) return this.stream([
       '## Purpose', '- Agree on the renewal terms.', '## People', '- **Maya Chen:** the client contact.', '## Questions to ask', '- Can we keep the price for two years?',
     ].join('\n'), onToken, signal)

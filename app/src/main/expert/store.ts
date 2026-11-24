@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Speaker, TranscriptSegment } from '../../shared/expert/voice'
+import type { FollowUpStatus, InterviewAnalysis } from '../../shared/expert/analysis'
 import { EXPERT_DEFAULTS, isInterviewLanguage, type Consent, type ExpertSettings, type Interview, type InterviewCard, type InterviewDraft, type InterviewSource, type InterviewState } from '../../shared/expert/types'
 
 type Row = Record<string, unknown>
@@ -29,6 +30,9 @@ const MIGRATIONS: string[] = [
      id TEXT PRIMARY KEY, interview_id TEXT NOT NULL REFERENCES interviews(id) ON DELETE CASCADE, session_id TEXT NOT NULL,
      speaker TEXT NOT NULL, text TEXT NOT NULL, at_ms INTEGER NOT NULL, original TEXT);
    CREATE INDEX segments_interview ON segments(interview_id, at_ms);`,
+  // the analysis of an interview (shared/expert/analysis.ts): the latest one, as JSON
+  `CREATE TABLE analyses (
+     interview_id TEXT PRIMARY KEY REFERENCES interviews(id) ON DELETE CASCADE, at INTEGER NOT NULL, body TEXT NOT NULL);`,
 ]
 export const EXPERT_DB_VERSION = MIGRATIONS.length
 
@@ -200,6 +204,37 @@ export class ExpertStore {
   /** the audio alone: the transcript and everything made from it stay */
   deleteAudio(id: string) {
     rmSync(this.folder(id), { recursive: true, force: true })
+  }
+
+  /** the latest analysis, or null before the first one (or when what is saved can't be read) */
+  analysis(id: string): InterviewAnalysis | null {
+    const r = this.db.prepare('SELECT body FROM analyses WHERE interview_id = ?').get(id) as Row | undefined
+    if (!r) return null
+    try {
+      const a = JSON.parse(String(r.body)) as InterviewAnalysis
+      return typeof a.summary === 'string' && Array.isArray(a.items) && Array.isArray(a.followUps) ? a : null
+    } catch { return null }
+  }
+
+  setAnalysis(id: string, a: InterviewAnalysis) {
+    if (!this.get(id)) return
+    this.db.prepare('INSERT INTO analyses (interview_id, at, body) VALUES (?, ?, ?) ON CONFLICT(interview_id) DO UPDATE SET at = excluded.at, body = excluded.body')
+      .run(id, a.at, JSON.stringify(a))
+    this.touch(id)
+  }
+
+  /** the expert keeps a question for the next session (open), or sets it aside (dismissed) */
+  setFollowUp(id: string, questionId: string, status: Exclude<FollowUpStatus, 'asked'>): InterviewAnalysis | null {
+    const a = this.analysis(id)
+    if (!a || !a.followUps.some((q) => q.id === questionId)) return a
+    this.setAnalysis(id, { ...a, followUps: a.followUps.map((q) => (q.id === questionId ? { ...q, status } : q)) })
+    return this.analysis(id)
+  }
+
+  /** the open questions were put to the expert in a voice session */
+  markAsked(id: string) {
+    const a = this.analysis(id)
+    if (a?.followUps.some((q) => q.status === 'open')) this.setAnalysis(id, { ...a, followUps: a.followUps.map((q) => (q.status === 'open' ? { ...q, status: 'asked' } : q)) })
   }
 
   private touch(id: string) { this.db.prepare('UPDATE interviews SET updated_at = ? WHERE id = ?').run(this.now(), id) }

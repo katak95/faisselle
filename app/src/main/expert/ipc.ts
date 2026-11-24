@@ -8,6 +8,8 @@ import { validModelId } from '../notes/bedrock'
 import { readSource, SOURCE_EXTENSIONS } from './sources'
 import type { ExpertStore } from './store'
 import { createVoice, frameOf } from './voice'
+import { createAnalysis } from './analyze'
+import type { Llm } from '../notes/enhance'
 import type { SonicTransport } from './sonic'
 import { SEGMENT_MAX } from '../../shared/expert/voice'
 import { cleanDraft, cleanDraftPatch, consentHolds, interviewLanguageFor, SOURCES_MAX, type ExpertSettings, type ExpertView, type SourcesResult } from '../../shared/expert/types'
@@ -34,6 +36,10 @@ export function hookExpert(d: {
   locale(): string
   /** Nova Sonic: Bedrock's bidirectional stream, or its stand-in in fake mode */
   sonic: SonicTransport
+  /** Claude on Bedrock with this model (the analysis model), signed in like the notes */
+  llm(modelId: string, signal: AbortSignal): Promise<Llm>
+  /** the company context (Settings), as the notes give it */
+  organisation?(): string[]
 }) {
   const changed = () => d.window()?.webContents.send('expert:changed')
   // only the main window's page: no other window, and no frame inside it
@@ -60,6 +66,12 @@ export function hookExpert(d: {
     segment: (s) => send('expert:voice-segment', s),
   })
   app.on('before-quit', () => voice.shutdown())
+  const agreed = (i: { consent: Parameters<typeof consentHolds>[0] }) => { const v = view(); return consentHolds(i.consent, { voiceRegion: v.settings.voiceRegion, voiceModelId: v.settings.voiceModelId, region: v.bedrock.region, modelId: v.bedrock.modelId }) }
+  const analysis = createAnalysis({
+    store: d.store, llm: (signal) => d.llm(view().bedrock.modelId, signal), modelId: () => view().bedrock.modelId, agreed,
+    talking: (id) => voice.view().interviewId === id && ['connecting', 'listening', 'thinking', 'speaking', 'reconnecting'].includes(voice.view().state),
+    organisation: d.organisation, send: () => changed(),
+  })
 
   handle('expert:view', () => view())
   handle('expert:settings', (_e, v) => {
@@ -71,7 +83,7 @@ export function hookExpert(d: {
   handle('expert:get', (_e, id) => {
     if (!isId(id)) return null
     const interview = d.store.get(id)
-    return interview ? { interview, sources: d.store.sources(id), segments: d.store.segments(id), audioBytes: d.store.audioBytes(id) } : null
+    return interview ? { interview, sources: d.store.sources(id), segments: d.store.segments(id), audioBytes: d.store.audioBytes(id), analysis: d.store.analysis(id), analysisState: analysis.state(id) } : null
   })
   handle('expert:create', (_e, v) => {
     const draft = cleanDraft(v, interviewLanguageFor(d.locale()))
@@ -122,6 +134,7 @@ export function hookExpert(d: {
   handle('expert:delete', (_e, id) => {
     if (!isId(id)) return false
     voice.forget(id)
+    analysis.forget(id)
     const gone = d.store.delete(id)
     changed()
     return gone
@@ -141,6 +154,14 @@ export function hookExpert(d: {
     changed()
     return true
   }, false)
+
+  handle('expert:analyze', (_e, id) => (isId(id) ? analysis.start(id) : null))
+  handle('expert:follow-up', (_e, id, questionId, status) => {
+    if (!isId(id) || !isId(questionId) || (status !== 'open' && status !== 'dismissed')) return null
+    const out = d.store.setFollowUp(id, questionId, status)
+    changed()
+    return out
+  })
 
   // the voice interview: one at a time, started from its page
   handle('expert:voice-state', () => voice.view())

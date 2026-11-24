@@ -1,4 +1,5 @@
 import type { TranscriptSegment, VoiceApi } from './voice'
+import type { AnalysisState, FollowUpStatus, InterviewAnalysis } from './analysis'
 
 // Expert interviews (Faisselle): an expert talks with a voice agent on Amazon Bedrock, and what they know becomes
 // Agent Skills. What main keeps (main/expert/store.ts) and what the window sees of it; every check a page's input
@@ -42,7 +43,9 @@ export type Interview = {
 export type InterviewSource = { id: string; name: string; bytes: number; addedAt: number }
 
 export type InterviewCard = Interview & { sources: number }
-export type InterviewDetail = { interview: Interview; sources: InterviewSource[]; segments: TranscriptSegment[]; audioBytes: number }
+export type InterviewDetail = { interview: Interview; sources: InterviewSource[]; segments: TranscriptSegment[]; audioBytes: number
+  /** the latest analysis (expert/analyze.ts), and what one is doing now: running, or why the last one failed */
+  analysis: InterviewAnalysis | null; analysisState?: AnalysisState }
 
 export type InterviewDraft = Pick<Interview, 'title' | 'domain' | 'goal' | 'language' | 'minutes'>
 
@@ -83,6 +86,10 @@ export type ExpertApi = {
   editSegment(id: string, segmentId: string, text: string): Promise<TranscriptSegment | null>
   /** the interview's audio alone; the transcript stays */
   deleteAudio(id: string): Promise<boolean>
+  /** Claude reads the interview so far: it runs in the background, and the page hears of it through onChange */
+  analyze(id: string): Promise<AnalysisState | null>
+  /** the expert keeps a follow-up question for the next session, or sets it aside */
+  setFollowUp(id: string, questionId: string, status: Exclude<FollowUpStatus, 'asked'>): Promise<InterviewAnalysis | null>
   showData(): void
   onChange(fn: () => void): () => void
   voice: VoiceApi

@@ -16,6 +16,8 @@ export const expert: ExpertApi = {
   delete: (id) => ipcRenderer.invoke('expert:delete', id),
   editSegment: (id, segmentId, text) => ipcRenderer.invoke('expert:edit-segment', id, segmentId, text),
   deleteAudio: (id) => ipcRenderer.invoke('expert:delete-audio', id),
+  analyze: (id) => ipcRenderer.invoke('expert:analyze', id),
+  setFollowUp: (id, questionId, status) => ipcRenderer.invoke('expert:follow-up', id, questionId, status),
   showData: () => { ipcRenderer.send('expert:show-data') },
   onChange: (fn) => { const f = () => fn(); ipcRenderer.on('expert:changed', f); return () => { ipcRenderer.off('expert:changed', f) } },
   voice: {

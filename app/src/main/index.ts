@@ -71,7 +71,7 @@ import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
 import { UtilityEngine } from './engine'
 import { createNotesModel } from './notes/model'
-import { createBedrockNotesModel, bedrockClient, bedrockEndpoint } from './notes/bedrock'
+import { createBedrockNotesModel, bedrockClient, bedrockEndpoint, type BedrockConfig } from './notes/bedrock'
 import { fakeMessagesClient } from './notes/fake'
 import { createSwitchingNotesModel } from './notes/provider'
 import { createSso, SignInNeededError } from './aws/sso'
@@ -91,6 +91,7 @@ import { createOAuthStore } from './atlassian/oauth'
 import { fakeAtlassianServer, fakeConfluence } from './atlassian/fake'
 import { hookAtlassian } from './atlassian/ipc'
 import { ExpertStore } from './expert/store'
+import { organisationBlock } from './organisation'
 import { hookExpert } from './expert/ipc'
 import { bedrockSonicTransport } from './expert/sonic'
 import { fakeSonicTransport } from './expert/sonicFake'
@@ -767,9 +768,9 @@ app.whenReady().then(() => {
     seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
     open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()) })
   const cloudConfig = () => bedrockConfig(loadSettings(settingsFile), sso, bedrockKey)
-  const bedrockModel = createBedrockNotesModel({ config: cloudConfig,
-    // fake mode: the fake engine answers, as for the local model
-    client: (c) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, c.auth === 'api-key' ? { apiKey: bedrockKey.get() ?? '' } : { keys: () => sso.credentials(c.accountId, c.roleName) }, bedrockEndpoint(c.modelId))) })
+  // fake mode: the fake engine answers, as for the local model
+  const bedrockMessages = (c: BedrockConfig) => (isFake() ? fakeMessagesClient(engine) : bedrockClient(c.region, c.auth === 'api-key' ? { apiKey: bedrockKey.get() ?? '' } : { keys: () => sso.credentials(c.accountId, c.roleName) }, bedrockEndpoint(c.modelId)))
+  const bedrockModel = createBedrockNotesModel({ config: cloudConfig, client: bedrockMessages })
   const provider = () => notesProviderSetting(loadSettings(settingsFile))
   const model = createSwitchingNotesModel({ local: localModel, bedrock: bedrockModel, provider })
   /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */
@@ -864,6 +865,9 @@ app.whenReady().then(() => {
   // a database that can't be opened leaves the interviews unreadable, never the meetings
   try {
     hookExpert({ store: new ExpertStore(join(userDataDir(), 'expert')), window: () => win, locale: uiLanguage,
+      // the analysis: Claude with the analysis model, signed in like the notes (the uses' own models don't apply)
+      llm: (modelId, signal) => createBedrockNotesModel({ config: () => { const c = cloudConfig(); return c && { ...c, modelId, models: {} } }, client: bedrockMessages }).llm(signal),
+      organisation: organisationBlock,
       bedrock: () => { const b = bedrockSettings(loadSettings(settingsFile)); return { ready: !!cloudConfig(), region: b.region, modelId: b.modelId } },
       // the voice signs in like the notes: the SSO role's keys, or the Bedrock API key
       sonic: isFake() ? fakeSonicTransport() : bedrockSonicTransport(() => {

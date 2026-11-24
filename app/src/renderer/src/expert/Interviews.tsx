@@ -8,6 +8,7 @@ import { LibraryEmpty } from '../screens/Home'
 import { dayLabel } from '../dates'
 import { language, t } from '../../../shared/i18n'
 import { VoicePanel } from './VoicePanel'
+import { AnalysisPanel } from './Analysis'
 import { consentHolds, DOMAIN_MAX, GOAL_MAX, INTERVIEW_LANGUAGES, MINUTES_MAX, MINUTES_MIN, TITLE_MAX, type ExpertView, type Interview, type InterviewCard, type InterviewDetail, type InterviewDraft, type InterviewState, type SourcesResult } from '../../../shared/expert/types'
 
 /** the screen for an expert-interview route, or null for any other route */
@@ -193,6 +194,7 @@ function InterviewPage({ id, go }: { id: string; go: (route: string) => void }) 
         <Consent interview={i} view={view} go={go} />
         <VoicePanel interview={i} segments={detail.segments} audioBytes={detail.audioBytes}
           canStart={view.bedrock.ready && consentHolds(i.consent, { voiceRegion: view.settings.voiceRegion, voiceModelId: view.settings.voiceModelId, region: view.bedrock.region, modelId: view.bedrock.modelId })} />
+        <AnalysisPanel id={id} detail={detail} />
       </>}</LoadingContent>
     </div>
     {deleting && i && <DeleteInterview interview={i} onDone={(gone) => { setDeleting(false); if (gone) go('/interviews') }} />}
