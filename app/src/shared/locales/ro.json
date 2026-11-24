@@ -853,7 +853,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian nu s-a conectat. Încearcă din nou.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence a refuzat: nu poți scrie în spațiul tău personal.",
-  "Connect Atlassian in Settings first.": "Conectează mai întâi Atlassian din Setări.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Conectat la {site}{account}. Rapoartele ajung în spațiul tău personal, sub „Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "Nu s-au putut salva ultimele modificări. Încearcă din nou înainte de trimitere.",
   "Couldn't send to Confluence.": "Nu s-a putut trimite în Confluence.",
@@ -933,5 +932,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "De exemplu: Acme face software de facturare pentru dentiști din Franța și Belgia. Clienții noștri sunt cabinete și grupuri stomatologice. Echipe: Vânzări, Succesul clienților, Produs. „MRR” este venitul recurent lunar; „lansarea din T3” este trecerea tuturor cabinetelor la noua versiune.",
   "Model for each use": "Model pentru fiecare utilizare",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Lasă o utilizare goală ca să fie scrisă cu modelul de mai sus. Fiecare model trece prin punctul de acces pe care îl cere ID-ul lui, ca mai sus.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelele și conectorii tăi într-un singur fișier, pe care îl poți da altcuiva: unde se scriu rezumatele, Bedrock și modelele lui, contextul companiei tale, Microsoft 365, Confluence și cuvintele tale personalizate. Nu conține parole, chei sau conectări: fiecare se conectează cu propriile conturi."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelele și conectorii tăi într-un singur fișier, pe care îl poți da altcuiva: unde se scriu rezumatele, Bedrock și modelele lui, contextul companiei tale, Microsoft 365, Confluence și cuvintele tale personalizate. Nu conține parole, chei sau conectări: fiecare se conectează cu propriile conturi.",
+  "Your {service} sign-in ran out.": "Conectarea la {service} a expirat.",
+  "Sign in again": "Conectează-te din nou",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Conectarea la Confluence a expirat. Conectează-te din nou, apoi trimite.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Conectarea la Confluence a expirat. Conectează-te mai întâi din nou.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Conectarea la Microsoft 365 a expirat: briefingul se pregătește fără invitație, e-mailuri și documente."
 }

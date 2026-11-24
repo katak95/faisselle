@@ -794,7 +794,6 @@
   "Atlassian didn't connect. Try again.": "Không kết nối được Atlassian. Hãy thử lại.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence từ chối: bạn không thể ghi vào không gian cá nhân.",
-  "Connect Atlassian in Settings first.": "Hãy kết nối Atlassian trong Cài đặt trước.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Đã kết nối {site}{account}. Biên bản sẽ vào không gian cá nhân của bạn, trong “Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "Không lưu được các thay đổi mới nhất. Hãy thử lại trước khi gửi.",
   "Couldn't send to Confluence.": "Không gửi được lên Confluence.",
@@ -874,5 +873,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Ví dụ: Acme làm phần mềm lập hóa đơn cho nha sĩ ở Pháp và Bỉ. Khách hàng của chúng tôi là các phòng khám và chuỗi nha khoa. Nhóm: Kinh doanh, Thành công khách hàng, Sản phẩm. \"MRR\" là doanh thu định kỳ hằng tháng; \"đợt triển khai Q3\" là việc chuyển mọi phòng khám sang phiên bản mới.",
   "Model for each use": "Mô hình cho từng mục đích",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Để trống một mục đích để viết nó bằng mô hình ở trên. Mỗi mô hình đi qua điểm cuối mà ID của nó yêu cầu, như ở trên.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Các mô hình và trình kết nối của bạn trong một tệp để đưa cho người khác: nơi viết bản tóm tắt, Bedrock và các mô hình của nó, bối cảnh công ty bạn, Microsoft 365, Confluence và các từ tùy chỉnh của bạn. Không có mật khẩu, khóa hay thông tin đăng nhập nào trong đó: mỗi người đăng nhập bằng tài khoản của riêng mình."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Các mô hình và trình kết nối của bạn trong một tệp để đưa cho người khác: nơi viết bản tóm tắt, Bedrock và các mô hình của nó, bối cảnh công ty bạn, Microsoft 365, Confluence và các từ tùy chỉnh của bạn. Không có mật khẩu, khóa hay thông tin đăng nhập nào trong đó: mỗi người đăng nhập bằng tài khoản của riêng mình.",
+  "Your {service} sign-in ran out.": "Phiên đăng nhập {service} của bạn đã hết hạn.",
+  "Sign in again": "Đăng nhập lại",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Phiên đăng nhập Confluence của bạn đã hết hạn. Đăng nhập lại rồi gửi.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Phiên đăng nhập Confluence của bạn đã hết hạn. Hãy đăng nhập lại trước.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Phiên đăng nhập Microsoft 365 của bạn đã hết hạn: bản tóm lược được chuẩn bị mà không có lời mời, email và tài liệu."
 }

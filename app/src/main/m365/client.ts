@@ -18,6 +18,8 @@ import { waitForCode } from '../atlassian/oauth'
  * with a new one before it runs out.
  */
 export type M365Options = { dataDir: string; /** the built worker the server runs in (out/main/m365.js) */ worker?: string; /** an organisation's own Azure app registration, read each time the server starts */ app?: () => { clientId?: string; tenantId?: string }; openExternal(url: string): void; onChange(s: M365Status): void
+  /** it connected at least once since it was turned on (a sign-in that ends signed out then ran out); kept by the caller */
+  connectedOnce?: { get(): boolean; set(on: boolean): void }
   /** SharePoint and OneDrive search: work-account mode, with Microsoft Search's wider read permissions (read when the server starts) */
   documents?: () => boolean
   /** the browser sign-in (an app without public client flows): its redirect URI, when that's the method */
@@ -66,7 +68,15 @@ export function createM365(o: M365Options) {
   let server: Promise<{ call: CallTool; close(): Promise<void> }> | undefined
   let polling = 0
   let documentsRefused = false
-  const set = (s: M365Status) => { status = s; o.onChange(s) }
+  /** it was connected, and the sign-in ran out: signed out stays 'expired' until connected again or turned off */
+  let lost = false
+  const set = (s: M365Status) => {
+    if (s.state === 'connected' || s.state === 'off') lost = false
+    if (s.state === 'connected' && o.connectedOnce && !o.connectedOnce.get()) o.connectedOnce.set(true)
+    status = s.state === 'signed-out' && lost ? { state: 'signed-out', expired: true } : s
+    o.onChange(status)
+  }
+  const ranOut = () => { lost = o.connectedOnce?.get() ?? true; set({ state: 'signed-out' }) }
   /** the browser sign-in's app, when that's the method in use */
   const browserApp = (): AppConfig | null => {
     const b = o.browser?.(), a = o.app?.()
@@ -98,7 +108,7 @@ export function createM365(o: M365Options) {
     const message = e instanceof Error ? e.message : String(e)
     const problem = e instanceof M365AuthError ? e.problem : undefined
     // signed out on Microsoft's side (revoked, or unused for months): Settings offers to connect again
-    if (problem === 'expired') { set({ state: 'signed-out' }); return }
+    if (problem === 'expired') { ranOut(); return }
     set({ state: 'error', message, ...(needsAdminConsent(message) ? { consent: true } : {}), ...(problem ? { problem } : {}) })
   }
   let cancelBrowser: AbortController | undefined
@@ -131,13 +141,15 @@ export function createM365(o: M365Options) {
 
   return {
     status: () => status,
+    /** tests (fake mode): the sign-in runs out, as when Microsoft refuses its refresh */
+    ranOut() { if (status.state === 'connected') ranOut() },
     /** at launch, when it was connected before: start the server and see whether the sign-in still holds */
     async resume() {
       set({ state: 'starting' })
-      if (browserApp() && !o.store!.tokens()) { set({ state: 'signed-out' }); return }
+      if (browserApp() && !o.store!.tokens()) { ranOut(); return }
       try {
         const who = await verify()
-        set(who === false ? { state: 'signed-out' } : { state: 'connected', account: who })
+        if (who === false) ranOut(); else set({ state: 'connected', account: who })
       } catch (e) { console.warn('Microsoft 365 did not start', e); failed(e) }
     },
     /** asks for a device code, opens the page, then checks every few seconds until the sign-in is done (10 minutes at most) */

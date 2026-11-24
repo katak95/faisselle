@@ -846,7 +846,6 @@
   "Atlassian didn't connect. Try again.": "החיבור ל-Atlassian נכשל. נסו שוב.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence סירב: אין לכם הרשאה לכתוב במרחב האישי.",
-  "Connect Atlassian in Settings first.": "חברו קודם את Atlassian בהגדרות.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "מחובר ל-{site}{account}. הסיכומים נשמרים במרחב האישי שלכם, תחת „Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "לא ניתן לשמור את השינויים האחרונים. נסו שוב לפני השליחה.",
   "Couldn't send to Confluence.": "השליחה ל-Confluence נכשלה.",
@@ -926,5 +925,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "לדוגמה: Acme מפתחת תוכנת חיוב לרופאי שיניים בצרפת ובבלגיה. הלקוחות שלנו הם מרפאות ורשתות מרפאות שיניים. צוותים: מכירות, הצלחת לקוחות, מוצר. „MRR” הוא ההכנסה החוזרת החודשית; „ההשקה ברבעון השלישי” היא המעבר של כל המרפאות לגרסה החדשה.",
   "Model for each use": "מודל לכל שימוש",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "אפשר להשאיר שימוש ריק כדי שייכתב עם המודל שלמעלה. כל מודל עובר דרך נקודת הקצה שהמזהה שלו דורש, כמו למעלה.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "המודלים והחיבורים שלך בקובץ אחד שאפשר לתת למישהו אחר: איפה נכתבים הסיכומים, Bedrock והמודלים שלו, הקשר החברה שלך, Microsoft 365,‏ Confluence והמילים המותאמות שלך. אין בו סיסמה, מפתח או כניסה: כל אחד נכנס עם החשבונות שלו."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "המודלים והחיבורים שלך בקובץ אחד שאפשר לתת למישהו אחר: איפה נכתבים הסיכומים, Bedrock והמודלים שלו, הקשר החברה שלך, Microsoft 365,‏ Confluence והמילים המותאמות שלך. אין בו סיסמה, מפתח או כניסה: כל אחד נכנס עם החשבונות שלו.",
+  "Your {service} sign-in ran out.": "פג תוקף ההתחברות שלך ל-{service}.",
+  "Sign in again": "התחברות מחדש",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "פג תוקף ההתחברות שלך ל-Confluence. התחבר מחדש ואז שלח.",
+  "Your Confluence sign-in ran out. Sign in again first.": "פג תוקף ההתחברות שלך ל-Confluence. התחבר מחדש קודם.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "פג תוקף ההתחברות שלך ל-Microsoft 365: התדריך מוכן בלי ההזמנה, המיילים והמסמכים."
 }

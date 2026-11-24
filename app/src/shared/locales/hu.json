@@ -824,7 +824,6 @@
   "Atlassian didn't connect. Try again.": "Az Atlassian nem csatlakozott. Próbáld újra.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "A Confluence elutasította: nem írhatsz a személyes területedre.",
-  "Connect Atlassian in Settings first.": "Előbb csatlakoztasd az Atlassiant a Beállításokban.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Csatlakozva: {site}{account}. A jegyzőkönyvek a személyes területedre kerülnek, a „Meeting notes” alá.",
   "Couldn't save your latest changes. Try again before sending.": "Nem sikerült menteni a legutóbbi módosításokat. Próbáld újra küldés előtt.",
   "Couldn't send to Confluence.": "Nem sikerült elküldeni a Confluence-be.",
@@ -904,5 +903,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Például: az Acme számlázó szoftvert készít fogorvosoknak Franciaországban és Belgiumban. Ügyfeleink rendelők és fogorvosi csoportok. Csapatok: Értékesítés, Ügyfélsiker, Termék. Az „MRR” a havi ismétlődő bevétel; a „Q3-as bevezetés” az összes rendelő átállása az új verzióra.",
   "Model for each use": "Modell minden felhasználáshoz",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Hagyd üresen a felhasználást, és a fenti modell írja. Minden modell az azonosítója által kért végponton megy, mint fent.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "A modelljeid és kapcsolataid egy fájlban, hogy másnak odaadhasd: hol készülnek az összefoglalók, a Bedrock és modelljei, a cégkörnyezeted, Microsoft 365, Confluence és a saját szavaid. Nincs benne jelszó, kulcs vagy bejelentkezés: mindenki a saját fiókjaival jelentkezik be."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "A modelljeid és kapcsolataid egy fájlban, hogy másnak odaadhasd: hol készülnek az összefoglalók, a Bedrock és modelljei, a cégkörnyezeted, Microsoft 365, Confluence és a saját szavaid. Nincs benne jelszó, kulcs vagy bejelentkezés: mindenki a saját fiókjaival jelentkezik be.",
+  "Your {service} sign-in ran out.": "A(z) {service}-bejelentkezésed lejárt.",
+  "Sign in again": "Újra bejelentkezés",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "A Confluence-bejelentkezésed lejárt. Jelentkezz be újra, aztán küldd el.",
+  "Your Confluence sign-in ran out. Sign in again first.": "A Confluence-bejelentkezésed lejárt. Előbb jelentkezz be újra.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "A Microsoft 365-bejelentkezésed lejárt: az összefoglaló a meghívó, az e-mailek és a dokumentumok nélkül készül."
 }

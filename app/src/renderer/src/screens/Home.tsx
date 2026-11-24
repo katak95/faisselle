@@ -15,6 +15,7 @@ import { useLanguage } from '../i18n'
 import { moveMeetingsToTrash, toasts } from '../components/TrashToast'
 import { readMeetingRows, useMeetingRowMotion } from '../meetingRowMotion'
 import { MeetingRow } from '../components/MeetingRow'
+import { ReconnectBanner } from '../components/Reconnect'
 import { FolderChip } from '../components/FolderPicker'
 import { Agenda } from '../components/Agenda'
 import { MEETING_DRAG } from '../folders'
@@ -71,6 +72,7 @@ export function Home({ open, openFolder, agendaJump }: { open: (id: string) => v
     </button>, toolbar)}
     <StartRecording testId="new-note" compact={calendar && !agendaOpen} emptyActions={emptyActions} onGone={() => setCalendarRevision(revision => revision + 1)} />
     <div className="native-library" ref={past.setRoot} tabIndex={-1}>
+      <ReconnectBanner />
       <h1>{t('Your meetings')}</h1>
       {past.failed && !!past.cards?.length && <InlineError testId="meetings-read-error" retry={past.retry} />}
       <LoadingContent pending={!past.cards && !past.failed} testId="meetings-loading" skeleton={<MeetingListLoading />} className="library-load">{!past.cards?.length ? <LibraryEmpty testId="past-empty" icon={<FileText size={28} aria-hidden="true" />} title={t('Your notes will show up here')} description={t('Your summary appears after you stop recording.')} retry={past.failed ? past.retry : undefined}><div ref={setEmptyActions} /></LibraryEmpty> : <PastNotes cards={past.cards ?? []} day={day} more={past.more} sentinel={past.setSentinel} onOpen={open} openFolder={openFolder} />}</LoadingContent>

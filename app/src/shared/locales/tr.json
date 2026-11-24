@@ -824,7 +824,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian bağlanamadı. Tekrar deneyin.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence reddetti: kişisel alanınıza yazamıyorsunuz.",
-  "Connect Atlassian in Settings first.": "Önce Ayarlar'dan Atlassian'ı bağlayın.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "{site}{account} sitesine bağlı. Raporlar kişisel alanınızda “Meeting notes” altına gider.",
   "Couldn't save your latest changes. Try again before sending.": "Son değişiklikleriniz kaydedilemedi. Göndermeden önce tekrar deneyin.",
   "Couldn't send to Confluence.": "Confluence'a gönderilemedi.",
@@ -904,5 +903,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Örneğin: Acme, Fransa ve Belçika’daki diş hekimleri için faturalama yazılımı yapar. Müşterilerimiz klinikler ve diş hekimliği gruplarıdır. Ekipler: Satış, Müşteri başarısı, Ürün. “MRR” aylık yinelenen gelirdir; “3. çeyrek geçişi” tüm kliniklerin yeni sürüme taşınmasıdır.",
   "Model for each use": "Her kullanım için model",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Bir kullanımı boş bırakırsanız yukarıdaki modelle yazılır. Her model, kimliğinin gerektirdiği uç noktadan geçer, yukarıdaki gibi.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelleriniz ve bağlayıcılarınız, başka birine verebileceğiniz tek bir dosyada: özetlerin nerede yazıldığı, Bedrock ve modelleri, şirket bağlamınız, Microsoft 365, Confluence ve özel sözcükleriniz. İçinde parola, anahtar veya oturum yoktur: herkes kendi hesaplarıyla oturum açar."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Modelleriniz ve bağlayıcılarınız, başka birine verebileceğiniz tek bir dosyada: özetlerin nerede yazıldığı, Bedrock ve modelleri, şirket bağlamınız, Microsoft 365, Confluence ve özel sözcükleriniz. İçinde parola, anahtar veya oturum yoktur: herkes kendi hesaplarıyla oturum açar.",
+  "Your {service} sign-in ran out.": "{service} oturumunuzun süresi doldu.",
+  "Sign in again": "Yeniden oturum aç",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Confluence oturumunuzun süresi doldu. Yeniden oturum açın, sonra gönderin.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Confluence oturumunuzun süresi doldu. Önce yeniden oturum açın.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Microsoft 365 oturumunuzun süresi doldu: brifing davet, e-postalar ve belgeler olmadan hazırlanır."
 }

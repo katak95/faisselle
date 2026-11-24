@@ -867,7 +867,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian se nepřipojil. Zkuste to znovu.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence odmítl: do svého osobního prostoru nemůžete psát.",
-  "Connect Atlassian in Settings first.": "Nejdřív připojte Atlassian v Nastavení.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Připojeno k {site}{account}. Zápisy jdou do vašeho osobního prostoru, pod „Meeting notes“.",
   "Couldn't save your latest changes. Try again before sending.": "Poslední změny se nepodařilo uložit. Zkuste to znovu před odesláním.",
   "Couldn't send to Confluence.": "Odeslání do Confluence se nezdařilo.",
@@ -947,5 +946,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Například: Acme vyvíjí fakturační software pro zubaře ve Francii a Belgii. Našimi zákazníky jsou ordinace a zubní skupiny. Týmy: Prodej, Úspěch zákazníků, Produkt. „MRR“ je měsíční opakovaný příjem; „nasazení ve 3. čtvrtletí“ je přechod všech ordinací na novou verzi.",
   "Model for each use": "Model pro každé použití",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Nechte použití prázdné, aby se psalo modelem výše. Každý model jde přes koncový bod, který vyžaduje jeho ID, jako výše.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Vaše modely a připojení v jednom souboru, který můžete předat někomu jinému: kde se píšou shrnutí, Bedrock a jeho modely, kontext vaší firmy, Microsoft 365, Confluence a vaše vlastní slova. Nejsou v něm hesla, klíče ani přihlášení: každý se přihlásí vlastními účty."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Vaše modely a připojení v jednom souboru, který můžete předat někomu jinému: kde se píšou shrnutí, Bedrock a jeho modely, kontext vaší firmy, Microsoft 365, Confluence a vaše vlastní slova. Nejsou v něm hesla, klíče ani přihlášení: každý se přihlásí vlastními účty.",
+  "Your {service} sign-in ran out.": "Přihlášení k {service} vypršelo.",
+  "Sign in again": "Přihlásit znovu",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Přihlášení ke Confluence vypršelo. Přihlaste se znovu a pak to odešlete.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Přihlášení ke Confluence vypršelo. Nejdřív se přihlaste znovu.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Přihlášení k Microsoft 365 vypršelo: podklady se připraví bez pozvánky, e-mailů a dokumentů."
 }

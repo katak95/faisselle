@@ -794,7 +794,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian tidak bersambung. Cuba lagi.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence menolak: anda tidak boleh menulis dalam ruang peribadi anda.",
-  "Connect Atlassian in Settings first.": "Sambungkan Atlassian dalam Tetapan dahulu.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Disambungkan ke {site}{account}. Laporan masuk ke ruang peribadi anda, di bawah “Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "Perubahan terkini tidak dapat disimpan. Cuba lagi sebelum menghantar.",
   "Couldn't send to Confluence.": "Tidak dapat menghantar ke Confluence.",
@@ -874,5 +873,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Contohnya: Acme membuat perisian pengebilan untuk doktor gigi di Perancis dan Belgium. Pelanggan kami ialah klinik dan kumpulan pergigian. Pasukan: Jualan, Kejayaan pelanggan, Produk. \"MRR\" ialah hasil berulang bulanan; \"pelancaran S3\" ialah perpindahan semua klinik ke versi baharu.",
   "Model for each use": "Model untuk setiap kegunaan",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Biarkan kegunaan kosong untuk menulisnya dengan model di atas. Setiap model melalui titik akhir yang diminta oleh ID-nya, seperti di atas.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Model dan penyambung anda dalam satu fail untuk diberikan kepada orang lain: tempat ringkasan ditulis, Bedrock dan modelnya, konteks syarikat anda, Microsoft 365, Confluence dan perkataan tersuai anda. Tiada kata laluan, kunci atau log masuk di dalamnya: setiap orang log masuk dengan akaun sendiri."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Model dan penyambung anda dalam satu fail untuk diberikan kepada orang lain: tempat ringkasan ditulis, Bedrock dan modelnya, konteks syarikat anda, Microsoft 365, Confluence dan perkataan tersuai anda. Tiada kata laluan, kunci atau log masuk di dalamnya: setiap orang log masuk dengan akaun sendiri.",
+  "Your {service} sign-in ran out.": "Log masuk {service} anda telah tamat tempoh.",
+  "Sign in again": "Log masuk semula",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Log masuk Confluence anda telah tamat tempoh. Log masuk semula, kemudian hantar.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Log masuk Confluence anda telah tamat tempoh. Log masuk semula dahulu.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Log masuk Microsoft 365 anda telah tamat tempoh: taklimat disediakan tanpa jemputan, e-mel dan dokumen."
 }

@@ -8,6 +8,7 @@ import { templateChoices, GENERAL } from '../../../shared/templates'
 import { t } from '../../../shared/i18n'
 import { Editor } from './Editor'
 import { InlineError } from './InlineError'
+import { reconnect, useLostConnections } from './Reconnect'
 
 type Person = { name: string; email: string | null }
 
@@ -156,6 +157,7 @@ function FollowUpEmail({ id, v, people }: { id: string; v: ExtrasView; people: P
 /** before a meeting: what to know and ask, from earlier meetings with these people, the invite and related emails */
 export function MeetingBrief({ id }: { id: string }) {
   const v = useExtras(id)
+  const m365Lost = useLostConnections().includes('m365')
   if (!v) return null
   const writing = writingFor(v, 'brief'), failed = failedFor(v, 'brief')
   // a document's link opens in the browser (main's window-open handler), not as an edit in the text
@@ -176,7 +178,11 @@ export function MeetingBrief({ id }: { id: string }) {
         </button>
       </div>
     </div>
-    {!v.brief && !writing && <p className="text-[13px] text-muted">{v.contextAvailable
+    {!v.contextAvailable && m365Lost && <div data-testid="note-brief-reconnect" role="status" className="flex items-center justify-between gap-3 text-[13px] text-muted">
+      <span>{t('Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.')}</span>
+      <button data-testid="note-brief-reconnect-button" className="workspace-button shrink-0" onClick={() => reconnect('m365')}>{t('Sign in again')}</button>
+    </div>}
+    {!v.brief && !writing && !m365Lost && <p className="text-[13px] text-muted">{v.contextAvailable
       ? t('What was said before with these people, open points, related emails and documents, and questions to ask.')
       : t('What was said before with these people, open points and questions to ask. Connect Microsoft 365 in Settings to add the invite and related emails.')}</p>}
     {failed && <InlineError testId="note-brief-failed"><span>{t("Faisselle couldn't prepare the brief.")}</span></InlineError>}

@@ -842,7 +842,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian ei yhdistänyt. Yritä uudelleen.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence kieltäytyi: et voi kirjoittaa henkilökohtaiseen tilaasi.",
-  "Connect Atlassian in Settings first.": "Yhdistä ensin Atlassian asetuksissa.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Yhdistetty: {site}{account}. Raportit menevät henkilökohtaiseen tilaasi kohtaan ”Meeting notes”.",
   "Couldn't save your latest changes. Try again before sending.": "Viimeisimpiä muutoksia ei voitu tallentaa. Yritä uudelleen ennen lähettämistä.",
   "Couldn't send to Confluence.": "Lähetys Confluenceen epäonnistui.",
@@ -922,5 +921,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Esimerkiksi: Acme tekee laskutusohjelmistoa hammaslääkäreille Ranskassa ja Belgiassa. Asiakkaitamme ovat klinikat ja hammaslääkäriketjut. Tiimit: Myynti, Asiakasmenestys, Tuote. ”MRR” on kuukausittainen toistuva tulo; ”Q3-käyttöönotto” on kaikkien klinikoiden siirto uuteen versioon.",
   "Model for each use": "Malli kullekin käytölle",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Jätä käyttö tyhjäksi, niin se kirjoitetaan yllä olevalla mallilla. Kukin malli kulkee sen tunnuksen vaatiman päätepisteen kautta, kuten yllä.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Mallisi ja yhteytesi yhdessä tiedostossa toiselle annettavaksi: missä yhteenvedot kirjoitetaan, Bedrock ja sen mallit, yrityksesi konteksti, Microsoft 365, Confluence ja omat sanasi. Salasanoja, avaimia tai kirjautumisia ei tule mukaan: jokainen kirjautuu omilla tileillään."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Mallisi ja yhteytesi yhdessä tiedostossa toiselle annettavaksi: missä yhteenvedot kirjoitetaan, Bedrock ja sen mallit, yrityksesi konteksti, Microsoft 365, Confluence ja omat sanasi. Salasanoja, avaimia tai kirjautumisia ei tule mukaan: jokainen kirjautuu omilla tileillään.",
+  "Your {service} sign-in ran out.": "{service}-kirjautumisesi on vanhentunut.",
+  "Sign in again": "Kirjaudu uudelleen",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Confluence-kirjautumisesi on vanhentunut. Kirjaudu uudelleen ja lähetä sitten.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Confluence-kirjautumisesi on vanhentunut. Kirjaudu ensin uudelleen.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Microsoft 365 -kirjautumisesi on vanhentunut: taustamuistio laaditaan ilman kutsua, sähköposteja ja asiakirjoja."
 }

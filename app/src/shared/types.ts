@@ -596,7 +596,8 @@ export type ExtrasView = MeetingExtras & {
 export type M365Status =
   | { state: 'off' }
   | { state: 'starting' }
-  | { state: 'signed-out' }
+  /** expired: it was connected, and the sign-in ran out (never connected yet otherwise) */
+  | { state: 'signed-out'; expired?: boolean }
   /** waiting for the person to enter the code on Microsoft's page; no code: to finish signing in in the browser */
   | { state: 'pending'; code?: string; url: string }
   | { state: 'connected'; account: string | null }

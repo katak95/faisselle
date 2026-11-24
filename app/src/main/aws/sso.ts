@@ -85,6 +85,8 @@ export function createSso(o: { file: string; api: SsoApi; seal(plain: string): s
 
   return {
     status: (): SsoStatus => status,
+    /** tests (fake mode): the sign-in runs out, as when its refresh is refused */
+    ranOut() { if (status.state === 'signed-in') set({ state: 'expired', startUrl: status.startUrl }) },
     /** where the person signed in last, so Settings can fill the fields in */
     target: (): SsoTarget | undefined => (saved ? { startUrl: saved.startUrl, ssoRegion: saved.ssoRegion } : undefined),
     /**

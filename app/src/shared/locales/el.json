@@ -839,7 +839,6 @@
   "Atlassian didn't connect. Try again.": "Το Atlassian δεν συνδέθηκε. Δοκιμάστε ξανά.",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Το Confluence αρνήθηκε: δεν μπορείτε να γράψετε στον προσωπικό σας χώρο.",
-  "Connect Atlassian in Settings first.": "Συνδέστε πρώτα το Atlassian στις Ρυθμίσεις.",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "Συνδέθηκε στο {site}{account}. Τα πρακτικά πάνε στον προσωπικό σας χώρο, κάτω από το «Meeting notes».",
   "Couldn't save your latest changes. Try again before sending.": "Δεν ήταν δυνατή η αποθήκευση των τελευταίων αλλαγών. Δοκιμάστε ξανά πριν από την αποστολή.",
   "Couldn't send to Confluence.": "Η αποστολή στο Confluence απέτυχε.",
@@ -919,5 +918,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "Για παράδειγμα: η Acme φτιάχνει λογισμικό τιμολόγησης για οδοντιάτρους σε Γαλλία και Βέλγιο. Πελάτες μας είναι ιατρεία και οδοντιατρικοί όμιλοι. Ομάδες: Πωλήσεις, Επιτυχία πελατών, Προϊόν. «MRR» είναι τα μηνιαία επαναλαμβανόμενα έσοδα· «η διάθεση του Γ΄ τριμήνου» είναι η μετάβαση όλων των ιατρείων στη νέα έκδοση.",
   "Model for each use": "Μοντέλο για κάθε χρήση",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "Αφήστε μια χρήση κενή για να γράφεται με το παραπάνω μοντέλο. Κάθε μοντέλο περνά από το τελικό σημείο που ζητά το αναγνωριστικό του, όπως παραπάνω.",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Τα μοντέλα και οι συνδέσεις σας σε ένα αρχείο για να το δώσετε σε κάποιον άλλο: πού γράφονται οι περιλήψεις, το Bedrock και τα μοντέλα του, το πλαίσιο της εταιρείας σας, Microsoft 365, Confluence και οι δικές σας λέξεις. Δεν περιέχει κωδικούς, κλειδιά ή συνδέσεις: ο καθένας συνδέεται με τους δικούς του λογαριασμούς."
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "Τα μοντέλα και οι συνδέσεις σας σε ένα αρχείο για να το δώσετε σε κάποιον άλλο: πού γράφονται οι περιλήψεις, το Bedrock και τα μοντέλα του, το πλαίσιο της εταιρείας σας, Microsoft 365, Confluence και οι δικές σας λέξεις. Δεν περιέχει κωδικούς, κλειδιά ή συνδέσεις: ο καθένας συνδέεται με τους δικούς του λογαριασμούς.",
+  "Your {service} sign-in ran out.": "Η σύνδεσή σας στο {service} έληξε.",
+  "Sign in again": "Συνδεθείτε ξανά",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "Η σύνδεσή σας στο Confluence έληξε. Συνδεθείτε ξανά και μετά στείλτε το.",
+  "Your Confluence sign-in ran out. Sign in again first.": "Η σύνδεσή σας στο Confluence έληξε. Συνδεθείτε ξανά πρώτα.",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "Η σύνδεσή σας στο Microsoft 365 έληξε: η ενημέρωση ετοιμάζεται χωρίς την πρόσκληση, τα email και τα έγγραφα."
 }

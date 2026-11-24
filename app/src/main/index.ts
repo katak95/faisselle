@@ -592,6 +592,9 @@ app.whenReady().then(() => {
     documents: () => loadSettings(m365File).m365?.documents === true,
     browser: () => { const s = loadSettings(m365File).m365; return s?.method === 'browser' ? { redirectUri: s.redirectUri ?? DEFAULT_REDIRECT } : null },
     store: m365Tokens,
+    // an older setting has no flag: it was connected when it was turned on
+    connectedOnce: { get: () => loadSettings(m365File).m365?.connectedOnce !== false,
+      set: (on) => updateSettings(m365File, { m365: { ...loadSettings(m365File).m365, connectedOnce: on ? undefined : false } }) },
     ...(fakeMicrosoft ? { fetch: fakeMicrosoft.fetch } : {}),
     openExternal: (url) => { if (fakeMicrosoft) fakeMicrosoft.open(url); else void shell.openExternal(url) },
     onChange: (st) => { m365Ipc?.push(); if (st.state === 'connected' || st.state === 'off') { m365Context.forget(); refreshCalendarConsumers() } },
@@ -1104,6 +1107,7 @@ app.whenReady().then(() => {
   if (isFake()) Object.assign(((globalThis as Record<string, unknown>).__fake__ ??= {}) as object, {
     untranscribe: () => { const id = store.meetings({ limit: 1 })[0].id; store.deleteSegments(store.segments(id).map((x) => x.id)); store.updateMeeting(id, { transcriptionPending: true }); return id },
     transcribeWaiting: () => transcribeWaiting(),
+    signInsRanOut: () => { sso.ranOut(); m365.ranOut(); atlassian.ranOut() },
   })
   onMeetingStopSaved(() => void transcribeWaiting())
   app.on('will-quit', killAllWatches)

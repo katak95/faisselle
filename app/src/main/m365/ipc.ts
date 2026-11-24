@@ -18,9 +18,9 @@ export function hookM365(d: { file: string; m365: M365; /** the browser sign-in'
   }
   const patch = (p: NonNullable<ReturnType<typeof loadSettings>['m365']>) => updateSettings(d.file, { m365: { ...loadSettings(d.file).m365, ...p } })
   ipcMain.handle('m365:get', () => view())
-  ipcMain.handle('m365:sign-in', () => { patch({ enabled: true }); void d.m365.signIn(); return view() })
+  ipcMain.handle('m365:sign-in', () => { patch(loadSettings(d.file).m365?.enabled ? { enabled: true } : { enabled: true, connectedOnce: false }); void d.m365.signIn(); return view() })
   ipcMain.handle('m365:cancel', () => { d.m365.cancel(); return view() })
-  ipcMain.handle('m365:sign-out', async () => { patch({ enabled: undefined }); await d.m365.signOut(); d.calendarChanged(); return view() })
+  ipcMain.handle('m365:sign-out', async () => { patch({ enabled: undefined, connectedOnce: undefined }); await d.m365.signOut(); d.calendarChanged(); return view() })
   ipcMain.handle('m365:calendar', (_e, on: unknown) => {
     if (typeof on !== 'boolean') return view()
     patch({ calendar: on ? undefined : false }); d.calendarChanged()

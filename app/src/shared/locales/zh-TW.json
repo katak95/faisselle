@@ -794,7 +794,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian 未能連線。請重試。",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence 拒絕了：你無法在個人空間中寫入。",
-  "Connect Atlassian in Settings first.": "請先在設定中連接 Atlassian。",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "已連線到 {site}{account}。報告會放在你個人空間的「Meeting notes」下。",
   "Couldn't save your latest changes. Try again before sending.": "無法儲存你最近的變更。請在傳送前重試。",
   "Couldn't send to Confluence.": "無法傳送到 Confluence。",
@@ -874,5 +873,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "例如：Acme 為法國和比利時的牙醫開發帳務軟體。我們的客戶是診所和牙科集團。團隊：業務、客戶成功、產品。「MRR」是每月經常性收入；「第三季上線」是把所有診所移轉到新版本。",
   "Model for each use": "依用途選擇模型",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "某個用途留空時，會用上面的模型撰寫。每個模型都經由其 ID 所要求的端點，同上。",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "把你的模型和連接器放進一個檔案，交給別人使用：摘要在哪裡撰寫、Bedrock 及其模型、你的公司背景、Microsoft 365、Confluence 以及你的自訂詞語。檔案中不含任何密碼、金鑰或登入資訊：每個人都用自己的帳號登入。"
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "把你的模型和連接器放進一個檔案，交給別人使用：摘要在哪裡撰寫、Bedrock 及其模型、你的公司背景、Microsoft 365、Confluence 以及你的自訂詞語。檔案中不含任何密碼、金鑰或登入資訊：每個人都用自己的帳號登入。",
+  "Your {service} sign-in ran out.": "你的 {service} 登入已過期。",
+  "Sign in again": "重新登入",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "你的 Confluence 登入已過期。請重新登入，然後再傳送。",
+  "Your Confluence sign-in ran out. Sign in again first.": "你的 Confluence 登入已過期。請先重新登入。",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "你的 Microsoft 365 登入已過期：簡報將在沒有邀請、郵件和文件的情況下準備。"
 }

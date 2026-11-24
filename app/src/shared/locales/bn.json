@@ -824,7 +824,6 @@
   "Atlassian didn't connect. Try again.": "Atlassian সংযুক্ত হয়নি। আবার চেষ্টা করুন।",
   "Confluence": "Confluence",
   "Confluence refused: you can't write in your personal space.": "Confluence প্রত্যাখ্যান করেছে: আপনার ব্যক্তিগত স্পেসে লিখতে পারবেন না।",
-  "Connect Atlassian in Settings first.": "আগে সেটিংসে Atlassian সংযুক্ত করুন।",
   "Connected to {site}{account}. Reports go to your personal space, under \"Meeting notes\".": "{site}{account}-এ সংযুক্ত। রিপোর্ট আপনার ব্যক্তিগত স্পেসে “Meeting notes”-এর নিচে যায়।",
   "Couldn't save your latest changes. Try again before sending.": "আপনার সাম্প্রতিক পরিবর্তন সংরক্ষণ করা যায়নি। পাঠানোর আগে আবার চেষ্টা করুন।",
   "Couldn't send to Confluence.": "Confluence-এ পাঠানো যায়নি।",
@@ -904,5 +903,10 @@
   "For example: Acme makes billing software for dentists in France and Belgium. Our clients are clinics and dental groups. Teams: Sales, Customer success, Product. \"MRR\" is monthly recurring revenue; \"the Q3 rollout\" is the move of all clinics to the new version.": "যেমন: Acme ফ্রান্স ও বেলজিয়ামের দন্তচিকিৎসকদের জন্য বিলিং সফটওয়্যার বানায়। আমাদের গ্রাহক ক্লিনিক ও ডেন্টাল গ্রুপ। দল: বিক্রয়, গ্রাহক সাফল্য, পণ্য। \"MRR\" মাসিক পুনরাবৃত্ত আয়; \"Q3 রোলআউট\" সব ক্লিনিককে নতুন সংস্করণে নেওয়া।",
   "Model for each use": "প্রতিটি ব্যবহারের জন্য মডেল",
   "Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.": "কোনো ব্যবহার ফাঁকা রাখলে সেটি ওপরের মডেল দিয়ে লেখা হবে। প্রতিটি মডেল তার ID যে এন্ডপয়েন্ট চায় সেখান দিয়ে যায়, ওপরের মতো।",
-  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "আপনার মডেল ও কানেক্টর এক ফাইলে, অন্য কাউকে দেওয়ার জন্য: সারাংশ কোথায় লেখা হয়, Bedrock ও তার মডেল, আপনার কোম্পানির প্রসঙ্গ, Microsoft 365, Confluence এবং আপনার নিজস্ব শব্দ। এতে কোনো পাসওয়ার্ড, কী বা সাইন-ইন থাকে না: প্রত্যেকে নিজের অ্যাকাউন্ট দিয়ে সাইন ইন করেন।"
+  "Your models and connectors in one file, to give to someone else: where summaries are written, Bedrock and its models, your company context, Microsoft 365, Confluence and your custom words. No password, key or sign-in goes in it: each person signs in with their own accounts.": "আপনার মডেল ও কানেক্টর এক ফাইলে, অন্য কাউকে দেওয়ার জন্য: সারাংশ কোথায় লেখা হয়, Bedrock ও তার মডেল, আপনার কোম্পানির প্রসঙ্গ, Microsoft 365, Confluence এবং আপনার নিজস্ব শব্দ। এতে কোনো পাসওয়ার্ড, কী বা সাইন-ইন থাকে না: প্রত্যেকে নিজের অ্যাকাউন্ট দিয়ে সাইন ইন করেন।",
+  "Your {service} sign-in ran out.": "আপনার {service} সাইন-ইনের মেয়াদ শেষ হয়েছে।",
+  "Sign in again": "আবার সাইন ইন করুন",
+  "Your Confluence sign-in ran out. Sign in again, then send it.": "আপনার Confluence সাইন-ইনের মেয়াদ শেষ হয়েছে। আবার সাইন ইন করে তারপর পাঠান।",
+  "Your Confluence sign-in ran out. Sign in again first.": "আপনার Confluence সাইন-ইনের মেয়াদ শেষ হয়েছে। আগে আবার সাইন ইন করুন।",
+  "Your Microsoft 365 sign-in ran out: the brief is prepared without the invite, emails and documents.": "আপনার Microsoft 365 সাইন-ইনের মেয়াদ শেষ হয়েছে: আমন্ত্রণ, ইমেল ও ডকুমেন্ট ছাড়াই ব্রিফ তৈরি হবে।"
 }
