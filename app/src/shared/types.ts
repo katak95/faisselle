@@ -462,6 +462,8 @@ export type NoteView = {
   part?: { part: number; of: number }
   /** Windows and Linux: waiting while the notes model loads (it can take a while there) */
   step?: 'loading'
+  /** waiting, and why nothing starts: the AWS sign-in ran out (Bedrock), or the notes model is still downloading */
+  waitingFor?: 'aws-sign-in' | 'notes-model' | 'recording'
   /** the people at the meeting changed after these edited notes were written, so they may be out of date */
   peopleChanged: boolean
   /** the notes were just written again (for new people): what they replaced, so an open editor with no edits since takes them */

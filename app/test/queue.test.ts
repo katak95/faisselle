@@ -50,6 +50,48 @@ describe('notes queue', () => {
     await done
     expect(ran).toHaveBeenCalledOnce()
   })
+  it('with the notes model on Bedrock, a 24 GB Mac writes the notes, the brief and Ask while it records; the local index still waits', async () => {
+    let recording = true
+    const said: string[] = []
+    const info = vi.spyOn(console, 'info').mockImplementation((...a: unknown[]) => { said.push(a.join(' ')) })
+    const q = createQueue({ recording: () => recording, smallMac: true, remote: () => true, backlogMs: () => 60_000 })
+    const notes = vi.fn(async () => {}), ask = vi.fn(async () => {}), index = vi.fn(async () => {})
+    const jobs = [q.enqueue(notes, 'enhance'), q.enqueue(ask, 'chat'), q.enqueue(index, 'index')]
+    await Promise.all(jobs.slice(0, 2))
+    expect(notes).toHaveBeenCalledOnce()
+    expect(ask).toHaveBeenCalledOnce()
+    await tick()
+    // meaning search's index is on the Mac: it still waits for the recording to stop
+    expect(index).not.toHaveBeenCalled()
+    expect(said).toContain('NOTES waiting for the recording to stop (this Mac runs the notes model only when nothing records)')
+    recording = false; q.recordingChanged(); await jobs[2]
+    expect(index).toHaveBeenCalledOnce()
+    info.mockRestore()
+  })
+
+  it('a recording that starts on a small Mac leaves a Bedrock job running', async () => {
+    let recording = false, aborted = false, release!: () => void
+    const q = createQueue({ recording: () => recording, smallMac: true, remote: () => true })
+    const job = q.enqueue(async (signal) => { signal.addEventListener('abort', () => { aborted = true }); await new Promise<void>((r) => { release = r }) }, 'enhance')
+    await tick()
+    recording = true; q.recordingChanged(); await tick()
+    expect(aborted).toBe(false)
+    release(); await job
+  })
+
+  it('says why the jobs wait, each time the reason changes', async () => {
+    let ready = false
+    const said: string[] = []
+    const info = vi.spyOn(console, 'info').mockImplementation((...a: unknown[]) => { said.push(a.join(' ')) })
+    const q = createQueue({ recording: () => false, smallMac: false, remote: () => true, modelReady: () => ready, waitingFor: () => 'waiting for the AWS sign-in' })
+    const job = q.enqueue(vi.fn(async () => {}), 'enhance')
+    q.enqueue(vi.fn(async () => {}), 'enhance')
+    await tick()
+    expect(said.filter((l) => l.includes('waiting for the AWS sign-in'))).toHaveLength(1)
+    ready = true; q.modelArrived(); await job
+    info.mockRestore()
+  })
+
   it('runs two meetings\' jobs one at a time, in order', async () => {
     const q = createQueue({ recording: () => false, smallMac: false })
     const log: string[] = []

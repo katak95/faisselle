@@ -25,6 +25,8 @@ export function hookNotes(p: {
   store: Pick<Store, 'meeting' | 'notes' | 'setNotes' | 'writtenWith' | 'setWrittenWith' | 'segments' | 'updateMeeting' | 'unenhancedMeetings'> & Partial<Pick<Store, 'extras' | 'setExtras'>>
   queue: Queue
   model: Pick<NotesModel, 'llm'> & Partial<Pick<NotesModel, 'needsLoad'>>
+  /** what a waiting note waits for when nothing can start (Settings says how to fix it); undefined: nothing blocks it */
+  waitingFor?: () => NoteView['waitingFor']
   /** Windows and Linux: say when the notes wait for the model to load (a Mac shows what it always did) */
   showLoading?: boolean
   /** the recording's files and transcript are final */
@@ -84,7 +86,9 @@ export function hookNotes(p: {
     const l = live.get(id)
     const saved = edits.get(id)
     const saves = saved && Object.fromEntries(Object.entries(saved).map(([side, edit]) => [side, { revision: edit.revision, status: edit.status, ...(edit.reason ? { reason: edit.reason } : {}) }]))
-    return { meetingId: id, mine: n.mine, enhanced: n.enhanced, edited: n.edited, status: l?.status ?? (n.enhanced != null ? 'done' : 'idle'), draft: l?.draft ?? '', peopleChanged: peopleChanged(id, n.enhanced != null) && !rewriteTimers.has(id) && !rewriting.has(id), ...(l?.part ? { part: l.part } : {}), ...(l?.step ? { step: l.step } : {}), ...(saves ? { saves } : {}) }
+    const status = l?.status ?? (n.enhanced != null ? 'done' : 'idle')
+    const waitingFor = status === 'waiting' ? p.waitingFor?.() : undefined
+    return { meetingId: id, mine: n.mine, enhanced: n.enhanced, edited: n.edited, status, ...(waitingFor ? { waitingFor } : {}), draft: l?.draft ?? '', peopleChanged: peopleChanged(id, n.enhanced != null) && !rewriteTimers.has(id) && !rewriting.has(id), ...(l?.part ? { part: l.part } : {}), ...(l?.step ? { step: l.step } : {}), ...(saves ? { saves } : {}) }
   }
   const set = (id: string, status: NoteStatus, draft = '', part?: { part: number; of: number }, step?: 'loading') => { live.set(id, { status, draft, part, step }); p.send(view(id)) }
 

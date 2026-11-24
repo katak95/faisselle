@@ -43,6 +43,8 @@ const CHECK_MS = 1000
  *   model is let go;
  * - on a bigger Mac jobs run during a recording, but when transcription falls more than 30 s behind on a track the
  *   running job is stopped and run again once it has caught up (under 10 s).
+ * With the notes model in the cloud (Bedrock), those rules are only for what still runs on the Mac (meaning search's
+ * index, reading ahead): the notes, the brief, the email and Ask don't wait for a recording or the transcription.
  */
 export function createQueue(o: {
   recording: () => boolean
@@ -54,6 +56,10 @@ export function createQueue(o: {
   idleMs?: number
   /** a notes model is on the Mac (first run: not until its download lands); nothing runs before */
   modelReady?: () => boolean
+  /** what the jobs wait for when the model isn't ready, for the log (the AWS sign-in, the download…) */
+  waitingFor?: () => string
+  /** the notes model is in the cloud: its jobs take nothing from the Mac's memory or graphics card */
+  remote?: () => boolean
 }) {
   const waiting: Entry[] = []
   let running: { entry: Entry; abort: AbortController } | undefined
@@ -61,14 +67,17 @@ export function createQueue(o: {
   let watch: NodeJS.Timeout | undefined
   /** a bigger Mac stopped for the backlog: waiting for it to fall under RESUME_MS */
   let yielded = false
-  /** the log has said the jobs wait for the first notes model */
-  let saidWait = false
+  /** what the log said the jobs wait for last: said again only when it changes */
+  let saidWait: string | undefined
   /** deleted meetings: their jobs are dropped, now and later */
   const gone = new Set<string>()
 
   const backlog = () => o.backlogMs?.() ?? 0
+  /** the jobs that run in the cloud model when it is in use: they don't share the Mac with transcription */
+  const inCloud = (kind: JobKind) => !!o.remote?.() && kind !== 'index' && kind !== 'readahead'
   const allowed = (kind: JobKind) => {
     if (o.modelReady && !o.modelReady()) return false
+    if (inCloud(kind)) return true
     if ((kind === 'index' || kind === 'folder') && o.recording()) return false
     if (kind === 'readahead' && !o.smallMac && backlog() > READ_BACKLOG_MS) return false
     if (o.smallMac) return !o.recording()
@@ -107,10 +116,17 @@ export function createQueue(o: {
     if (i === -1) i = waiting.findIndex((e) => (e.kind === 'index' || e.kind === 'folder') && allowed(e.kind))
     if (i === -1) {
       if (!waiting.length) armIdle()
-      else if (o.modelReady && !o.modelReady() && !saidWait) { saidWait = true; console.info('NOTES', 'waiting for the notes model to finish downloading') }
+      else {
+        // why nothing starts, said once per reason
+        const why = o.modelReady && !o.modelReady() ? o.waitingFor?.() ?? 'waiting for the notes model to finish downloading'
+          : o.smallMac && o.recording() ? 'waiting for the recording to stop (this Mac runs the notes model only when nothing records)'
+          : 'waiting for the transcription to catch up'
+        if (why !== saidWait) { saidWait = why; console.info('NOTES', why) }
+      }
       watching(); return
     }
     disarmIdle()
+    saidWait = undefined
     const [entry] = waiting.splice(i, 1)
     const abort = new AbortController()
     running = { entry, abort }
@@ -161,11 +177,12 @@ export function createQueue(o: {
     /** call when any recording starts or stops */
     recordingChanged() {
       if (o.recording()) disarmIdle()
-      if (o.recording() && (running?.entry.kind === 'index' || running?.entry.kind === 'folder')) running.abort.abort()
+      if (o.recording() && (running?.entry.kind === 'index' || (running?.entry.kind === 'folder' && !inCloud('folder')))) running.abort.abort()
       if (o.recording() && o.smallMac) {
         // a read ahead waiting would be stale by the time the meeting ends
         for (const e of waiting.filter((x) => x.kind === 'readahead')) { waiting.splice(waiting.indexOf(e), 1); e.resolve() }
-        running?.abort.abort()
+        // what runs in the cloud goes on; what uses the Mac's memory stops, and the local models go
+        if (running && !inCloud(running.entry.kind)) running.abort.abort()
         o.onIdle?.()
       }
       pump()
