@@ -19,7 +19,7 @@ Our conversations should be our own business. Good notes shouldn't need third-pa
 
 ## Download
 
-Faisselle is free for [Mac](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-mac-arm64.dmg), [Windows](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-windows-x64.exe) and [Linux](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-linux-x86_64.AppImage).
+Faisselle is free for [Mac](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-mac-arm64.dmg), [Windows](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-windows-x64-setup.exe) and [Linux](https://github.com/katak95/faisselle/releases/latest/download/Faisselle-linux-x86_64-setup.AppImage).
 
 On a Mac you can also use [Homebrew](https://brew.sh).
 

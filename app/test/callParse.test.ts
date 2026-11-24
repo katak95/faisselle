@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readCall, summarize, zoomLinuxTile, zoomTile, type AxNode, type AxWindow } from '../src/main/callNames/parse'
+import { nameFor } from '../src/main/callNames/attribute'
 
 const node = (r: string, o: Partial<AxNode> = {}, ...k: AxNode[]): AxNode => ({ r, ...o, ...(k.length ? { k } : {}) })
 const win = (tree: AxNode, title?: string): AxWindow => ({ title, tree })
@@ -147,6 +148,11 @@ describe('Google Meet', () => {
     const names = ['Dana Smith', 'Ana María de la Cruz', 'Mary-Jane O\'Neil', 'J. R. Smith', 'Ludwig van Beethoven', '李雷', 'jiwon', 'Ann Lee (Presenting)']
     expect(readCall('meet', [meetWindow(names.map((n) => meetTile(n)))]).participants)
       .toEqual(['Dana Smith', 'Ana María de la Cruz', 'Mary-Jane O\'Neil', 'J. R. Smith', 'Ludwig van Beethoven', '李雷', 'jiwon', 'Ann Lee'])
+  })
+
+  it('"(You)" after a name marks my own tile, so it never counts as the other side (#112)', () => {
+    const r = readCall('meet', [meetWindow([meetTile('Theo Lane (You)', ['v5h6Xc']), meetTile('Dana Smith', ['v5h6Xc'])])])
+    expect(r).toEqual({ speaking: ['Theo Lane', 'Dana Smith'], participants: ['Theo Lane', 'Dana Smith'], me: 'Theo Lane' })
   })
 
   it('only windows showing a Meet call are read', () => {
@@ -342,6 +348,132 @@ describe('a Teams meeting where nobody is marked as talking (#83)', () => {
   })
 })
 
+// ---- new Teams in English on Windows (#83, 0.3.69): tiles with no label inside, the mute word on the video image ----
+// menu item "Name, video is on, <meeting title>, Context menu is available"; beside it an image whose words carry
+// "Unmuted" or "Muted" and end with the person's name. Names made up.
+const EN_TITLE = 'Quarterly planning with Contoso'
+const enTile = (name: string, video = 'video is on', extra = '') => node('menu item', { t: `${name}, ${video}, ${EN_TITLE}, ${extra}Context menu is available` })
+const enVideo = (name: string, mic: 'Unmuted' | 'Muted') => node('image', { i: `menu${name.length}x`, c: ['fui-Primitive', 'vdi-dynamic-occlusion'], t: `Video, of, call, ${EN_TITLE}, ${mic}, video is on, Pinned off, ${name}` })
+const enMeeting = (stage: AxNode[]) => win(node('frame', { t: `${EN_TITLE} | Microsoft Teams` },
+  node('panel', { i: 'app' },
+    node('push button', { i: 'organizer-control-button', t: 'Meeting options' }),
+    node('push button', { i: 'start-breakout-room-button', t: 'Rooms' }),
+    node('panel', { i: 'horizontalEnd' }, node('push button', { i: 'hangup-button', t: 'Leave' })),
+    ...stage)), `${EN_TITLE} | Microsoft Teams`)
+
+describe('new Teams in English on Windows (#83)', () => {
+  it('reads a tile with no label inside: the name before "video is on" (or off), never the meeting title or the hint', () => {
+    const r = readCall('teams', [enMeeting([enTile('Dana Smith'), enTile('Ann Lee', 'Video is off'), enTile('Bo Park', 'video is off')])])
+    expect(r.participants).toEqual(['Dana Smith', 'Ann Lee', 'Bo Park'])
+  })
+  it('takes the mute word from the video image that names the person, so the one other person unmuted is the one talking', () => {
+    const stage = [enVideo('Dana Smith', 'Unmuted'), enTile('Dana Smith'), enVideo('Ann Lee', 'Muted'), enTile('Ann Lee'), enTile('Bo Park', 'video is off', 'Muted, ')]
+    expect(readCall('teams', [enMeeting(stage)])).toEqual({ speaking: ['Dana Smith'], participants: ['Dana Smith', 'Ann Lee', 'Bo Park'], me: null, byMute: true })
+    // an image naming nobody shown says nothing about anyone
+    const stray = [enVideo('Cy Young', 'Unmuted'), enTile('Ann Lee', 'video is on', 'Muted, '), enTile('Bo Park', 'video is on', 'Muted, ')]
+    expect(readCall('teams', [enMeeting(stray)]).speaking).toEqual([])
+  })
+  it("my own tile (\"Name (You)\") is me, so with one other person the reading is a call of two", () => {
+    const r = readCall('teams', [enMeeting([enTile('Alex Morgan (You)'), enVideo('Dana Smith', 'Unmuted'), enTile('Dana Smith')])])
+    expect(r).toEqual({ speaking: [], participants: ['Alex Morgan', 'Dana Smith'], me: 'Alex Morgan' })
+  })
+  it('reads a tile whose label inside is not the name: "(You)" there is my own tile, anything else is just the name before it (#83, 18:30)', () => {
+    const mine = node('menu item', { t: `Alex Morgan, video is on, ${EN_TITLE}, Context menu is available` }, node('label', { t: '(You)' }))
+    const dana = node('menu item', { t: `Dana Smith, video is off, ${EN_TITLE}, Context menu is available` }, node('label', { t: 'DS' }))
+    expect(readCall('teams', [enMeeting([mine, dana])])).toEqual({ speaking: [], participants: ['Alex Morgan', 'Dana Smith'], me: 'Alex Morgan' })
+    // a label that starts the tile's words but runs on into something else is still no name
+    const odd = node('menu item', { t: `Dana Smith Contoso, video is on, ${EN_TITLE}, Context menu is available` }, node('label', { t: 'Dana Smith' }))
+    expect(readCall('teams', [enMeeting([odd])]).participants).toEqual([])
+  })
+  it('one other tile alone in a meeting names nobody: a bigger meeting with the chat open shows one tile too (#83, 15:30)', () => {
+    expect(readCall('teams', [enMeeting([enVideo('Dana Smith', 'Unmuted'), enTile('Dana Smith')])]).speaking).toEqual([])
+  })
+})
+
+// ---- Teams' talking mark on Windows (#83, measured by a reporter in an 8-person English meeting): the tile's last
+// child carries the class vdi-frame-occlusion while that person talks; other classes when they stop; a muted tile has
+// no such child. Shapes copied from three tiles of one call-watch reading, names made up.
+const nameBox = (name: string): AxNode => node('panel', { c: ['fui-Primitive', '___y6qvlo0'] },
+  node('panel', { c: ['fui-Flex', 'vdi-occlusion', '___1d0k7eo'] },
+    node('panel', { c: ['fui-Flex', '___ylrf500'] },
+      node('panel', { c: ['___nq9nxu0', 'lpcCommonWeb-hoverTarget', 'lpc-hover-target-container'] }, node('label', { t: name })))))
+const PRODUCTION = 'Has control of production tools'
+const talkingTile = (name: string, talking: boolean) => node('menu item', { t: `${name}, video is on, ${PRODUCTION}, Context menu is available`, c: ['fui-Flex', '___s8lnzv0'] },
+  node('panel', { c: ['fui-Primitive', '___19sw0rl'] }), nameBox(name),
+  node('panel', { c: talking ? ['fui-Flex', 'vdi-frame-occlusion', '___1vvhwjq'] : ['fui-Flex', '___dv8x4j0', 'f22iagw'] }))
+const mutedTile = (name: string) => node('menu item', { t: `${name}, ${PRODUCTION}, muted, Context menu is available`, c: ['fui-Flex', '___1ntexr1'] },
+  node('panel', { c: ['fui-Primitive', 'bkg_ZmZkYTdk', '___1eev0rn'] }), node('panel', { c: ['fui-Primitive', '___19sw0rl'] }), nameBox(name))
+const stage = (tiles: AxNode[], title = 'Weekly review | Microsoft Teams') => win(node('frame', { t: title },
+  node('panel', { i: 'app' }, node('panel', { i: 'horizontalEnd' }, node('push button', { i: 'hangup-button', t: 'Leave' })), ...tiles)), title)
+
+describe("Teams' talking mark: the tile's last child has vdi-frame-occlusion (#83)", () => {
+  it('marks the person talking, not someone unmuted and quiet, and never a muted tile', () => {
+    const r = readCall('teams', [stage([talkingTile('Dana Smith', true), talkingTile('Ann Lee', false), mutedTile('Bo Park')])])
+    expect(r).toEqual({ speaking: ['Dana Smith'], participants: ['Dana Smith', 'Ann Lee', 'Bo Park'], me: null })
+  })
+  it('reads the name from the first field or the label, whatever Teams puts before the hint', () => {
+    expect(readCall('teams', [stage([talkingTile('Dana Smith', false)])]).participants).toEqual(['Dana Smith'])
+  })
+  it('is a real mark: it wins over who is muted, and with 3 or 4 mics open it follows the one talking around an 8-person stage', () => {
+    const people = ['Dana Smith', 'Ann Lee', 'Bo Park', 'Cy Young', 'Eve Adams', 'Finn Moss', 'Gus Hale', 'Ivy Chen']
+    const open = new Set(['Dana Smith', 'Ann Lee', 'Cy Young', 'Ivy Chen'])
+    for (const talker of ['Ann Lee', 'Ivy Chen', 'Dana Smith']) {
+      const tiles = people.map((p) => (open.has(p) ? talkingTile(p, p === talker) : mutedTile(p)))
+      const r = readCall('teams', [stage(tiles)])
+      expect(r.speaking).toEqual([talker])
+      expect(r.byMute).toBeUndefined()
+      expect(r.participants).toHaveLength(8)
+    }
+    // nobody talking with several mics open: nobody marked
+    expect(readCall('teams', [stage(people.map((p) => (open.has(p) ? talkingTile(p, false) : mutedTile(p))))]).speaking).toEqual([])
+  })
+  it('the class only counts on the last child of a tile, not anywhere else in the window', () => {
+    const elsewhere = node('panel', { c: ['fui-Flex', 'vdi-frame-occlusion'] }, node('label', { t: 'Weekly review' }))
+    expect(readCall('teams', [stage([elsewhere, talkingTile('Ann Lee', false), talkingTile('Bo Park', false)])]).speaking).toEqual([])
+  })
+})
+
+// ---- Teams' talking mark on a Mac (#138, from a reporter's 3-person call in new Teams on macOS): the same tiles as on
+// Windows, as AXMenuItems described "Name, ..., Context menu is available", the classes from AXDOMClassList, and while
+// someone talks an empty AXGroup with vdi-frame-occlusion as the tile's last child. My own tile reads "Myself video,
+// Name, ..., Unmuted, Has context menu". A small "Window" dialog (window sharing) comes first. Names made up.
+const macTile = (name: string, talking: boolean): AxNode => node('AXMenuItem', { d: `${name}, ${PRODUCTION}, Context menu is available`, c: ['fui-Flex', '___s8lnzv0'] },
+  node('AXGroup', { c: ['fui-Primitive', 'bkg_ZmZkYTdk'] }), node('AXGroup', { c: ['fui-Primitive', '___19sw0rl'] }), node('AXGroup', { c: ['fui-Primitive', '___jl63on0'] }),
+  node('AXGroup', { c: ['fui-Flex', 'vdi-occlusion', '___1d0k7eo'] }), node('AXGroup', { c: ['fui-Flex', '___ylrf500'] }),
+  node('AXStaticText', { v: name }),
+  ...(talking ? [node('AXGroup', { c: ['fui-Flex', 'vdi-frame-occlusion', '___1vvhwjq'] })] : []))
+const macOwnTile = (name: string, talking = false): AxNode => node('AXMenuItem', { d: `Myself video, ${name}, ${PRODUCTION}, Unmuted, Has context menu` },
+  node('AXGroup', { c: ['fui-Primitive', '___19sw0rl'] }), node('AXStaticText', { v: name }),
+  ...(talking ? [node('AXGroup', { c: ['fui-Flex', 'vdi-frame-occlusion', '___1vvhwjq'] })] : []))
+const macSharing = win(node('AXWindow', { s: 'AXDialog', t: 'Window' }, node('AXButton', { i: 'WindowSharingSessionButton' })), 'Window')
+const macStage = (tiles: AxNode[]) => win(node('AXWindow', { t: 'Weekly review | Microsoft Teams' },
+  node('AXGroup', { c: ['BrowserRootView'] }, node('AXWebArea', { t: 'Weekly review | Microsoft Teams' },
+    node('AXToolbar', {}, node('AXButton', { i: 'roster-button', d: 'People' }), node('AXButton', { i: 'hangup-button', d: 'Leave' })),
+    node('AXGroup', {}, ...tiles)))), 'Weekly review | Microsoft Teams')
+
+describe("Teams' talking mark on a Mac (#138)", () => {
+  it('reads the empty frame group from AXDOMClassList as talking, and knows my own "Myself video" tile', () => {
+    const r = readCall('teams', [macSharing, macStage([macOwnTile('Alex Morgan'), macTile('Dana Smith', true), macTile('Ann Lee', false)])])
+    expect(r).toEqual({ speaking: ['Dana Smith'], participants: ['Alex Morgan', 'Dana Smith', 'Ann Lee'], me: 'Alex Morgan' })
+  })
+  it('the window-sharing dialog listed first gives nobody and never hides the call window', () => {
+    expect(readCall('teams', [macSharing])).toEqual({ speaking: [], participants: [], me: null })
+    expect(readCall('teams', [macSharing, macStage([macTile('Ann Lee', true)])]).speaking).toEqual(['Ann Lee'])
+  })
+  it('with several tiles marked at once (background noise), the line goes to nobody', () => {
+    const samples = [0, 500, 1000, 1500].map((ms) => ({ ms, ...readCall('teams', [macStage([macOwnTile('Alex Morgan'), macTile('Dana Smith', true), macTile('Ann Lee', true)])]) }))
+    expect(nameFor({ startMs: 0, endMs: 2000 }, samples)).toBeNull()
+  })
+  it('my own tile lit while I talk names nobody on the other side', () => {
+    const samples = [0, 500, 1000, 1500].map((ms) => ({ ms, ...readCall('teams', [macStage([macOwnTile('Alex Morgan', true), macTile('Dana Smith', false), macTile('Ann Lee', false)])]) }))
+    expect(nameFor({ startMs: 0, endMs: 2000 }, samples)).toBeNull()
+  })
+  it('one other person lit names their line', () => {
+    const samples = [0, 500, 1000, 1500].map((ms) => ({ ms, ...readCall('teams', [macStage([macOwnTile('Alex Morgan'), macTile('Dana Smith', ms < 1500), macTile('Ann Lee', false)])]) }))
+    expect(nameFor({ startMs: 0, endMs: 2000 }, samples)).toBe('Dana Smith')
+  })
+})
+
 describe('summarize: a short picture of the tree for the log', () => {
   it("counts roles and shows ids, classes and the app's own words, never a name or anything said", () => {
     const captions = node('AXGroup', { i: 'captions' }, node('AXStaticText', { v: 'we can sign the renewal with Acme on Friday' }))
@@ -358,6 +490,13 @@ describe('summarize: a short picture of the tree for the log', () => {
     expect(s.split('\n')).toHaveLength(3)
     expect(s).toContain('window "Meet - ‹12›"')
     expect(s).not.toContain('abc-defg-hij')
+  })
+  it('shows how deep a line is past the indent cap, so a Meet tile can be told from the page around it (#112)', () => {
+    let n: AxNode = node('AXStaticText', { v: 'Dana Smith' })
+    for (let i = 0; i < 20; i++) n = node('AXGroup', i === 5 ? { c: ['v5h6Xc'] } : {}, n)
+    const s = summarize([win(node('AXWindow', {}, n), 'Meet - abc-defg-hij')])
+    expect(s).toContain('@21 AXStaticText "‹10›"')
+    expect(s).toContain('@15 AXGroup .v5h6Xc')
   })
   it('says which windows are minimised, so a call hidden in one shows in the log (#138)', () => {
     const s = summarize([{ ...win(node('AXWindow', {}), 'Microsoft Teams'), minimized: true }, win(node('AXWindow', {}), 'Microsoft Teams')])

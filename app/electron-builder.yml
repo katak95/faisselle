@@ -4,6 +4,7 @@ copyright: Copyright © 2026 Frigade
 # GitHub Releases: every v* tag builds Mac, Windows and Linux (.github/workflows/release.yml).
 # Fixed file names, so releases/latest/download/Faisselle-mac-arm64.dmg (and the Windows and Linux ones) point at the newest.
 # Installed copies update from the same release (latest-mac.yml, latest.yml, latest-linux.yml; src/main/updates.ts).
+# The website links the .dmg and, on Windows and Linux, the -setup copies release.yml adds; latest*.yml keep these names.
 publish:
   provider: github
   owner: katak95
@@ -29,7 +30,7 @@ extraResources:
   # the Mac's menu bar icon (tray.ts reads it from Resources; @2x is picked up next to it)
   - { from: resources, to: ., filter: ["tray.png", "tray@2x.png", "tray-titled.png", "tray-titled@2x.png"] }
   # licenses of things bundled or downloaded: fonts, whisper.cpp, Silero VAD, libopus, the native recorders' crates,
-  # whisper-server's headers, animate-ui and the CUDA runtime
+  # whisper-server's headers, animate-ui, the CUDA runtime and the echo canceller (webrtcaec3.js)
   - from: resources/licenses
     to: licenses
   # the Mac's About window shows Resources/Credits.html under the version, with its link
@@ -82,6 +83,8 @@ mac:
     NSCalendarsFullAccessUsageDescription: Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
     NSCalendarsUsageDescription: Faisselle reads your calendar to name your notes after the meeting and to know who is in it. Nothing leaves your Mac.
     NSAppleEventsUsageDescription: Faisselle checks the browser tab's name to tell when you're in a call, and pauses your music while it records.
+    # macOS 15 and later ask before an app can be found on the local network (Bonjour), which the iPhone app needs
+    NSLocalNetworkUsageDescription: Faisselle lets your iPhone find this computer on your Wi-Fi so your notes can sync. Nothing goes through the internet.
     # Electron's own defaults ("This app needs access to..."): Faisselle never asks for these, so plain words instead
     NSCameraUsageDescription: Faisselle doesn't use the camera.
     NSBluetoothAlwaysUsageDescription: Faisselle doesn't use Bluetooth.

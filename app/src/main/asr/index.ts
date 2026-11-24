@@ -6,6 +6,7 @@ import { isFake } from '../paths'
 import { feedRecording } from './backfill'
 import type { Meeting, Segment, Store } from '../store'
 import { createPipeline, type Pipeline } from './pipeline'
+import { loadAec3 } from './aec3'
 import { echoConfidence } from './echo'
 import { appleSpeechAvailable, installSpeechLocale, readSpeechLocales, speechDisagrees, speechFits, wantedSpeechLocale, type SpeechHost, type SpeechLocales } from './appleSpeech'
 import { whisperLanguage, type Spoken } from '../../shared/spoken'
@@ -101,7 +102,8 @@ export function liveSilentMs(id: string, now = Date.now()): number {
   return Math.max(0, now - live.quietSince)
 }
 
-export type RecordedOptions = { signal?: AbortSignal; progress?: (ms: number) => void; fromMs?: Partial<Record<Track,number>>; save?: (segments: Omit<Segment,'id'>[]) => void }
+/** language: a code whisper is told for every chunk instead of the spoken setting (a phone recording's own) */
+export type RecordedOptions = { signal?: AbortSignal; progress?: (ms: number) => void; fromMs?: Partial<Record<Track,number>>; save?: (segments: Omit<Segment,'id'>[]) => void; language?: string }
 type Recorded = (id: string, tracks: Partial<Record<Track, AsyncIterable<Float32Array>>>, stopped?: () => boolean, options?: RecordedOptions) => Promise<boolean>
 let recorded: Recorded = async () => false
 /**
@@ -192,6 +194,8 @@ export function hookTranscription(p: {
   queued?: (meetingId: string) => void
 }): () => void {
   idleMs = p.serverIdleMs ?? SERVER_IDLE_MS
+  // the echo canceller is ready long before the first meeting: the mic's copy of their voice goes before whisper reads it
+  void loadAec3()
   queuedListener = p.queued
   spokenNow = p.spoken ?? (() => 'en')
   if (p.speech && appleSpeechAvailable(p.speech.host)) {
@@ -230,7 +234,7 @@ export function hookTranscription(p: {
         // the model takes a few seconds to load: start now, so the first chunk does not wait for it
         srv.url().catch((e) => console.error('whisper-server did not start', e))
         transcribe = createTranscriber({ url: () => srv.url(), recover: recoverer(srv), onLanguage: (_t, lang, chars, locked) => hear(lang, chars, locked), prompt: promptOf,
-          language: () => whisperLanguage(spokenNow()), signal: options?.signal })
+          language: () => options?.language ?? whisperLanguage(spokenNow()), signal: options?.signal })
       } else {
         console.warn('no speech model yet: this meeting is recorded but not transcribed')
         setTimeout(() => warnOnce('no-speech-model'), NO_MODEL_NOTE_DELAY_MS)

@@ -10,6 +10,8 @@ it('keeps a flat face on bordered controls, including selected, paused and proce
     '.workspace-button', '.note-recording-group', '.note-record-action',
     '.note-resume-action', '.citation-tabs button', '.modal-button', '.ob-button',
     '.settings-select', '.settings-toggle', '.settings-spoken-choice',
+    // the recording pill's mark and wave: no glow in either theme
+    '.widget-details',
   ]
   const rules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   for (const control of controls) {
@@ -26,6 +28,8 @@ it('uses one saturated fill and white ink for controls while standalone accents 
   expect(values('--primary')).toEqual(['#6F00FF'])
   expect(values('--primary-ink')).toEqual(['#FFFFFF'])
   expect(values('--accent')).toEqual(['#6F00FF', '#B780FF'])
+  // The recording pill is dark in both themes, so its accent never follows the light theme's deep purple.
+  expect(values('--pill-accent')).toEqual(['#B780FF'])
 })
 
 it('retains the recording primary gradient, pressed depth and divider', () => {

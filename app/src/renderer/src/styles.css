@@ -1,15 +1,6 @@
 @import "tailwindcss";
 @custom-variant focus-visible (&:is([data-focus-ring],:focus-visible:where(:not([data-quiet-focus]))));
 
-/* Brand type is bundled. Utility text follows macOS for a crisp native rhythm. */
-@font-face {
-  font-family: "Bricolage Grotesque";
-  src: url("./assets/bricolage-grotesque.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-
 :root {
   --button-height: 30px;
   --dur-micro: 120ms;
@@ -32,7 +23,8 @@
   --primary: #6F00FF;
   --primary-hover: color-mix(in srgb, var(--primary) 92%, black);
   --focus: var(--accent);
-  --pill-accent: var(--accent);
+  /* The recording pill is dark in both themes, so its accent stays the light brand purple. */
+  --pill-accent: #B780FF;
   --primary-ink: #FFFFFF;
   --accent-soft: color-mix(in srgb, var(--accent) 10%, var(--bg));
   --status-live: #416D48;
@@ -126,7 +118,6 @@
 
 @theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --font-brand: "Bricolage Grotesque", -apple-system, system-ui, sans-serif;
   --color-bg: var(--bg);
   --color-card: var(--card);
   --color-ink: var(--ink);
@@ -372,7 +363,7 @@ html.widget, .widget-pill[data-illustration] { --pill:#232326;--pill-ink:#F7F7FA
 .live-words { color: var(--muted); }
 .live-word { animation: motion-fade var(--dur-base) var(--ease-out) backwards; }
 /* zero height, so the dots never make their line taller than a line without them */
-.live-dots { display: inline-flex; align-items: center; gap: 3px; margin-inline-start: 7px; height: 0; vertical-align: 0.4em; }
+.live-dots { display: inline-flex; align-items: center; gap: 3px; margin-inline-start: 7px; height: 0; vertical-align: 0.26em; }
 .live-dots i { width: 4px; height: 4px; border-radius: 999px; background: var(--muted); animation: live-dot 1.2s ease-in-out infinite; }
 .live-dots i:nth-child(2) { animation-delay: 0.2s; }
 .live-dots i:nth-child(3) { animation-delay: 0.4s; }
@@ -775,12 +766,8 @@ html:not(.widget) button:focus-visible, html:not(.widget) input:focus-visible { 
 
 /* Name ink comes from the same folder token in both transcript surfaces. */
 :is(.line-who,.widget-preview-speaker)[data-folder-color] { color:var(--folder-ink); }
-/* Keep violet names readable on the charcoal recorder and over highlighted transcript rows. */
-:is(.line-who,.widget-preview-speaker)[data-folder-color=violet] { background:var(--bg);border-radius:4px; }
-@media (prefers-color-scheme:light) {
-  .widget-details > :is(span:first-child,svg) { filter:drop-shadow(0 0 1px var(--pill-ink)); }
-  .widget-pill:focus-visible { outline-color:var(--pill-ink); }
-}
+/* Keep violet names readable over highlighted transcript rows. The recorder's names use the pill's light purple. */
+.line-who[data-folder-color=violet] { background:var(--bg);border-radius:4px; }
 
 /* Calendar linking lives in the date popover; attendee editing stays in People. */
 .note-date-anchor { min-width:0;max-width:min(100%, 17rem); }

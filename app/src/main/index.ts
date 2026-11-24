@@ -1,3 +1,4 @@
+import { importPhoneRecording } from './companion/phoneImport'
 import { loadWindowState, placeWindow, saveWindowState } from './windowState'
 import { trustSystemCertificates } from './systemCerts'
 import { createSavedTranscriptions } from './savedTranscription'
@@ -69,7 +70,7 @@ import { setJargon, setOwnerName } from './vocab'
 import { cleanJargon } from '../shared/jargon'
 import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
-import { UtilityEngine } from './engine'
+import { engineShim, SHIM, UtilityEngine } from './engine'
 import { createNotesModel } from './notes/model'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -84,11 +85,17 @@ import { hookShare } from './share'
 import { hookBackup } from './backupIpc'
 import { hookFolders } from './foldersIpc'
 import { hookMcp } from './mcp'
-import { startedHidden } from './mcp/paths'
+import { createQuietStart } from './quietStart'
+import { startArgs, startReason, type StartReason } from './startReason'
 import { deleteRecording } from './deleteRecording'
 import { AUDIO_SCHEME, audioExts, createAudioHandler, trackFile, type AudioExt } from './audio'
 import { helperDecode, wavDecode } from './asr/backfill'
 import { finishQuit, hookUpdates, isPreviewBuild, updatesOn } from './updates'
+import { createCompanion, type Companion } from './companion'
+import { askSources } from './companion/handlers'
+import { hookCompanion } from './companion/ipc'
+import { companionWanted } from './companion/gate'
+import { copyFile, mkdir, rename } from 'node:fs/promises'
 import type { NoteSaveResult, StartResult } from '../shared/types'
 
 // the transcript's player streams each meeting's audio from here; seeking needs stream support (before ready)
@@ -113,14 +120,28 @@ if (x11) { stripAppImageEnv(); app.relaunch(x11); app.exit(0) }
 // One Faisselle at a time: a second launch focuses the existing window
 else if (!app.requestSingleInstanceLock()) app.quit()
 let win: BrowserWindow | undefined
+/** the iPhone companion once it has started (Settings → Phone pairs and unpairs through it) */
+let companion: Companion | undefined
 let allowQuit = false
 let presentMain = (_foreground = false) => {}
 let updateMainMenu = () => {}
 let menuBar: ReturnType<typeof createTray> | undefined
 /** test runs: no window on screen, never takes focus from what the person is doing */
 const BACKGROUND = process.env.YOGURT_BACKGROUND === '1'
-// an AI app's yogurt-mcp starting Faisselle while it was still opening (--hidden) brings no window forward
-app.on('second-instance', (_e, argv) => { if (app.isReady() && !startedHidden(process.platform, argv)) showMain() })
+/** how this Faisselle started (#147): an AI app's start waits quietly, with no call watching, until the person opens it */
+let quietStart: ReturnType<typeof createQuietStart> | undefined
+/** work a quiet Faisselle waits for before quitting by itself (set once notes and setup exist) */
+let busyNow = () => !!activeMeeting()
+/** Linux: the program that started Faisselle (an older yogurt-mcp passed only --hidden); elsewhere it costs a process to ask */
+const parentName = () => { if (process.platform !== 'linux') return undefined; try { return readFileSync(`/proc/${process.ppid}/comm`, 'utf8').trim() } catch { return undefined } }
+// an AI app's yogurt-mcp or the login item starting Faisselle while it was still opening (--hidden) brings no window forward
+app.on('second-instance', (_e, argv) => {
+  if (!app.isReady()) return
+  const why: StartReason = startReason({ argv, env: {} })
+  console.info('APP', `started again by=${why} args=${startArgs(argv)}`)
+  if (why === 'ai-app' || why === 'login') quietStart?.startedAgain(why)
+  else showMain()
+})
 
 /** Links open in the user's browser, never inside the app window. */
 function openExternally(url: string) {
@@ -243,6 +264,7 @@ const permissions = createPermissions({
 
 /** Reuse the hidden main window, including its route, scroll, drafts and position. */
 function showMain() {
+  quietStart?.opened()
   if (!win) { createWindow(); presented++ }
   presentMain(true)
 }
@@ -257,6 +279,7 @@ function askFromMenu() {
   win?.webContents.send('nav:ask')
 }
 function goTo(next: string, resume = false) {
+  quietStart?.opened()
   route = next
   resumeRequested = resume
   if (!win) createWindow()
@@ -313,6 +336,11 @@ let recordingControls: { start(o: { eventId?: string; title?: string }): Promise
 /** the processes of a call app on the mic at the last reading (set once detection starts): names come only from them (#98) */
 let micPidsNow: (app: string) => number[] = () => []
 
+/** the meeting's call window as the call names reader sees it (set once call names start). Mac and Windows: their
+ * readers also say when the call window is just minimised or on another desktop, so that is never taken for the call
+ * ending (#83: on Windows a recording started from the agenda never ended by itself) */
+let callWindowOf: (meetingId: string) => { goneMs: number } | null = () => null
+
 /** fake mode's hooks reach the store and the notes through these */
 let storeRef: Store | undefined
 let indexerRef: { schedule(): Promise<unknown> } | undefined
@@ -343,6 +371,7 @@ function startDetection() {
     ready: () => !onboardingShowing(),
     // fake mode: tests can shorten the grace
     graceMs: isFake() && process.env.YOGURT_FAKE_CALL_GONE_MS ? Number(process.env.YOGURT_FAKE_CALL_GONE_MS) : CALL_GONE_MS,
+    callWindow: (id) => callWindowOf(id),
   })
   onMeetingStop(() => { watcher.cleared() })
   const prompts = createPrompts({
@@ -483,7 +512,7 @@ function startDetection() {
   }
   // cheap, and only while Faisselle runs; more often while recording, so the end of a quiet call is noticed promptly
   let timer: NodeJS.Timeout | undefined
-  const watchLoop = () => { timer = setTimeout(() => { void watcher.tick().catch((e) => console.error('detect failed', e)).finally(watchLoop) }, watchEveryMs(!!activeMeeting())) }
+  const watchLoop = () => { timer = setTimeout(() => { void quietStart!.detect(() => watcher.tick()).catch((e) => console.error('detect failed', e)).finally(watchLoop) }, watchEveryMs(!!activeMeeting())) }
   watchLoop()
   app.on('will-quit', () => clearTimeout(timer))
   if (isFake()) {
@@ -525,6 +554,10 @@ function startDetection() {
 
 app.whenReady().then(() => {
   console.info('APP', `trusting ${systemCerts} certificates from the system on top of the built-in ones`)
+  // #147: which start this was (login, an AI app, an update, the person), so a log says what opened Faisselle
+  const started = startReason({ argv: process.argv, env: process.env, parent: parentName(), openedAtLogin: openedAtLogin() })
+  console.info('APP', `started by=${started} args=${startArgs(process.argv)}`)
+  quietStart = createQuietStart({ reason: started, quit: () => app.quit(), busy: () => busyNow() })
   // Local Electron launches need the same Dock icon as the packaged application.
   if (!app.isPackaged && process.platform === 'darwin') app.dock?.setIcon(join(__dirname, '../../build/icon.png'))
   const settings = loadSettings(join(userDataDir(), 'settings.json'))
@@ -550,12 +583,12 @@ app.whenReady().then(() => {
   if (!isFake()) syncLoginItem(settings.openAtLogin)
   // Windows and Linux: the calendar is a pasted private calendar address, kept sealed with the system keychain
   // a Mac: the same links, next to its own calendars (Settings → Calendars → Add a calendar link)
+  // no keychain (Linux without a secret service): scrambled, not encrypted, so a secret isn't readable at a glance
+  const sealSecret = (plain: string) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`)
+  const openSecret = (sealed: string) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64'))
+    : sealed.startsWith('b:') ? Buffer.from(sealed.slice(2), 'base64').toString() : sealed.replace(/^p:/, ''))
   const calendarLinks = caps.calendar ? createCalendarLinks({
-    file: join(userDataDir(), 'settings.json'), get: getCalendar,
-    // no keychain (Linux without a secret service): scrambled, not encrypted, so the address isn't readable at a glance
-    seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
-    open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64'))
-      : sealed.startsWith('b:') ? Buffer.from(sealed.slice(2), 'base64').toString() : sealed.replace(/^p:/, '')),
+    file: join(userDataDir(), 'settings.json'), get: getCalendar, seal: sealSecret, open: openSecret,
   }) : null
   if (calendarLinks) setCalendarLinkSource(calendarLinks, { alongside: !caps.calendarLink })
   const preferences = hookPreferences({
@@ -616,6 +649,7 @@ app.whenReady().then(() => {
     changed: (id) => { win?.webContents.send('transcript:speakers', id); sendWidgetTranscript('transcript:speakers', id); win?.webContents.send('meetings:changed'); notes.applyPeople(id) },
     onStart: onMeetingStart, onStop: onMeetingStop, onCapture: onCaptureStart, onBind: onMeetingBound, micPids: (app) => micPidsNow(app),
   })
+  if (process.platform === 'darwin' || process.platform === 'win32') callWindowOf = (id) => callNames.callWindow(id)
   // Windows and Linux: whisper left the graphics card in a meeting, so the speed check (timed with it) runs again next start
   onWhisperGpuOff(() => speedStore(speedFile()).forget())
   hookTranscription({ store, modelPath: () => setup.installed()?.asr, send: (seg) => {
@@ -669,7 +703,10 @@ app.whenReady().then(() => {
   // 32 GB and up: the notes model reads each meeting in as it happens (notes/readAhead.ts)
   const readsAhead = !isFake() && readAheadAllowed(os.totalmem())
   // the notes model: one job at a time, recording first; loaded when needed, the best one downloaded
-  const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), { gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' })
+  // Linux: the shim that keeps the engine from crashing on the processor (#32); without it, the card is the only way
+  const shim = engineShim(process.platform, [process.resourcesPath && join(process.resourcesPath, 'bin', SHIM), join(__dirname, '../../resources/bin', SHIM)].filter((x): x is string => !!x), existsSync)
+  if (process.platform === 'linux') console.info('NOTES', shim ? `big allocations go through ${shim}` : `${SHIM} is missing: the notes engine can crash on the processor`)
+  const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), { gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' && !shim, ...(shim ? { preload: shim } : {}) })
   if (engine instanceof UtilityEngine) probeGpu = () => engine.probe().then((g) => {
     console.info('NOTES', `graphics: ${g.gpuType || 'none'}${g.gpuNames.length ? ` (${g.gpuNames.join(', ')})` : ''}, ${g.vramTotalGB.toFixed(1)} GB`)
     return g
@@ -720,6 +757,7 @@ app.whenReady().then(() => {
     changed: () => { win?.webContents.send('meetings:changed'); void indexer.schedule() },
   })
   let finishing = false, discardUnsaved = false
+  busyNow = () => !!activeMeeting() || queue.busy() || setup.state.phase === 'checking' || setup.state.phase === 'downloading'
   const savedTranscriptions = createSavedTranscriptions({
     store, ready: () => !!setup.installed()?.asr, recording: () => !!activeMeeting() || !!resumingId || finishing, live: transcriptOpen,
     tracks: async id => {
@@ -911,7 +949,7 @@ app.whenReady().then(() => {
       await rejoined; await recordingSettled(id)
       return (['me', 'them'] as const).flatMap((track) => { const path = trackFile(meetingDir(id), track, audioKinds); return path ? [{ track, path }] : [] })
     },
-    send: (clients) => win?.webContents.send('mcp:clients', clients),
+    send: (clients) => { quietStart?.clients(clients.length); win?.webContents.send('mcp:clients', clients) },
   })
   // notes only for a meeting that exists: saving one for an unknown id would throw (its row must exist)
   const known = (id: unknown): id is string => isId(id) && !!store.meeting(id)
@@ -1013,7 +1051,9 @@ app.whenReady().then(() => {
       const recording = activeMeeting()
       if (recording) stopMeeting(recording.id, 'quit')
       // Music, recorder files and transcription still receive the same bounded graceful shutdown.
-      await Promise.all([media.resume(), settleRecording().then(() => settleTranscription())])
+      // the companion says goodbye on the network (so the phone sees the computer leave), for half a second at most
+      const companionStopped = Promise.race([companion?.stop(), new Promise((r) => setTimeout(r, 500))])
+      await Promise.all([media.resume(), settleRecording().then(() => settleTranscription()), companionStopped])
       allowQuit = true
       finishQuit()
     })().catch((err) => console.error('quit was cancelled because saving or shutdown failed', err)).finally(() => {
@@ -1116,6 +1156,50 @@ app.whenReady().then(() => {
     } catch (e) { console.warn('tidying prepared notes failed', e) }
   }
   tidyPrepared(); setInterval(tidyPrepared, 60_000).unref()
+  // the iPhone companion: never started until the iPhone app ships (YOGURT_PHONE=1 turns it on); then off until a phone
+  // is paired or Settings starts pairing. Tests also need YOGURT_FAKE_COMPANION=1
+  app.on('will-quit', () => { void companion?.stop() })
+  const meetingsChanged = () => { win?.webContents.send('meetings:changed'); win?.webContents.send('folders:changed') }
+  const companionOn = companionWanted(process.env, isFake())
+  // Linux without a secret service: the key is only scrambled on disk (the file is the person's own, mode 600)
+  if (companionOn && !safeStorage.isEncryptionAvailable()) console.warn('COMPANION key not sealed: no system keychain')
+  const companionReady = !companionOn ? Promise.resolve(undefined) : createCompanion({
+    store, userDataDir: userDataDir(), seal: sealSecret, open: openSecret, appVersion: app.getVersion(),
+    deviceName: () => os.hostname().replace(/\.local$/i, ''), recording: () => !!activeMeeting(),
+    log: (...parts) => console.info(...parts),
+    // the phone's question asked like one in Ask (it is kept there too), answered once it's written
+    ask: async (question, scope) => {
+      if (askUnavailable()) throw new Error('waits for the meeting')
+      const meetingIds = scope?.meetingIds ?? (scope?.folderId ? store.folderMeetingIds(scope.folderId) : undefined)
+      const { id, done } = conversations.ask(null, question, meetingIds ? { scope: meetingIds } : {})
+      await done
+      const turn = conversations.view(id)?.turns.at(-1)
+      if (!turn || turn.status !== 'done') throw new Error('no answer')
+      return { answer: turn.answer, sources: askSources(turn.sources) }
+    },
+    // a meeting recorded on the phone: its audio goes where an imported file's would, then it is transcribed and its
+    // notes written the same way; the phone's transcript and draft notes show until this computer's replace them
+    importRecording: (m, audioPath, draft) => importPhoneRecording({ store, meetingDir, changed: meetingsChanged,
+      start: (id, again) => savedTranscriptions.start(id, again) }, m, audioPath, draft),
+    audioFiles: async (id) => {
+      await rejoined; await recordingSettled(id)
+      return (['me', 'them'] as const).flatMap((track) => { const path = trackFile(meetingDir(id), track, audioKinds); return path ? [{ track, path }] : [] })
+    },
+    ops: {
+      // a new revision; an open note takes it unless it was typed in since (then both texts are kept)
+      notesRewrite: (id, mine) => { notes.phoneMine(id, mine) },
+      // the same refusals and follow-ups as the window's own Delete and Restore
+      trashBlocked: (id) => id === resumingId || stopSavePending(id),
+      trashed: (id) => {
+        indexer.forget(id)
+        meetingsChanged()
+        if (route === `/note/${id}`) { route = ''; win?.webContents.send('nav:go', route) }
+      },
+      restored: (id) => { indexer.restored(id); meetingsChanged() },
+      foldersChanged: () => { win?.webContents.send('folders:changed'); folderSuggestions.refresh() },
+    },
+  }).then((c) => { companion = c; return c }, (err) => { console.error('COMPANION could not start', (err as Error).name); return undefined })
+  hookCompanion({ companion: companionReady, send: (s) => { if (win && !win.isDestroyed()) win.webContents.send('companion:status', s) } })
   ipcMain.handle('meetings:cards', (_e, o: { before?: { at: number; id: string }; limit?: number; folder?: string }) => {
     const limit = Math.max(1, Math.min(1000, Number(o?.limit) || 40))
     const b = o?.before
@@ -1218,16 +1302,16 @@ app.whenReady().then(() => {
   })
   ipcMain.handle('nav:current', () => route)
   ipcMain.handle('nav:take-ask', () => { const pending = pendingAsk; pendingAsk = false; return pending })
-  // opened by the Mac at login: just the menu bar, until a call or a click
-  // opened by an AI app's yogurt-mcp off a Mac (--hidden): the same, so no window jumps in front of it
-  if (!openedAtLogin() && !startedHidden(process.platform, process.argv)) createWindow()
+  // opened at login: just the menu bar, until a call or a click
+  // opened by an AI app's yogurt-mcp: the same, so no window jumps in front of it, and no call watching either (#147)
+  if (quietStart!.window()) createWindow()
   startDetection()
   void setup.start()
   // new versions from GitHub Releases, downloaded in the background and installed on quit
   const updatesAvailable = updatesOn({ packaged: app.isPackaged, fake: isFake(), profile: !!process.env.YOGURT_USER_DATA, platform: process.platform, appImage: !!process.env.APPIMAGE,
     feed: app.isPackaged && existsSync(join(process.resourcesPath, 'app-update.yml')),
     preview: app.isPackaged && isPreviewBuild((() => { try { return readFileSync(join(app.getAppPath(), 'package.json'), 'utf8') } catch { return '' } })()) })
-  hookUpdates({ file: join(userDataDir(), 'settings.json'), available: updatesAvailable, recording: () => !!activeMeeting(),
+  hookUpdates({ file: join(userDataDir(), 'settings.json'), available: updatesAvailable, recording: () => !!activeMeeting(), quiet: () => !!quietStart?.quiet(),
     // fake mode: a test pretends a version downloaded
     fake: isFake() && process.env.YOGURT_FAKE_UPDATE ? { version: process.env.YOGURT_FAKE_UPDATE, restarted: () => { updateRestarts++ } } : undefined })
     .catch((err) => console.warn("couldn't start looking for new versions", err))

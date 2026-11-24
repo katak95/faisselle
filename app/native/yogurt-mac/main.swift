@@ -220,7 +220,7 @@ func browserTitle(_ id: String) -> String? {
  * one first. Faisselle reads the tree (src/main/callNames/parse.ts). Chromium and Electron build a page's tree only when
  * an assistive app asks, so they are asked the way screen readers do (AXManualAccessibility): see askTree.
  */
-let axKeys = [kAXRoleAttribute, kAXSubroleAttribute, kAXDescriptionAttribute, kAXTitleAttribute, kAXValueAttribute, kAXIdentifierAttribute, "AXDOMClassList", kAXChildrenAttribute, kAXSizeAttribute] as [String]
+let axKeys = [kAXRoleAttribute, kAXSubroleAttribute, kAXDescriptionAttribute, kAXTitleAttribute, kAXValueAttribute, kAXIdentifierAttribute, "AXDOMClassList", kAXChildrenAttribute, kAXSizeAttribute, "AXDOMIdentifier"] as [String]
 let chromium: Set<String> = ["com.google.Chrome", "company.thebrowser.Browser", "com.ardia.browser", "company.thebrowser.dia", "com.brave.Browser", "com.microsoft.edgemac", "com.microsoft.teams", "com.microsoft.teams2"]
 var askedTree = Set<pid_t>()
 
@@ -280,7 +280,8 @@ func axCopy(_ e: AXUIElement, depth: Int, maxDepth: Int, budget: inout Int, zoom
   if let x = axText(at(3)) { n["t"] = x }
   // what someone types is never copied
   if role != "AXTextField" && role != "AXTextArea", let x = axText(at(4)) { n["v"] = x }
-  if let x = axText(at(5)) { n["i"] = x }
+  // a page element's id ("hangup-button") is its DOM id; Chromium may not give it as AXIdentifier (#138)
+  if let x = axText(at(5)) ?? axText(at(9)) { n["i"] = x }
   if let c = at(6) as? [String], !c.isEmpty { n["c"] = Array(c.prefix(20)) }
   if role == "AXTabGroup", let size = at(8), CFGetTypeID(size) == AXValueGetTypeID() {
     var sz = CGSize.zero
@@ -444,6 +445,32 @@ func missedWindows(_ app: AXUIElement, _ pid: pid_t) -> (windows: [[String: Any]
   return (windows, mac)
 }
 
+/// The window number behind an accessibility window: private, but stable for years and used by window managers. Only
+/// windows of the current desktop are listed by accessibility, so this is how a call window on another one is told apart
+/// from one that closed.
+@_silgen_name("_AXUIElementGetWindow")
+func _AXUIElementGetWindow(_ element: AXUIElement, _ id: UnsafeMutablePointer<CGWindowID>) -> AXError
+func windowNumber(_ w: AXUIElement) -> CGWindowID? {
+  var id: CGWindowID = 0
+  return _AXUIElementGetWindow(w, &id) == .success && id != 0 ? id : nil
+}
+/// the window numbers of each app's call windows at its last reading with a call
+var callWindowNumbers: [pid_t: Set<CGWindowID>] = [:]
+/// Whether a call window read before still exists while accessibility no longer lists it: on another desktop or a full
+/// screen Space, not closed. A window that is listed but has lost its call controls (Teams after the call) is gone.
+func callWindowOutOfSight(_ app: AXUIElement, _ pid: pid_t) -> Bool {
+  guard let known = callWindowNumbers[pid], !known.isEmpty else { return false }
+  let listed = Set(((axAttr(app, kAXWindowsAttribute) as? [AXUIElement]) ?? []).compactMap(windowNumber))
+  let info = (CGWindowListCopyWindowInfo([.optionAll], kCGNullWindowID) as? [[String: Any]]) ?? []
+  let alive = Set(info.compactMap { w -> CGWindowID? in
+    guard (w[kCGWindowOwnerPID as String] as? Int) == Int(pid), let n = w[kCGWindowNumber as String] as? Int else { return nil }
+    return CGWindowID(n)
+  })
+  // a closed window is forgotten
+  callWindowNumbers[pid] = known.intersection(alive)
+  return !known.intersection(alive).subtracting(listed).isEmpty
+}
+
 func watchCalls(every: Int, ids: [String], pids: [pid_t] = []) {
   // Faisselle closes stdin to stop the watch (and a crashed Faisselle closes it too)
   DispatchQueue.global().async { _ = FileHandle.standardInput.readDataToEndOfFile(); DispatchQueue.main.sync { resetTrees() }; exit(0) }
@@ -484,6 +511,7 @@ func watchCalls(every: Int, ids: [String], pids: [pid_t] = []) {
         if chromium.contains(id) && !id.hasPrefix("com.microsoft.teams") {
           for w in wins.prefix(4) { AXUIElementSetAttributeValue(w, "AXManualAccessibility" as CFString, kCFBooleanTrue) }
         }
+        callWindowNumbers[target.processIdentifier] = Set(wins.compactMap(windowNumber))
         let zoom = id == "us.zoom.xos"
         var budget = zoom ? 1500 : 4000
         // the tab title belongs to the window that was focused when it was read
@@ -502,6 +530,8 @@ func watchCalls(every: Int, ids: [String], pids: [pid_t] = []) {
       } else {
         // which windows were looked at and how, so a log can say why a call was missed (#111)
         var o: [String: Any] = ["t": t, "error": running.isEmpty ? "not-running" : lastControlLook.isEmpty ? "no-call-window" : "no-call-window (\(lastControlLook))"]
+        // the call window is still there, out of accessibility's sight: Faisselle must not take that for the call ending
+        if running.contains(where: { callWindowOutOfSight(AXUIElementCreateApplication($0.processIdentifier), $0.processIdentifier) }) { o["hidden"] = true }
         if let (id, app, pid) = teams {
           misses += 1
           if misses == 10 {

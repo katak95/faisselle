@@ -13,7 +13,9 @@ import { readCall, summarize, type AxWindow, type CallKind } from './parse'
 
 /** what yogurt-mac call-watch prints each time it reads: the call windows, or why it could not */
 /** macWindows: how many normal windows of the app the Mac itself shows, beside the ones accessibility lists (#138) */
-export type WatchLine = { t: number; app?: string; windows?: AxWindow[]; error?: string; macWindows?: number }
+/** hidden: no call window accessibility can see, but the Mac still has the one that was the call (another desktop, a full
+ * screen Space): the call is not over */
+export type WatchLine = { t: number; app?: string; windows?: AxWindow[]; error?: string; macWindows?: number; hidden?: boolean }
 /** pids: read only these processes' windows (the call app's processes on the mic); none known, the app's frontmost with a call */
 export type Watch = (ids: string[], onLine: (l: WatchLine) => void, pids?: number[]) => { stop(): void }
 
@@ -63,7 +65,7 @@ const MAX_RESTARTS = 20
 const LOGGED_CHANGES = 30
 
 type Sample = Omit<CallSample, 'ms'> & { t: number }
-type Session = { app: string | null; ids: string[]; pids?: number[]; heardAt: number; quietMs: number; restarts: number; samples: Sample[]; priorLines: Set<number>; watch?: { stop(): void }; everyApp: boolean; offset?: number; startedAt: number; pictured: boolean; missPictured?: boolean; errors: Set<string>; last: string; logged: number }
+type Session = { app: string | null; ids: string[]; pids?: number[]; heardAt: number; quietMs: number; restarts: number; samples: Sample[]; priorLines: Set<number>; watch?: { stop(): void }; everyApp: boolean; offset?: number; startedAt: number; pictured: boolean; missPictured?: boolean; picturedPeople?: boolean; picturedTalking?: boolean; errors: Set<string>; last: string; logged: number; /** a call window with people was read (Zoom, Teams) */ windowSeen?: CallKind; /** since when the readings say that window is gone, and the last one that said so */ goneSince?: number; goneAt?: number }
 
 export function hookCallNames(p: {
   store: Pick<Store, 'meeting' | 'segments' | 'setSegmentSpeakers' | 'updateMeeting'>
@@ -98,10 +100,27 @@ export function hookCallNames(p: {
     return s.samples.map(({ t, ...r }) => ({ ...r, ms: t - zero - APP_LAG_MS }))
   }
 
+  /** the call window was read again after the readings said it was gone */
+  const windowBack = (s: Session) => {
+    if (s.goneSince !== undefined) log(`call names: the ${s.windowSeen} call window is back after ${Math.round((now() - s.goneSince) / 1000)} s`)
+    s.goneSince = undefined; s.goneAt = undefined
+  }
+
   const onLine = (id: string, s: Session, l: WatchLine) => {
     s.quietMs = Math.min(MAX_QUIET_MS, Math.max(QUIET_MS, 3 * (now() - s.heardAt)))
     s.heardAt = now()
     if (l.error || !l.app || !l.windows) {
+      // the call window gone: the reader looked and found none (or the app quit). Anything else (no permission, a slow
+      // window) says nothing either way.
+      const gone = !!l.error && (l.error.startsWith('no-call-window') || l.error === 'not-running')
+      if (gone && l.hidden) {
+        if (!s.errors.has('hidden')) { s.errors.add('hidden'); log('call names: the call window is out of sight (another desktop or full screen), not closed') }
+        windowBack(s)
+      }
+      else if (gone && s.windowSeen) {
+        if (s.goneSince === undefined) { s.goneSince = now(); log(`call names: the ${s.windowSeen} call window went away`) }
+        s.goneAt = now()
+      } else { s.goneSince = undefined; s.goneAt = undefined }
       const why = l.error ?? 'nothing read'
       if (!s.errors.has(why)) { s.errors.add(why); log(`call names: ${why}${why === 'not-trusted' ? ' (no Accessibility permission): the other side stays Them' : ''}`) }
       // a call app with no call window sends its windows once, so the log shows what it gives when a call is missed (#138)
@@ -115,15 +134,30 @@ export function hookCallNames(p: {
       if (!s.errors.has(why)) { s.errors.add(why); log(`call names: ${why}`) }
       return
     }
-    // the first reading of each meeting goes to the log in short, so a real call shows what its app gives
-    if (!s.pictured) { s.pictured = true; log(`call names: reading ${l.app} (${kind}), its window in short:\n${summarize(l.windows)}`) }
     const { byMute, ...r } = readCall(kind, l.windows)
+    // The first reading of each meeting goes to the log in short, so a real call shows what its app gives. Teams opens
+    // the mic on its join screen, minutes before the call (#138), so the first reading with people in it goes there too.
+    // Meet's lobby shows people too (#112), so the first reading with someone marked talking goes there as well, long
+    // enough to reach the tiles past the browser's own buttons: it shows where the marks sit.
+    const people = r.participants.length > 0
+    const talking = r.speaking.length > 0
+    if (!s.pictured || (people && !s.picturedPeople) || (talking && !s.picturedTalking)) {
+      s.pictured = true; s.picturedPeople ||= people
+      if (talking) s.picturedTalking = true
+      log(`call names: reading ${l.app} (${kind}), its window in short:\n${summarize(l.windows, talking ? 200 : 60)}`)
+    }
     // A stage can show fewer people than are in the call (a screen share, another layout: #83 went "0 of 13", "0 of 2").
     // The most seen in the last minute stands for the call, so me and one other is no call of two, and who is muted
     // names nobody while someone may be hidden.
     const most = Math.max(r.participants.length, ...s.samples.filter((x) => x.ok !== false && l.t - x.t <= RECENT_MS).map((x) => x.participants.length))
     if (byMute && most > r.participants.length) r.speaking = []
     s.samples.push({ t: l.t, ...r, most })
+    // Zoom's meeting window and Teams' Leave button are there only during a call. A Meet tab is not followed: switching
+    // tabs hides it from the reader, and the browser lets go of the mic as soon as its call ends.
+    if (kind === 'zoom' || kind === 'teams') {
+      if (r.participants.length) s.windowSeen ??= kind
+      windowBack(s)
+    }
     // counts only: main.log is pasted into public issues, and names belong to the people in the call
     const said = `${r.speaking.length} of ${r.participants.length}${r.me ? ', me known' : ''}`
     if (said !== s.last && s.logged < LOGGED_CHANGES) { s.logged++; log(`call names: ${kind} talking ${said}`) }
@@ -156,9 +190,12 @@ export function hookCallNames(p: {
     s.watch?.stop(); s.watch = undefined
     const ids = watchIds(m.app)
     s.ids = ids; s.heardAt = now()
+    // a window read before may have been another app's
+    s.windowSeen = undefined; s.goneSince = undefined; s.goneAt = undefined
     log(`call names: the call is in ${m.app}, reading only it`)
     if (!ids.length) return
-    s.pictured = false
+    // the log says again what the call's own app shows, even when it reads as what the last app did (#83)
+    s.pictured = false; s.picturedPeople = false; s.picturedTalking = false; s.last = ''
     begin(m.id, s)
   })
 
@@ -204,7 +241,8 @@ export function hookCallNames(p: {
       if (s.watch && s.app && !s.pids && p.micPids?.(s.app).length) {
         log(`call names: ${s.app} is on the mic now, reading only its process`)
         s.watch.stop(); s.watch = undefined
-        s.samples = []; s.heardAt = now(); s.pictured = false
+        s.samples = []; s.heardAt = now(); s.pictured = false; s.picturedPeople = false; s.picturedTalking = false
+        s.windowSeen = undefined; s.goneSince = undefined; s.goneAt = undefined
         begin(id, s)
         continue
       }
@@ -225,6 +263,16 @@ export function hookCallNames(p: {
     nameFor(meetingId: string, startMs: number, endMs: number): string | null {
       const s = sessions.get(meetingId)
       return s?.samples.length ? nameFor({ startMs, endMs }, timeline(s), { myNames: p.myNames() }) : null
+    },
+    /**
+     * The meeting's call window (watch.ts ends the call when it has been gone a while): null until one with people was
+     * read; goneMs 0 while it is there, hidden, or the reader has said nothing lately (no evidence is not gone).
+     */
+    callWindow(meetingId: string): { goneMs: number } | null {
+      const s = sessions.get(meetingId)
+      if (!s?.windowSeen) return null
+      const fresh = s.goneSince !== undefined && s.goneAt !== undefined && now() - s.goneAt <= s.quietMs
+      return { goneMs: fresh ? now() - s.goneSince! : 0 }
     },
     /** resolves when the names after the meeting are in */
     finished: (id: string): Promise<void> => finals.get(id) ?? Promise.resolve(),
