@@ -81,10 +81,10 @@ describe('the browser sign-in for Microsoft 365', () => {
     store.setTokens({ ...store.tokens()!, expiresAt: Date.now() + 60_000 })
     await m.call('get-calendar-view', {})
     expect(tokens.at(-1)).toBe('fake-access-2')
-    // refused refresh (revoked): signed out, and Settings offers to connect again
+    // refused refresh (revoked): signed out after a sign-in: it ran out, and Settings offers to connect again
     store.setTokens({ access: 'old', refresh: 'revoked', expiresAt: Date.now() })
     await expect(m.call('get-calendar-view', {})).rejects.toThrow()
-    expect(m.status()).toEqual({ state: 'signed-out' })
+    expect(m.status()).toEqual({ state: 'signed-out', expired: true })
     expect(store.tokens()).toBeUndefined()
   })
 
@@ -98,5 +98,32 @@ describe('the browser sign-in for Microsoft 365', () => {
     await m.signIn()
     busy.close()
     expect(m.status()).toMatchObject({ state: 'error', problem: 'port-busy' })
+  })
+})
+
+describe('a Microsoft 365 sign-in that ran out', () => {
+  const client = (once: { v: boolean }) => createM365({ dataDir: tmp(), app: () => ({ clientId: app.clientId }), browser: () => ({ redirectUri: app.redirectUri }),
+    store: createTokenStore({ file: join(tmp(), 'x.json'), ...plain }), openExternal: () => {}, onChange: () => {}, connect: fakeM365Server(),
+    connectedOnce: { get: () => once.v, set: (on) => { once.v = on } } })
+
+  it('says it ran out when it was connected before', async () => {
+    const m = client({ v: true })
+    await m.resume()
+    expect(m.status()).toEqual({ state: 'signed-out', expired: true })
+  })
+
+  it("doesn't, when it was turned on but never connected", async () => {
+    const m = client({ v: false })
+    await m.resume()
+    expect(m.status()).toEqual({ state: 'signed-out' })
+  })
+
+  it('stays ran out through a sign-in given up, and not once turned off', async () => {
+    const m = client({ v: true })
+    await m.resume()
+    m.cancel()
+    expect(m.status()).toEqual({ state: 'signed-out', expired: true })
+    await m.signOut()
+    expect(m.status()).toEqual({ state: 'off' })
   })
 })

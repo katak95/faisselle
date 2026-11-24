@@ -3,7 +3,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
 import type { AtlassianStatus } from '../../shared/types'
 import { oauthProvider, PREFERRED_PORT, waitForCode, type OAuthStore } from './oauth'
-import { accountOf, createToolbox, sitesOf, toolJson, type RawCall, type ToolInfo, type Toolbox } from './tools'
+import { accountOf, createToolbox, describeTools, sitesOf, toolJson, type RawCall, type ToolInfo, type Toolbox } from './tools'
 
 /** Atlassian's remote MCP server; v2 is the one Atlassian recommends for every client */
 export const ATLASSIAN_MCP = 'https://mcp.atlassian.com/v2/mcp'
@@ -48,8 +48,18 @@ export function createAtlassian(o: { store: OAuthStore; openExternal(url: string
         await transport.finishAuth(code)
         return connectWith(p, undefined, provider)
       }
-      const { tools } = await client.listTools()
-      return { tools: tools as ToolInfo[], call: (name: string, args: Record<string, unknown>) => client.callTool({ name, arguments: args }, undefined, { timeout: 90_000 }).then(toolJson), close: () => client.close() }
+      // every page of the list: a tool on a later page would otherwise only be reachable through the gateway
+      const tools: unknown[] = []
+      for (let cursor: string | undefined, n = 0; n < 20; n++) {
+        const page = await client.listTools(cursor ? { cursor } : undefined)
+        tools.push(...page.tools)
+        cursor = page.nextCursor
+        if (!cursor) break
+      }
+      return { tools: tools as ToolInfo[], close: () => client.close(),
+        call: (name: string, args: Record<string, unknown>) => client.callTool({ name, arguments: args }, undefined, { timeout: 90_000 }).then(toolJson)
+          // which tool, and which arguments it was given (their names, not their values)
+          .catch((e: unknown) => { console.warn('Atlassian call failed', name, Object.keys(args).join(','), e instanceof Error ? e.message : String(e)); throw e }) }
     }
     if (!interactive) return connectWith(port)
     cancel = new AbortController()
@@ -62,6 +72,8 @@ export function createAtlassian(o: { store: OAuthStore; openExternal(url: string
   /** after connecting: the sites, the one in use, and who is signed in */
   async function settle(c: Connection) {
     conn = c
+    // what the server offers today: Atlassian adds, renames and defers tools without notice
+    console.info('Atlassian tools', describeTools(c.tools).slice(0, 4000))
     box = createToolbox(c.tools, c.call)
     sites = box.can('resources') ? sitesOf(await box.call('resources', {})) : []
     account = box.can('me') ? accountOf(await box.call('me', {}).catch(() => undefined)) : undefined
@@ -94,6 +106,8 @@ export function createAtlassian(o: { store: OAuthStore; openExternal(url: string
       set({ state: 'starting' })
       try { const c = await open(true, mine); if (mine === attempt) await settle(c); else await c.close() } catch (e) { if (mine === attempt) fail(e) }
     },
+    /** tests (fake mode): the sign-in runs out, as when Atlassian refuses it at the next start */
+    ranOut() { if (status.state === 'connected') set({ state: 'signed-out' }) },
     cancel() { attempt++; cancel?.abort(); if (status.state === 'pending' || status.state === 'starting') set({ state: o.store.signedIn() ? 'signed-out' : 'off' }) },
     async signOut() {
       attempt++; cancel?.abort()

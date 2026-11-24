@@ -50,6 +50,8 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   hiddenCalendarIds?: string[]
   /** Hide events without a call link; off unless enabled. */
   hideEventsWithoutCallLink?: boolean
+  /** what the person wrote about their organisation, as background for the notes, the brief and Ask (organisation.ts) */
+  organisation?: string
   /** names, products and acronyms to spell right in transcripts and notes (shared/jargon.ts) */
   jargon?: string[]
   /** the language people speak in meetings: English only unless 'multi' (shared/spoken.ts) */
@@ -61,7 +63,9 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** where the notes are written: this computer unless 'bedrock' (Claude on Amazon Bedrock, notes/bedrock.ts) */
   notesProvider?: 'bedrock'
   /** Bedrock: the Identity Center to sign in to, the account and role to use, and the model (aws/sso.ts) */
-  bedrock?: { /** how requests are signed: the SSO role (when left out) or a Bedrock API key (aws/apiKey.ts) */ auth?: 'sso' | 'api-key'; startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string }
+  bedrock?: { /** how requests are signed: the SSO role (when left out) or a Bedrock API key (aws/apiKey.ts) */ auth?: 'sso' | 'api-key'; startUrl?: string; ssoRegion?: string; accountId?: string; roleName?: string; region?: string; modelId?: string
+    /** a model for some uses (summaries, brief…) instead of modelId (Settings → Model for each use) */
+    models?: Partial<Record<import('../shared/types').ModelUse, string>> }
   /** summary templates the person wrote (shared/templates.ts) */
   templates?: Array<{ id: string; name: string; instructions: string }>
   /** the template new notes follow; the general notes when left out */
@@ -69,7 +73,7 @@ export type Settings = { theme?: 'light' | 'dark'; language?: string; /** what t
   /** Microsoft 365, read only (m365/): the calendar and related emails; off unless connected */
   /** Atlassian (Confluence): connected unless off, the site picked, and where reports go on each site (atlassian/) */
   atlassian?: { enabled?: boolean; siteId?: string; places?: Record<string, { spaceId: string; spaceKey?: string; spaceUrl?: string; parentId?: string }> }
-  m365?: { enabled?: boolean; clientId?: string; tenantId?: string; /** browser: code + PKCE on redirectUri (an app without public client flows) */ method?: 'browser'; redirectUri?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
+  m365?: { enabled?: boolean; /** false: turned on but never connected yet (a sign-out then isn't a sign-in that ran out) */ connectedOnce?: boolean; clientId?: string; tenantId?: string; /** browser: code + PKCE on redirectUri (an app without public client flows) */ method?: 'browser'; redirectUri?: string; calendar?: boolean; /** SharePoint and OneDrive search (work-account mode, wider permissions); off unless turned on */ documents?: boolean } }
 
 /** "English only" unless Multi-language was picked */
 export const spokenSetting = (s: Settings): Spoken => spokenOf(s.spoken)

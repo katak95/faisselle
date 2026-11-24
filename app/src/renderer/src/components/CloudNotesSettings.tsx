@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { MODEL_USES, type ModelUse } from '../../../shared/types'
 // the app's own icons (Hugeicons, Icons.tsx), under the names these components use
 import { ChevronDown, Globe as Cloud } from './Icons'
 import type { CloudNotesView } from '../../../shared/types'
@@ -21,6 +22,35 @@ function Field({ id, label, value, placeholder, hint, onSave }: { id: string; la
         className="mt-2 w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
     </div>
   </div>
+}
+
+const useLabel = (u: ModelUse) => ({ summary: t('Summary'), actions: t('Action items'), followup: t('Follow-up email'), brief: t('Brief'), ask: t('Ask') })[u]
+
+/** Bedrock: a model for some uses instead of the main one (Haiku for the notes, Sonnet for the brief…); empty: the main one */
+function ModelsByUse({ config, save }: { config: Config; save(models: Partial<Record<ModelUse, string>>): void }) {
+  const set = Object.keys(config.models ?? {}).length > 0
+  const [open, setOpen] = useState(set)
+  return <div className="settings-row" data-testid="cloud-models-by-use">
+    <div className="settings-row-copy">
+      <button className="settings-description underline" aria-expanded={open} onClick={() => setOpen(!open)}>{t('Model for each use')}</button>
+      {open && <div className="mt-2 flex flex-col gap-2">
+        <p className="settings-description">{t('Leave a use empty to write it with the model above. Each model goes through the endpoint its ID calls for, as above.')}</p>
+        {MODEL_USES.map((u) => <UseModel key={u} use={u} value={config.models?.[u] ?? ''} placeholder={config.modelId} onSave={(m) => save({ [u]: m })} />)}
+      </div>}
+    </div>
+  </div>
+}
+
+function UseModel({ use, value, placeholder, onSave }: { use: ModelUse; value: string; placeholder: string; onSave(v: string): void }) {
+  const [text, setText] = useState(value)
+  useEffect(() => setText(value), [value])
+  const save = () => { if (text.trim() !== value) onSave(text.trim()) }
+  return <label className="flex items-center gap-2 text-[12px] text-muted">
+    <span className="w-32 shrink-0">{useLabel(use)}</span>
+    <input data-testid={`cloud-model-${use}`} dir="ltr" value={text} placeholder={placeholder} autoComplete="off" spellCheck={false}
+      onChange={(e) => setText(e.target.value)} onBlur={save} onKeyDown={(e) => { if (e.key === 'Enter') save() }}
+      className="w-full rounded-md border border-line bg-bg px-2 py-1.5 font-mono text-[12px] text-ink" />
+  </label>
 }
 
 /**
@@ -168,6 +198,7 @@ export function CloudNotesSettings() {
         <Field id="cloud-model" label={t('Model')} value={v.config.modelId} placeholder="eu.anthropic.claude-haiku-4-5-20251001-v1:0"
           hint={t('Claude in Amazon Bedrock takes IDs like anthropic.claude-haiku-5-5 (permission bedrock-mantle:CreateInference). An InvokeModel ID or inference profile, like eu.anthropic.claude-haiku-4-5-20251001-v1:0, goes through bedrock-runtime (permission bedrock:InvokeModelWithResponseStream).')}
           onSave={(modelId) => set({ modelId })} />
+        <ModelsByUse config={v.config} save={(models) => set({ models })} />
 
         {v.localBytes > 0 && <div className="settings-row" data-testid="cloud-local-model">
           <div className="settings-row-copy">

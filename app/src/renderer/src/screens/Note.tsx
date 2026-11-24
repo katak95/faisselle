@@ -454,6 +454,14 @@ export function Note({ id, onTitleChange, at, folderSuggestion, onSource, onResu
           </div>
         </header>
         {readFailed && <InlineError testId="note-read-error" retry={retryRead} />}
+        {notes?.status === 'waiting' && notes.waitingFor && <div data-testid="note-waiting-for" data-reason={notes.waitingFor} role="status"
+          className="mx-auto mt-2 flex w-full max-w-[720px] items-center justify-between gap-3 rounded-xl border border-line bg-float px-3 py-2 text-[13px] text-ink">
+          <span>{notes.waitingFor === 'aws-sign-in'
+            ? t('The summary is waiting for you to sign in to AWS again. It starts by itself once you are signed in.')
+            : notes.waitingFor === 'recording' ? t('The summary will be written once the recording stops: this computer runs the notes model only when nothing records.')
+            : t('The summary is waiting for the notes model to finish downloading.')}</span>
+          {notes.waitingFor !== 'recording' && <button className="workspace-button shrink-0" onClick={() => window.yogurt.nav.go(notes.waitingFor === 'aws-sign-in' ? '/settings/bedrock' : '/settings/notes-model')}>{notes.waitingFor === 'aws-sign-in' ? t('Sign in to AWS') : t('Settings')}</button>}
+        </div>}
         <div ref={setChatAnchor} className="note-reading-area">
           <div ref={panels} className="note-panels">
           <NoteReadingPane active={primary === 'notes'} summary={shown === 'enhanced'} generating={shown === 'enhanced' && ['waiting', 'rewriting', 'handoff', 'reset', 'streaming'].includes(summaryState)} resetting={shown === 'enhanced' && summaryState === 'reset'} writing={shown === 'enhanced' && summaryState === 'streaming'} scroll={readingScroll}>

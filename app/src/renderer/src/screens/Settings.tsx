@@ -20,6 +20,8 @@ import { TemplateSettings } from '../components/TemplateSettings'
 import { M365Settings } from '../components/M365Settings'
 import { AtlassianSettings } from '../components/AtlassianSettings'
 import { ExpertSettings } from '../expert/ExpertSettings'
+import { SetupShare } from '../components/SetupShare'
+import { CompanyContext } from '../components/CompanyContext'
 import { supportedKinds, settingsPage } from '../../../shared/platform'
 import { Swap, SwapText } from '../components/Swap'
 
@@ -87,7 +89,23 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
   const [prefs, setPrefs] = useState<Awaited<ReturnType<typeof window.yogurt.settings.get>>>()
   const [name, setName] = useState('')
   const [generalReady, setGeneralReady] = useState(false)
+  /** bumped when a setup is imported: the sections it touches read their settings again */
+  const [setupRev, setSetupRev] = useState(0)
   const scroll = useScrollMemory<HTMLDivElement>('settings', !!prefs && !!perms)
+  // a sign-in to do again (from Home, a note or sharing): its section, once it is on screen
+  useEffect(() => {
+    // Bedrock: the AWS sign-in, or the API key when that is how it signs in
+    const targets = ({ bedrock: ['cloud-sign-in', 'cloud-api-key'], m365: ['settings-m365'], atlassian: ['settings-atlassian'] } as Record<string, string[]>)[focus ?? '']
+    if (!targets) return
+    let tries = 0, frame = 0
+    const look = () => {
+      const el = targets.map((id) => document.querySelector<HTMLElement>(`[data-testid="${id}"]`)).find(Boolean)
+      if (el) { el.scrollIntoView({ block: 'center', behavior: 'instant' }); el.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus({ preventScroll: true }); return }
+      if (++tries < 120) frame = requestAnimationFrame(look)
+    }
+    frame = requestAnimationFrame(look)
+    return () => cancelAnimationFrame(frame)
+  }, [focus])
   useEffect(() => { void window.yogurt.settings.get().then(setPrefs) }, [revision])
   const reload = useCallback(() => { void window.yogurt.permissions.status().then(setPerms) }, [])
   useEffect(() => {
@@ -267,16 +285,20 @@ export function Settings({ revision = 0, focus }: { revision?: number; focus?: s
             <AppLanguage />
             <SummaryLanguage />
             <SpokenSetting />
-            <Jargon />
+            <Jargon key={`jargon-${setupRev}`} />
           </div>
 
-          <CloudNotesSettings />
+          <CloudNotesSettings key={`cloud-${setupRev}`} />
+
+          <CompanyContext key={`company-${setupRev}`} />
 
           <TemplateSettings />
 
-          <M365Settings />
+          <M365Settings key={`m365-${setupRev}`} />
 
-          <AtlassianSettings />
+          <AtlassianSettings key={`atlassian-${setupRev}`} />
+
+          <SetupShare onApplied={() => { setSetupRev((n) => n + 1); void window.yogurt.settings.get().then(setPrefs) }} />
 
           <ExpertSettings />
 

@@ -2,9 +2,9 @@ import { ipcMain } from 'electron'
 import { loadSettings, notesProviderSetting, updateSettings, type Settings } from './settings'
 import { validRegion, validStartUrl, type Sso, type SsoStatus } from './aws/sso'
 import { validApiKey, type ApiKeyStore } from './aws/apiKey'
-import { BEDROCK_DEFAULTS, validAccountId, validModelId, validRoleName, type BedrockConfig } from './notes/bedrock'
+import { BEDROCK_DEFAULTS, cleanModels, validAccountId, validModelId, validRoleName, type BedrockConfig } from './notes/bedrock'
 import { isProvider, type NotesProvider } from './notes/provider'
-import type { CloudNotesView } from '../shared/types'
+import { MODEL_USES, type CloudNotesView } from '../shared/types'
 
 type Saved = NonNullable<Settings['bedrock']>
 
@@ -14,14 +14,15 @@ export const bedrockSettings = (s: Settings): Required<Saved> => ({
   startUrl: s.bedrock?.startUrl ?? '', ssoRegion: s.bedrock?.ssoRegion ?? BEDROCK_DEFAULTS.region,
   accountId: s.bedrock?.accountId ?? '', roleName: s.bedrock?.roleName ?? '',
   region: s.bedrock?.region ?? BEDROCK_DEFAULTS.region, modelId: s.bedrock?.modelId ?? BEDROCK_DEFAULTS.modelId,
+  models: cleanModels(s.bedrock?.models),
 })
 
 /** what a Bedrock request needs: signed in with an account and role, or a saved API key */
 export function bedrockConfig(s: Settings, sso: Pick<Sso, 'status'>, key?: Pick<ApiKeyStore, 'has' | 'savedAt'>): BedrockConfig | undefined {
   const b = bedrockSettings(s)
-  if (b.auth === 'api-key') return key?.has() ? { region: b.region, modelId: b.modelId, auth: 'api-key', accountId: '', roleName: '', authId: `key:${key.savedAt() ?? 0}` } : undefined
+  if (b.auth === 'api-key') return key?.has() ? { region: b.region, modelId: b.modelId, auth: 'api-key', accountId: '', roleName: '', authId: `key:${key.savedAt() ?? 0}`, models: b.models } : undefined
   if (sso.status().state !== 'signed-in' || !b.accountId || !b.roleName) return undefined
-  return { region: b.region, modelId: b.modelId, auth: 'sso', accountId: b.accountId, roleName: b.roleName, authId: `sso:${b.accountId}|${b.roleName}` }
+  return { region: b.region, modelId: b.modelId, auth: 'sso', accountId: b.accountId, roleName: b.roleName, authId: `sso:${b.accountId}|${b.roleName}`, models: b.models }
 }
 
 /**
@@ -66,6 +67,16 @@ export function hookCloud(d: { file: string; sso: Sso; apiKey: ApiKeyStore; canR
     if (p.ssoRegion !== undefined && validRegion(p.ssoRegion)) patch.ssoRegion = p.ssoRegion
     if (p.region !== undefined && validRegion(p.region)) patch.region = p.region
     if (p.modelId !== undefined && validModelId(p.modelId)) patch.modelId = p.modelId
+    // a model for some uses: '' gives that use back to the main model
+    if (p.models && typeof p.models === 'object') {
+      const next = { ...cleanModels(loadSettings(d.file).bedrock?.models) }
+      for (const use of MODEL_USES) {
+        const m = (p.models as Record<string, unknown>)[use]
+        if (m === '') delete next[use]
+        else if (validModelId(m)) next[use] = m
+      }
+      patch.models = Object.keys(next).length ? next : undefined
+    }
     if (p.accountId !== undefined && (p.accountId === '' || validAccountId(p.accountId))) patch.accountId = (p.accountId as string) || undefined
     if (p.roleName !== undefined && (p.roleName === '' || validRoleName(p.roleName))) patch.roleName = (p.roleName as string) || undefined
     // another account: its role is chosen again

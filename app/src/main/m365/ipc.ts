@@ -4,8 +4,8 @@ import type { M365 } from './client'
 import type { M365View } from '../../shared/types'
 import { DEFAULT_REDIRECT, parseRedirect, type TokenStore } from './oauth'
 
-const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const validTenant = (v: string) => v === '' || GUID.test(v) || /^(common|organizations|consumers)$/.test(v) || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(v)
+export const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+export const validTenant = (v: string) => v === '' || GUID.test(v) || /^(common|organizations|consumers)$/.test(v) || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(v)
 
 /** Settings → Microsoft 365: connect (device code), the Outlook calendar on or off, and an organisation's own Azure app */
 export function hookM365(d: { file: string; m365: M365; /** the browser sign-in's tokens and secret */ store: TokenStore; send(v: M365View): void; calendarChanged(): void; restart(): void
@@ -18,9 +18,9 @@ export function hookM365(d: { file: string; m365: M365; /** the browser sign-in'
   }
   const patch = (p: NonNullable<ReturnType<typeof loadSettings>['m365']>) => updateSettings(d.file, { m365: { ...loadSettings(d.file).m365, ...p } })
   ipcMain.handle('m365:get', () => view())
-  ipcMain.handle('m365:sign-in', () => { patch({ enabled: true }); void d.m365.signIn(); return view() })
+  ipcMain.handle('m365:sign-in', () => { patch(loadSettings(d.file).m365?.enabled ? { enabled: true } : { enabled: true, connectedOnce: false }); void d.m365.signIn(); return view() })
   ipcMain.handle('m365:cancel', () => { d.m365.cancel(); return view() })
-  ipcMain.handle('m365:sign-out', async () => { patch({ enabled: undefined }); await d.m365.signOut(); d.calendarChanged(); return view() })
+  ipcMain.handle('m365:sign-out', async () => { patch({ enabled: undefined, connectedOnce: undefined }); await d.m365.signOut(); d.calendarChanged(); return view() })
   ipcMain.handle('m365:calendar', (_e, on: unknown) => {
     if (typeof on !== 'boolean') return view()
     patch({ calendar: on ? undefined : false }); d.calendarChanged()

@@ -5,6 +5,7 @@ import type { Queue } from './notes/queue'
 import { transcriptHead, transcriptText, contextIntro } from './notes/enhance'
 import { meetingWords, respell, spellingLine } from './vocab'
 import type { AskStep, ChatTurn, ChatView } from '../shared/types'
+import { organisationBlock } from './organisation'
 
 /**
  * Chat with one meeting: a question answered by the notes model from the meeting's transcript and notes.
@@ -62,6 +63,7 @@ export function contextTail(meeting: Pick<Meeting, 'title' | 'attendees'>, notes
     `Meeting: ${meeting.title || 'Untitled'}`,
     `People invited: ${people.length ? people.join(', ') : 'not known'}.`,
     ...(spelling ? [spelling] : []),
+    ...(organisationBlock().length ? ['', ...organisationBlock().slice(0, -1)] : []),
     ...(written ? ['', 'The notes on this meeting:', '<notes>', written, '</notes>']
       : mine ? ['', 'Notes the person typed during the meeting:', '<notes>', mine, '</notes>'] : []),
     // the invite, related emails and documents (Microsoft 365): background, never what was said
@@ -241,7 +243,7 @@ export async function* ask(d: Deps, meetingId: string, question: string, history
       if (signal.aborted) return
       o.onStep?.({ kind: 'reading', title: m.title })
       // the engine ends an answer it is told to stop and returns what it had (no error)
-      const answer = await llm.chat(chatPrompt({ context, question, history: recent, recording }), (t) => { if (!signal.aborted) push(t) }, { maxTokens: ANSWER_TOKENS })
+      const answer = await llm.chat(chatPrompt({ context, question, history: recent, recording }), (t) => { if (!signal.aborted) push(t) }, { maxTokens: ANSWER_TOKENS, use: 'ask' })
       if (!signal.aborted) o.onComplete?.(answer)
     } catch (e) {
       // stopped by the person: what was written stands

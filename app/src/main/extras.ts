@@ -11,6 +11,7 @@ import { isId } from './ipcArgs'
 import { LOCALES } from '../shared/i18n'
 import type { DocRef } from './m365/documents'
 import type { MeetingContext } from './m365/context'
+import { organisationBlock } from './organisation'
 
 /**
  * What is written beside a meeting's notes, on request: the follow-up email (from the notes and action items), the
@@ -31,6 +32,7 @@ export function followUpPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'
     'Here are the notes of a meeting that just ended ("You" is the person they are for):',
     '<notes>', i.notes, '</notes>',
     ...(i.actions.length ? ['Action items:', actionsMarkdown(i.actions)] : []),
+    ...organisationBlock(),
     ...(i.context ? [contextIntro, '<context>', i.context, '</context>'] : []),
     '',
     `Meeting: ${i.meeting.title || 'Untitled'}`,
@@ -58,6 +60,7 @@ export function briefPrompt(i: { meeting: Pick<Meeting, 'title' | 'attendees'>; 
       `<meeting title=${JSON.stringify(e.title)} date="${day(e.at)}">`, e.notes,
       ...(e.open.length ? ['Action items still open:', actionsMarkdown(e.open)] : []), '</meeting>'])] : ['There are no earlier meetings with these people in Faisselle.']),
     '',
+    ...organisationBlock(),
     ...(i.context ? [contextIntro, '<context>', i.context, '</context>', ''] : []),
     `Write a short brief in ${i.language || 'English'}, in Markdown, starting right away with the first "## " heading:`,
     '- "## Purpose": what this meeting is likely about and what "You" should get out of it, in two or three bullets.',
@@ -87,7 +90,7 @@ export function withDocumentLinks(md: string, docs: DocRef[]): string {
   return `${md.trimEnd()}\n## Related documents\n${links}`
 }
 
-const actionsFromNotesPrompt = (notes: string) => ['Here are the notes of a meeting:', '<notes>', notes, '</notes>', '', actionsPrompt()].join('\n')
+const actionsFromNotesPrompt = (notes: string) => [...organisationBlock(), 'Here are the notes of a meeting:', '<notes>', notes, '</notes>', '', actionsPrompt()].join('\n')
 
 export function parseFollowUp(raw: string): FollowUp | null {
   const text = raw.trim()
@@ -178,7 +181,7 @@ export function hookExtras(d: {
     const out = await llm.chat(followUpPrompt({ meeting: m, notes, actions: d.store.extras(id).actions ?? [], me: d.me(), language: langOf(id), context }), (t) => {
       const before = bodySoFar(raw); raw += t; const after = bodySoFar(raw)
       if (after.length > before.length) onToken(after.slice(before.length))
-    }, { maxTokens: 1500, json: FOLLOWUP_SCHEMA })
+    }, { maxTokens: 1500, json: FOLLOWUP_SCHEMA, use: 'followup' })
     if (signal.aborted) return
     const f = parseFollowUp(out)
     if (!f) throw new Error('The model did not write an email')
@@ -196,7 +199,7 @@ export function hookExtras(d: {
     }))
     const ctx = await d.context(id, { documents: true }).catch(() => undefined)
     const docs = ctx?.documents ?? []
-    const md = tidyNotes(await llm.chat(briefPrompt({ meeting: m, startsAt, earlier, context: ctx?.text, me: d.me(), language: langOf(id), documents: docs.length > 0 }), onToken, { maxTokens: 1800 }))
+    const md = tidyNotes(await llm.chat(briefPrompt({ meeting: m, startsAt, earlier, context: ctx?.text, me: d.me(), language: langOf(id), documents: docs.length > 0 }), onToken, { maxTokens: 1800, use: 'brief' }))
     if (signal.aborted) return
     if (!md) throw new Error('The model did not write a brief')
     // the links come from the search itself, never from the model: none can be made up
@@ -206,7 +209,7 @@ export function hookExtras(d: {
   const actions = (id: string) => run(id, 'actions', async (llm, signal) => {
     const notes = d.store.notes(id).enhanced
     if (!notes) throw new Error('No notes yet')
-    const items = parseActions(await llm.chat(actionsFromNotesPrompt(notes), () => {}, { maxTokens: 1500, json: ACTIONS_SCHEMA }))
+    const items = parseActions(await llm.chat(actionsFromNotesPrompt(notes), () => {}, { maxTokens: 1500, json: ACTIONS_SCHEMA, use: 'actions' }))
     if (signal.aborted) return
     if (!items) throw new Error('The model did not give a list')
     d.store.setExtras(id, { actions: keepTicks(items, d.store.extras(id).actions ?? []) })

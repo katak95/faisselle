@@ -66,6 +66,7 @@ import { helperWatch, killAllWatches } from './callNames/watch'
 import { macFullName } from './user'
 import { setJargon, setOwnerName } from './vocab'
 import { cleanJargon } from '../shared/jargon'
+import { setOrganisation } from './organisation'
 import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
 import { UtilityEngine } from './engine'
@@ -105,6 +106,7 @@ import { createIndexer } from './library/indexer'
 import { hookConversations } from './library/conversations'
 import { hookShare } from './share'
 import { hookBackup } from './backupIpc'
+import { hookSetupShare } from './configShareIpc'
 import { hookFolders } from './foldersIpc'
 import { hookMcp } from './mcp'
 import { startedHidden } from './mcp/paths'
@@ -591,10 +593,13 @@ app.whenReady().then(() => {
     seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
     open: (sealed) => (sealed.startsWith('k:') ? safeStorage.decryptString(Buffer.from(sealed.slice(2), 'base64')) : Buffer.from(sealed.slice(2), 'base64').toString()) })
   const fakeMicrosoft = isFake() ? fakeMicrosoftSignIn() : undefined
-  const m365 = createM365({ dataDir: userDataDir(), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
+  const m365 = createM365({ dataDir: userDataDir(), worker: join(__dirname, 'm365.js'), app: () => ({ clientId: loadSettings(m365File).m365?.clientId, tenantId: loadSettings(m365File).m365?.tenantId }),
     documents: () => loadSettings(m365File).m365?.documents === true,
     browser: () => { const s = loadSettings(m365File).m365; return s?.method === 'browser' ? { redirectUri: s.redirectUri ?? DEFAULT_REDIRECT } : null },
     store: m365Tokens,
+    // an older setting has no flag: it was connected when it was turned on
+    connectedOnce: { get: () => loadSettings(m365File).m365?.connectedOnce !== false,
+      set: (on) => updateSettings(m365File, { m365: { ...loadSettings(m365File).m365, connectedOnce: on ? undefined : false } }) },
     ...(fakeMicrosoft ? { fetch: fakeMicrosoft.fetch } : {}),
     openExternal: (url) => { if (fakeMicrosoft) fakeMicrosoft.open(url); else void shell.openExternal(url) },
     onChange: (st) => { m365Ipc?.push(); if (st.state === 'connected' || st.state === 'off') { m365Context.forget(); refreshCalendarConsumers() } },
@@ -665,6 +670,7 @@ app.whenReady().then(() => {
   const me = () => loadSettings(settingsFile).myName?.trim() || macName()
   setOwnerName(me)
   setJargon(() => cleanJargon(loadSettings(settingsFile).jargon))
+  setOrganisation(() => loadSettings(settingsFile).organisation ?? '')
   // names from the call: the call app is read while a meeting records, and each line of the other side gets the name talking then
   const callNames = hookCallNames({
     store, watch: !caps.callNames ? () => ({ stop() {} }) : isFake() ? fakeCallWatch : helperWatch(helperPath), myNames: () => [me(), macName()],
@@ -747,6 +753,8 @@ app.whenReady().then(() => {
   const localModel = createNotesModel({ engine, modelPath: () => setup.notesPath(), onLoaded: path => setup.notesModelLoaded(path), contextSize: memory.contextSize, ...(memory.releaseSpeech ? { beforeLoad: releaseIdleSpeech } : {}) })
   // the notes on Amazon Bedrock instead (Settings → Notes model): signed in with AWS IAM Identity Center
   let cloud: ReturnType<typeof hookCloud> | undefined
+  /** the notes moved between this computer and Bedrock (Settings, or a setup imported) */
+  let notesChanged: (p: 'local' | 'bedrock') => void = () => {}
   const sso = createSso({
     file: join(userDataDir(), 'aws-sso.json'), api: isFake() ? fakeSsoApi() : awsSsoApi(),
     seal: (plain) => (safeStorage.isEncryptionAvailable() ? `k:${safeStorage.encryptString(plain).toString('base64')}` : `b:${Buffer.from(plain).toString('base64')}`),
@@ -766,23 +774,29 @@ app.whenReady().then(() => {
   const model = createSwitchingNotesModel({ local: localModel, bedrock: bedrockModel, provider })
   /** a note can be written now: the local model is in, or Bedrock is signed in with an account and role */
   const notesReady = () => (provider() === 'bedrock' ? !!cloudConfig() : !!setup.notesPath())
+  /** why notes can't start: on Bedrock, the AWS sign-in (it runs out after the organisation's session length) */
+  const notesWaitingFor = (): 'aws-sign-in' | 'notes-model' | 'recording' | undefined => (!notesReady() ? (provider() === 'bedrock' ? 'aws-sign-in' : 'notes-model')
+    // a smaller Mac writes with the local model only once nothing records (Bedrock doesn't wait)
+    : provider() !== 'bedrock' && smallMac && !!activeMeeting() ? 'recording' : undefined)
   // first run: the notes model lands after recording already works; jobs wait in the queue for it
   // the embedding model (meaning search across meetings) runs in the same worker and is let go with the notes model
   const embedder = createEmbedder({ engine, modelPath: () => setup.installed()?.embed, id: bundledCatalog.embedding.id, dims: bundledCatalog.embedding.dims })
-  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: notesReady })
+  const queue = createQueue({ recording: () => !!activeMeeting(), smallMac, idleMs: memory.idleMs, backlogMs: transcriptionBacklogMs, onIdle: () => { void model.unload().catch(e => console.error('letting the notes model go failed', e)); void embedder.unload() }, modelReady: notesReady, remote: () => provider() === 'bedrock',
+    waitingFor: () => (notesWaitingFor() === 'aws-sign-in' ? 'waiting for the AWS sign-in (Settings → Notes model): Bedrock is not signed in, or no account and role are chosen' : 'waiting for the notes model to finish downloading') })
   ipcMain.handle('setup:remove-upgrade', () => setup.removeUpgrade(remove => queue.enqueue(async () => {
     await model.unload()
     remove()
   }, 'enhance')))
   setup.onNotesModel(() => { queue.modelArrived(); conversations.refresh() })
+  notesChanged = (p) => {
+    if (p === 'local') setup.localNotesWanted()
+    else { setup.cloudChosen(); void model.switched().catch((e) => console.error('letting the local notes model go failed', e)) }
+    queue.modelArrived(); conversations.refresh()
+  }
   cloud = hookCloud({
     file: settingsFile, sso, apiKey: bedrockKey, canRunLocally: () => setup.canRunLocally(),
     send: (v) => win?.webContents.send('cloud:changed', v),
-    changed: (p) => {
-      if (p === 'local') setup.localNotesWanted()
-      else { setup.cloudChosen(); void model.switched().catch((e) => console.error('letting the local notes model go failed', e)) }
-      queue.modelArrived(); conversations.refresh()
-    },
+    changed: (p) => notesChanged(p),
     test: async () => { const llm = await bedrockModel.llm(); await llm.chat('Reply with the single word OK.', () => {}, { maxTokens: 16 }) },
     localNotesBytes: () => setup.localNotesBytes(),
     // on Bedrock no new job reaches the local model (and the queue waits while Bedrock isn't signed in yet): let it go, then its files
@@ -810,6 +824,7 @@ app.whenReady().then(() => {
     ...(automatic ? { keep: endedAt => keepsRecording(loadSettings(settingsFile), endedAt) } : {}),
   })
   const notes = hookNotes({
+    waitingFor: notesWaitingFor,
     summarized: id => { folderSuggestions.schedule(id); void removeRecording(id, true) },
     // Windows and Linux: a note waiting while the model loads says so (a Mac shows what it always did)
     showLoading: platform !== 'darwin',
@@ -1010,6 +1025,25 @@ app.whenReady().then(() => {
   const foldersChanged = () => { win?.webContents.send('folders:changed'); folderSuggestions.refresh() }
   hookFolders({ store, changed: foldersChanged })
   // every meeting to one file and back; what an import adds shows up on home
+  // Settings → Share the setup: models and connectors to a file, and from one (never a secret)
+  hookSetupShare({ file: settingsFile, window: () => win,
+    site: () => { try { return atlassian.current().site } catch { return undefined } },
+    applied: (sections, before, after) => {
+      if (sections.includes('notes')) {
+        const p = after.notesProvider === 'bedrock' ? 'bedrock' : 'local'
+        if (p !== (before.notesProvider === 'bedrock' ? 'bedrock' : 'local')) notesChanged(p)
+        if (cloud) win?.webContents.send('cloud:changed', cloud.view())
+      }
+      if (sections.includes('m365')) {
+        const b = before.m365 ?? {}, a = after.m365 ?? {}
+        // another app, tenant or way of signing in: the sign-in made with the old one is no use
+        if (b.clientId !== a.clientId || b.tenantId !== a.tenantId || b.method !== a.method) m365Tokens.setTokens(undefined)
+        void m365.stop().then(() => { if (loadSettings(m365File).m365?.enabled) void m365.resume() })
+        refreshCalendarConsumers()
+        m365Ipc?.push()
+      }
+      if (sections.includes('confluence')) { atlassian.siteChanged(); atlassianIpc?.push() }
+    } })
   hookBackup({ getRecordingPill: () => visibilityOf(loadSettings(settingsFile), platform).showRecordingPill,
     setRecordingPill: preferences.setRecordingPill, db: store.db, meetingsDir: join(userDataDir(), 'meetings'), window: () => win, recording: () => !!activeMeeting() || !!resumingId,
     changed: () => { win?.webContents.send('meetings:changed'); win?.webContents.send('conversations:list', conversations.list()); void indexer.refresh(); folderSuggestions.refresh() },
@@ -1094,6 +1128,7 @@ app.whenReady().then(() => {
   if (isFake()) Object.assign(((globalThis as Record<string, unknown>).__fake__ ??= {}) as object, {
     untranscribe: () => { const id = store.meetings({ limit: 1 })[0].id; store.deleteSegments(store.segments(id).map((x) => x.id)); store.updateMeeting(id, { transcriptionPending: true }); return id },
     transcribeWaiting: () => transcribeWaiting(),
+    signInsRanOut: () => { sso.ranOut(); m365.ranOut(); atlassian.ranOut() },
   })
   onMeetingStopSaved(() => void transcribeWaiting())
   app.on('will-quit', killAllWatches)

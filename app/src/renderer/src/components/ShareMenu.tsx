@@ -1,5 +1,6 @@
 import { usePopoverPresence } from '../motion'
 import { retryToast, toasts } from './TrashToast'
+import { lostAtlassian, reconnect } from './Reconnect'
 import { Copy, Check, CircleAlert, FileDown, ShareTray, ArrowUpRight as Send } from './Icons'
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { t } from '../../../shared/i18n'
@@ -11,6 +12,12 @@ import type { NoteStatus } from '../../../shared/types'
 type Feedback = { text: string; kind: 'copied' | 'saved' | 'notice' | 'error' }
 
 /** Copy choices stay beside the meeting controls. Saving before use protects the latest edits. */
+/** Confluence isn't connected any more (its sign-in ran out): the way back, in Settings */
+function reconnectToast(id: string) {
+  toasts.add({ id, title: t('Your Confluence sign-in ran out. Sign in again, then send it.'), timeout: 0, data: { testId: 'share-confluence-reconnect-toast', actionTestId: 'share-confluence-reconnect' },
+    actionProps: { children: t('Sign in again'), onClick: () => { toasts.close(id); reconnect('atlassian') } } })
+}
+
 export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: string; shown: 'mine' | 'enhanced'; status: NoteStatus; hasEnhanced: boolean; beforeUse: () => Promise<boolean> }) {
   const [open, setOpen] = useState<false | 'pointer' | 'keyboard'>(false)
   const presence = usePopoverPresence(open)
@@ -66,13 +73,14 @@ export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: s
   const run = (fn: () => void) => { setOpen(false); button.current?.focus(); fn() }
 
   // Confluence: offered once Atlassian is connected; a note sent before is updated, not sent twice
-  const [confluence, setConfluence] = useState<{ connected: boolean; sentAt?: number }>({ connected: false })
+  // signed out after a sign-in (it ran out): offered too, to sign in again
+  const [confluence, setConfluence] = useState<{ connected: boolean; lost?: boolean; sentAt?: number }>({ connected: false })
   const isOpen = !!open
   useEffect(() => {
     if (!isOpen) return
     let live = true
     void Promise.all([window.yogurt.atlassian.get(), window.yogurt.extras.get(id)]).then(([a, x]) => {
-      if (live) setConfluence({ connected: a.status.state === 'connected', ...(x?.confluence ? { sentAt: x.confluence.at } : {}) })
+      if (live) setConfluence({ connected: a.status.state === 'connected', lost: lostAtlassian(a.status), ...(x?.confluence ? { sentAt: x.confluence.at } : {}) })
     })
     return () => { live = false }
   }, [isOpen, id])
@@ -89,9 +97,9 @@ export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: s
       const r = await window.yogurt.atlassian.send(id)
       setSaid(undefined)
       if (r.status === 'failed') {
+        if (r.kind === 'not-connected') { reconnectToast(toastId); return }
         retryToast(toastId, r.kind === 'no-space' ? t('No personal space in Confluence yet. Create yours once in Confluence, then try again.')
           : r.kind === 'denied' ? t("Confluence refused: you can't write in your personal space.")
-          : r.kind === 'not-connected' ? t('Connect Atlassian in Settings first.')
           : t("Couldn't send to Confluence."), 'share-confluence-retry', sendToConfluence, 'share-confluence-error')
         return
       }
@@ -165,6 +173,14 @@ export function ShareMenu({ id, shown, status, hasEnhanced, beforeUse }: { id: s
           <button ref={(el) => { items.current[3] = el }} role="menuitem" data-testid="share-export" onClick={() => run(() => void save())} className={row}>
             <FileDown size={15} aria-hidden="true" className="text-muted" />{t('Save Markdown…')}
           </button>
+          {!confluence.connected && confluence.lost && <button ref={(el) => { items.current[4] = el }} role="menuitem" data-testid="share-confluence-reconnect-item"
+            onClick={() => run(() => reconnect('atlassian'))} className={row}>
+            <Send size={15} strokeWidth={1.75} aria-hidden="true" className="text-muted" />
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span>{t('Send to Confluence')}</span>
+              <span className="text-xs text-muted">{t('Your Confluence sign-in ran out. Sign in again first.')}</span>
+            </span>
+          </button>}
           {confluence.connected && <button ref={(el) => { items.current[4] = el }} role="menuitem" data-testid="share-confluence" disabled={!hasEnhanced}
             onClick={() => run(() => void sendToConfluence())} className={`${row} disabled:opacity-40`}>
             <Send size={15} strokeWidth={1.75} aria-hidden="true" className="text-muted" />

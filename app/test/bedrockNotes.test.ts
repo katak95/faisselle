@@ -223,7 +223,7 @@ describe('a Bedrock API key', () => {
     const signedOut = { status: () => ({ state: 'signed-out' as const }) } as never
     const key = { has: () => true, savedAt: () => 7 }
     const s = { bedrock: { auth: 'api-key' as const, modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0' } }
-    expect(bedrockConfig(s, signedOut, key)).toEqual({ region: 'eu-west-1', modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0', auth: 'api-key', accountId: '', roleName: '', authId: 'key:7' })
+    expect(bedrockConfig(s, signedOut, key)).toEqual({ region: 'eu-west-1', modelId: 'eu.anthropic.claude-haiku-4-5-20251001-v1:0', auth: 'api-key', accountId: '', roleName: '', authId: 'key:7', models: {} })
     expect(bedrockConfig(s, signedOut, { has: () => false, savedAt: () => undefined })).toBeUndefined()
     // the SSO way still needs its sign-in
     expect(bedrockConfig({ bedrock: { accountId: '123456789012', roleName: 'R' } }, signedOut, key)).toBeUndefined()
