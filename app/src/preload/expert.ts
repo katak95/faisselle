@@ -18,6 +18,11 @@ export const expert: ExpertApi = {
   deleteAudio: (id) => ipcRenderer.invoke('expert:delete-audio', id),
   analyze: (id) => ipcRenderer.invoke('expert:analyze', id),
   setFollowUp: (id, questionId, status) => ipcRenderer.invoke('expert:follow-up', id, questionId, status),
+  writeSkills: (id) => ipcRenderer.invoke('expert:write-skills', id),
+  newSkill: (id) => ipcRenderer.invoke('expert:skill-new', id),
+  updateSkill: (id, skillId, patch) => ipcRenderer.invoke('expert:skill-update', id, skillId, patch),
+  deleteSkill: (id, skillId) => ipcRenderer.invoke('expert:skill-delete', id, skillId),
+  exportSkills: (id, skillId) => ipcRenderer.invoke('expert:skills-export', id, skillId),
   showData: () => { ipcRenderer.send('expert:show-data') },
   onChange: (fn) => { const f = () => fn(); ipcRenderer.on('expert:changed', f); return () => { ipcRenderer.off('expert:changed', f) } },
   voice: {

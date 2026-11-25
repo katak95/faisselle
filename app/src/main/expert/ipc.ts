@@ -1,7 +1,7 @@
 // Expert interviews, between the window and main: every argument is checked here, only the main window may ask,
 // and files are picked with main's own dialog (FAISSELLE_EXPERT_SOURCES stands in for it in tests).
 import { app, dialog, ipcMain, shell, type BrowserWindow, type IpcMainInvokeEvent } from 'electron'
-import { delimiter } from 'node:path'
+import { delimiter, join } from 'node:path'
 import { isId } from '../ipcArgs'
 import { validRegion } from '../aws/sso'
 import { validModelId } from '../notes/bedrock'
@@ -9,6 +9,9 @@ import { readSource, SOURCE_EXTENSIONS } from './sources'
 import type { ExpertStore } from './store'
 import { createVoice, frameOf } from './voice'
 import { createAnalysis } from './analyze'
+import { createSkillWriter, skillsZip } from './skillWriter'
+import { writeFile } from 'node:fs/promises'
+import { cleanSkillPatch, skillNameOf, type SkillsExport } from '../../shared/expert/skills'
 import type { Llm } from '../notes/enhance'
 import type { SonicTransport } from './sonic'
 import { SEGMENT_MAX } from '../../shared/expert/voice'
@@ -72,6 +75,11 @@ export function hookExpert(d: {
     talking: (id) => voice.view().interviewId === id && ['connecting', 'listening', 'thinking', 'speaking', 'reconnecting'].includes(voice.view().state),
     organisation: d.organisation, send: () => changed(),
   })
+  const skills = createSkillWriter({
+    store: d.store, llm: (signal) => d.llm(view().bedrock.modelId, signal), agreed,
+    talking: (id) => voice.view().interviewId === id && ['connecting', 'listening', 'thinking', 'speaking', 'reconnecting'].includes(voice.view().state),
+    organisation: d.organisation, send: () => changed(),
+  })
 
   handle('expert:view', () => view())
   handle('expert:settings', (_e, v) => {
@@ -83,7 +91,7 @@ export function hookExpert(d: {
   handle('expert:get', (_e, id) => {
     if (!isId(id)) return null
     const interview = d.store.get(id)
-    return interview ? { interview, sources: d.store.sources(id), segments: d.store.segments(id), audioBytes: d.store.audioBytes(id), analysis: d.store.analysis(id), analysisState: analysis.state(id) } : null
+    return interview ? { interview, sources: d.store.sources(id), segments: d.store.segments(id), audioBytes: d.store.audioBytes(id), analysis: d.store.analysis(id), analysisState: analysis.state(id), skills: d.store.skills(id), skillsState: skills.state(id) } : null
   })
   handle('expert:create', (_e, v) => {
     const draft = cleanDraft(v, interviewLanguageFor(d.locale()))
@@ -135,6 +143,7 @@ export function hookExpert(d: {
     if (!isId(id)) return false
     voice.forget(id)
     analysis.forget(id)
+    skills.forget(id)
     const gone = d.store.delete(id)
     changed()
     return gone
@@ -163,6 +172,39 @@ export function hookExpert(d: {
     return out
   })
 
+  // Skill Studio
+  handle('expert:write-skills', (_e, id) => (isId(id) ? skills.start(id) : null))
+  handle('expert:skill-new', (_e, id) => {
+    if (!isId(id)) return null
+    const out = d.store.addSkill(id, { name: 'new-skill', description: '', body: '' }) ?? null
+    changed()
+    return out
+  })
+  handle('expert:skill-update', (_e, id, skillId, v) => {
+    const patch = cleanSkillPatch(v)
+    if (!isId(id) || !isId(skillId) || !patch) return null
+    const out = d.store.updateSkill(id, skillId, patch) ?? null
+    changed()
+    return out
+  })
+  handle('expert:skill-delete', (_e, id, skillId) => {
+    if (!isId(id) || !isId(skillId)) return false
+    const gone = d.store.deleteSkill(id, skillId)
+    changed()
+    return gone
+  }, false)
+  handle('expert:skills-export', async (_e, id, skillId): Promise<SkillsExport> => {
+    if (!isId(id) || (skillId !== undefined && !isId(skillId))) return { ok: false, reason: 'none' }
+    const i = d.store.get(id)
+    // a skill an agent can load needs its description and instructions
+    const list = d.store.skills(id).filter((k) => (skillId === undefined || k.id === skillId) && k.description && k.body)
+    if (!i || !list.length) return { ok: false, reason: 'none' }
+    const name = `${list.length === 1 ? list[0].name : skillNameOf(i.title) || 'skills'}${list.length === 1 ? '' : '-skills'}.zip`
+    const path = process.env.FAISSELLE_EXPERT_EXPORT !== undefined ? join(process.env.FAISSELLE_EXPERT_EXPORT, name) : await save(d.window(), name)
+    if (!path) return { ok: false, reason: 'canceled' }
+    try { await writeFile(path, await skillsZip(list)); return { ok: true, skills: list.length } } catch (e) { console.warn('exporting the skills failed', e); return { ok: false, reason: 'failed' } }
+  }, { ok: false, reason: 'none' })
+
   // the voice interview: one at a time, started from its page
   handle('expert:voice-state', () => voice.view())
   handle('expert:voice-start', (_e, id) => {
@@ -189,4 +231,10 @@ async function pick(win: BrowserWindow | undefined): Promise<string[] | null> {
   const options = { properties: ['openFile', 'multiSelections'] as Array<'openFile' | 'multiSelections'>, filters: [{ name: 'Text', extensions: SOURCE_EXTENSIONS }] }
   const r = win ? await dialog.showOpenDialog(win, options) : await dialog.showOpenDialog(options)
   return r.canceled ? null : r.filePaths
+}
+
+async function save(win: BrowserWindow | undefined, name: string): Promise<string | null> {
+  const options = { defaultPath: join(app.getPath('documents'), name), filters: [{ name: 'Zip', extensions: ['zip'] }] }
+  const r = win ? await dialog.showSaveDialog(win, options) : await dialog.showSaveDialog(options)
+  return r.canceled || !r.filePath ? null : r.filePath
 }

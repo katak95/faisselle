@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Speaker, TranscriptSegment } from '../../shared/expert/voice'
 import type { FollowUpStatus, InterviewAnalysis } from '../../shared/expert/analysis'
+import { uniqueName, type Skill, type SkillPatch } from '../../shared/expert/skills'
 import { EXPERT_DEFAULTS, isInterviewLanguage, type Consent, type ExpertSettings, type Interview, type InterviewCard, type InterviewDraft, type InterviewSource, type InterviewState } from '../../shared/expert/types'
 
 type Row = Record<string, unknown>
@@ -33,6 +34,12 @@ const MIGRATIONS: string[] = [
   // the analysis of an interview (shared/expert/analysis.ts): the latest one, as JSON
   `CREATE TABLE analyses (
      interview_id TEXT PRIMARY KEY REFERENCES interviews(id) ON DELETE CASCADE, at INTEGER NOT NULL, body TEXT NOT NULL);`,
+  // the Agent Skills written from an interview (shared/expert/skills.ts); edited: the expert changed it
+  `CREATE TABLE skills (
+     id TEXT PRIMARY KEY, interview_id TEXT NOT NULL REFERENCES interviews(id) ON DELETE CASCADE,
+     name TEXT NOT NULL, description TEXT NOT NULL, body TEXT NOT NULL, edited INTEGER NOT NULL DEFAULT 0,
+     created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
+   CREATE INDEX skills_interview ON skills(interview_id, created_at);`,
 ]
 export const EXPERT_DB_VERSION = MIGRATIONS.length
 
@@ -55,6 +62,10 @@ const interviewOf = (r: Row): Interview => ({
 const segmentOf = (r: Row): TranscriptSegment => ({
   id: String(r.id), interviewId: String(r.interview_id), sessionId: String(r.session_id), speaker: r.speaker === 'agent' ? 'agent' : 'expert',
   text: String(r.text), atMs: Number(r.at_ms), edited: r.original !== null && r.original !== undefined, original: r.original === null || r.original === undefined ? null : String(r.original),
+})
+const skillOf = (r: Row): Skill => ({
+  id: String(r.id), interviewId: String(r.interview_id), name: String(r.name), description: String(r.description), body: String(r.body),
+  edited: Number(r.edited) === 1, createdAt: Number(r.created_at), updatedAt: Number(r.updated_at),
 })
 const sourceOf = (r: Row): InterviewSource => ({ id: String(r.id), name: String(r.name), bytes: Number(r.bytes), addedAt: Number(r.added_at) })
 
@@ -235,6 +246,59 @@ export class ExpertStore {
   markAsked(id: string) {
     const a = this.analysis(id)
     if (a?.followUps.some((q) => q.status === 'open')) this.setAnalysis(id, { ...a, followUps: a.followUps.map((q) => (q.status === 'open' ? { ...q, status: 'asked' } : q)) })
+  }
+
+  skills(id: string): Skill[] {
+    return (this.db.prepare('SELECT * FROM skills WHERE interview_id = ? ORDER BY created_at, rowid').all(id) as Row[]).map(skillOf)
+  }
+
+  skill(id: string, skillId: string): Skill | undefined {
+    const r = this.db.prepare('SELECT * FROM skills WHERE id = ? AND interview_id = ?').get(skillId, id) as Row | undefined
+    return r && skillOf(r)
+  }
+
+  /** newly written skills take the place of the ones the expert didn't change; those they changed stay */
+  replaceDrafts(id: string, drafts: Array<Pick<Skill, 'name' | 'description' | 'body'>>): Skill[] {
+    if (!this.get(id)) return []
+    const at = this.now()
+    this.db.exec('BEGIN')
+    try {
+      this.db.prepare('DELETE FROM skills WHERE interview_id = ? AND edited = 0').run(id)
+      const taken = this.skills(id).map((k) => k.name)
+      const put = this.db.prepare('INSERT INTO skills (id, interview_id, name, description, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      drafts.forEach((d, n) => { const name = uniqueName(d.name, taken); taken.push(name); put.run(randomUUID(), id, name, d.description, d.body, at + n, at + n) })
+      this.db.exec('COMMIT')
+    } catch (e) { this.db.exec('ROLLBACK'); throw e }
+    this.touch(id)
+    return this.skills(id)
+  }
+
+  /** a blank skill the expert writes themselves */
+  addSkill(id: string, s: Pick<Skill, 'name' | 'description' | 'body'>): Skill | undefined {
+    if (!this.get(id)) return undefined
+    const skillId = randomUUID(), at = this.now()
+    this.db.prepare('INSERT INTO skills (id, interview_id, name, description, body, edited, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?)')
+      .run(skillId, id, uniqueName(s.name, this.skills(id).map((k) => k.name)), s.description, s.body, at, at)
+    this.touch(id)
+    return this.skill(id, skillId)
+  }
+
+  /** the expert's change: kept from then on when the skills are written again. A name taken by another skill gets a number */
+  updateSkill(id: string, skillId: string, p: SkillPatch): Skill | undefined {
+    const cur = this.skill(id, skillId)
+    if (!cur) return undefined
+    const name = p.name && p.name !== cur.name ? uniqueName(p.name, this.skills(id).filter((k) => k.id !== skillId).map((k) => k.name)) : cur.name
+    const n = { ...cur, ...p, name }
+    if (n.name === cur.name && n.description === cur.description && n.body === cur.body) return cur
+    this.db.prepare('UPDATE skills SET name = ?, description = ?, body = ?, edited = 1, updated_at = ? WHERE id = ?').run(n.name, n.description, n.body, this.now(), skillId)
+    this.touch(id)
+    return this.skill(id, skillId)
+  }
+
+  deleteSkill(id: string, skillId: string): boolean {
+    const gone = this.db.prepare('DELETE FROM skills WHERE id = ? AND interview_id = ?').run(skillId, id).changes > 0
+    if (gone) this.touch(id)
+    return gone
   }
 
   private touch(id: string) { this.db.prepare('UPDATE interviews SET updated_at = ? WHERE id = ?').run(this.now(), id) }

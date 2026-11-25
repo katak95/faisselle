@@ -1,5 +1,6 @@
 import type { TranscriptSegment, VoiceApi } from './voice'
 import type { AnalysisState, FollowUpStatus, InterviewAnalysis } from './analysis'
+import type { Skill, SkillPatch, SkillsExport, SkillsState } from './skills'
 
 // Expert interviews (Faisselle): an expert talks with a voice agent on Amazon Bedrock, and what they know becomes
 // Agent Skills. What main keeps (main/expert/store.ts) and what the window sees of it; every check a page's input
@@ -45,7 +46,9 @@ export type InterviewSource = { id: string; name: string; bytes: number; addedAt
 export type InterviewCard = Interview & { sources: number }
 export type InterviewDetail = { interview: Interview; sources: InterviewSource[]; segments: TranscriptSegment[]; audioBytes: number
   /** the latest analysis (expert/analyze.ts), and what one is doing now: running, or why the last one failed */
-  analysis: InterviewAnalysis | null; analysisState?: AnalysisState }
+  analysis: InterviewAnalysis | null; analysisState?: AnalysisState
+  /** the Agent Skills written from it (Skill Studio), and what writing them is doing now */
+  skills: Skill[]; skillsState?: SkillsState }
 
 export type InterviewDraft = Pick<Interview, 'title' | 'domain' | 'goal' | 'language' | 'minutes'>
 
@@ -90,6 +93,14 @@ export type ExpertApi = {
   analyze(id: string): Promise<AnalysisState | null>
   /** the expert keeps a follow-up question for the next session, or sets it aside */
   setFollowUp(id: string, questionId: string, status: Exclude<FollowUpStatus, 'asked'>): Promise<InterviewAnalysis | null>
+  /** Claude writes Agent Skills from the analysis; the skills the expert changed are kept */
+  writeSkills(id: string): Promise<SkillsState | null>
+  /** a blank skill, written by the expert */
+  newSkill(id: string): Promise<Skill | null>
+  updateSkill(id: string, skillId: string, patch: SkillPatch): Promise<Skill | null>
+  deleteSkill(id: string, skillId: string): Promise<boolean>
+  /** one skill, or all of them (no skillId), as a zip saved where main's dialog says */
+  exportSkills(id: string, skillId?: string): Promise<SkillsExport>
   showData(): void
   onChange(fn: () => void): () => void
   voice: VoiceApi

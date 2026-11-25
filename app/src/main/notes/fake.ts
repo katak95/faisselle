@@ -19,6 +19,15 @@ export class FakeEngine implements Engine {
     ] }), onToken, signal)
     if (prompt.includes('Write the follow-up email')) return this.stream(JSON.stringify({ subject: 'Launch plan: next steps',
       body: 'Hi all,\n\nThanks for the time today. Here is what we agreed:\n- The site goes live on Tuesday.\n- The email goes out on Wednesday morning.\n\nBest,\nYou' }), onToken, signal)
+    // Skill Studio (expert/skillWriter.ts): two skills
+    if (prompt.startsWith('You are writing Agent Skills from an interview')) {
+      return this.stream(JSON.stringify({ skills: [
+        { name: 'Month-end close', description: 'Closes the books at month end: reconciles the bank accounts, then the supplier invoices. Use when asked to close the month or prepare the close.',
+          body: '## Overview\nClose the books on the fifth working day.\n\n## Steps\n1. Reconcile the bank accounts.\n2. Reconcile the supplier invoices.\n\n## Not covered yet\n- What to do when the bank does not balance.' },
+        { name: 'missing-invoices', description: 'Chases a missing supplier invoice before the close. Use when an invoice is missing at month end.',
+          body: '## Steps\n1. Ask purchasing before the third working day.' },
+      ] }), onToken, signal)
+    }
     // an expert interview's analysis (expert/analyze.ts): what the stand-in voice heard, and two questions to ask next
     if (prompt.startsWith("You are helping turn an expert's know-how into Agent Skills")) {
       const closes = prompt.includes('fourth working day') ? 'fourth' : 'fifth'
