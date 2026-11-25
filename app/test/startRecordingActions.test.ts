@@ -72,7 +72,7 @@ afterEach(() => { cleanups.reverse().forEach(cleanup => cleanup()); vi.useRealTi
 it('keeps upload and the unattached action available outside the live/15-minute window', async () => {
   for (const events of [[], [event('past', now - 60_000, now)], [event('later', now + 15 * 60_000 + 1)]]) {
     const tree = await calendar(events)
-    expect(label(tree)).toContain('Start recording')
+    expect(label(tree)).toContain('Record')
     expect(find(tree, 'recording-choices').type).toBe(Menu.Trigger)
     expect(find(tree, 'recording-upload')).toBeDefined()
     await click(find(tree, 'start-recording'))
@@ -83,9 +83,22 @@ it('starts an unattached recording from the empty library even during a calendar
   await calendar([event('live')])
   const tree = render(document.getElementById('empty')!)
   const cta = find(tree, 'empty-start-recording')
-  expect(renderToStaticMarkup(cta.props.children as ReactNode)).toContain('Start recording')
+  expect(renderToStaticMarkup(cta.props.children as ReactNode)).toContain('Record')
   await click(cta)
   expect(start).toHaveBeenCalledExactlyOnceWith(null, undefined)
+})
+
+it('labels the primary action from the meeting state and names an uploaded note in its tooltip', async () => {
+  for (const [events, text, tooltip] of [
+    [[], 'Record', 'Record'],
+    [[event('live')], 'Take notes · Planning live', 'Take notes · Planning live'],
+    [[{ ...event('live'), note: { id: 'note', state: 'stopped' } }], 'Resume recording', 'Resume recording'],
+    [[{ ...event('live'), note: { id: 'note', state: 'done', source: 'audio-file' } }], 'Open note', 'Open Planning live'],
+  ] satisfies [AgendaEvent[], string, string][]) {
+    const tree = await calendar(events)
+    expect(label(tree)).toContain(`<span class="recording-label">${text}</span>`)
+    expect(find(tree, 'start-recording').props.title).toBe(tooltip)
+  }
 })
 
 it('carries the folder through the toolbar, calendar, unattached and empty-state record actions', async () => {
@@ -130,7 +143,7 @@ it('uses the menu trigger for two live meetings, with live choices first, New re
 })
 it('suggests an upcoming meeting but keeps the main action unattached', async () => {
   const tree = await calendar([event('soon', now + 8 * 60_000)])
-  expect(label(tree)).toContain('Start recording')
+  expect(label(tree)).toContain('Record')
   expect(find(tree, 'recording-choices').type).toBe(Menu.Trigger)
   await click(find(tree, 'start-recording'))
   expect(start).toHaveBeenCalledExactlyOnceWith(null, undefined)
@@ -138,8 +151,8 @@ it('suggests an upcoming meeting but keeps the main action unattached', async ()
 it.each(['stopped', 'done'] as const)('labels a %s note for resume in the title bar and menu without suggesting a new folder', async state => {
   const live = { ...event('live'), note: { id: 'existing', state } }
   const tree = await calendar([live])
-  expect(label(tree)).toContain('Resume notes · Planning live')
-  expect(find(tree, 'start-recording').props.title).toBe('Resume notes · Planning live')
+  expect(label(tree)).toContain('Resume recording')
+  expect(find(tree, 'start-recording').props.title).toBe('Resume recording')
   const row = find(tree, 'recording-meeting')
   const html = renderToStaticMarkup(row.props.children as ReactNode)
   expect(html).toContain('Resume notes · Planning live')
@@ -169,7 +182,7 @@ it('refreshes the resume label when the linked note changes or is trashed', asyn
   await calendar([live])
   day.mockResolvedValue({ status: 'granted', events: [{ ...live, note: { id: 'existing', state: 'done' } }] })
   meetingsChanged(); await flush()
-  expect(label(render())).toContain('Resume notes · Planning live')
+  expect(label(render())).toContain('Resume recording')
   day.mockResolvedValue({ status: 'granted', events: [live] })
   meetingsChanged(); await flush()
   expect(label(render())).toContain('Take notes · Planning live')
@@ -177,7 +190,7 @@ it('refreshes the resume label when the linked note changes or is trashed', asyn
 it('changes at the 15-minute, start and end boundaries and never offers a past event', async () => {
   const upcoming = event('boundary', now + 16 * 60_000, now + 17 * 60_000)
   await calendar([upcoming])
-  for (const [minutes, expected, arrow] of [[0, 'Start recording', true], [1, 'Start recording', true], [16, 'Take notes · Planning boundary', true], [17, 'Start recording', true]] as const) {
+  for (const [minutes, expected, arrow] of [[0, 'Record', true], [1, 'Record', true], [16, 'Take notes · Planning boundary', true], [17, 'Record', true]] as const) {
     vi.setSystemTime(now + minutes * 60_000 - 1)
     render(); run(hooks.effects[1]); await vi.advanceTimersByTimeAsync(1)
     const tree = render()
@@ -235,7 +248,8 @@ it('reports a removed event, refreshes choices, and never reports a failed or ra
 
 it('opens an uploaded calendar-linked note without offering to append a recording', async () => {
   const tree = await calendar([{ ...event('imported'), note: { id: 'imported', state: 'done', source: 'audio-file' } }])
-  expect(label(tree)).toContain('Open Planning imported')
+  expect(label(tree)).toContain('Open note')
+  expect(find(tree, 'start-recording').props.title).toBe('Open Planning imported')
   expect(label(tree)).not.toContain('Resume')
 })
 

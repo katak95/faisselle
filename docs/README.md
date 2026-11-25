@@ -77,3 +77,5 @@ Removing the app keeps your data. To remove that too, export a backup if you wan
 ## Report a problem
 
 [Open a GitHub issue](https://github.com/katak95/faisselle/issues) with your operating system, Faisselle version, what you did, what you expected and what happened. Leave private meeting content out of screenshots and reports.
+
+Faisselle keeps a log on your computer, in the `logs` folder inside the Faisselle data folder listed above: `main.log` is the newest, and `main.old.log` holds what came before it. Attaching both helps a lot.

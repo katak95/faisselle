@@ -431,6 +431,16 @@ describe('the speed check (Windows and Linux): speech models timed on this compu
     expect(c.installed()?.llm).toBeTruthy()
   })
 
+  it('Linux with no usable graphics card (31 GiB, #32): the 14 GB 26B is never downloaded', async () => {
+    for (const gpu of [{ kind: 'none' as const, name: '', vramGB: 0 }, { kind: 'discrete' as const, name: 'NVIDIA GeForce GTX 1650', vramGB: 4 }]) {
+      const s = speed({ 'whisper-large-v3-turbo-q5_0': 0.3, 'whisper-small-q5_1': 0.3 })
+      const { c, rec } = setup({ getHardware: async () => ({ ...gpuPc, cpuModel: 'AMD Ryzen 7 5800XT', totalRamGB: 33.3, gpu }), speed: s.deps })
+      await c.start(); await c.idle()
+      expect(c.state).toMatchObject({ phase: 'ready' })
+      expect(rec.asked).not.toContain(bigUrl)
+    }
+  })
+
   it('a Mac reports the same notes download progress', async () => {
     const { c, states } = setup()
     await c.start(); await c.idle()
@@ -501,6 +511,22 @@ describe('the speed check (Windows and Linux): speech models timed on this compu
     await c.start(); await c.idle()
     expect(s.timed).toEqual(['whisper-large-v3-turbo-q5_0'])
     expect(c.installed()?.asr).toContain('large-v3-turbo')
+  })
+
+  // #156: on a processor too slow for turbo, a smaller model already on disk can take over a meeting; none is downloaded for it
+  it('lists the smaller speech models already on disk, best first, and downloads none for that', async () => {
+    const s = speed({ 'whisper-large-v3-turbo-q5_0': 0.1 })
+    const { c, root, rec } = setup({ getHardware: async () => gpuPc, speed: s.deps })
+    mkdirSync(join(root, 'asr'), { recursive: true })
+    for (const id of ['whisper-small-q5_1', 'whisper-tiny-q5_1']) { const f = join(root, 'asr', name(url(id))); writeFileSync(f, 'x'); writeFileSync(f + '.ok', 'FAKE') }
+    // a file that was never checked is not offered
+    writeFileSync(join(root, 'asr', name(url('whisper-base-q5_1'))), 'x')
+    await c.start(); await c.idle()
+    expect(c.installed()?.smallerAsr).toEqual([join(root, 'asr', name(url('whisper-small-q5_1'))), join(root, 'asr', name(url('whisper-tiny-q5_1')))])
+    expect(rec.asked.filter((u) => catalog.asr.some((a) => a.url === u))).toEqual([url('whisper-large-v3-turbo-q5_0')])
+    const none = setup({ getHardware: async () => gpuPc, speed: speed({ 'whisper-large-v3-turbo-q5_0': 0.1 }).deps })
+    await none.c.start(); await none.c.idle()
+    expect(none.c.installed()?.smallerAsr).toBeUndefined()
   })
 
   it('a stored result on the same computer is used as it is: nothing is timed again', async () => {

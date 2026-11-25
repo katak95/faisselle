@@ -29,7 +29,7 @@
 .workspace:dir(rtl) .workspace-sidebar[inert] { transform:translateX(100%); }
 .workspace[data-peeking=true] .workspace-sidebar-inner { box-shadow:var(--shadow); }
 .sidebar-collapsed .workspace-sidebar { z-index:4; }
-.sidebar-collapsed .workspace-sidebar-inner { background-color:var(--chrome);border-start-end-radius:8px;border-end-end-radius:8px; }
+.sidebar-collapsed .workspace-sidebar-inner { background-color:var(--chrome);border-end-end-radius:8px; }
 @media (prefers-reduced-motion:no-preference) {
   /* Keep the panel opaque until the moving page has cleared its footprint. */
   .workspace[data-sidebar-motion=true]:not(.sidebar-collapsed) .workspace-sidebar-inner { transition:background-color 0s 200ms; }
@@ -159,13 +159,14 @@
 .workspace:dir(rtl) .workspace-toolbar:has(.notes-download-status) { padding-inline-end:132px; }
 .workspace:dir(rtl) .workspace-toolbar[data-note=true]:has(.notes-download-status) { padding-inline-end:185px; }
 .native-library { position:relative;padding:29px 26px 30px;min-width:0;overflow:auto; }
+/* Pinning the sidebar can cross the narrow-pane breakpoint without resizing the window. */
+.native-home>.native-library { padding-top:29px; }
 /* Keep the scroll area full width. The hover background extends 8px past the content on each side. */
-@media (width > 1728px) {
-  :is(.native-home,.native-folder)>.native-library>* { --meeting-list-max-width:1520px;inline-size:min(100%,calc(var(--meeting-list-max-width) - 16px));margin-inline:auto; }
-}
+:is(.native-home,.native-folder)>.native-library>* { --meeting-list-max-width:1080px;inline-size:min(100%,calc(var(--meeting-list-max-width) - 16px));margin-inline:auto; }
 .native-library>h1 { font-size:20px;line-height:26px;font-weight:600;letter-spacing:-.55px;margin-bottom:9px; }
 .native-meeting-day { margin-top:25px; }
-.native-meeting-day>h2,.meeting-day-exit { font-size:10px;line-height:14px;font-weight:500;color:var(--muted);margin-bottom:9px; }
+.native-meeting-day>h2,.meeting-day-exit { font-size:11px;line-height:14px;font-weight:550;color:var(--written);margin-bottom:9px; }
+.native-home :is(h1, [data-row-heading])[tabindex="-1"]:focus { outline:none; }
 .native-meeting-row { position:relative;display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;column-gap:12px;margin-inline:-8px;padding-inline-end:8px;border-radius:7px;overflow:hidden; }
 .native-meeting-row:hover:not([data-focus-ring]):not(:has([data-focus-ring])) { background:var(--row-hover); }
 .native-meeting-card { grid-area:1 / 1 / 2 / 3;display:grid;grid-template-columns:subgrid;align-items:center;min-width:0;border-radius:inherit; }
@@ -178,9 +179,9 @@
 .meeting-identity.recording { color:var(--primary-ink);background:var(--primary);border-color:transparent; }
 .meeting-description { min-width:0;flex:1; }
 .meeting-description strong { display:block;font-weight:500;font-size:13px;line-height:19px;letter-spacing:-.1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.meeting-description>span { display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;margin-top:2px;color:var(--muted); }
-.meeting-meta { display:flex;flex-direction:column;gap:4px;flex:none;min-width:49px;text-align:end;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums; }
-.meeting-meta small { font-size:9px;line-height:12px;color:var(--muted); }
+.meeting-description>span { display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:16px;margin-top:2px;color:var(--written); }
+.meeting-meta { display:flex;flex-direction:column;gap:4px;flex:none;min-width:49px;text-align:end;color:var(--written);font-size:10px;font-variant-numeric:tabular-nums; }
+.meeting-meta small { font-size:9px;line-height:12px; }
 .meeting-drag-preview { position:fixed;inset-block-start:0;inset-inline-start:0;display:flex;align-items:center;gap:9px;width:max-content;max-width:280px;padding:8px 11px;border:1px solid var(--line);border-radius:10px;background:var(--float);color:var(--ink);box-shadow:var(--shadow);pointer-events:none; }
 .meeting-drag-preview strong { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:19px;font-weight:500; }
 .meeting-live { display:flex;align-items:center;gap:4px;color:var(--accent); }
@@ -297,8 +298,14 @@
 .agenda-status p { margin:5px 0 17px; }
 .trash-note { color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 16px; }
 .trash-actions { display:flex;gap:4px; }
-/* The stack stays anchored to the window as the workspace changes beneath it. */
-.app-toast-viewport { position:fixed;bottom:20px;inset-inline-end:20px;width:340px;max-width:calc(100% - 40px);z-index:90;outline:none;pointer-events:none; }
+/* A docked control raises the stack by its actual footprint, including wrapped text and warnings. */
+.app-toast-viewport {
+  position:fixed;inset-inline-end:20px;
+  bottom:max(20px,12px + max(anchor(--note-footer top,0px),anchor(--ask-composer top,0px),anchor(--transcript-player top,0px)));
+  width:340px;max-width:calc(100% - 40px);z-index:90;outline:none;pointer-events:none;
+}
+.chat-panel:not([aria-modal=true]) .app-toast-viewport { z-index:0; }
+[data-beside-ask] .app-toast-viewport { inset-inline-end:calc(anchor(--docked-ask start) + 12px);bottom:anchor(--docked-ask bottom); }
 .app-toast { position:absolute;inset-block-end:0;inset-inline:0;width:100%;height:var(--toast-frontmost-height,var(--toast-height));border:1px solid var(--line);border-radius:11px;background:var(--float);color:var(--ink);box-shadow:0 8px 24px #0000001F,0 1px 3px #00000014;pointer-events:auto;outline:none;--gap:10px;z-index:calc(100 - var(--toast-index,0)); }
 .app-toast[data-expanded] { height:var(--toast-height); }
 .app-toast[data-limited] { opacity:0; }
@@ -393,9 +400,11 @@
 [data-folder-color]:not([data-folder-color=default]) { --folder-tint:color-mix(in srgb,var(--folder-ink) 12%,var(--bg)); }
 .folder-glyph { display:inline-flex;align-items:center;justify-content:center;flex:none;color:var(--folder-ink); }
 .folder-preview-tile,.folder-heading-icon { background:var(--folder-tint);color:var(--folder-ink); }
-.folder-page-heading { display:flex;align-items:center;gap:12px;margin-bottom:9px; }
-.folder-page-heading h1 { min-width:0;font-size:20px;line-height:26px;font-weight:600;letter-spacing:-.55px; }
-.folder-page-heading h1 input { font:inherit;letter-spacing:inherit; }
+.library-page-heading { display:flex;align-items:center;gap:12px;margin-bottom:9px; }
+.native-home .library-page-heading { height:var(--button-height); }
+.workspace:not(.sidebar-collapsed) .home-search { display:none; }
+.library-page-heading h1 { min-width:0;font-size:20px;line-height:26px;font-weight:600;letter-spacing:-.55px; }
+.library-page-heading h1 input { font:inherit;letter-spacing:inherit; }
 .folder-heading-icon { display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:10px;border:1px solid color-mix(in srgb,var(--folder-ink) 15%,transparent); }
 .folder-heading-icon:hover { filter:brightness(.96); }
 .folder-appearance-preview { display:flex;align-items:center;gap:12px;margin:0 20px 22px;min-width:0; }
@@ -453,10 +462,10 @@
 
 /* Ask keeps one reading column and one composer in both surfaces. */
 /* a gutter held from the start: a scrollbar appearing as context grows would shift the centred page sideways */
-.ask-page { contain:layout;height:100%;min-height:0;display:flex;flex-direction:column;overflow-y:auto;scrollbar-gutter:stable both-edges;padding:104px 32px max(24px,var(--toast-clearance,0px)); }
+.ask-page { contain:layout;height:100%;min-height:0;display:flex;flex-direction:column;overflow-y:auto;scrollbar-gutter:stable both-edges;padding:104px 32px 24px; }
 .ask-page-toolbar { position:absolute;z-index:4;top:68px;inset-inline:24px;display:flex;align-items:center;justify-content:flex-end;gap:12px;height:28px; }
 .ask-back { margin-inline-end:auto; }
-.ask-page:has(.ask-landing) { container-type:size;padding-bottom:max(clamp(104px,24vh,240px),var(--toast-clearance,0px)); }
+.ask-page:has(.ask-landing) { container-type:size;padding-bottom:clamp(104px,24vh,240px); }
 .ask-page:has(.ask-landing) .ask-back { display:none; }
 .ask-conversation { display:flex;flex-direction:column;min-height:0;min-width:0;flex:1; }
 /* Anchor to the 194px empty composition; context and multiline drafts grow downward. */
@@ -479,6 +488,7 @@
 .ask-turn:last-child { margin-bottom:0; }
 .ask-question { width:fit-content;max-width:80%;margin:0;margin-inline-start:auto;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:12px;background:var(--control);padding:8px 12px;font-size:14px;line-height:20px; }
 .ask-composer { flex:none;min-width:0;container-type:inline-size; }
+:is(.ask-page,.chat-panel[aria-modal=true]) .ask-conversation:not(.ask-landing) .ask-composer { anchor-name:--ask-composer; }
 .ask-box { position:relative;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--float); }
 /* Composers are never lit; a short tapered flare invites typing instead. */
 .ask-tracer { position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);overflow:visible;pointer-events:none;opacity:0;fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--accent) 70%,transparent)) drop-shadow(0 0 10px color-mix(in srgb,var(--accent) 35%,transparent)); }

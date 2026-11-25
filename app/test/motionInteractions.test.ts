@@ -1,9 +1,10 @@
-import { CalendarDays, Check, FileText, ICON_STROKE_WIDTH } from '../src/renderer/src/components/Icons'
+import { CalendarDays, Check, ICON_STROKE_WIDTH } from '../src/renderer/src/components/Icons'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { App } from '../src/renderer/src/App'
 import { afterEach, expect, it, vi } from 'vitest'
 import { useEffect, useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from 'react'
 import { useDialogFocus } from '../src/renderer/src/useDialogFocus'
+import { useMeetingDateJump } from '../src/renderer/src/meetingDateJump'
 import { Search } from '../src/renderer/src/components/Search'
 import { Ask } from '../src/renderer/src/components/Chat'
 import { AskContext, scopeLabel } from '../src/renderer/src/components/AskContext'
@@ -503,7 +504,7 @@ it('offers letting AI apps make changes only once they can read, off until turne
   expect(toggle()['aria-checked']).toBe(true)
 })
 
-it('opens a command-search question as a draft when recording prevents an answer', async () => {
+it.each([false, true])('opens a pending command-search question as a draft when recording prevents an answer (Meta: %s)', async metaKey => {
   vi.stubGlobal('document', { activeElement: null })
   vi.stubGlobal('HTMLButtonElement', class {})
   const draft = vi.fn().mockResolvedValue(undefined), onNavigate = vi.fn()
@@ -511,31 +512,55 @@ it('opens a command-search question as a draft when recording prevents an answer
   vi.stubGlobal('window', { yogurt: { capabilities: { calendar: false }, conversations } })
   const render = renderer(() => Search({ onOpen() {}, onNavigate, onSettingsChange() {}, onShortcuts() {}, onClose() {}, sidebarCollapsed: false, onToggleSidebar() {} }))
   find(render(), 'search-input').props.onChange({ target: { value: 'What did we decide?' } })
-  find(render(), 'search').props.onKeyDown({ key: 'Enter', metaKey: true, nativeEvent: {}, preventDefault() {} })
+  find(render(), 'search').props.onKeyDown({ key: 'Enter', metaKey, nativeEvent: {}, preventDefault() {} })
   await vi.waitFor(() => expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/chat/draft-id'))
   expect(draft).toHaveBeenCalledExactlyOnceWith('draft-id', 'What did we decide?')
 })
 
-it.each([true, false])('offers and runs the date command only with an agenda (calendar: %s)', async calendar => {
+it.each([
+  [true, 'December 12', new Date(2026, 11, 12), 2025],
+  [false, 'December 12', new Date(2026, 11, 12), 2025],
+  [false, 'November 11, 2025', new Date(2025, 10, 11), 2025],
+] as const)('opens the requested day with or without Agenda (calendar %s, query %s)', async (calendar, query, target, filterYear) => {
   vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 10, 14, 12))
   vi.stubGlobal('document', { activeElement: null })
   vi.stubGlobal('HTMLButtonElement', class {})
   vi.stubGlobal('window', { yogurt: { capabilities: { calendar }, search: { query: vi.fn().mockResolvedValue([]) } } })
   const onNavigate = vi.fn()
   const render = renderer(() => Search({ onOpen() {}, onNavigate, onSettingsChange() {}, onShortcuts() {}, onClose() {}, sidebarCollapsed: false, onToggleSidebar() {} }))
-  find(render(), 'search-input').props.onChange({ target: { value: 'November 11, 2028' } })
+  find(render(), 'search-input').props.onChange({ target: { value: query } })
   render()
   vi.mocked(useEffect).mock.calls.find(([, deps]) => deps?.length === 6)![0]()
   await vi.runAllTimersAsync()
   const tree = render()
-  expect(find(tree, 'search-date').props.children[1].props.title).toContain('2028')
-  if (!calendar) { expect(() => find(tree, 'command-agenda-date')).toThrow('Missing'); return }
+  expect(find(tree, 'search-date').props.children[1].props.title).toContain(String(filterYear))
   const row = find(tree, 'command-agenda-date')
   expect(row.props['aria-selected']).toBe(true)
   expect(row.props.children[0].type).toBe(CalendarDays)
-  expect(row.props.children[1].props.children[0]).toBe('Go to Nov 11, 2028')
+  expect(row.props.children[1].props.children[0]).toBe('Go to ' + target.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))
   find(tree, 'search').props.onKeyDown({ key: 'Enter', nativeEvent: {}, preventDefault() {} })
-  expect(onNavigate).toHaveBeenCalledExactlyOnceWith('', new Date(2028, 10, 11).getTime())
+  expect(onNavigate).toHaveBeenCalledExactlyOnceWith('', target.getTime())
+})
+
+it.each([0, 3200])('returns a scrolled list to zero and leaves focus alone if already there (scrollTop %s)', scrollTop => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(2026, 10, 24, 12))
+  vi.stubGlobal('window', { matchMedia: () => ({ matches: true }) })
+  const heading = { focus: vi.fn() }
+  const root = Object.assign(new EventTarget(), { scrollTop, clientHeight: 500, scrollHeight: 3700, querySelector: vi.fn(() => heading) })
+  const next = vi.fn()
+  renderer(() => {
+    useMeetingDateJump({ at: new Date(2026, 11, 12).getTime() }, {
+      cards: [{ startedAt: new Date(2026, 10, 20).getTime() }], root: root as unknown as HTMLElement, more: true, failed: 'page', next,
+    }, true)
+    return null
+  })()
+  for (const [effect] of vi.mocked(useLayoutEffect).mock.calls) effect()
+  expect(root.scrollTop).toBe(0)
+  expect(next).not.toHaveBeenCalled()
+  if (scrollTop) expect(root.querySelector).toHaveBeenCalledWith('h1')
+  expect(heading.focus).toHaveBeenCalledTimes(scrollTop ? 1 : 0)
 })
 
 it('jumps a mounted agenda to the day and week, closes details, and keeps arrows and repeated jumps working', async () => {
@@ -589,7 +614,7 @@ it.each(['dark', 'mode'])('executes the ranked result when Enter beats a slow se
   vi.useFakeTimers()
   vi.stubGlobal('document', { activeElement: null })
   vi.stubGlobal('HTMLButtonElement', class {})
-  const meeting = { meetingId: 'm1', title: 'Dark mode planning', startedAt: 1, parts: [], confident: true }
+  const meeting = { meetingId: 'm1', title: 'Dark mode planning', startedAt: 1, parts: [], attendees: [], preview: '', confident: true }
   const query = vi.fn(async () => { await new Promise(resolve => setTimeout(resolve, 300)); return [meeting] })
   const setTheme = vi.fn().mockResolvedValue(undefined), onOpen = vi.fn()
   vi.stubGlobal('window', { yogurt: { capabilities: {}, settings: { get: async () => ({ theme: 'light' }), setTheme }, search: { query } } })
@@ -597,8 +622,14 @@ it.each(['dark', 'mode'])('executes the ranked result when Enter beats a slow se
   render()
   vi.mocked(useEffect).mock.calls[1][0]()
   await Promise.resolve()
+  const question = 'What happened?'
+  find(render(), 'search-input').props.onChange({ target: { value: question } })
+  render()
+  vi.mocked(useEffect).mock.calls.find(([, deps]) => deps?.[0] === question && deps.length > 1)![0]()
+  await vi.runAllTimersAsync()
   find(render(), 'search-input').props.onChange({ target: { value: term } })
   const tree = render()
+  expect(find(tree, 'search-ask').props['aria-selected']).toBe(true)
   vi.mocked(useEffect).mock.calls.find(([, deps]) => deps?.[0] === term && deps.length > 1)![0]()
   find(tree, 'search').props.onKeyDown({ key: 'Enter', nativeEvent: {}, preventDefault() {} })
   await vi.runAllTimersAsync()
@@ -625,7 +656,7 @@ it('offers another read when a palette query fails', async () => {
 
 
 it('keeps initial search results still, ignores stationary hover, and scrolls only for keyboard selection', async () => {
-  const meetings = [{ meetingId: 'm1', title: 'Recent meeting', startedAt: 1000, parts: [] }]
+  const meetings = ['m1', 'm2', 'm3'].map(meetingId => ({ meetingId, title: 'Recent meeting', startedAt: 1000, parts: [], attendees: [], preview: meetingId + ' notes' }))
   vi.stubGlobal('document', { activeElement: null })
   vi.stubGlobal('HTMLButtonElement', class {})
   vi.stubGlobal('window', { yogurt: { capabilities: { calendar: true }, search: { query: vi.fn().mockResolvedValue(meetings) } } })
@@ -635,40 +666,37 @@ it('keeps initial search results still, ignores stationary hover, and scrolls on
   let tree = render()
   find(tree, 'search-results').props.ref.current = { querySelector: () => ({ scrollIntoView }) }
   expect(find(tree, 'search-results').props.className).toContain('[overflow-anchor:none]')
-  expect(() => find(tree, 'search-intent-icon')).toThrow('Missing')
   scroll()
   expect(scrollIntoView).not.toHaveBeenCalled()
-  // Recent meetings arrive after the initial commands, without scrolling the commands back into view.
+  // Receiving the recent meetings does not move the list.
   vi.mocked(useEffect).mock.calls.find(([, deps]) => deps?.length === 6)![0]()
   await Promise.resolve()
   tree = render(); scroll()
   expect(find(tree, 'search-result').props['aria-selected']).toBe(true)
   expect(scrollIntoView).not.toHaveBeenCalled()
-  find(tree, 'command-meetings').props.onMouseMove({ movementX: 0, movementY: 0 })
+  find(tree, 'search-m2').props.onMouseMove({ movementX: 0, movementY: 0 })
   tree = render(); scroll()
   expect(find(tree, 'search-result').props['aria-selected']).toBe(true)
-  expect(() => find(tree, 'search-intent-icon')).toThrow('Missing')
-  find(tree, 'command-meetings').props.onMouseMove({ movementX: 1, movementY: 0 })
+  find(tree, 'search-m2').props.onMouseMove({ movementX: 1, movementY: 0 })
   tree = render(); scroll()
-  expect(find(tree, 'command-meetings').props['aria-selected']).toBe(true)
-  expect(() => find(tree, 'search-intent-icon')).toThrow('Missing')
-  expect(find(tree, 'command-meetings').props.children[0].type).toBe(FileText)
+  expect(find(tree, 'search-m2').props['aria-selected']).toBe(true)
+  expect(find(tree, 'search-preview').props.children.props.children).toBe('m2 notes')
   expect(scrollIntoView).not.toHaveBeenCalled()
   find(tree, 'search').props.onKeyDown({ key: 'ArrowDown', nativeEvent: {}, preventDefault() {} })
   tree = render(); scroll()
-  expect(find(tree, 'command-chat').props['aria-selected']).toBe(true)
+  expect(find(tree, 'search-m3').props['aria-selected']).toBe(true)
   expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
   scrollIntoView.mockClear()
-  find(tree, 'command-meetings').props.onMouseMove({ movementX: 0, movementY: 0 })
+  find(tree, 'search-m2').props.onMouseMove({ movementX: 0, movementY: 0 })
   tree = render()
-  expect(find(tree, 'command-chat').props['aria-selected']).toBe(true)
+  expect(find(tree, 'search-m3').props['aria-selected']).toBe(true)
   find(tree, 'search-result').props.onMouseMove({ movementX: 0, movementY: 1 })
   tree = render(); scroll()
   expect(find(tree, 'search-result').props['aria-selected']).toBe(true)
   expect(scrollIntoView).not.toHaveBeenCalled()
 })
 
-it('keeps row glyphs stable across typing, filters, and keyboard selection without an input icon', async () => {
+it('keeps row glyphs stable across keyboard selection', async () => {
   vi.useFakeTimers()
   vi.stubGlobal('document', { activeElement: null })
   vi.stubGlobal('HTMLButtonElement', class {})
@@ -678,7 +706,7 @@ it('keeps row glyphs stable across typing, filters, and keyboard selection witho
     meetings: { onChange: () => () => {} },
     search: {
       people: async () => [{ name: 'Sample attendee', email: 'participant@example.test' }],
-      query: async () => [{ meetingId: 'm1', title: 'Planning', startedAt: 1000, parts: [] }],
+      query: async () => [{ meetingId: 'm1', title: 'Planning', startedAt: 1000, parts: [], attendees: [], preview: '' }],
     },
   } })
   const folders = [{ id: 'f1', name: 'Planning', icon: 'calendar' as const, color: 'violet' as const, count: 1, createdAt: 1 }]
@@ -696,7 +724,8 @@ it('keeps row glyphs stable across typing, filters, and keyboard selection witho
       const icon = props.children[0]
       if (icons.has(props.id)) expect(icon.type).toBe(icons.get(props.id))
       icons.set(props.id, icon.type)
-      if (icon.props.appearance) expect(icon.props.appearance).toBe(folders[0])
+      if (props.id === 'search-m1') expect(icon.props.className).toBe('search-meeting-dot')
+      else if (icon.props.appearance) expect(icon.props.appearance).toBe(folders[0])
       else {
         expect(icon.props).toMatchObject({ size: 16, 'aria-hidden': 'true' })
         expect(renderToStaticMarkup(icon)).toContain(`stroke-width="${ICON_STROKE_WIDTH}"`)
@@ -704,19 +733,17 @@ it('keeps row glyphs stable across typing, filters, and keyboard selection witho
     }
     inspect(props.children)
   }
-  for (const query of ['', 'plan', 'planning', 'November 11, 2028', 'att', 'Sample attendee', 'theme']) {
+  for (const query of ['', 'plan', 'planning', 'November 11, 2028', 'att', 'Sample attendee', 'theme', 'what was decided?']) {
     find(render(), 'search-input').props.onChange({ target: { value: query } })
     render()
     vi.mocked(useEffect).mock.calls.find(([, deps]) => deps?.length === 6)![0]()
     await vi.runAllTimersAsync()
-    let tree = render()
-    expect(() => find(tree, 'search-intent-icon')).toThrow('Missing')
+    const tree = render()
     inspect(tree)
     if (query === 'Sample attendee') expect(find(tree, 'search-person-filter')).toBeDefined()
     if (query === 'November 11, 2028') expect(find(tree, 'search-date')).toBeDefined()
     find(tree, 'search').props.onKeyDown({ key: 'ArrowDown', nativeEvent: {}, preventDefault() {} })
-    tree = render()
-    inspect(tree)
+    inspect(render())
   }
   expect([...icons.keys()]).toEqual(expect.arrayContaining(['search-m1', 'search-ask', 'command-agenda-date', 'command-folder-f1', 'command-theme-light', 'search-person-email%3Aparticipant%40example.test']))
 })

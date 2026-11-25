@@ -1,4 +1,6 @@
 {
+  "Record": "Record",
+  "Search meetings": "Search meetings",
   "Hide sidebar": "Hide sidebar",
   "Show sidebar": "Show sidebar",
   "Folders": "Folders",
@@ -292,5 +294,17 @@
   "Send feedback": "Send feedback",
   "Help and settings": "Help and settings",
   "Faisselle menu": "Faisselle menu",
-  "Restart to update · {version}": "Restart to update · {version}"
+  "Restart to update · {version}": "Restart to update · {version}",
+  "Mic is still off. Try again.": "Mic is still off. Try again.",
+  "Mute my mic in Faisselle": "Mute my mic in Faisselle",
+  "Muting mic…": "Muting mic…",
+  "Mic off in Faisselle": "Mic off in Faisselle",
+  "Unmute my mic in Faisselle": "Unmute my mic in Faisselle",
+  "Unmuting mic…": "Unmuting mic…",
+  "Unmute my mic": "Unmute my mic",
+  "Mic will stay off on resume": "Mic will stay off on resume",
+  "Mute my mic": "Mute my mic",
+  "Mic on in Faisselle": "Mic on in Faisselle",
+  "Mic mute couldn’t be confirmed.": "Mic mute couldn’t be confirmed.",
+  "Mic off. Faisselle can’t hear call audio.": "Mic off. Faisselle can’t hear call audio."
 }

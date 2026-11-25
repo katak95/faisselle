@@ -95,6 +95,7 @@ export type YogurtApi = {
     stop(id: string): void
     /** pauses or resumes this active recording without finishing the note */
     setPaused(id: string, paused: boolean): Promise<boolean>
+    setMicMuted(id: string, muted: boolean): Promise<boolean>
     /** retries saving the original stop time without stopping or finalizing the capture again */
     retryStopSave(id: string): Promise<boolean>
     /** the person's own title (tidied; blank keeps the old one) */
@@ -148,6 +149,7 @@ export type YogurtApi = {
     onFlushRequest(cb: (closing: boolean) => Promise<boolean>): () => void
     /** the open note kept its unsaved edits over notes written again for new people */
     keptEdits(meetingId: string): void
+    dismissPeopleChange(meetingId: string, membership: string): Promise<void>
     /** writes the enhanced notes again */
     writeAgain(meetingId: string, note?: string): Promise<void>
     stop(meetingId: string): Promise<void>
@@ -395,7 +397,10 @@ export type AgendaEvent = CalEvent & { note?: { id: string; state: Meeting['stat
 /** Start notes: the meeting's id, or why it didn't start (gone: the event left the calendar) */
 export type StartResult = { id: string; alreadyRecording?: true; resumeRequested?: true } | { error: 'gone' | 'failed' }
 /** one meeting found: parts is a piece of its notes or transcript, hit on the words matched */
-export type SearchResult = { meetingId: string; title: string; startedAt: number; parts: SnippetPart[]; confident?: boolean }
+export type SearchResult = {
+  meetingId: string; title: string; startedAt: number; attendees: Person[]; folder?: Pick<Folder, 'id' | 'name' | 'color'>
+  preview: string; parts: SnippetPart[]; confident?: boolean
+}
 
 /**
  * Where a meeting's enhanced notes are: idle (none yet, the meeting may still be on), waiting (for the transcript or
@@ -410,7 +415,7 @@ export type NoteView = {
   part?: { part: number; of: number }
   /** Windows and Linux: waiting while the notes model loads (it can take a while there) */
   step?: 'loading'
-  /** the people at the meeting changed after these edited notes were written, so they may be out of date */
+  /** Show the notice for a changed attendee list until this membership is dismissed. */
   peopleChanged: boolean
   /** the notes were just written again (for new people): what they replaced, so an open editor with no edits since takes them */
   rewrittenFrom?: string
@@ -439,7 +444,12 @@ export type MicDevice = { id: string; name: string; isDefault: boolean }
 export type MicsView = { devices: MicDevice[]; choice: string | null; using: string | null; defaultName: string | null }
 
 /** What the recording widget shows: recording (time, hints) or the card after stopping */
+export type MicState = 'on' | 'muting' | 'off' | 'unmuting' | 'still-off' | 'unconfirmed' | 'restoring-off'
+export const micIsOff = (state?: MicState) => state === 'off' || state === 'still-off' || state === 'unmuting' || state === 'restoring-off'
+export const micPendingAction = (state?: MicState) => state === 'restoring-off' ? 'muting' : state === 'muting' || state === 'unmuting' ? state : undefined
+
 export type WidgetView = {
+  micState?: MicState
   kind: 'recording' | 'captured'
   paused?: true
   meetingId: string

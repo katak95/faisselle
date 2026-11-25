@@ -9,9 +9,24 @@ import { changeMeetingRows } from '../meetingRowMotion'
 import { trashMeetings, restoreMeetings } from '../trashMeetings'
 
 let toastHost: HTMLDivElement | undefined
-// Keep Undo reachable when Ask uses the native modal top layer on smaller windows.
-export function setToastDialog(dialog: HTMLDialogElement | null) {
-  if (toastHost) (dialog ?? document.body).append(toastHost)
+// Keep one live stack as Ask opens, including in the native modal top layer.
+export function setToastDialog(dialog: HTMLDialogElement | null, beside = false, animate = false) {
+  const host = toastHost
+  if (!host) return
+  const parent = dialog ?? document.body
+  const changedSide = host.hasAttribute('data-beside-ask') !== beside
+  if (!changedSide && host.parentElement === parent) return
+  const viewport = host.querySelector<HTMLElement>('.app-toast-viewport')
+  const from = changedSide && animate && viewport?.querySelector('.app-toast') &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? viewport.getBoundingClientRect() : null
+  if (changedSide) viewport?.getAnimations().forEach(animation => animation.cancel())
+  if (host.parentElement !== parent) parent.append(host)
+  host.toggleAttribute('data-beside-ask', beside)
+  if (from && viewport) {
+    const to = viewport.getBoundingClientRect()
+    viewport.animate([{ transform: `translate(${from.x - to.x}px, ${from.y - to.y}px)` }, { transform: 'none' }],
+      { duration: motion.surface, easing: motion.ease })
+  }
 }
 
 type Shown = { ids: string[]; bulk?: boolean; error?: string; /** the note it was moved from: Undo opens it again */ from?: string }
@@ -119,24 +134,9 @@ export function TrashToast({ go }: { go: (route: string) => void }) {
   </Toast.Provider>
 }
 
-// Reserve the expanded stack so keyboard focus or hover can expose every action without covering the dock.
-export function toastClearance(shown: ReadonlyArray<{ limited?: boolean; height?: number }>) {
-  const visible = shown.filter(item => !item.limited)
-  if (!visible.length) return ''
-  const height = visible.reduce((sum, item) => sum + (item.height ?? 0), 0)
-  // 20px below the stack, 12px above it, and Animate UI's gap between expanded cards.
-  return `calc(${20 + height + 12}px + ${(visible.length - 1) * 0.75}rem)`
-}
-
 function ToastList() {
   const reduced = useReducedMotion()
   const { toasts: shown } = Toast.useToastManager<{ testId?: string; actionTestId?: string }>()
-  const clearance = toastClearance(shown)
-  useLayoutEffect(() => {
-    if (!clearance) return
-    document.body.style.setProperty('--toast-clearance', clearance)
-    return () => { document.body.style.removeProperty('--toast-clearance') }
-  }, [clearance])
   const front = shown.find(item => item.transitionStatus !== 'ending')
   return shown.map(item => <Toast.Root key={item.id} toast={item} className="app-toast" transition={{ duration: (reduced ? motion.micro : motion.surface) / 1000, ease: motion.softCurve }} exitTransition={{ duration: (reduced ? motion.micro : motion.base) / 1000, ease: motion.out }} swipeDirection={['down', 'right']}
     data-kind={item.data?.testId} data-testid={item.transitionStatus === 'ending' ? undefined : item.data?.testId ?? 'app-toast'}>

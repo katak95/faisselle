@@ -1,15 +1,15 @@
-import { micFloor, silentSpeech, speechSample } from '../shared/speechWave'
+import { recordingSpeech, silentSpeech } from '../shared/speechWave'
 import { BrowserWindow, ipcMain, Notification, screen } from 'electron'
 import { join } from 'node:path'
 import type { Meeting } from './store'
 import { WidgetModel } from './widgetModel'
 import { onRecordingEvent, recordingFinished } from './capture'
 import { onMeetingChange, onMeetingStart, onMeetingStop, stopSavePending } from './meeting'
-import type { WidgetView } from '../shared/types'
+import { micIsOff, type WidgetView } from '../shared/types'
 import { floatingType, floatOverFullScreen } from './float'
 import { isFake } from './paths'
 import { t, onLanguage } from '../shared/i18n'
-import { widgetLayout, widgetDragLayout, widgetRestLayout, widgetContains, type WidgetSurface, type WidgetLayout } from '../shared/widgetMorph'
+import { widgetLayout, widgetDragLayout, widgetRestLayout, widgetSizedPill, widgetContains, type WidgetSurface, type WidgetLayout } from '../shared/widgetMorph'
 
 const BACKGROUND = process.env.YOGURT_BACKGROUND === '1'
 const FIRST_W = 127, FIRST_H = 42
@@ -63,7 +63,7 @@ export function createWidget(d: { open(meetingId: string): void; stop(meetingId:
   platform?: NodeJS.Platform }) {
   const model = new WidgetModel(d.os)
   let speech = silentSpeech
-  let micLevels: number[] = []
+  const floors = { me: [] as number[], them: [] as number[] }
   let win: BrowserWindow | undefined
   /**
    * Linux (X11): Electron crashes when a window is destroyed while the X server still answers about its size, as
@@ -161,7 +161,7 @@ export function createWidget(d: { open(meetingId: string): void; stop(meetingId:
 
   onMeetingStart((m) => {
     speech = silentSpeech
-    micLevels = []
+    floors.me.length = floors.them.length = 0
     notifyOnChange = false; notice = null; stopPressed = false
     model.start({ id: m.id, title: m.title, startedAt: m.resume ? m.resume.startedAt - m.resume.capturedMs : m.startedAt })
     open(); push()
@@ -200,8 +200,12 @@ export function createWidget(d: { open(meetingId: string): void; stop(meetingId:
   onRecordingEvent((e) => {
     if (!model.meetingId) return
     if (e.t === 'level') {
-      speech = speechSample(speech, e, performance.timeOrigin + performance.now(), micFloor(micLevels, e))
+      speech = recordingSpeech(speech, e, floors, micIsOff(model.micState), performance.timeOrigin + performance.now())
       broadcast('widget:level', { me: e.me, them: e.them, speech })
+    } else if (e.t === 'mic-state' && e.meetingId === model.meetingId) {
+      if (micIsOff(model.micState) !== micIsOff(e.state)) speech = silentSpeech
+      model.micState = e.state
+      push()
     } else if (e.t === 'paused' && e.meetingId === model.meetingId) { model.pause(e.paused, e.at); push() }
     else if (e.t === 'warn') { model.warn(e.code); push() }
     else if (e.t === 'gave-up') model.gaveUp()
@@ -257,24 +261,22 @@ export function createWidget(d: { open(meetingId: string): void; stop(meetingId:
     hitTest()
   })
   ipcMain.on('widget:drag-end', (e) => {
-    if (!win || win.isDestroyed() || e.sender !== win.webContents) return
-    if (dragPosition) {
-      lastPosition = { x: pill.x, y: pill.y }
-      if (layout && surface && surface.height > FIRST_H + 1) place(widgetRestLayout(layout, screen.getDisplayMatching(pill).workArea, model.view(Date.now())?.note ? 446 : 390))
-    }
+    if (!win || win.isDestroyed() || e.sender !== win.webContents || !dragPosition) return
+    lastPosition = { x: pill.x, y: pill.y }
     dragPosition = null; dragFrame = null
-    if (!surface || surface.height <= FIRST_H + 1) place()
+    if (layout && surface && surface.height > FIRST_H + 1) place(widgetRestLayout(layout, screen.getDisplayMatching(pill).workArea, surface.height))
+    else place()
   })
   ipcMain.on('widget:size', (e, w: unknown, h: unknown) => {
-    if (!win || win.isDestroyed() || e.sender !== win.webContents || typeof w !== 'number' || !Number.isFinite(w) || w < 60 || w > 340 || h !== FIRST_H || pressed) return
-    // Apply timer width changes once collapsed, so they cannot re-anchor a dropped card.
-    if (surface && surface.height > FIRST_H + 1) return
-    // rounded, not up: the timer is a fractional width, and rounding up left the right end a pixel wider than the left
-    const width = Math.round(w)
-    if (width === pill.width) return
-    lastWidth = width
-    pill = fit({ ...pill, x: pill.x + pill.width - width, width })
-    lastPosition = { x: pill.x, y: pill.y }; place()
+    if (!win || win.isDestroyed() || !layout || e.sender !== win.webContents || typeof w !== 'number' || !Number.isFinite(w) || w < 60 || w > 340 || h !== FIRST_H || pressed) return
+    const next = widgetSizedPill(layout, w)
+    if (next.width === pill.width) return
+    // Remember the measured pill without moving the native window that contains both shapes.
+    layout = { ...layout, pill: next }
+    lastWidth = next.width
+    pill = { ...next, x: layout.bounds.x + next.x, y: layout.bounds.y + next.y }
+    lastPosition = { x: pill.x, y: pill.y }
+    win.webContents.send('widget:layout', layout)
   })
   const displayChanged = () => {
     if (!win || win.isDestroyed()) return
@@ -283,6 +285,7 @@ export function createWidget(d: { open(meetingId: string): void; stop(meetingId:
 
   return {
     visibilityChanged,
+    owns: (sender: Electron.WebContents) => !!win && !win.isDestroyed() && sender === win.webContents,
     elapsed: () => model.view(Date.now())?.elapsedMs ?? 0,
     /** the recording is about to stop because its call ended: the finished card says so */
     callEnded: (meetingId: string) => { if (model.meetingId === meetingId) model.callEnded() },

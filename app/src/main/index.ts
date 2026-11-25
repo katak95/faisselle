@@ -60,7 +60,7 @@ import { deleteMeeting } from './deleteMeeting'
 import { emptyTrash, moveToTrash, purgeTrash } from './trash'
 import { isId, text, rewriteNote } from './ipcArgs'
 import { hookMics } from './mics'
-import { activeCapture, audioHelperPath, hookCapture, joinParts, onCaptureStart, onRecordingEvent, prepareAppend, recordingFinished, recordingPaused, recordingSettled, rejoinInterrupted, setRecordingPaused, settleRecording, tell, type WarnCode } from './capture'
+import { activeCapture, audioHelperPath, hookCapture, joinParts, onCaptureStart, onRecordingEvent, prepareAppend, recordingFinished, recordingPaused, recordingSettled, rejoinInterrupted, setMicMuted, setRecordingPaused, settleRecording, tell, type WarnCode } from './capture'
 import { createWidget } from './widget'
 import { liveSilentMs, hookTranscription, transcribeRecorded, onWhisperGpuOff, meetingLanguage, settleTranscription, speechLocaleFor, spokenChanged, transcriptionBacklogMs, stopTranscriptionServer, releaseIdleSpeech, transcriptFinished, transcriptOpen, transcriptPartials } from './asr'
 import { hookCallNames, type Watch } from './callNames'
@@ -70,7 +70,7 @@ import { setJargon, setOwnerName } from './vocab'
 import { cleanJargon } from '../shared/jargon'
 import { setGenericTitles } from './titles'
 import { installAppMenu } from './appMenu'
-import { engineShim, SHIM, UtilityEngine } from './engine'
+import { backendOrder, engineShim, SHIM, UtilityEngine } from './engine'
 import { createNotesModel } from './notes/model'
 import { FakeEngine } from './notes/fake'
 import { hookNotes } from './notes'
@@ -87,6 +87,7 @@ import { hookFolders } from './foldersIpc'
 import { hookMcp } from './mcp'
 import { createQuietStart } from './quietStart'
 import { startArgs, startReason, type StartReason } from './startReason'
+import { quitCalledOff, quitting, started as startedAfterQuit } from './quitByUser'
 import { deleteRecording } from './deleteRecording'
 import { AUDIO_SCHEME, audioExts, createAudioHandler, trackFile, type AudioExt } from './audio'
 import { helperDecode, wavDecode } from './asr/backfill'
@@ -116,9 +117,13 @@ process.on('uncaughtException', (err) => console.error('uncaught exception', err
 
 // Linux on Wayland: once more through XWayland, so the widget and the card can float (display.ts)
 const x11 = x11Relaunch(process.platform, process.argv, process.env, process.execPath)
+/**
+ * One Faisselle at a time: a second launch hands its arguments to the running one (second-instance) and quits. It does
+ * nothing else on the way out (#156: an AI app's --hidden start ran the whole start-up, and wrote its own mcp.pipe).
+ */
+const primary = !x11 && app.requestSingleInstanceLock()
 if (x11) { stripAppImageEnv(); app.relaunch(x11); app.exit(0) }
-// One Faisselle at a time: a second launch focuses the existing window
-else if (!app.requestSingleInstanceLock()) app.quit()
+else if (!primary) app.quit()
 let win: BrowserWindow | undefined
 /** the iPhone companion once it has started (Settings → Phone pairs and unpairs through it) */
 let companion: Companion | undefined
@@ -476,6 +481,10 @@ function startDetection() {
     return changed
   }
   ipcMain.handle('meetings:set-paused', (_e, id: unknown, paused: unknown) => pauseRecording(id, paused))
+  ipcMain.handle('meetings:set-mic-muted', (e, id: unknown, muted: unknown) => {
+    if (e.senderFrame !== e.sender.mainFrame || (e.sender !== win?.webContents && !widget.owns(e.sender))) return false
+    return isId(id) && typeof muted === 'boolean' && activeMeeting()?.id === id && setMicMuted(id, muted, e.sender === win?.webContents ? 'note' : 'widget')
+  })
   recordingControls = { start: startNotes, pause: pauseRecording }
   ipcMain.handle('meetings:retry-stop-save', (_e, id: unknown) => isId(id) && retryStopSave(id))
   // the menu bar: open, new note or stop, quit; Faisselle stays there with its window closed
@@ -553,10 +562,14 @@ function startDetection() {
 }
 
 app.whenReady().then(() => {
+  if (!primary) return
   console.info('APP', `trusting ${systemCerts} certificates from the system on top of the built-in ones`)
   // #147: which start this was (login, an AI app, an update, the person), so a log says what opened Faisselle
   const started = startReason({ argv: process.argv, env: process.env, parent: parentName(), openedAtLogin: openedAtLogin() })
   console.info('APP', `started by=${started} args=${startArgs(process.argv)}`)
+  // #147: the person quit Faisselle, so an AI app (an older yogurt-mcp) doesn't start it until they open it themselves
+  if (startedAfterQuit(userDataDir(), started)) { console.info('APP the person quit Faisselle: not starting for an AI app'); app.quit(); return }
+  app.on('will-quit', () => quitting(userDataDir()))
   quietStart = createQuietStart({ reason: started, quit: () => app.quit(), busy: () => busyNow() })
   // Local Electron launches need the same Dock icon as the packaged application.
   if (!app.isPackaged && process.platform === 'darwin') app.dock?.setIcon(join(__dirname, '../../build/icon.png'))
@@ -652,7 +665,7 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin' || process.platform === 'win32') callWindowOf = (id) => callNames.callWindow(id)
   // Windows and Linux: whisper left the graphics card in a meeting, so the speed check (timed with it) runs again next start
   onWhisperGpuOff(() => speedStore(speedFile()).forget())
-  hookTranscription({ store, modelPath: () => setup.installed()?.asr, send: (seg) => {
+  hookTranscription({ store, modelPath: () => setup.installed()?.asr, smallerModels: () => setup.installed()?.smallerAsr ?? [], send: (seg) => {
     const order = seg.track === 'them' && seg.speaker ? store.speakerOrder(seg.meetingId, seg.speaker) : []
     const colored = { ...seg, speakerColor: speakerColor(seg.track, seg.speaker, order) }
     win?.webContents.send('transcript:segment', colored); sendWidgetTranscript('transcript:segment', colored)
@@ -706,7 +719,12 @@ app.whenReady().then(() => {
   // Linux: the shim that keeps the engine from crashing on the processor (#32); without it, the card is the only way
   const shim = engineShim(process.platform, [process.resourcesPath && join(process.resourcesPath, 'bin', SHIM), join(__dirname, '../../resources/bin', SHIM)].filter((x): x is string => !!x), existsSync)
   if (process.platform === 'linux') console.info('NOTES', shim ? `big allocations go through ${shim}` : `${SHIM} is missing: the notes engine can crash on the processor`)
-  const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), { gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' && !shim, ...(shim ? { preload: shim } : {}) })
+  // Windows and Linux: a CUDA build that won't start finds no card; Vulkan is tried next, and kept when it finds one (#32)
+  const backends = backendOrder(process.platform, process.env, loadSettings(settingsFile).notesGpuBackend)
+  const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), {
+    gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' && !shim, ...(shim ? { preload: shim } : {}),
+    backends, onBackend: (b) => { console.info('NOTES', `graphics found with ${b === 'auto' ? 'the default build' : b}; kept for next time`); updateSettings(settingsFile, { notesGpuBackend: b === 'vulkan' ? b : undefined }) },
+  })
   if (engine instanceof UtilityEngine) probeGpu = () => engine.probe().then((g) => {
     console.info('NOTES', `graphics: ${g.gpuType || 'none'}${g.gpuNames.length ? ` (${g.gpuNames.join(', ')})` : ''}, ${g.vramTotalGB.toFixed(1)} GB`)
     return g
@@ -962,6 +980,9 @@ app.whenReady().then(() => {
   ipcMain.handle('notes:set-enhanced', (_e, id: unknown, md: unknown, revision: unknown) => saveEdit(id, 'enhanced', md, revision))
   ipcMain.on('notes:flush-sync', (e, id: unknown, side: unknown, md: unknown, revision: unknown) => { e.returnValue = saveEdit(id, side, md, revision) })
   ipcMain.on('notes:kept-edits', (_e, id: unknown) => { if (known(id)) notes.keptEdits(id) })
+  ipcMain.handle('notes:dismiss-people-change', (_e, id: unknown, membership: unknown) => {
+    if (known(id) && typeof membership === 'string') notes.dismissPeopleChange(id, membership)
+  })
   ipcMain.handle('notes:stop', (_e, id: unknown) => { if (known(id)) return notes.stop(id) })
   // "Write again", from the note or an AI app; false when it can't start now
   const writeAgain = (id: unknown, note: unknown): boolean => {
@@ -1013,6 +1034,8 @@ app.whenReady().then(() => {
   // Flush the last keystroke and retained drafts before the existing recording/transcription shutdown.
   const resumeEditing = () => {
     finishing = false; allowQuit = false; discardUnsaved = false
+    // a quit called off: the next one is the person's only if they ask again (#147)
+    quitCalledOff()
     uploads.resume(); savedTranscriptions.resume()
     win?.webContents.send('notes:flush-request', null)
   }
@@ -1285,12 +1308,18 @@ app.whenReady().then(() => {
     const sp = isId(folder) ? folder : undefined
     // fake mode: short questions answer late, so a test can see an older answer never replace a newer one
     if (isFake() && process.env.YOGURT_FAKE_SEARCH_SLOW === '1' && query.trim().length <= 4) await new Promise((r) => setTimeout(r, 1000))
-    const hits = query.trim() || personSearch ? store.search(query, personSearch ? Infinity : 30, sp, { locale: app.getLocale(), language: uiLanguage(), people }) : store.meetingCards({ limit: 3, folder: sp }).map((c) => ({ meetingId: c.id, snippet: '', parts: [] }))
-    return hits.flatMap((h) => {
-      const m = store.meeting(h.meetingId)
-      if (!m) return []
-      const parts = h.parts.length ? h.parts : [{ text: store.preview(m.id), hit: false }]
-      return [{ meetingId: m.id, title: m.title, startedAt: m.startedAt, confident: 'confident' in h ? h.confident : false, parts: parts.filter((p) => p.text) }]
+    const hits = query.trim() || personSearch
+      ? store.search(query, personSearch ? Infinity : 30, sp, { locale: app.getLocale(), language: uiLanguage(), people })
+      : undefined
+    if (hits && !hits.length) return []
+    const cards = store.meetingCards({ limit: hits?.length ?? 3, folder: sp, ids: hits?.map(h => h.meetingId) })
+    const byId = new Map(cards.map(c => [c.id, c]))
+    return (hits ?? cards.map(c => ({ meetingId: c.id, parts: [], confident: false }))).flatMap(hit => {
+      const card = byId.get(hit.meetingId)
+      if (!card) return []
+      const folder = card.folders?.find(f => f.id === sp) ?? card.folders?.[0]
+      return [{ meetingId: card.id, title: card.title, startedAt: card.startedAt, attendees: card.attendees,
+        folder, preview: card.preview, parts: hit.parts, confident: hit.confident }]
     })
   })
   // the window's own moves (home, a note from the list): remembered here so a reload stays where it was

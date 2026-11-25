@@ -1,5 +1,5 @@
 import { meterHeights } from './meterGeometry'
-import { _electron as electron, expect, test, type ElectronApplication, type Page } from '@playwright/test'
+import { _electron as electron, expect, test, type ElectronApplication, type Locator, type Page } from '@playwright/test'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -8,11 +8,11 @@ const main = join(import.meta.dirname, '../out/main/index.js')
 const zoom = { bundleId: 'us.zoom.xos', name: 'zoom.us' }
 type Snap = { visible: boolean; view: { kind: string; note: { text: string } | null; crashed: boolean } | null; notice: { title: string; body: string; meetingId: string } | null; bounds: { x: number; y: number; width: number; height: number } | null; workArea: { x: number; y: number; width: number; height: number } }
 
-async function launch(settings?: object) {
+async function launch(settings?: object, micAck?: string, ...switches: string[]) {
   const userData = mkdtempSync(join(tmpdir(), 'yogurt-e2e-'))
   if (settings) writeFileSync(join(userData, 'settings.json'), JSON.stringify(settings))
   // These tests control foreground/background explicitly instead of competing for native focus.
-  const app = await electron.launch({ args: [main], env: { ...process.env, YOGURT_BACKGROUND: '1', YOGURT_FAKE: '1', YOGURT_USER_DATA: userData } })
+  const app = await electron.launch({ args: [...switches, main], env: { ...process.env, YOGURT_BACKGROUND: '1', YOGURT_FAKE: '1', YOGURT_USER_DATA: userData, ...(micAck && { YOGURT_FAKE_MIC_ACK: micAck }) } })
   // the config's actionTimeout never reaches Electron's windows: without this a click that can't land waits out the
   // whole test, and the stuck app then holds up the worker's teardown too (how "pause says Paused" failed once)
   app.context().setDefaultTimeout(15_000)
@@ -41,18 +41,27 @@ async function record(app: ElectronApplication, page: Page) {
   return widget
 }
 
+async function leaveRecorder(w: Page) {
+  // The mic swaps its SVG under the pointer. Leave from a target that stays mounted.
+  await w.getByTestId('widget-time').hover()
+  await w.mouse.move(0, 0)
+}
+
 test('the widget is a compact horizontal recorder with one live wave and no external shadow', async () => {
   const { app, page } = await launch()
   try {
     expect((await snap(app)).visible).toBe(false)
     const w = await record(app, page)
-    await expect(w.getByTestId('widget')).toHaveAttribute('data-kind', 'recording')
+    const pill = w.getByTestId('widget')
+    await expect(pill).toHaveAttribute('data-kind', 'recording')
+    await expect.poll(() => pill.evaluate(el =>
+      el.getBoundingClientRect().width - Math.round(el.querySelector('.widget-time')!.getBoundingClientRect().width),
+    )).toBe(53)
     const s = await snap(app)
     expect(s.visible).toBe(true)
-    const style = await w.getByTestId('widget').evaluate((el) => ({ shadow: getComputedStyle(el).boxShadow, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }))
+    const style = await pill.evaluate((el) => ({ shadow: getComputedStyle(el).boxShadow, width: el.getBoundingClientRect().width, height: el.getBoundingClientRect().height }))
     // The snapshot keeps the resting pill bounds.
     expect(style.height).toBe(42)
-    expect(style.width).toBeLessThan(127)
     expect(s.bounds).toMatchObject({ width: Math.ceil(style.width), height: 42 })
     expect(style.shadow).toBe('none')
     // one meter, moved by the microphone of the fake call
@@ -63,14 +72,273 @@ test('the widget is a compact horizontal recorder with one live wave and no exte
     await expect(w.getByTestId('widget-pause')).toHaveCount(0)
     await expect(w.getByTestId('widget-stop')).toHaveCount(0)
     await expect(w.getByTestId('widget-resume')).toHaveCount(0)
-    await expect(w.getByTestId('logo')).toBeVisible()
+    await expect(w.getByTestId('logo')).toHaveCount(0)
     for (const colorScheme of ['light', 'dark'] as const) {
       await w.emulateMedia({ colorScheme })
       // The charcoal recorder keeps the light brand purple in both appearances.
       const accent = 'rgb(183, 128, 255)'
-      await expect(w.getByTestId('logo').locator('path')).toHaveCSS('fill', accent)
       await expect(w.getByTestId('widget-wave')).toHaveCSS('color', accent)
     }
+  } finally { await app.close() }
+})
+
+async function captureCenteredReadout(app: ElectronApplication, pill: Locator, path: string) {
+  const png = await pill.screenshot({ path, scale: 'device' })
+  const { boxes, controls, center, width } = await pill.evaluate(el => {
+    const bounds = el.getBoundingClientRect()
+    const boxes = ['widget-wave', 'widget-time'].map(id => {
+      const b = el.querySelector(`[data-testid="${id}"]`)!.getBoundingClientRect()
+      return { left: b.left - bounds.left, right: b.right - bounds.left, mid: b.top - bounds.top + b.height / 2 }
+    })
+    const center = el.getAttribute('data-open') === 'true' ? 27 : bounds.height / 2
+    const controls = [...el.querySelectorAll('[data-testid="logo"], .widget-mic, .widget-mic svg, .widget-mic-off, .widget-mic-off svg')].map(node => {
+      const b = node.getBoundingClientRect()
+      return b.top - bounds.top + b.height / 2
+    })
+    return { boxes, controls, center, width: bounds.width }
+  })
+  expect(Math.abs(boxes[0].mid - boxes[1].mid)).toBeLessThanOrEqual(0.5)
+  for (const box of boxes) expect(Math.abs(box.mid - center)).toBeLessThanOrEqual(0.5)
+  for (const mid of controls) expect(Math.abs(mid - center)).toBeLessThanOrEqual(0.5)
+  expect(png.readUInt32BE(16)).toBe(Math.round(width) * 2)
+  // The old line boxes already lined up. Check the painted digits and strokes at Retina scale too.
+  const ink = await app.evaluate(({ nativeImage }, { data, boxes, center }) => {
+    const image = nativeImage.createFromBuffer(Buffer.from(data, 'base64'))
+    const pixels = image.toBitmap(), stride = image.getSize().width * 4
+    return boxes.map(box => {
+      const left = Math.floor(box.left * 2), right = Math.ceil(box.right * 2)
+      const firstRow = Math.round((center - 10) * 2), lastRow = Math.round((center + 10) * 2)
+      const background = pixels.subarray(firstRow * stride + left * 4, firstRow * stride + left * 4 + 3)
+      let top = Infinity, bottom = -Infinity
+      for (let y = firstRow; y < lastRow; y++) {
+        for (let x = left; x < right; x++) {
+          const i = y * stride + x * 4
+          if (background.some((channel, c) => pixels[i + c] > channel + 8)) {
+            top = Math.min(top, y); bottom = Math.max(bottom, y + 1)
+          }
+        }
+      }
+      return (top + bottom) / 4
+    })
+  }, { data: png.toString('base64'), boxes, center })
+  for (const mid of ink) expect(Math.abs(mid - center)).toBeLessThanOrEqual(0.5)
+  expect(Math.abs(ink[0] - ink[1])).toBeLessThanOrEqual(0.5)
+}
+
+test('each visible recorder frame fits its contents across hover, mute and unmute', async () => {
+  const { app, page } = await launch()
+  try {
+    const w = await record(app, page), pill = w.getByTestId('widget')
+    const header = page.getByTestId('note-mic'), mic = w.getByTestId('widget-mic')
+    const badge = w.getByTestId('widget-mic-off')
+    const watch = await pill.evaluateHandle(el => {
+      const errors = new Set<string>(), seen = new Set<string>()
+      const sample = () => {
+        const open = el.dataset.open === 'true', bounds = el.getBoundingClientRect()
+        const timer = el.querySelector('.widget-time')!.getBoundingClientRect()
+        const divider = el.querySelector('.widget-mic-status')?.getBoundingClientRect()
+        const label = open ? 'expanded' : divider ? 'muted pill' : 'unmuted pill'
+        seen.add(label)
+        const width = open ? 340 : Math.round(53 + timer.width + (divider ? 49 : 0))
+        if (Math.abs(bounds.width - width) > 0.01) errors.add(`${label} width ${bounds.width}, expected ${width}`)
+        if (bounds.left < 0 || bounds.top < 0 || bounds.right > innerWidth || bounds.bottom > innerHeight) errors.add('surface outside native window')
+        if (divider && Math.abs(divider.left - timer.right - 12) > 0.01) errors.add('badge gap')
+        const preview = el.querySelector<HTMLElement>('.widget-preview')!
+        const visible = getComputedStyle(preview).visibility === 'visible'
+        const content = preview.getBoundingClientRect()
+        if (visible !== open || (visible && (content.left < bounds.left || content.right > bounds.right || content.bottom > bounds.bottom))) errors.add('transcript clipped or visible in the pill')
+        const brand = el.querySelector('.widget-brand')
+        if (open !== !!brand || (brand && getComputedStyle(brand).opacity !== '1')) errors.add('logo missing on open')
+      }
+      // Sample state commits as well as animation frames: an eventual width assertion misses the first bad paint.
+      const observer = new MutationObserver(sample)
+      observer.observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-open'] })
+      let frame = 0
+      const tick = () => { sample(); frame = requestAnimationFrame(tick) }
+      tick()
+      return { stop: () => { observer.disconnect(); cancelAnimationFrame(frame); return { errors: [...errors], seen: [...seen] } } }
+    })
+    // First change mute in the compact pill, then collapse directly from each expanded mic state.
+    await header.click()
+    await expect(badge).toBeVisible()
+    await header.click()
+    await expect(badge).toHaveCount(0)
+    await pill.hover()
+    await mic.click()
+    await expect(mic).toHaveAttribute('aria-pressed', 'true')
+    await leaveRecorder(w)
+    await expect(badge).toBeVisible()
+    await pill.hover()
+    await mic.click()
+    await expect(mic).toHaveAttribute('aria-pressed', 'false')
+    await leaveRecorder(w)
+    await expect(pill).toHaveAttribute('data-open', 'false')
+    const result = await watch.evaluate(watch => watch.stop())
+    expect(result.seen.sort()).toEqual(['expanded', 'muted pill', 'unmuted pill'])
+    expect(result.errors).toEqual([])
+  } finally { await app.close() }
+})
+
+test('the header and expanded card share confirmed mute, across collapse, reload and pause', async ({}, testInfo) => {
+  const { app, page } = await launch(undefined, 'slow', '--force-device-scale-factor=2')
+  try {
+    const w = await record(app, page)
+    const pill = w.getByTestId('widget')
+    const header = page.getByTestId('note-mic'), card = w.getByTestId('widget-mic')
+    const presented = (await fake<{ presented: number }>(app, 'main')).presented
+    // Review captures of each mic state in both themes; CI keeps them with the ui-review artifact.
+    const capture = async (name: string) => {
+      for (const colorScheme of ['light', 'dark'] as const) {
+        await page.emulateMedia({ colorScheme }); await w.emulateMedia({ colorScheme })
+        const expanded = name.endsWith('card')
+        const details = expanded ? ['logo', 'widget-wave', 'widget-time', 'widget-mic']
+          : name === 'off-collapsed' ? ['widget-wave', 'widget-time', 'widget-mic-off'] : ['widget-wave', 'widget-time']
+        if (expanded) {
+          await expect(pill).toHaveCSS('width', '340px')
+          await expect(pill.getByTestId('logo').locator('path')).toHaveCSS('fill', 'rgb(255, 255, 255)')
+        } else await expect(pill.getByTestId('logo')).toHaveCount(0)
+        await expect(pill.getByTestId('widget-wave')).toHaveCSS('color', 'rgb(183, 128, 255)')
+        await expect.poll(() => pill.evaluate((el, ids) => {
+          const boxes = ids.map(id => el.querySelector(`[data-testid="${id}"]`)?.getBoundingClientRect())
+          if (!boxes.every((box, i) => box && (i === 0 || box.left > boxes[i - 1]!.right))) return false
+          if (ids.includes('logo')) return true
+          const pill = el.getBoundingClientRect()
+          const [wave, time, mic] = boxes
+          if (Math.round(wave!.left - pill.left) !== 13 || Math.round(time!.left - wave!.right) !== 12) return false
+          if (!mic) return Math.abs(pill.right - time!.right - 13) <= 0.5
+          const divider = el.querySelector('.widget-mic-status')?.getBoundingClientRect()
+          if (!divider) return false
+          return Math.abs(divider.left - time!.right - 12) <= 0.5 && Math.round(mic.left - divider.left) === 13
+            && Math.round(pill.right - mic.right) === 13
+            && divider.top - pill.top === 9 && pill.bottom - divider.bottom === 9
+            && mic.width === 24 && mic.height === 24
+        }, details)).toBe(true)
+        await page.getByTestId('note-state').locator('..').screenshot({ path: testInfo.outputPath(`mic-${name}-header-${colorScheme}.png`) })
+        await captureCenteredReadout(app, pill, testInfo.outputPath(`mic-${name}-pill-${colorScheme}.png`))
+      }
+      await page.emulateMedia({ colorScheme: null }); await w.emulateMedia({ colorScheme: null })
+    }
+    await expect(card).toHaveCount(0)
+    await expect(w.getByTestId('widget-mic-off')).toHaveCount(0)
+    await capture('on-collapsed')
+    await pill.hover()
+    await expect(card).toHaveAccessibleName('Mute my mic')
+    await capture('on-card')
+    await card.click()
+    await expect(header).toHaveAttribute('aria-busy', 'true')
+    await expect(card).toBeDisabled()
+    await expect(header).toHaveAccessibleName('Unmute my mic')
+    await expect(card).toHaveAttribute('aria-pressed', 'true')
+    await expect(w.getByTestId('widget-mic-off')).toHaveCount(0)
+    await capture('off-card')
+    await leaveRecorder(w)
+    await expect(pill).toHaveAttribute('data-open', 'false')
+    await expect(w.getByTestId('widget-mic-off')).toBeVisible()
+    await capture('off-collapsed')
+    expect((await fake<{ presented: number }>(app, 'main')).presented).toBe(presented)
+    await page.reload()
+    await expect(header).toHaveAttribute('aria-pressed', 'true')
+    await page.getByTestId('note-pause').click()
+    await expect(header).toBeDisabled()
+    await expect(page.getByText('Mic will stay off on resume')).toBeVisible()
+    await expect.poll(async () => (await snap(app)).visible).toBe(false)
+    await page.screenshot({ path: testInfo.outputPath('mic-paused-note.png') })
+    for (const colorScheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme })
+      await page.screenshot({ path: testInfo.outputPath(`mic-paused-note-${colorScheme}.png`) })
+    }
+    await page.getByTestId('note-pause').click()
+    await header.press('Space')
+    await expect(page.getByText('Unmuting mic…')).toBeVisible()
+    await expect(header).toHaveAttribute('aria-pressed', 'false')
+    await expect(w.getByTestId('widget-mic-off')).toHaveCount(0)
+    await pill.hover()
+    await expect(card).toHaveAccessibleName('Mute my mic')
+    await page.getByTestId('note-stop').click()
+  } finally { await app.close() }
+})
+
+test('one card click changes the mic icon once in each window, after confirmation', async ({}, testInfo) => {
+  const { app, page } = await launch(undefined, 'slow')
+  try {
+    const w = await record(app, page)
+    const pill = w.getByTestId('widget'), card = w.getByTestId('widget-mic')
+    await pill.hover()
+    await card.click({ trial: true })
+    const header = page.getByTestId('note-mic')
+    const preview = w.getByTestId('widget-preview-text')
+    const top = await preview.evaluate(el => el.getBoundingClientRect().top)
+    const watches = await Promise.all([card, header].map(button => button.evaluateHandle(el => {
+      const states: string[] = [], icons: string[] = [], statusDelays: number[] = []
+      const feedback = el.closest('.widget-pill')?.querySelector('.widget-preview > [role="status"]')
+      let pendingAt: number | undefined
+      const take = () => {
+        const state = el.getAttribute('aria-pressed')!
+        const icon = el.querySelector('svg')!.innerHTML
+        if (states.at(-1) !== state) states.push(state)
+        if (icons.at(-1) !== icon) icons.push(icon)
+        if (el.getAttribute('aria-busy') === 'true') pendingAt ??= performance.now()
+        else pendingAt = undefined
+      }
+      take()
+      new MutationObserver(take).observe(el, { attributes: true, childList: true, subtree: true })
+      if (feedback) new MutationObserver(() => {
+        if (pendingAt !== undefined && feedback.classList.contains('mic-pending-status')) statusDelays.push(performance.now() - pendingAt)
+      }).observe(feedback, { attributes: true, attributeFilter: ['class'] })
+      return { states, icons, statusDelays }
+    })))
+    for (const [action, previous, next] of [['Muting', 'false', 'true'], ['Unmuting', 'true', 'false']] as const) {
+      await card.click()
+      await expect(card).toBeDisabled()
+      await expect(card).toHaveAttribute('aria-pressed', previous)
+      // A second click in either window while the helper is busy cannot issue the opposite command.
+      for (const button of [card, header]) await button.evaluate(el => (el as HTMLButtonElement).click())
+      const status = w.getByText(`${action} mic…`, { exact: true })
+      await expect(status).toBeVisible()
+      expect(await preview.evaluate(el => el.getBoundingClientRect().top)).toBeCloseTo(top, 0)
+      await pill.screenshot({ path: testInfo.outputPath(`mic-${action.toLowerCase()}-pending-card.png`) })
+      await expect(card).toHaveAttribute('aria-pressed', next)
+      await expect(header).toHaveAttribute('aria-pressed', next)
+      await expect(status).toBeHidden()
+    }
+    for (const watch of watches) {
+      const { states, icons } = await watch.jsonValue()
+      expect(states).toEqual(['false', 'true', 'false'])
+      expect(icons).toHaveLength(3)
+      expect(icons[0]).toEqual(icons[2])
+      expect(icons[1]).not.toEqual(icons[0])
+    }
+    const { statusDelays } = await watches[0].jsonValue()
+    expect(statusDelays).toHaveLength(2)
+    for (const delay of statusDelays) expect(delay).toBeGreaterThanOrEqual(650)
+  } finally { await app.close() }
+})
+
+test('a failed unmute keeps the mic off and the separate call audio warning visible', async () => {
+  const { app, page } = await launch(undefined, 'stay-off')
+  try {
+    const w = await record(app, page)
+    await page.getByTestId('note-mic').click()
+    await fake(app, 'warn', 'no-system-audio')
+    const card = w.getByRole('button', { name: 'Unmute my mic', exact: true })
+    await card.click()
+    await expect(w.getByText('Mic is still off. Try again.', { exact: true })).toBeVisible()
+    await expect(card).toBeEnabled()
+    await expect(page.getByTestId('note-mic')).toHaveAttribute('aria-pressed', 'true')
+    await expect(w.getByTestId('widget-note')).toHaveText('Mic off. Faisselle can’t hear call audio.')
+    await expect(w.getByTestId('logo')).toBeVisible()
+  } finally { await app.close() }
+})
+
+test('a lost mute reply closes the recording and explains the failure in the note', async () => {
+  const { app, page } = await launch(undefined, 'missing')
+  try {
+    await record(app, page)
+    await page.getByRole('button', { name: 'Mute my mic', exact: true }).click()
+    await expect(page.getByTestId('note-mic')).toHaveAttribute('aria-busy', 'true')
+    await expect(page.getByTestId('note-mic')).toHaveAttribute('aria-pressed', 'false')
+    await expect(page.getByTestId('note-state')).toHaveAttribute('data-state', /^(stopped|done)$/, { timeout: 15000 })
+    await expect(page.getByText('Mic mute couldn’t be confirmed.', { exact: true })).toBeVisible()
   } finally { await app.close() }
 })
 
@@ -106,6 +374,7 @@ test('Pause hides the recorder and preview; Resume in the meeting restores its p
     await expect(page.getByTestId('note-state')).toHaveAttribute('data-paused', 'true')
     await expect(w.getByTestId('widget')).toHaveCount(0)
     await expect(preview.getByTestId('widget')).toHaveCount(0)
+    await expect(w.getByTestId('logo')).toHaveCount(0)
     expect((await snap(app)).visible).toBe(false)
     expect((await snap(app)).notice).toBeNull()
     await page.getByTestId('note-pause').click()
@@ -320,7 +589,7 @@ test('hover stays stationary and pointer-down movement drags immediately without
     const widget = w.getByTestId('widget')
     // the pill hugs its content: the same space at both ends
     // measured once it settles: the pill resizes to its timer and animates there; 13 is 12 inside the 1px border
-    await expect.poll(() => widget.evaluate(el => { const r = el.getBoundingClientRect(), a = el.querySelector('.widget-details > :first-child')!.getBoundingClientRect(), z = el.querySelector('[data-testid=widget-time]')!.getBoundingClientRect(); return [Math.round(a.left - r.left), Math.round(r.right - z.right)] })).toEqual([13, 13])
+    await expect.poll(() => widget.evaluate(el => { const r = el.getBoundingClientRect(), a = el.querySelector('[data-testid=widget-wave]')!.getBoundingClientRect(), z = el.querySelector('[data-testid=widget-time]')!.getBoundingClientRect(); return [Math.round(a.left - r.left), Math.round(r.right - z.right)] })).toEqual([13, 13])
     const before = (await snap(app)).bounds!
     const box = (await w.getByTestId('widget').boundingBox())!
     const presented = (await fake<{ presented: number }>(app, 'main')).presented

@@ -14,6 +14,7 @@ const win = process.platform === 'win32'
 const launches = process.env.SMOKE_NO_LAUNCH !== '1'
 const NOT_RUNNING = "Faisselle isn't running, and it couldn't be opened. Open Faisselle, then try again.\n"
 const TOO_LONG = "Faisselle's folder path is too long for its connection.\n"
+const CLOSED = 'Faisselle is closed. Open Faisselle to use your meetings.\n'
 
 let failed = 0
 const check = (ok, what) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${what}`); if (!ok) failed++ }
@@ -114,7 +115,7 @@ if (launches) {
   const r = run(dir)
   r.send(init)
   check(await until(() => r.lines.length === 1, 35_000), 'Faisselle is started, then the first message gets its answer')
-  check(existsSync(join(dir, 'server.args')) && readFileSync(join(dir, 'server.args'), 'utf8') === '["--hidden"]', 'started with --hidden')
+  check(existsSync(join(dir, 'server.args')) && readFileSync(join(dir, 'server.args'), 'utf8') === '["--hidden","--started-by=ai-app"]', 'started with --hidden --started-by=ai-app')
   r.p.stdin.end()
   check(await exitsWithin(r, 3000) === 0, 'the session ends as usual')
   const pid = Number(readFileSync(join(dir, 'server.pid'), 'utf8'))
@@ -123,7 +124,21 @@ if (launches) {
   if (alive(pid)) process.kill(pid)
 }
 
-// 5. Linux: a profile path too long for a Unix socket
+// 5. the person quit Faisselle themselves: not started for an AI app, which is told to open it (#147)
+if (launches) {
+  const dir = profile()
+  const launcher = join(dir, win ? 'Faisselle.cmd' : 'Faisselle.AppImage')
+  if (win) writeFileSync(launcher, `@"${process.execPath}" "${join(here, 'server.mjs')}" "${dir}" %*\r\n`)
+  else { writeFileSync(launcher, `#!/bin/sh\nexec "${process.execPath}" "${join(here, 'server.mjs')}" "${dir}" "$@"\n`); chmodSync(launcher, 0o755) }
+  writeFileSync(join(dir, 'mcp-launch'), launcher + '\n')
+  writeFileSync(join(dir, 'quit-by-user'), '')
+  const r = run(dir)
+  check(await exitsWithin(r, 3000) === 1 && r.err === CLOSED, 'quit by the person: exit 1 at once, saying to open Faisselle')
+  await sleep(500)
+  check(!existsSync(join(dir, 'server.pid')), 'and Faisselle is not started')
+}
+
+// 6. Linux: a profile path too long for a Unix socket
 if (!win) {
   let dir = profile()
   while (join(dir, 'mcp.sock').length < 120) { dir = join(dir, 'a'.repeat(40)); mkdirSync(dir) }
