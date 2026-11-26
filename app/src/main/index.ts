@@ -20,7 +20,7 @@ import { isAppRoute } from '../shared/routes'
 import { resumesNote } from '../shared/agendaNote'
 import { relaunchOptions, stripAppImageEnv } from './relaunch'
 import { capabilities, micListHelper, platformOf, supportedKinds } from '../shared/platform'
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, Notification, protocol, safeStorage, screen, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, nativeTheme, Notification, powerMonitor, protocol, safeStorage, screen, shell } from 'electron'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import { basename, join } from 'node:path'
@@ -87,9 +87,9 @@ import { hookFolders } from './foldersIpc'
 import { hookMcp } from './mcp'
 import { createQuietStart } from './quietStart'
 import { startArgs, startReason, type StartReason } from './startReason'
-import { quitCalledOff, quitting, started as startedAfterQuit } from './quitByUser'
+import { quitCalledOff, quitting, recordingQuitGuard, started as startedAfterQuit } from './quitByUser'
 import { deleteRecording } from './deleteRecording'
-import { AUDIO_SCHEME, audioExts, createAudioHandler, trackFile, type AudioExt } from './audio'
+import { AUDIO_SCHEME, audioExts, createAudioHandler, playbackFile, trackFile, type AudioExt } from './audio'
 import { helperDecode, wavDecode } from './asr/backfill'
 import { finishQuit, hookUpdates, isPreviewBuild, updatesOn } from './updates'
 import { createCompanion, type Companion } from './companion'
@@ -232,7 +232,7 @@ function createSetup(): SetupController {
     download: isFake() ? fakeDownloadDeps({ stepMs: Number(process.env.YOGURT_FAKE_STEP_MS ?? 5), notesMs: Number(process.env.YOGURT_FAKE_NOTES_MODEL_MS ?? 0), notesFailOnce: process.env.YOGURT_FAKE_NOTES_MODEL_FAIL_ONCE === '1' }) : realDeps,
     ...(isFake() ? { sha256Override: 'FAKE' } : {}),
     // Windows and Linux: speech models timed on this computer (asr/speedCheck.ts); a Mac never is
-    ...(platform === 'darwin' ? {} : { speed: { ...speedStore(speedFile()), measure: isFake() ? fakeMeasure() : (model: string) => measureSpeed(model, { binary: whisperServerPath(), vadModel: vadModelPath(), clip: speedClipPath() ?? '' }) } }),
+    ...(platform === 'darwin' ? {} : { speed: { ...speedStore(speedFile()), measure: isFake() ? fakeMeasure() : (model: string, o?: { cpu?: boolean }) => measureSpeed(model, { binary: whisperServerPath(), vadModel: vadModelPath(), clip: speedClipPath() ?? '', cpu: o?.cpu }) } }),
   })
 }
 /** what the speed check found (Windows and Linux) */
@@ -665,7 +665,9 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin' || process.platform === 'win32') callWindowOf = (id) => callNames.callWindow(id)
   // Windows and Linux: whisper left the graphics card in a meeting, so the speed check (timed with it) runs again next start
   onWhisperGpuOff(() => speedStore(speedFile()).forget())
-  hookTranscription({ store, modelPath: () => setup.installed()?.asr, smallerModels: () => setup.installed()?.smallerAsr ?? [], send: (seg) => {
+  hookTranscription({ store, modelPath: () => setup.installed()?.asr, smallerModels: () => setup.installed()?.smallerAsr ?? [],
+    // the speed check's findings: whisper on the processor (faster there than on built-in graphics), or after the meeting
+    cpuOnly: () => !!setup.installed()?.asrCpu, afterMeeting: () => !!setup.installed()?.asrAfterMeeting, send: (seg) => {
     const order = seg.track === 'them' && seg.speaker ? store.speakerOrder(seg.meetingId, seg.speaker) : []
     const colored = { ...seg, speakerColor: speakerColor(seg.track, seg.speaker, order) }
     win?.webContents.send('transcript:segment', colored); sendWidgetTranscript('transcript:segment', colored)
@@ -676,6 +678,8 @@ app.whenReady().then(() => {
     warn: (code) => tell({ t: 'warn', code }), pidFile: join(userDataDir(), 'whisper-server.pid'),
     // whisper-server went down mid-meeting (#127): the rest is read from the saved recording once the transcript is settled
     queued: () => { void savedTranscriptions.pump() },
+    // the mic without the other side's echo is kept beside the recording, for listening back (#166)
+    meetingDir: (id) => join(userDataDir(), 'meetings', id),
     // English only (the default) or Multi-language, read on each chunk so the footer's picker counts at once
     spoken: () => spokenSetting(loadSettings(settingsFile)),
     // Apple's on-device speech for the live words (macOS 26, Apple Silicon); fake mode has a stand-in when a test asks
@@ -720,10 +724,13 @@ app.whenReady().then(() => {
   const shim = engineShim(process.platform, [process.resourcesPath && join(process.resourcesPath, 'bin', SHIM), join(__dirname, '../../resources/bin', SHIM)].filter((x): x is string => !!x), existsSync)
   if (process.platform === 'linux') console.info('NOTES', shim ? `big allocations go through ${shim}` : `${SHIM} is missing: the notes engine can crash on the processor`)
   // Windows and Linux: a CUDA build that won't start finds no card; Vulkan is tried next, and kept when it finds one (#32)
-  const backends = backendOrder(process.platform, process.env, loadSettings(settingsFile).notesGpuBackend)
+  const saved = loadSettings(settingsFile)
+  const backends = backendOrder(process.platform, process.env, saved.notesGpuBackend)
   const engine = isFake() ? new FakeEngine() : new UtilityEngine(join(__dirname, 'engine.js'), {
     gpuFallback: process.platform !== 'darwin', cpuCrashes: process.platform === 'linux' && !shim, ...(shim ? { preload: shim } : {}),
     backends, onBackend: (b) => { console.info('NOTES', `graphics found with ${b === 'auto' ? 'the default build' : b}; kept for next time`); updateSettings(settingsFile, { notesGpuBackend: b === 'vulkan' ? b : undefined }) },
+    // the card ran out of memory (#165): fewer layers from the next launch on, too
+    ...(saved.notesGpuLayers ? { gpuLayers: saved.notesGpuLayers } : {}), onGpuLayers: (l) => updateSettings(settingsFile, { notesGpuLayers: l }),
   })
   if (engine instanceof UtilityEngine) probeGpu = () => engine.probe().then((g) => {
     console.info('NOTES', `graphics: ${g.gpuType || 'none'}${g.gpuNames.length ? ` (${g.gpuNames.join(', ')})` : ''}, ${g.vramTotalGB.toFixed(1)} GB`)
@@ -1031,9 +1038,20 @@ app.whenReady().then(() => {
       window.webContents.send('notes:flush-request', token)
     })
   }
+  // The active meeting keeps its id while paused and clears it on stop.
+  const waitForRecordingChoice = recordingQuitGuard(() => activeMeeting()?.id, async signal => {
+    showMain()
+    const options = { type: 'question' as const, message: t('Stop recording and quit?'),
+      buttons: [t('Cancel'), t('Stop and Quit')], defaultId: 0, cancelId: 0, noLink: true, signal }
+    const answer = win && !win.isDestroyed() ? await dialog.showMessageBox(win, options) : await dialog.showMessageBox(options)
+    return answer.response === 1
+  })
+  let sessionEnding = false
+  // On macOS this also covers logout. Other platforms only prompt for an explicit menu command.
+  if (process.platform === 'darwin') powerMonitor.on('shutdown', () => { sessionEnding = true; app.quit() })
   // Flush the last keystroke and retained drafts before the existing recording/transcription shutdown.
   const resumeEditing = () => {
-    finishing = false; allowQuit = false; discardUnsaved = false
+    finishing = false; allowQuit = false; discardUnsaved = false; sessionEnding = false
     // a quit called off: the next one is the person's only if they ask again (#147)
     quitCalledOff()
     uploads.resume(); savedTranscriptions.resume()
@@ -1050,7 +1068,7 @@ app.whenReady().then(() => {
   app.on('before-quit', (e) => {
     if (allowQuit) return
     e.preventDefault()
-    if (finishing) return
+    if (finishing || waitForRecordingChoice(sessionEnding)) return
     finishing = true
     // #127: a quit left no line of its own, so what it stopped (whisper-server loading) looked like a crash
     console.info('APP quitting')
@@ -1206,7 +1224,8 @@ app.whenReady().then(() => {
       start: (id, again) => savedTranscriptions.start(id, again) }, m, audioPath, draft),
     audioFiles: async (id) => {
       await rejoined; await recordingSettled(id)
-      return (['me', 'them'] as const).flatMap((track) => { const path = trackFile(meetingDir(id), track, audioKinds); return path ? [{ track, path }] : [] })
+      // the iPhone plays what the note's player plays: the mic without echo where there is one (#166)
+      return (['me', 'them'] as const).flatMap((track) => { const path = playbackFile(meetingDir(id), track, audioKinds); return path ? [{ track, path }] : [] })
     },
     ops: {
       // a new revision; an open note takes it unless it was typed in since (then both texts are kept)

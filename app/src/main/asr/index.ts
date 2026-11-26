@@ -6,6 +6,7 @@ import { isFake } from '../paths'
 import { feedRecording } from './backfill'
 import type { Meeting, Segment, Store } from '../store'
 import { createPipeline, type Pipeline } from './pipeline'
+import { createCleanMic, type CleanMic } from './cleanMic'
 import { loadAec3 } from './aec3'
 import { echoConfidence } from './echo'
 import { appleSpeechAvailable, installSpeechLocale, readSpeechLocales, speechDisagrees, speechFits, wantedSpeechLocale, type SpeechHost, type SpeechLocales } from './appleSpeech'
@@ -30,6 +31,9 @@ type Session = { complete?: () => boolean; pipeline: Pipeline | null; priorLines
   /** a live meeting whose speech engine was there: a transcript left incomplete is queued for its saved recording */
   liveEngine?: boolean
   replacement?: boolean
+  /** the mic without echo, for listening back (cleanMic.ts) */
+  cleanMic?: CleanMic
+  aborted?: () => boolean
   /** Apple's speech listens in this locale for the meeting (null: whisper only); off once whisper hears another language */
   speech?: string | null
   micQuickAfterFinal?: boolean
@@ -148,12 +152,13 @@ let gpuOffListener: (() => void) | undefined
 export function onWhisperGpuOff(cb: () => void) { gpuOffListener = cb }
 
 /** One whisper-server while meetings need it: started (warmed up) when one starts, let go a while after the last */
-function serverFor(model: string, pidFile: string | undefined, make?: (model: string, pidFile?: string) => WhisperServer, o: { cpuOnly?: boolean } = {}): WhisperServer {
+/** keepCpu: the speed check found the processor faster than the graphics here: whisper never tries the graphics */
+function serverFor(model: string, pidFile: string | undefined, make?: (model: string, pidFile?: string) => WhisperServer, o: { cpuOnly?: boolean; keepCpu?: boolean } = {}): WhisperServer {
   clearTimeout(idleTimer)
   const key = `${model}|${pidFile}`
   if (!server || serverKey !== key) {
     void server?.stop()
-    server = make ? make(model, pidFile) : createWhisperServer({ binary: whisperServerPath(), model, pidFile, vadModel: vadModelPath(), gpuFallback: process.platform !== 'darwin', cpuOnly: o.cpuOnly, onGpuOff: () => gpuOffListener?.(), checkGpu: async (url) => { const clip = clipStart(); return !clip || hearsClip(url, clip) } })
+    server = make ? make(model, pidFile) : createWhisperServer({ binary: whisperServerPath(), model, pidFile, vadModel: vadModelPath(), gpuFallback: process.platform !== 'darwin' && !o.keepCpu, cpuOnly: o.cpuOnly || o.keepCpu, onGpuOff: () => gpuOffListener?.(), checkGpu: async (url) => { const clip = clipStart(); return !clip || hearsClip(url, clip) } })
     serverKey = key
   }
   return server
@@ -207,6 +212,12 @@ export function hookTranscription(p: {
   spoken?: () => Spoken
   /** a live transcript came out incomplete (whisper-server died, #127): its saved recording waits to be transcribed */
   queued?: (meetingId: string) => void
+  /** Windows and Linux, from the speed check: whisper on the processor alone (faster there than the built-in graphics) */
+  cpuOnly?: () => boolean
+  /** Windows and Linux, from the speed check: no speech model keeps up live, so meetings are transcribed after they end */
+  afterMeeting?: () => boolean
+  /** the meeting's folder, where the mic without echo is kept for listening back (#166); none: not kept */
+  meetingDir?: (meetingId: string) => string
 }): () => void {
   idleMs = p.serverIdleMs ?? SERVER_IDLE_MS
   // the echo canceller is ready long before the first meeting: the mic's copy of their voice goes before whisper reads it
@@ -244,12 +255,13 @@ export function hookTranscription(p: {
     else {
       const model = p.modelPath()
       if (model) {
-        let srv = serverFor(model, p.pidFile, p.server)
+        const keepCpu = !!p.cpuOnly?.()
+        let srv = serverFor(model, p.pidFile, p.server, { keepCpu })
         srv.resetBudget()
         // no other meeting on it: a graphics card set aside earlier gets another chance (#156: it stayed off until a restart)
         if (!sessions.size) srv.gpuAgain(later ? 'a saved recording' : 'a new meeting')
-        // the model takes a few seconds to load: start now, so the first chunk does not wait for it
-        srv.url().catch((e) => console.error('whisper-server did not start', e))
+        // the model takes a few seconds to load: start now, so the first chunk does not wait for it (not for a meeting read after it ends)
+        if (later || !p.afterMeeting?.()) srv.url().catch((e) => console.error('whisper-server did not start', e))
         const pauseLive = (why: string) => {
           if (s.pipeline?.paused()) return
           console.warn(`ASR ${why}: live transcription pauses, and the saved recording finishes the transcript after the meeting`)
@@ -272,7 +284,7 @@ export function hookTranscription(p: {
           if (next && [...sessions.values()].every((x) => x === s)) {
             tried.add(next); reading = next
             console.warn(`ASR ${why}: ${basename(next)} takes over for the rest of this meeting`)
-            srv = serverFor(next, p.pidFile, p.server, { cpuOnly: true })
+            srv = serverFor(next, p.pidFile, p.server, { cpuOnly: true, keepCpu })
             srv.resetBudget()
             srv.url().catch((e) => console.error('whisper-server did not start', e))
             return
@@ -317,7 +329,11 @@ export function hookTranscription(p: {
         } catch (error) { if (options.signal?.aborted) return []; throw error }
       }
     }
+    // a reading of part of a saved recording (from a gap) would make a copy with holes: the one there stays
+    const whole = !later || !Object.values(options?.fromMs ?? {}).some((ms) => (ms ?? 0) > 0)
+    const cleanMic = transcribe && whole && p.meetingDir ? createCleanMic(p.meetingDir(id)) : undefined
     const s: Session = {
+      cleanMic, aborted: () => !!options?.signal?.aborted,
       complete: () => !!transcribe && !pendingBefore && !saveFailed && !warned.has('transcribe-failed') && !s.failed && !options?.signal?.aborted && !s.pipeline?.paused() && !Object.keys(s.pipeline?.gaps() ?? {}).length,
       replacement: !!options?.save, liveEngine: !later && !!transcribe, store: p.store, refresh: p.refresh, speech: speechLocaleFor(id), priorLines: new Set(p.store.segments?.(id).map((s) => s.id) ?? []),
       pipeline: transcribe ? createPipeline({ meetingId: id, transcribe, save: (segs) => {
@@ -332,9 +348,17 @@ export function hookTranscription(p: {
         if (part.track === 'me' && s.micQuickAfterFinal !== undefined && !part.words?.length) micQuickReads(s, s.micQuickAfterFinal)
       }, holdMs: p.holdMs, extraWaitMs: p.extraWaitMs, onWarn: warnOnce,
         nameOf: (a, b) => p.store.meeting?.(id)?.source === 'audio-file' ? AUDIO_SPEAKER : p.nameOf?.(id, a, b) ?? previousSpeaker(priorSegments,'them',a,b),
-        respell: (t) => { const m = p.store.meeting?.(id); return m ? respell(t, meetingWords(m)) : t } }) : null,
+        respell: (t) => { const m = p.store.meeting?.(id); return m ? respell(t, meetingWords(m)) : t },
+        cleanMic: cleanMic && ((ms, x) => cleanMic.push(ms, x)) }) : null,
     }
     if (s.speech) s.pipeline?.setQuickReads(false)
+    // the speed check found no speech model that keeps up live here: the meeting is recorded, and the saved recording
+    // gives the transcript once it ends (never a refusal to record)
+    if (!later && s.pipeline && p.afterMeeting?.()) {
+      console.info('ASR this computer transcribes meetings after they end: live transcription is off')
+      s.pipeline.pause()
+      setTimeout(() => warnOnce('live-paused'), NO_MODEL_NOTE_DELAY_MS)
+    }
     sessions.set(id, s)
     return s
   }
@@ -466,6 +490,7 @@ function finishSession(id: string, s: Session, audioDone: () => Promise<void> = 
   s.store ??= store
   let queued = false
   s.done ??= audioDone().then(() => s.pipeline?.finish()).then(() => {
+    if (s.cleanMic && s.pipeline) s.cleanMic.finish({ echo: s.pipeline.echoPresent(), ...s.pipeline.span(), failed: !!s.failed || !!s.aborted?.() })
     if (!s.replacement) clearAfterGaps(id, s)
     if (!s.replacement) sweepEcho(id, s)
     if (!s.replacement && s.complete?.()) s.store?.updateMeeting(id, { transcriptionPending: false })
