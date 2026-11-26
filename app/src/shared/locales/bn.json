@@ -638,7 +638,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle কলে আপনাকে চেনার জন্য আপনার নাম ব্যবহার করে।",
   "Your summary appears after you stop recording.": "রেকর্ডিং থামানোর পর আপনার সারাংশ দেখা যাবে।",
   "You can add notes here to guide the summary.": "সারাংশকে দিকনির্দেশ দিতে এখানে নোট যোগ করতে পারেন।",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "মিটিং, নোট, প্রতিলিপি ও রাখা অডিও একটি ফাইলে ব্যাকআপ নিতে পারেন।",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "মিটিং, নোট, প্রতিলিপি, রাখা অডিও ও বিশেষজ্ঞ সাক্ষাৎকার একটি ফাইলে ব্যাকআপ নিতে পারেন।",
   "You can get a reminder when Faisselle detects a call.": "Faisselle কল শনাক্ত করলে অনুস্মারক পেতে পারেন।",
   "You can record here or add existing meetings to this folder.": "এখানে রেকর্ড করতে বা এই ফোল্ডারে পুরোনো মিটিং যোগ করতে পারেন।",
   "You can use calendar events to add meeting titles and attendees to your notes.": "ক্যালেন্ডারের ইভেন্ট থেকে নোটে মিটিংয়ের শিরোনাম ও অংশগ্রহণকারী যোগ করতে পারেন।",
@@ -1052,5 +1052,8 @@
   "The skills couldn't be written. Try again.": "স্কিল লেখা যায়নি। আবার চেষ্টা করুন।",
   "When an agent should use it": "এজেন্ট কখন এটি ব্যবহার করবে",
   "Write the skills": "স্কিল লিখুন",
-  "Written by Claude. Change anything: your version is kept.": "Claude লিখেছে। যা চান বদলান: আপনার সংস্করণ রাখা হবে।"
+  "Written by Claude. Change anything: your version is kept.": "Claude লিখেছে। যা চান বদলান: আপনার সংস্করণ রাখা হবে।",
+  "Expert interviews are in it too.": "বিশেষজ্ঞ সাক্ষাৎকারও এতে আছে।",
+  "Expert interviews added.": "বিশেষজ্ঞ সাক্ষাৎকার যোগ হয়েছে।",
+  "The expert interviews in it couldn't be imported.": "এর বিশেষজ্ঞ সাক্ষাৎকারগুলো আমদানি করা যায়নি।"
 }

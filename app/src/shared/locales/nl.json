@@ -650,7 +650,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle gebruikt je naam om je in gesprekken te herkennen.",
   "Your summary appears after you stop recording.": "Je samenvatting verschijnt nadat je de opname stopt.",
   "You can add notes here to guide the summary.": "Je kunt hier notities toevoegen om de samenvatting te sturen.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Je kunt meetings, notities, transcripten en bewaarde audio in één bestand opslaan.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Je kunt meetings, notities, transcripten, bewaarde audio en expertinterviews in één bestand opslaan.",
   "You can get a reminder when Faisselle detects a call.": "Je kunt een herinnering krijgen als Faisselle een gesprek herkent.",
   "You can record here or add existing meetings to this folder.": "Je kunt hier opnemen of bestaande meetings aan deze map toevoegen.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Je kunt agenda-afspraken gebruiken voor titels en deelnemers in je notities.",
@@ -1064,5 +1064,8 @@
   "The skills couldn't be written. Try again.": "De skills konden niet worden geschreven. Probeer het opnieuw.",
   "When an agent should use it": "Wanneer een agent hem moet gebruiken",
   "Write the skills": "Skills schrijven",
-  "Written by Claude. Change anything: your version is kept.": "Geschreven door Claude. Wijzig wat je wilt: jouw versie blijft behouden."
+  "Written by Claude. Change anything: your version is kept.": "Geschreven door Claude. Wijzig wat je wilt: jouw versie blijft behouden.",
+  "Expert interviews are in it too.": "De expertinterviews zitten er ook in.",
+  "Expert interviews added.": "Expertinterviews toegevoegd.",
+  "The expert interviews in it couldn't be imported.": "De expertinterviews erin konden niet worden geïmporteerd."
 }

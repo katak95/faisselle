@@ -9,14 +9,15 @@ import { dirname, join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { isId } from './ipcArgs'
 import { pack, unpack } from './zip'
+import { exportExpert, importExpert } from './expert/backup'
 
 /**
  * A backup is one zip: manifest.json, a snapshot of yogurt.db and meetings/<id>/ with each meeting's recordings.
  * Importing adds the meetings that are not here yet and never changes or removes one that is.
  */
 export const BACKUP_FORMAT = backupFormat.format
-export type Manifest = { format: number; app: string; createdAt: number; meetings: number; showRecordingPill?: boolean }
-export type ImportResult = { ok: true; added: number; skipped: number; showRecordingPill?: boolean } | { ok: false; error: 'newer' | 'invalid' | 'failed' }
+export type Manifest = { format: number; app: string; createdAt: number; meetings: number; showRecordingPill?: boolean; /** expert interviews (expert/backup.ts), when it has them */ interviews?: number }
+export type ImportResult = { ok: true; added: number; skipped: number; showRecordingPill?: boolean; /** expert interviews added; failed: the meetings came in, the interviews didn't */ interviews?: number; interviewsFailed?: boolean } | { ok: false; error: 'newer' | 'invalid' | 'failed' }
 
 type Row = Record<string, string | number | bigint | null | Uint8Array>
 const q = (name: string) => `"${name.replace(/"/g, '""')}"`
@@ -144,7 +145,9 @@ const scratch = (name: string) => name.endsWith('.f32')
 const cleanup = (dir: string) => rm(dir, { recursive: true, force: true }).catch((e) => console.warn('backup cleanup failed', dir, e))
 
 /** Everything to one zip: a snapshot of the database (safe while Faisselle runs), each meeting's recordings, and a manifest */
-export async function exportBackup(o: { db: DatabaseSync; meetingsDir: string; out: string; appVersion: string; now?: number; showRecordingPill?: boolean }): Promise<{ meetings: number }> {
+/** expert: the interviews' own database and folder (expert/store.ts), to go in the backup too */
+export async function exportBackup(o: { db: DatabaseSync; meetingsDir: string; out: string; appVersion: string; now?: number; showRecordingPill?: boolean
+  expert?: { db: DatabaseSync; dir: string } }): Promise<{ meetings: number; interviews?: number }> {
   const work = await mkdtemp(join(tmpdir(), 'yogurt-export-'))
   let staging: string | undefined
   try {
@@ -168,7 +171,8 @@ export async function exportBackup(o: { db: DatabaseSync; meetingsDir: string; o
         if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
       }
     }
-    const manifest: Manifest = { format: BACKUP_FORMAT, app: o.appVersion, createdAt: o.now ?? Date.now(), meetings: ids.length, showRecordingPill: o.showRecordingPill }
+    const interviews = o.expert ? await exportExpert({ db: o.expert.db, dir: o.expert.dir, work }) : 0
+    const manifest: Manifest = { format: BACKUP_FORMAT, app: o.appVersion, createdAt: o.now ?? Date.now(), meetings: ids.length, showRecordingPill: o.showRecordingPill, ...(o.expert ? { interviews } : {}) }
     await writeFile(join(work, 'manifest.json'), JSON.stringify(manifest, null, 2))
     // Keep the previous backup until its replacement is complete. Stage beside the
     // destination so the final rename stays atomic, including on an external disk.
@@ -176,7 +180,7 @@ export async function exportBackup(o: { db: DatabaseSync; meetingsDir: string; o
     const archive = join(staging, 'backup.zip')
     await pack(work, archive)
     await rename(archive, o.out)
-    return { meetings: ids.length }
+    return { meetings: ids.length, ...(o.expert ? { interviews } : {}) }
   } finally {
     await Promise.all([
       cleanup(work),
@@ -189,7 +193,7 @@ export async function exportBackup(o: { db: DatabaseSync; meetingsDir: string; o
 const plainOnly = async (s: string) => !(await lstat(s)).isSymbolicLink()
 
 /** Adds missing meetings, recordings first. A failed merge rolls back rows and attempts to remove its copied audio. */
-export async function importBackup(o: { db: DatabaseSync; meetingsDir: string; zip: string }): Promise<ImportResult> {
+export async function importBackup(o: { db: DatabaseSync; meetingsDir: string; zip: string; expert?: { db: DatabaseSync; dir: string } }): Promise<ImportResult> {
   let work: string | undefined
   const copied: string[] = []
   let from: DatabaseSync | undefined
@@ -219,7 +223,17 @@ export async function importBackup(o: { db: DatabaseSync; meetingsDir: string; z
     }
     const r = mergeBackup(o.db, from)
     const pill = (raw as Manifest).showRecordingPill
-    return { ok: true, added: r.added.length, skipped: r.skipped, ...(typeof pill === 'boolean' && { showRecordingPill: pill }) }
+    // the meetings are in: interviews that fail to come in leave them so, and say so
+    let interviews = 0, interviewsFailed = false
+    if (o.expert) {
+      const audio: string[] = []
+      try { interviews = await importExpert({ db: o.expert.db, dir: o.expert.dir, work, copied: audio }) } catch (e) {
+        console.error('importing the expert interviews failed', e)
+        interviewsFailed = true
+        for (const d of audio) await cleanup(d)
+      }
+    }
+    return { ok: true, added: r.added.length, skipped: r.skipped, ...(typeof pill === 'boolean' && { showRecordingPill: pill }), ...(interviews ? { interviews } : {}), ...(interviewsFailed ? { interviewsFailed } : {}) }
   } catch (e) {
     console.error('import failed', e)
     for (const d of copied) await cleanup(d)

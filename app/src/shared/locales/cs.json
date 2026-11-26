@@ -681,7 +681,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle vás v hovorech rozpoznává podle jména.",
   "Your summary appears after you stop recording.": "Po zastavení nahrávání se zobrazí váš souhrn.",
   "You can add notes here to guide the summary.": "Zde můžete přidat poznámky jako vodítko pro souhrn.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Schůzky, poznámky, přepisy a uložený zvuk můžete zálohovat do jednoho souboru.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Schůzky, poznámky, přepisy, uložený zvuk a rozhovory s experty můžete zálohovat do jednoho souboru.",
   "You can get a reminder when Faisselle detects a call.": "Můžete dostat připomenutí, když Faisselle rozpozná hovor.",
   "You can record here or add existing meetings to this folder.": "Zde můžete nahrávat nebo do složky přidat existující schůzky.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Z událostí kalendáře můžete k poznámkám přidat názvy schůzek a účastníky.",
@@ -1095,5 +1095,8 @@
   "The skills couldn't be written. Try again.": "Skilly se nepodařilo napsat. Zkuste to znovu.",
   "When an agent should use it": "Kdy ho má agent použít",
   "Write the skills": "Napsat skilly",
-  "Written by Claude. Change anything: your version is kept.": "Napsal Claude. Změňte, co chcete: vaše verze zůstane zachována."
+  "Written by Claude. Change anything: your version is kept.": "Napsal Claude. Změňte, co chcete: vaše verze zůstane zachována.",
+  "Expert interviews are in it too.": "Jsou v ní i rozhovory s experty.",
+  "Expert interviews added.": "Rozhovory s experty přidány.",
+  "The expert interviews in it couldn't be imported.": "Rozhovory s experty z ní se nepodařilo importovat."
 }

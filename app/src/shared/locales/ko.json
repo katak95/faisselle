@@ -608,7 +608,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle는 이름으로 통화 중인 나를 알아봐요.",
   "Your summary appears after you stop recording.": "녹음을 중지하면 요약이 표시돼요.",
   "You can add notes here to guide the summary.": "여기에 노트를 추가해 요약에 참고하게 할 수 있어요.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "회의, 노트, 녹취록과 저장된 오디오를 한 파일에 백업할 수 있어요.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "회의, 노트, 녹취록, 저장된 오디오와 전문가 인터뷰를 한 파일에 백업할 수 있어요.",
   "You can get a reminder when Faisselle detects a call.": "Faisselle가 통화를 감지하면 알림을 받을 수 있어요.",
   "You can record here or add existing meetings to this folder.": "여기서 녹음하거나 기존 회의를 이 폴더에 추가할 수 있어요.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "캘린더 일정으로 노트에 회의 제목과 참석자를 추가할 수 있어요.",
@@ -1022,5 +1022,8 @@
   "The skills couldn't be written. Try again.": "스킬을 작성할 수 없습니다. 다시 시도하세요.",
   "When an agent should use it": "에이전트가 사용해야 할 때",
   "Write the skills": "스킬 작성",
-  "Written by Claude. Change anything: your version is kept.": "Claude가 작성함. 무엇이든 바꾸세요. 내 버전이 유지됩니다."
+  "Written by Claude. Change anything: your version is kept.": "Claude가 작성함. 무엇이든 바꾸세요. 내 버전이 유지됩니다.",
+  "Expert interviews are in it too.": "전문가 인터뷰도 들어 있어요.",
+  "Expert interviews added.": "전문가 인터뷰를 추가했어요.",
+  "The expert interviews in it couldn't be imported.": "포함된 전문가 인터뷰를 가져오지 못했어요."
 }

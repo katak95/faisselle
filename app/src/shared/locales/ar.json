@@ -706,7 +706,7 @@
   "Faisselle uses your name to identify you in calls.": "يستخدم Faisselle اسمك للتعرف عليك في المكالمات.",
   "Your summary appears after you stop recording.": "يظهر ملخصك بعد إيقاف التسجيل.",
   "You can add notes here to guide the summary.": "يمكنك إضافة ملاحظات هنا لتوجيه الملخص.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "يمكنك نسخ الاجتماعات والملاحظات والنصوص والصوت المحفوظ احتياطيًا في ملف واحد.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "يمكنك نسخ الاجتماعات والملاحظات والنصوص والصوت المحفوظ والمقابلات مع الخبراء احتياطيًا في ملف واحد.",
   "You can get a reminder when Faisselle detects a call.": "يمكنك تلقي تذكير عندما يكتشف Faisselle مكالمة.",
   "You can record here or add existing meetings to this folder.": "يمكنك التسجيل هنا أو إضافة اجتماعات موجودة إلى هذا المجلد.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "يمكنك استخدام أحداث التقويم لإضافة عناوين الاجتماعات والحاضرين إلى ملاحظاتك.",
@@ -1120,5 +1120,8 @@
   "The skills couldn't be written. Try again.": "تعذّرت كتابة المهارات. حاول مرة أخرى.",
   "When an agent should use it": "متى يجب أن يستخدمها الوكيل",
   "Write the skills": "اكتب المهارات",
-  "Written by Claude. Change anything: your version is kept.": "كتبها Claude. غيّر ما تريد: تُحفظ نسختك."
+  "Written by Claude. Change anything: your version is kept.": "كتبها Claude. غيّر ما تريد: تُحفظ نسختك.",
+  "Expert interviews are in it too.": "المقابلات مع الخبراء فيه أيضًا.",
+  "Expert interviews added.": "أُضيفت المقابلات مع الخبراء.",
+  "The expert interviews in it couldn't be imported.": "تعذّر استيراد المقابلات مع الخبراء التي فيه."
 }

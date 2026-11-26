@@ -251,9 +251,10 @@ export type YogurtApi = {
     /** import waits while a meeting records */
     status(): Promise<{ recording: boolean }>
     /** asks where to save, then writes the zip */
-    export(): Promise<{ ok: true; meetings: number } | { ok: false; error: 'cancelled' | 'failed' } | { ok: false; error: 'unsaved'; meetingId: string }>
+    /** interviews: the expert interviews in it too */
+    export(): Promise<{ ok: true; meetings: number; interviews?: number } | { ok: false; error: 'cancelled' | 'failed' } | { ok: false; error: 'unsaved'; meetingId: string }>
     /** asks for a backup, then adds what is new in it */
-    import(): Promise<{ ok: true; added: number; skipped: number } | { ok: false; error: 'cancelled' | 'recording' | 'newer' | 'invalid' | 'failed' }>
+    import(): Promise<{ ok: true; added: number; skipped: number; interviews?: number; interviewsFailed?: boolean } | { ok: false; error: 'cancelled' | 'recording' | 'newer' | 'invalid' | 'failed' }>
     /** the file just exported, in Finder */
     show(): void
   }

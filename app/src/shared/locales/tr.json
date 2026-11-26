@@ -638,7 +638,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle görüşmelerde sizi tanımak için adınızı kullanır.",
   "Your summary appears after you stop recording.": "Kaydı durdurduğunuzda özetiniz görünür.",
   "You can add notes here to guide the summary.": "Özete yön vermek için buraya not ekleyebilirsiniz.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Toplantıları, notları, dökümleri ve saklanan sesi tek dosyada yedekleyebilirsiniz.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Toplantıları, notları, dökümleri, saklanan sesi ve uzman görüşmelerini tek dosyada yedekleyebilirsiniz.",
   "You can get a reminder when Faisselle detects a call.": "Faisselle bir görüşme algıladığında hatırlatma alabilirsiniz.",
   "You can record here or add existing meetings to this folder.": "Burada kayıt yapabilir veya mevcut toplantıları bu klasöre ekleyebilirsiniz.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Notlara toplantı başlıklarını ve katılımcıları eklemek için takvim etkinliklerini kullanabilirsiniz.",
@@ -1052,5 +1052,8 @@
   "The skills couldn't be written. Try again.": "Skill'ler yazılamadı. Yeniden deneyin.",
   "When an agent should use it": "Bir ajanın onu ne zaman kullanacağı",
   "Write the skills": "Skill'leri yaz",
-  "Written by Claude. Change anything: your version is kept.": "Claude tarafından yazıldı. İstediğinizi değiştirin: sizin sürümünüz korunur."
+  "Written by Claude. Change anything: your version is kept.": "Claude tarafından yazıldı. İstediğinizi değiştirin: sizin sürümünüz korunur.",
+  "Expert interviews are in it too.": "Uzman görüşmeleri de içinde.",
+  "Expert interviews added.": "Uzman görüşmeleri eklendi.",
+  "The expert interviews in it couldn't be imported.": "İçindeki uzman görüşmeleri içe aktarılamadı."
 }

@@ -862,9 +862,11 @@ app.whenReady().then(() => {
   atlassianIpc = hookAtlassian({ file: settingsFile, atlassian, store, send: (v) => win?.webContents.send('atlassian:changed', v), changed: (id) => extras.push(id) })
   if (loadSettings(settingsFile).atlassian?.enabled) void atlassian.resume()
   // expert interviews (expert/): Bedrock as set up for the notes, kept in a database of their own
+  let expertStore: ExpertStore | undefined
   // a database that can't be opened leaves the interviews unreadable, never the meetings
   try {
-    hookExpert({ store: new ExpertStore(join(userDataDir(), 'expert')), window: () => win, locale: uiLanguage,
+    expertStore = new ExpertStore(join(userDataDir(), 'expert'))
+    hookExpert({ store: expertStore, window: () => win, locale: uiLanguage,
       // the analysis: Claude with the analysis model, signed in like the notes (the uses' own models don't apply)
       llm: (modelId, signal) => createBedrockNotesModel({ config: () => { const c = cloudConfig(); return c && { ...c, modelId, models: {} } }, client: bedrockMessages }).llm(signal),
       organisation: organisationBlock,
@@ -1051,7 +1053,9 @@ app.whenReady().then(() => {
   hookBackup({ getRecordingPill: () => visibilityOf(loadSettings(settingsFile), platform).showRecordingPill,
     setRecordingPill: preferences.setRecordingPill, db: store.db, meetingsDir: join(userDataDir(), 'meetings'), window: () => win, recording: () => !!activeMeeting() || !!resumingId,
     changed: () => { win?.webContents.send('meetings:changed'); win?.webContents.send('conversations:list', conversations.list()); void indexer.refresh(); folderSuggestions.refresh() },
-    beforeExport: () => { notes.retryDrafts(); return notes.pendingDraftId() } })
+    beforeExport: () => { notes.retryDrafts(); return notes.pendingDraftId() },
+    // the expert interviews go in the backup too, when their database opened
+    expert: () => expertStore && { db: expertStore.db, dir: expertStore.dir, changed: () => win?.webContents.send('expert:changed') } })
   // AI apps change things only through the functions behind the app's own buttons
   const noteSaved = (id: string, r: ReturnType<typeof notes.replace>) => { if (r === 'saved') win?.webContents.send('meetings:changed'); return r }
   void hookMcp({

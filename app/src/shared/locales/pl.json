@@ -686,7 +686,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle używa Twojego imienia, by rozpoznać Cię w rozmowach.",
   "Your summary appears after you stop recording.": "Podsumowanie pojawi się po zatrzymaniu nagrywania.",
   "You can add notes here to guide the summary.": "Możesz tu dodać notatki jako wskazówki do podsumowania.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Możesz zapisać spotkania, notatki, transkrypcje i zachowany dźwięk w jednym pliku.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Możesz zapisać spotkania, notatki, transkrypcje, zachowany dźwięk i wywiady z ekspertami w jednym pliku.",
   "You can get a reminder when Faisselle detects a call.": "Możesz otrzymać przypomnienie, gdy Faisselle wykryje rozmowę.",
   "You can record here or add existing meetings to this folder.": "Możesz tu nagrywać lub dodać istniejące spotkania do tego folderu.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Możesz użyć wydarzeń kalendarza, by dodać tytuły i uczestników do notatek.",
@@ -1100,5 +1100,8 @@
   "The skills couldn't be written. Try again.": "Nie udało się napisać skilli. Spróbuj ponownie.",
   "When an agent should use it": "Kiedy agent ma go używać",
   "Write the skills": "Napisz skille",
-  "Written by Claude. Change anything: your version is kept.": "Napisany przez Claude. Zmień, co chcesz: Twoja wersja zostanie zachowana."
+  "Written by Claude. Change anything: your version is kept.": "Napisany przez Claude. Zmień, co chcesz: Twoja wersja zostanie zachowana.",
+  "Expert interviews are in it too.": "Zawiera też wywiady z ekspertami.",
+  "Expert interviews added.": "Dodano wywiady z ekspertami.",
+  "The expert interviews in it couldn't be imported.": "Nie udało się zaimportować zawartych w niej wywiadów z ekspertami."
 }

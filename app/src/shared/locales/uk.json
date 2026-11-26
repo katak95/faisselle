@@ -678,7 +678,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle упізнає вас у дзвінках за вашим ім’ям.",
   "Your summary appears after you stop recording.": "Підсумок з’явиться після зупинення запису.",
   "You can add notes here to guide the summary.": "Тут можна додати нотатки, щоб спрямувати підсумок.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Можна зберегти зустрічі, нотатки, розшифровки й збережене аудіо в одному файлі.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Можна зберегти зустрічі, нотатки, розшифровки, збережене аудіо та інтерв’ю з експертами в одному файлі.",
   "You can get a reminder when Faisselle detects a call.": "Можна отримувати нагадування, коли Faisselle виявляє дзвінок.",
   "You can record here or add existing meetings to this folder.": "Тут можна записувати або додавати наявні зустрічі до цієї папки.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Можна додавати назви зустрічей та учасників до нотаток із подій календаря.",
@@ -1092,5 +1092,8 @@
   "The skills couldn't be written. Try again.": "Не вдалося написати навички. Спробуйте ще раз.",
   "When an agent should use it": "Коли агенту її використовувати",
   "Write the skills": "Написати навички",
-  "Written by Claude. Change anything: your version is kept.": "Написано Claude. Змінюйте що завгодно: ваша версія зберігається."
+  "Written by Claude. Change anything: your version is kept.": "Написано Claude. Змінюйте що завгодно: ваша версія зберігається.",
+  "Expert interviews are in it too.": "Інтерв’ю з експертами теж там.",
+  "Expert interviews added.": "Інтерв’ю з експертами додано.",
+  "The expert interviews in it couldn't be imported.": "Не вдалося імпортувати інтерв’ю з експертами з нього."
 }

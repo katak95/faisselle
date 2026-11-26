@@ -608,7 +608,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle memakai nama Anda untuk mengenali Anda dalam panggilan.",
   "Your summary appears after you stop recording.": "Ringkasan Anda muncul setelah Anda menghentikan rekaman.",
   "You can add notes here to guide the summary.": "Anda dapat menambah catatan di sini untuk memandu ringkasan.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Anda dapat mencadangkan rapat, catatan, transkrip, dan audio tersimpan dalam satu file.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Anda dapat mencadangkan rapat, catatan, transkrip, audio tersimpan, dan wawancara pakar dalam satu file.",
   "You can get a reminder when Faisselle detects a call.": "Anda dapat menerima pengingat saat Faisselle mendeteksi panggilan.",
   "You can record here or add existing meetings to this folder.": "Anda dapat merekam di sini atau menambah rapat yang ada ke folder ini.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Anda dapat memakai acara kalender untuk menambah judul rapat dan peserta ke catatan.",
@@ -1022,5 +1022,8 @@
   "The skills couldn't be written. Try again.": "Skill tidak dapat ditulis. Coba lagi.",
   "When an agent should use it": "Kapan agen harus menggunakannya",
   "Write the skills": "Tulis skill",
-  "Written by Claude. Change anything: your version is kept.": "Ditulis oleh Claude. Ubah apa saja: versi Anda dipertahankan."
+  "Written by Claude. Change anything: your version is kept.": "Ditulis oleh Claude. Ubah apa saja: versi Anda dipertahankan.",
+  "Expert interviews are in it too.": "Wawancara pakar juga ada di dalamnya.",
+  "Expert interviews added.": "Wawancara pakar ditambahkan.",
+  "The expert interviews in it couldn't be imported.": "Wawancara pakar di dalamnya tidak dapat diimpor."
 }

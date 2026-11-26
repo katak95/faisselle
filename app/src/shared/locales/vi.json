@@ -608,7 +608,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle dùng tên của bạn để nhận ra bạn trong cuộc gọi.",
   "Your summary appears after you stop recording.": "Bản tóm tắt sẽ xuất hiện sau khi bạn dừng ghi âm.",
   "You can add notes here to guide the summary.": "Bạn có thể thêm ghi chú ở đây để định hướng tóm tắt.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Bạn có thể sao lưu cuộc họp, ghi chú, bản chép lời và âm thanh đã lưu vào một tệp.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Bạn có thể sao lưu cuộc họp, ghi chú, bản chép lời, âm thanh đã lưu và các buổi phỏng vấn chuyên gia vào một tệp.",
   "You can get a reminder when Faisselle detects a call.": "Bạn có thể nhận lời nhắc khi Faisselle phát hiện cuộc gọi.",
   "You can record here or add existing meetings to this folder.": "Bạn có thể ghi âm ở đây hoặc thêm cuộc họp có sẵn vào thư mục này.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Bạn có thể dùng sự kiện lịch để thêm tiêu đề cuộc họp và người tham dự vào ghi chú.",
@@ -1022,5 +1022,8 @@
   "The skills couldn't be written. Try again.": "Không thể viết các skill. Hãy thử lại.",
   "When an agent should use it": "Khi nào agent nên dùng",
   "Write the skills": "Viết các skill",
-  "Written by Claude. Change anything: your version is kept.": "Do Claude viết. Sửa bất cứ gì: phiên bản của bạn được giữ lại."
+  "Written by Claude. Change anything: your version is kept.": "Do Claude viết. Sửa bất cứ gì: phiên bản của bạn được giữ lại.",
+  "Expert interviews are in it too.": "Có cả các buổi phỏng vấn chuyên gia.",
+  "Expert interviews added.": "Đã thêm các buổi phỏng vấn chuyên gia.",
+  "The expert interviews in it couldn't be imported.": "Không thể nhập các buổi phỏng vấn chuyên gia trong đó."
 }

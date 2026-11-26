@@ -660,7 +660,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle משתמש בשם שלך כדי לזהות אותך בשיחות.",
   "Your summary appears after you stop recording.": "הסיכום יופיע לאחר עצירת ההקלטה.",
   "You can add notes here to guide the summary.": "אפשר להוסיף כאן הערות כדי להנחות את הסיכום.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "אפשר לגבות פגישות, הערות, תמלילים ושמע שנשמר בקובץ אחד.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "אפשר לגבות פגישות, הערות, תמלילים, שמע שנשמר וראיונות מומחים בקובץ אחד.",
   "You can get a reminder when Faisselle detects a call.": "אפשר לקבל תזכורת כש-Faisselle מזהה שיחה.",
   "You can record here or add existing meetings to this folder.": "אפשר להקליט כאן או להוסיף פגישות קיימות לתיקייה הזו.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "אפשר להשתמש באירועי יומן כדי להוסיף כותרות ומשתתפים להערות.",
@@ -1074,5 +1074,8 @@
   "The skills couldn't be written. Try again.": "לא ניתן היה לכתוב את הסקילים. נסה שוב.",
   "When an agent should use it": "מתי סוכן צריך להשתמש בו",
   "Write the skills": "כתיבת הסקילים",
-  "Written by Claude. Change anything: your version is kept.": "נכתב על ידי Claude. שנה מה שתרצה: הגרסה שלך נשמרת."
+  "Written by Claude. Change anything: your version is kept.": "נכתב על ידי Claude. שנה מה שתרצה: הגרסה שלך נשמרת.",
+  "Expert interviews are in it too.": "גם ראיונות המומחים כלולים.",
+  "Expert interviews added.": "ראיונות המומחים נוספו.",
+  "The expert interviews in it couldn't be imported.": "לא ניתן היה לייבא את ראיונות המומחים שבו."
 }

@@ -446,7 +446,7 @@ export function PermissionRow({ kind, status, onAsk }: { kind: PermissionKind; s
   )
 }
 
-type Said = { kind: 'exported'; count: number } | { kind: 'imported'; added: number; skipped: number } | { kind: 'error'; text: string; meetingId?: string }
+type Said = { kind: 'exported'; count: number; interviews?: number } | { kind: 'imported'; added: number; skipped: number; interviews?: number; interviewsFailed?: boolean } | { kind: 'error'; text: string; meetingId?: string }
 
 /** every meeting to one file, and back: for a new Mac or after reinstalling */
 function Backup({ onImported }: { onImported(): void }) {
@@ -465,14 +465,14 @@ function Backup({ onImported }: { onImported(): void }) {
       setBusy(null); setSaid({ kind: 'error', text: t("Couldn't save your latest changes. Return to your note and try again.") }); return
     }
     const r = await window.yogurt.backup.export().catch(() => ({ ok: false, error: 'failed' } as const)).finally(() => setBusy(null))
-    if (r.ok) setSaid({ kind: 'exported', count: r.meetings })
+    if (r.ok) setSaid({ kind: 'exported', count: r.meetings, interviews: r.interviews })
     else if (r.error === 'failed') setSaid({ kind: 'error', text: t("Couldn't save the backup. Try again, or pick another place.") })
     else if (r.error === 'unsaved') setSaid({ kind: 'error', text: t("Save your latest note changes before exporting a backup."), meetingId: r.meetingId })
   }
   const importAll = async () => {
     setBusy('import'); setSaid(null)
     const r = await window.yogurt.backup.import().catch(() => ({ ok: false, error: 'failed' } as const)).finally(() => setBusy(null))
-    if (r.ok) { onImported(); setSaid({ kind: 'imported', added: r.added, skipped: r.skipped }); return }
+    if (r.ok) { onImported(); setSaid({ kind: 'imported', added: r.added, skipped: r.skipped, interviews: r.interviews, interviewsFailed: r.interviewsFailed }); return }
     const text = {
       cancelled: '', recording: t('You can import once the recording stops.'),
       newer: t('This backup is from a newer Faisselle. Update Faisselle, then try again.'),
@@ -486,7 +486,7 @@ function Backup({ onImported }: { onImported(): void }) {
     <>
       <h2 className="settings-section-heading">{t('Backup')}</h2>
       <div data-testid="backup" className="settings-group settings-backup">
-        <p className="settings-description">{t('You can back up meetings, notes, transcripts and saved audio in one file.')}</p>
+        <p className="settings-description">{t('You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.')}</p>
         <div className="settings-backup-actions">
           <button data-testid="backup-export" disabled={!!busy} onClick={() => void exportAll()} className={pill}>
             <Download size={14} aria-hidden="true" className="text-muted" />{busy === 'export' ? t('Exporting…') : t('Export backup')}
@@ -500,12 +500,14 @@ function Backup({ onImported }: { onImported(): void }) {
           {said && (
             <p data-testid="backup-said" data-kind={said.kind} className={`settings-backup-status ${said.kind === 'error' ? 'text-danger' : 'text-ink'}`}>
               {said.kind === 'exported' && <>
-                <span className="flex items-center gap-1.5"><Check size={14} aria-hidden="true" className="text-muted" />{t('Exported {count} meetings', { count: said.count })}</span>
+                <span className="flex items-center gap-1.5"><Check size={14} aria-hidden="true" className="text-muted" />{t('Exported {count} meetings', { count: said.count })}{!!said.interviews && ' ' + t('Expert interviews are in it too.')}</span>
                 <button data-testid="backup-show" onClick={() => window.yogurt.backup.show()} className="ghost-btn">{osWords({ mac: t('Show in Finder'), windows: t('Show in File Explorer'), linux: t('Show in Files') })}</button>
               </>}
               {said.kind === 'imported' && <span className="flex items-center gap-1.5"><Check size={14} aria-hidden="true" className="text-muted" />
-                {said.added ? t('Added {count} meetings.', { count: said.added }) : t('Nothing new in this backup.')}
-                {said.skipped > 0 && ' ' + t('{count} were already here.', { count: said.skipped })}</span>}
+                {said.added ? t('Added {count} meetings.', { count: said.added }) : !said.interviews && t('Nothing new in this backup.')}
+                {said.skipped > 0 && ' ' + t('{count} were already here.', { count: said.skipped })}
+                {!!said.interviews && ' ' + t('Expert interviews added.')}
+                {said.interviewsFailed && ' ' + t("The expert interviews in it couldn't be imported.")}</span>}
               {said.kind === 'error' && <>{said.text}{said.meetingId && <button data-testid="backup-open-note" className="ghost-btn" onClick={() => window.yogurt.nav.go(`/note/${said.meetingId}`)}>{t('Open note')}</button>}</>}
             </p>
           )}

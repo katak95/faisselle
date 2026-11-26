@@ -608,7 +608,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselleは名前を使って通話中のあなたを識別します。",
   "Your summary appears after you stop recording.": "録音を停止すると要約が表示されます。",
   "You can add notes here to guide the summary.": "ここにメモを追加して要約の参考にできます。",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "会議、ノート、文字起こし、保存済み音声を1つのファイルにバックアップできます。",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "会議、ノート、文字起こし、保存済み音声、エキスパートインタビューを1つのファイルにバックアップできます。",
   "You can get a reminder when Faisselle detects a call.": "Faisselleが通話を検出したときに通知を受け取れます。",
   "You can record here or add existing meetings to this folder.": "ここで録音するか、既存の会議をこのフォルダに追加できます。",
   "You can use calendar events to add meeting titles and attendees to your notes.": "カレンダーの予定から会議のタイトルと参加者をノートに追加できます。",
@@ -1022,5 +1022,8 @@
   "The skills couldn't be written. Try again.": "スキルを書けませんでした。もう一度お試しください。",
   "When an agent should use it": "エージェントが使うべきとき",
   "Write the skills": "スキルを書く",
-  "Written by Claude. Change anything: your version is kept.": "Claude が作成。自由に変更できます。あなたの版が残ります。"
+  "Written by Claude. Change anything: your version is kept.": "Claude が作成。自由に変更できます。あなたの版が残ります。",
+  "Expert interviews are in it too.": "エキスパートインタビューも含まれています。",
+  "Expert interviews added.": "エキスパートインタビューを追加しました。",
+  "The expert interviews in it couldn't be imported.": "含まれているエキスパートインタビューを読み込めませんでした。"
 }

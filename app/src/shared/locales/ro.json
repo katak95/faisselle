@@ -667,7 +667,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle vă identifică în apeluri după nume.",
   "Your summary appears after you stop recording.": "Rezumatul apare după ce opriți înregistrarea.",
   "You can add notes here to guide the summary.": "Puteți adăuga note aici pentru a ghida rezumatul.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Puteți salva întâlnirile, notele, transcrierile și sunetul păstrat într-un singur fișier.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Puteți salva întâlnirile, notele, transcrierile, sunetul păstrat și interviurile cu experți într-un singur fișier.",
   "You can get a reminder when Faisselle detects a call.": "Puteți primi un memento când Faisselle detectează un apel.",
   "You can record here or add existing meetings to this folder.": "Puteți înregistra aici sau adăuga întâlniri existente în acest dosar.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Puteți folosi evenimentele din calendar pentru a adăuga titluri și participanți la note.",
@@ -1081,5 +1081,8 @@
   "The skills couldn't be written. Try again.": "Skillurile nu au putut fi scrise. Încearcă din nou.",
   "When an agent should use it": "Când trebuie să-l folosească un agent",
   "Write the skills": "Scrie skillurile",
-  "Written by Claude. Change anything: your version is kept.": "Scris de Claude. Schimbă ce vrei: versiunea ta se păstrează."
+  "Written by Claude. Change anything: your version is kept.": "Scris de Claude. Schimbă ce vrei: versiunea ta se păstrează.",
+  "Expert interviews are in it too.": "Conține și interviurile cu experți.",
+  "Expert interviews added.": "Interviurile cu experți au fost adăugate.",
+  "The expert interviews in it couldn't be imported.": "Interviurile cu experți din el nu au putut fi importate."
 }

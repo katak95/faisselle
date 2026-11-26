@@ -650,7 +650,7 @@
   "Faisselle uses your name to identify you in calls.": "Ginagamit ng Faisselle ang pangalan mo para makilala ka sa mga tawag.",
   "Your summary appears after you stop recording.": "Lalabas ang buod mo pagkatapos mong ihinto ang recording.",
   "You can add notes here to guide the summary.": "Puwede kang magdagdag ng tala rito para gabayan ang buod.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Puwede mong i-backup ang mga meeting, tala, transcript at na-save na audio sa isang file.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Puwede mong i-backup ang mga meeting, tala, transcript, na-save na audio at mga interview sa eksperto sa isang file.",
   "You can get a reminder when Faisselle detects a call.": "Puwede kang makatanggap ng paalala kapag may natukoy na tawag ang Faisselle.",
   "You can record here or add existing meetings to this folder.": "Puwede kang mag-record dito o magdagdag ng mga meeting sa folder na ito.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Puwede mong gamitin ang mga event sa kalendaryo para idagdag ang pamagat at kalahok sa mga tala.",
@@ -1064,5 +1064,8 @@
   "The skills couldn't be written. Try again.": "Hindi maisulat ang skills. Subukan ulit.",
   "When an agent should use it": "Kailan ito dapat gamitin ng agent",
   "Write the skills": "Isulat ang skills",
-  "Written by Claude. Change anything: your version is kept.": "Isinulat ni Claude. Baguhin ang kahit ano: pinapanatili ang bersyon mo."
+  "Written by Claude. Change anything: your version is kept.": "Isinulat ni Claude. Baguhin ang kahit ano: pinapanatili ang bersyon mo.",
+  "Expert interviews are in it too.": "Kasama rin ang mga interview sa eksperto.",
+  "Expert interviews added.": "Naidagdag ang mga interview sa eksperto.",
+  "The expert interviews in it couldn't be imported.": "Hindi ma-import ang mga interview sa eksperto na nasa loob nito."
 }

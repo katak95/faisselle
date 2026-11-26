@@ -650,7 +650,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle bruker navnet ditt for å kjenne deg igjen i samtaler.",
   "Your summary appears after you stop recording.": "Sammendraget ditt vises etter at du stopper opptaket.",
   "You can add notes here to guide the summary.": "Du kan legge til notater her som hjelp til sammendraget.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Du kan sikkerhetskopiere møter, notater, transkripsjoner og lagret lyd i én fil.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Du kan sikkerhetskopiere møter, notater, transkripsjoner, lagret lyd og ekspertintervjuer i én fil.",
   "You can get a reminder when Faisselle detects a call.": "Du kan få en påminnelse når Faisselle oppdager en samtale.",
   "You can record here or add existing meetings to this folder.": "Du kan ta opp her eller legge til eksisterende møter i mappen.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Du kan bruke kalenderhendelser til å legge til møtetitler og deltakere i notatene.",
@@ -1064,5 +1064,8 @@
   "The skills couldn't be written. Try again.": "Skills kunne ikke skrives. Prøv igjen.",
   "When an agent should use it": "Når en agent skal bruke den",
   "Write the skills": "Skriv skills",
-  "Written by Claude. Change anything: your version is kept.": "Skrevet av Claude. Endre hva du vil: din versjon beholdes."
+  "Written by Claude. Change anything: your version is kept.": "Skrevet av Claude. Endre hva du vil: din versjon beholdes.",
+  "Expert interviews are in it too.": "Ekspertintervjuene er også med.",
+  "Expert interviews added.": "Ekspertintervjuer lagt til.",
+  "The expert interviews in it couldn't be imported.": "Ekspertintervjuene i den kunne ikke importeres."
 }

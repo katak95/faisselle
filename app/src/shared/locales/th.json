@@ -608,7 +608,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle ใช้ชื่อของคุณเพื่อระบุตัวคุณในสาย",
   "Your summary appears after you stop recording.": "สรุปของคุณจะปรากฏหลังจากหยุดบันทึกเสียง",
   "You can add notes here to guide the summary.": "คุณเพิ่มโน้ตที่นี่เพื่อเป็นแนวทางให้สรุปได้",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "คุณสำรองการประชุม โน้ต ข้อความถอดเสียง และเสียงที่เก็บไว้ในไฟล์เดียวได้",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "คุณสำรองการประชุม โน้ต ข้อความถอดเสียง เสียงที่เก็บไว้ และการสัมภาษณ์ผู้เชี่ยวชาญไว้ในไฟล์เดียวได้",
   "You can get a reminder when Faisselle detects a call.": "คุณรับการเตือนได้เมื่อ Faisselle ตรวจพบสาย",
   "You can record here or add existing meetings to this folder.": "คุณบันทึกที่นี่หรือเพิ่มการประชุมที่มีอยู่ลงในโฟลเดอร์นี้ได้",
   "You can use calendar events to add meeting titles and attendees to your notes.": "คุณใช้กิจกรรมในปฏิทินเพิ่มชื่อการประชุมและผู้เข้าร่วมลงในโน้ตได้",
@@ -1022,5 +1022,8 @@
   "The skills couldn't be written. Try again.": "เขียนสกิลไม่ได้ ลองอีกครั้ง",
   "When an agent should use it": "เอเจนต์ควรใช้เมื่อใด",
   "Write the skills": "เขียนสกิล",
-  "Written by Claude. Change anything: your version is kept.": "เขียนโดย Claude แก้ไขได้ทุกอย่าง: เวอร์ชันของคุณจะถูกเก็บไว้"
+  "Written by Claude. Change anything: your version is kept.": "เขียนโดย Claude แก้ไขได้ทุกอย่าง: เวอร์ชันของคุณจะถูกเก็บไว้",
+  "Expert interviews are in it too.": "มีการสัมภาษณ์ผู้เชี่ยวชาญด้วย",
+  "Expert interviews added.": "เพิ่มการสัมภาษณ์ผู้เชี่ยวชาญแล้ว",
+  "The expert interviews in it couldn't be imported.": "นำเข้าการสัมภาษณ์ผู้เชี่ยวชาญในไฟล์นี้ไม่ได้"
 }

@@ -656,7 +656,7 @@
   "Faisselle uses your name to identify you in calls.": "Faisselle tunnistaa sinut puheluissa nimesi avulla.",
   "Your summary appears after you stop recording.": "Yhteenvetosi tulee näkyviin tallennuksen pysäyttämisen jälkeen.",
   "You can add notes here to guide the summary.": "Voit lisätä tähän muistiinpanoja yhteenvedon tueksi.",
-  "You can back up meetings, notes, transcripts and saved audio in one file.": "Voit varmuuskopioida kokoukset, muistiinpanot, litteroinnit ja säilytetyn äänen yhteen tiedostoon.",
+  "You can back up meetings, notes, transcripts, saved audio and expert interviews in one file.": "Voit varmuuskopioida kokoukset, muistiinpanot, litteroinnit, säilytetyn äänen ja asiantuntijahaastattelut yhteen tiedostoon.",
   "You can get a reminder when Faisselle detects a call.": "Voit saada muistutuksen, kun Faisselle havaitsee puhelun.",
   "You can record here or add existing meetings to this folder.": "Voit tallentaa tässä tai lisätä olemassa olevia kokouksia tähän kansioon.",
   "You can use calendar events to add meeting titles and attendees to your notes.": "Voit lisätä kokousten nimet ja osallistujat muistiinpanoihin kalenteritapahtumista.",
@@ -1070,5 +1070,8 @@
   "The skills couldn't be written. Try again.": "Taitoja ei voitu kirjoittaa. Yritä uudelleen.",
   "When an agent should use it": "Milloin agentin pitää käyttää sitä",
   "Write the skills": "Kirjoita taidot",
-  "Written by Claude. Change anything: your version is kept.": "Clauden kirjoittama. Muuta mitä haluat: oma versiosi säilyy."
+  "Written by Claude. Change anything: your version is kept.": "Clauden kirjoittama. Muuta mitä haluat: oma versiosi säilyy.",
+  "Expert interviews are in it too.": "Asiantuntijahaastattelut ovat mukana.",
+  "Expert interviews added.": "Asiantuntijahaastattelut lisätty.",
+  "The expert interviews in it couldn't be imported.": "Sen asiantuntijahaastatteluja ei voitu tuoda."
 }
